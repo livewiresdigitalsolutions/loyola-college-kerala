@@ -144,42 +144,9 @@ function ApplicationDownloadContent() {
     return `LC${programLevelId}${degreeId}${courseId}20265${paddedId}`;
   };
 
-  const handleDownloadDocument = async () => {
-    setIsDownloading(true);
-    try {
-      const response = await fetch("/api/generate-pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userEmail }),
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        const applicationId = generateApplicationId(
-          applicationData!.program_level_id,
-          applicationData!.degree_id,
-          applicationData!.course_id,
-          applicationData!.id
-        );
-        a.download = `Application-${applicationId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        toast.success("Application PDF downloaded successfully!");
-      } else {
-        const error = await response.json();
-        toast.error(error.error || "Failed to generate PDF");
-      }
-    } catch (error) {
-      console.error("Download error:", error);
-      toast.error("Download failed. Please try again.");
-    } finally {
-      setIsDownloading(false);
-    }
+  // Replace handleDownloadDocument function with:
+  const handleViewApplication = () => {
+    router.push(`/application-preview?email=${userEmail}`);
   };
 
   if (isLoading) {
@@ -218,8 +185,8 @@ function ApplicationDownloadContent() {
           Payment Successful!
         </h1>
         <p className="text-xl text-white/90 max-w-2xl mx-auto -mb-10">
-          Your admission application has been submitted successfully and
-          payment has been confirmed.
+          Your admission application has been submitted successfully and payment
+          has been confirmed.
         </p>
       </div>
 
@@ -421,8 +388,7 @@ function ApplicationDownloadContent() {
                             Emergency Mobile
                           </p>
                           <p className="text-lg font-semibold text-black">
-                            {applicationData.emergency_contact_mobile ||
-                              "N/A"}
+                            {applicationData.emergency_contact_mobile || "N/A"}
                           </p>
                         </div>
                       </div>
@@ -502,33 +468,29 @@ function ApplicationDownloadContent() {
                   <div className="mt-12 pt-8 border-t-2 border-gray-200">
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <button
-                        onClick={handleDownloadDocument}
-                        disabled={isDownloading}
-                        className="px-8 py-4 bg-[#342D87] text-white font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                        onClick={handleViewApplication}
+                        className="px-8 py-4 bg-[#342D87] text-white font-bold rounded-xl hover:bg-[#2a2470] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
                       >
-                        {isDownloading ? (
-                          <>
-                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                            Generating Document...
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              className="w-6 h-6"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            Download Application
-                          </>
-                        )}
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                        View & Download Application
                       </button>
                     </div>
                     <p className="text-center text-sm text-gray-600 mt-6">
@@ -542,8 +504,7 @@ function ApplicationDownloadContent() {
               {/* Contact Support */}
               <div className="mt-8 text-center p-6 bg-gray-50 rounded-xl border border-gray-200">
                 <p className="text-black mb-2">
-                  <strong>Need Help?</strong> Contact our admission support
-                  team
+                  <strong>Need Help?</strong> Contact our admission support team
                 </p>
                 <div className="flex flex-wrap justify-center gap-6 text-sm">
                   <a

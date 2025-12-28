@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer";
 import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
@@ -280,65 +279,42 @@ export async function POST(req: NextRequest) {
     // Compile HTML
     const html = template(data);
 
-    // Launch browser - Environment-specific configuration
+    // Launch browser
     console.log("Launching Puppeteer...");
-    
-    const isProduction = process.env.VERCEL_ENV === 'production';
-    
-    if (isProduction) {
-      // Vercel production environment
-      browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
-        headless: chromium.headless,
-      });
-    } else {
-      // Local development environment
-      browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-gpu"
-        ],
-        executablePath: 
-          process.platform === 'win32' 
-            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
-            : process.platform === 'darwin'
-            ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-            : '/usr/bin/google-chrome',
-      });
-    }
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
 
     // Generate PDF
-    console.log("Generating PDF...");
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: {
-        top: "0mm",
-        right: "0mm",
-        bottom: "0mm",
-        left: "0mm",
-      },
-    });
+    // Generate PDF
+console.log("Generating PDF...");
+const pdfBuffer = await page.pdf({
+  format: "A4",
+  printBackground: true,
+  margin: {
+    top: "0mm",
+    right: "0mm",
+    bottom: "0mm",
+    left: "0mm",
+  },
+});
 
-    await browser.close();
-    browser = null;
+await browser.close();
 
-    console.log("=== PDF Generation Completed Successfully ===");
+console.log("=== PDF Generation Completed Successfully ===");
 
-    return new NextResponse(pdfBuffer, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename=Application-${applicationId}.pdf`,
-      },
-    });
+// FIX: Return directly without conversion
+return new NextResponse(pdfBuffer as BodyInit, {
+  headers: {
+    "Content-Type": "application/pdf",
+    "Content-Disposition": `attachment; filename=Application-${applicationId}.pdf`,
+  },
+});
+
 
   } catch (error) {
     console.error("=== PDF Generation Error ===");

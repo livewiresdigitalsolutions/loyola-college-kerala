@@ -222,42 +222,8 @@ function AdmissionFormContent() {
     return `${programLevelId}${degreeId}${courseId}${id}`;
   };
 
-  const handleDownloadDocument = async () => {
-    setIsDownloading(true);
-    try {
-      const response = await fetch("/api/generate-pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userEmail }),
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        const applicationId = generateApplicationId(
-          parseInt(applicationData!.program_level_id),
-          parseInt(applicationData!.degree_id),
-          parseInt(applicationData!.course_id),
-          applicationData!.id!
-        );
-        a.download = `Application-${applicationId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        toast.success("Application PDF downloaded successfully!");
-      } else {
-        const error = await response.json();
-        toast.error(error.error || "Failed to generate PDF");
-      }
-    } catch (error) {
-      console.error("Download error:", error);
-      toast.error("Download failed. Please try again.");
-    } finally {
-      setIsDownloading(false);
-    }
+  const handleViewApplication = () => {
+    router.push(`/application-preview?email=${userEmail}`);
   };
 
   const getTabsForProgramLevel = (): Tab[] => {
@@ -1906,7 +1872,7 @@ function AdmissionFormContent() {
                         <div className="mt-12 pt-8 border-t-2 border-gray-200">
                           <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <button
-                              onClick={handleDownloadDocument}
+                              onClick={handleViewApplication}
                               disabled={isDownloading}
                               className="px-8 py-4 bg-[#342D87] text-white font-bold rounded-xl hover:bg-[#2a2470] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                             >
