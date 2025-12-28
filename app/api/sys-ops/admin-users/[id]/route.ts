@@ -87,14 +87,15 @@ async function deleteAdminSupabase(id: string) {
 // PUT handler
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
 
     const result = isDevelopment
-      ? await updateAdminSupabase(params.id, body)
-      : await updateAdminMySQL(params.id, body);
+      ? await updateAdminSupabase(id, body)
+      : await updateAdminMySQL(id, body);
 
     return NextResponse.json({
       success: true,
@@ -112,12 +113,14 @@ export async function PUT(
 // DELETE handler
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const result = isDevelopment
-      ? await deleteAdminSupabase(params.id)
-      : await deleteAdminMySQL(params.id);
+      ? await deleteAdminSupabase(id)
+      : await deleteAdminMySQL(id);
 
     return NextResponse.json({
       success: true,
