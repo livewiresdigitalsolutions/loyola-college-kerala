@@ -25,7 +25,7 @@ import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = process.env.DB_TYPE === 'supabase';
 
 // MySQL connection config
 const mysqlConfig = {

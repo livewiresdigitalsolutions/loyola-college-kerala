@@ -4,7 +4,7 @@ import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcrypt';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = process.env.DB_TYPE === 'supabase';
 const SALT_ROUNDS = 10;
 
 const mysqlConfig = {

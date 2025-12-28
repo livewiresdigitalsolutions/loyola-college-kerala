@@ -6,7 +6,7 @@ import path from "path";
 import mysql from "mysql2/promise";
 import { createClient } from "@supabase/supabase-js";
 
-const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = process.env.DB_TYPE === 'supabase';
 
 const mysqlConfig = {
   host: process.env.MYSQL_HOST || "localhost",
