@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import {
   ChevronDown,
@@ -12,6 +13,7 @@ import {
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState<boolean>(false);
+  const pathname = usePathname();
 
   useEffect((): (() => void) => {
     const onScroll = (): void => {
@@ -21,6 +23,17 @@ const Navbar: React.FC = () => {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Hide navbar on sys-ops pages and all its subpages
+  const hideNavbarRoutes = ['/sys-ops'];
+  const shouldHideNavbar = hideNavbarRoutes.some(route => 
+    pathname?.startsWith(route)
+  );
+
+  // Don't render navbar on sys-ops pages
+  if (shouldHideNavbar) {
+    return null;
+  }
 
   return (
     <header
