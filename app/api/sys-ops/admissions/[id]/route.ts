@@ -156,12 +156,14 @@ async function updateAdmissionSupabase(id: string, formData: any) {
 // GET handler
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     const data = isDevelopment
-      ? await getAdmissionSupabase(params.id)
-      : await getAdmissionMySQL(params.id);
+      ? await getAdmissionSupabase(id)
+      : await getAdmissionMySQL(id);
 
     if (!data) {
       return NextResponse.json(
@@ -183,9 +185,10 @@ export async function GET(
 // PUT handler
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { formData } = body;
 
@@ -197,8 +200,8 @@ export async function PUT(
     }
 
     const result = isDevelopment
-      ? await updateAdmissionSupabase(params.id, formData)
-      : await updateAdmissionMySQL(params.id, formData);
+      ? await updateAdmissionSupabase(id, formData)
+      : await updateAdmissionMySQL(id, formData);
 
     return NextResponse.json({
       success: true,
@@ -216,12 +219,14 @@ export async function PUT(
 // DELETE handler
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    
     const result = isDevelopment
-      ? await deleteAdmissionSupabase(params.id)
-      : await deleteAdmissionMySQL(params.id);
+      ? await deleteAdmissionSupabase(id)
+      : await deleteAdmissionMySQL(id);
 
     return NextResponse.json({
       success: true,
