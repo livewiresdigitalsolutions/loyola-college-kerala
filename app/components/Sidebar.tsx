@@ -1,8 +1,6 @@
-// app/components/hero.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -23,23 +21,11 @@ interface Course {
   degree_id: number;
 }
 
-interface HeroMedia {
-  id: number;
-  type: "image" | "video";
-  url: string;
-  title: string;
-  display_order: number;
-  is_active: boolean;
-}
-
-const Hero: React.FC = () => {
+const Sidebar: React.FC = () => {
   const router = useRouter();
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [currentMediaIndex, setCurrentMediaIndex] = useState<number>(0);
-  const [heroMedia, setHeroMedia] = useState<HeroMedia[]>([]);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -67,7 +53,6 @@ const Hero: React.FC = () => {
 
   useEffect(() => {
     fetchPrograms();
-    fetchHeroMedia();
   }, []);
 
   useEffect(() => {
@@ -85,46 +70,6 @@ const Hero: React.FC = () => {
       setSelectedCourse("");
     }
   }, [selectedDegree]);
-
-  // Fetch hero media from API
-  const fetchHeroMedia = async () => {
-    try {
-      const response = await fetch("/api/hero-media");
-      const data = await response.json();
-      if (data.success && data.data) {
-        setHeroMedia(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching hero media:", error);
-    }
-  };
-
-  // Handle media carousel - videos play completely, then move to next
-  useEffect(() => {
-    if (heroMedia.length === 0) return;
-
-    const currentMedia = heroMedia[currentMediaIndex];
-
-    if (currentMedia?.type === "video") {
-      // Video will auto-advance when it ends
-      return;
-    } else {
-      // Images auto-advance after 5 seconds
-      const timer = setTimeout(() => {
-        setCurrentMediaIndex((prev) =>
-          prev === heroMedia.length - 1 ? 0 : prev + 1
-        );
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [currentMediaIndex, heroMedia]);
-
-  const handleVideoEnd = () => {
-    setCurrentMediaIndex((prev) =>
-      prev === heroMedia.length - 1 ? 0 : prev + 1
-    );
-  };
 
   const fetchPrograms = async () => {
     try {
@@ -298,101 +243,15 @@ const Hero: React.FC = () => {
     }
   };
 
-  const currentMedia = heroMedia[currentMediaIndex];
-
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section>
       <Toaster position="top-right" />
-      // In hero.tsx, replace the Image component with conditional rendering
-      {heroMedia.length > 0 && currentMedia ? (
-        currentMedia.type === "video" ? (
-          <video
-            ref={videoRef}
-            key={currentMedia.id}
-            src={currentMedia.url}
-            autoPlay
-            muted
-            playsInline
-            onEnded={handleVideoEnd}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        ) : // Check if URL is external or local
-        currentMedia.url.startsWith("http") ? (
-          <img
-            key={currentMedia.id}
-            src={currentMedia.url}
-            alt={currentMedia.title || "Campus view"}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        ) : (
-          <Image
-            key={currentMedia.id}
-            src={currentMedia.url}
-            alt={currentMedia.title || "Campus view"}
-            fill
-            priority
-            className="object-cover"
-          />
-        )
-      ) : (
-        <Image
-          src="/assets/loyola.png"
-          alt="Campus view"
-          fill
-          priority
-          className="object-cover"
-        />
-      )}
-      {/* Media Indicators */}
-      {heroMedia.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-2">
-          {heroMedia.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentMediaIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentMediaIndex
-                  ? "bg-white w-8"
-                  : "bg-white/50 hover:bg-white/75"
-              }`}
-            />
-          ))}
-        </div>
-      )}
-      <div className="absolute inset-0 bg-black/40" />
-      <div className="relative z-10 flex min-h-screen items-center px-6 md:px-16">
-        <div className="grid w-full grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="text-white max-w-2xl flex flex-col justify-center h-full">
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight pt-26">
-              Empowering Minds. <br />
-              Enriching Society.
-            </h1>
-
-            <p className="mt-4 text-sm md:text-base text-gray-200">
-              Loyola College Kerala (Autonomous) – A NAAC A++ Institution
-              shaping leaders through values, excellence, and innovation.
-            </p>
-
-            <div className="mt-6 flex gap-4">
-              <button className="rounded-md bg-[#342D87] px-6 py-3 text-sm font-black hover:bg-yellow-600 hover:text-white transition-transform duration-200 hover:scale-105">
-                Explore Academics
-              </button>
-
-              <button
-                onClick={() => {
-                  setShowForm(true);
-                  setShowLogin(false);
-                }}
-                className="rounded-md bg-white px-6 py-3 text-sm font-black text-[#342D87] hover:bg-yellow-600 hover:text-white transition-transform duration-200 hover:scale-105"
-              >
-                Admissions 2026 →
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
+      {/* Modal Overlay - Full Screen with Backdrop */}
+      {(showForm || showLogin) && (
+        <div className="fixed inset-0 bg-black/40 z-[9998] flex items-center justify-end px-6 md:px-16 -right-14 pt-20">
+          <div className="flex justify-end w-full max-w-7xl mx-auto">
             {showForm && !showLogin && (
-              <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mt-24 max-h-[calc(100vh-200px)] overflow-y-auto">
+              <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full max-h-[calc(100vh-200px)] overflow-y-auto">
                 <h2 className="text-xl font-bold text-center">
                   Admissions Open 2026
                 </h2>
@@ -542,7 +401,7 @@ const Hero: React.FC = () => {
             )}
 
             {showLogin && (
-              <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mt-24">
+              <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
                 <h2 className="text-xl font-bold text-center">Login</h2>
                 <p className="text-sm text-center text-[#342D87] mb-4">
                   Access your application
@@ -596,21 +455,22 @@ const Hero: React.FC = () => {
             )}
           </div>
         </div>
-      </div>
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 z-50">
-        {/* <button
+      )}
+
+      {/* Fixed Side Button */}
+      <div className="fixed right-0 top-75 -translate-y-1/2 z-[9999]">
+        <button
           onClick={() => {
             setShowForm((prev) => !prev);
             setShowLogin(false);
           }}
-          className="rotate-[-90deg] origin-bottom-right bg-yellow-600 px-4 py-2
-                     text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-[#342D87] hover:text-white transition-transform duration-200 hover:scale-105"
+          className="rotate-[-90deg] origin-bottom-right bg-yellow-600 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-[#342D87] hover:text-white transition-transform duration-200 hover:scale-105"
         >
           Admissions Enquiry →
-        </button> */}
+        </button>
       </div>
     </section>
   );
 };
 
-export default Hero;
+export default Sidebar;

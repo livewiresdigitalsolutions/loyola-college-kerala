@@ -132,14 +132,15 @@ function ApplicationPreviewContent() {
   };
 
   const generateApplicationId = (
-    programLevelId: number,
-    degreeId: number,
-    courseId: number,
-    dbId: number
-  ): string => {
-    const paddedId = String(dbId).padStart(2, "0");
-    return `LC${programLevelId}${degreeId}${courseId}20265${paddedId}`;
-  };
+  programLevelId: number,
+  degreeId: number,
+  courseId: number,
+  dbId: number
+): string => {
+  const paddedId = String(dbId).padStart(2, "0");
+  const paddedCourseId = String(courseId).padStart(2, "0");
+  return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
+};
 
   const handleDownloadPDF = async () => {
     if (!contentRef.current || !applicationData) return;

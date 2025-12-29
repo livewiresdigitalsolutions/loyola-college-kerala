@@ -1,4 +1,3 @@
-// app/api/courses/route.ts
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
@@ -55,7 +54,7 @@ export async function GET(request: Request) {
     const degreeId = searchParams.get('degree_id');
     
     const data = isDevelopment
-      ?  await fetchFromSupabase(degreeId || undefined)
+      ? await fetchFromSupabase(degreeId || undefined)
       : await fetchFromMySQL(degreeId || undefined);
     
     return NextResponse.json(data);
@@ -63,6 +62,48 @@ export async function GET(request: Request) {
     console.error('Error fetching courses:', error);
     return NextResponse.json(
       { error: 'Failed to fetch courses' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { course_name, degree_id } = body;
+
+    if (!course_name || !degree_id) {
+      return NextResponse.json(
+        { error: 'All fields are required' },
+        { status: 400 }
+      );
+    }
+
+    if (isDevelopment) {
+      const { data, error } = await supabase
+        .from('course')
+        .insert([{ course_name, degree_id }])
+        .select();
+
+      if (error) throw error;
+      return NextResponse.json(data[0]);
+    } else {
+      const connection = await mysql.createConnection(mysqlConfig);
+      const [result] = await connection.execute(
+        'INSERT INTO course (course_name, degree_id) VALUES (?, ?)',
+        [course_name, degree_id]
+      );
+      await connection.end();
+      return NextResponse.json({ 
+        id: (result as any).insertId, 
+        course_name, 
+        degree_id 
+      });
+    }
+  } catch (error: any) {
+    console.error('Error creating course:', error);
+    return NextResponse.json(
+      { error: 'Failed to create course', details: error.message },
       { status: 500 }
     );
   }

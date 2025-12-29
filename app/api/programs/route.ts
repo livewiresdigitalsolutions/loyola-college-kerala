@@ -1,33 +1,9 @@
-// import { dbFactory } from "../../lib/repository";
-
-// export async function GET() {
-
-//   try {
-//     debugger;
-//     const repo = dbFactory.enquireRepository();
-//     const programs = await repo.getAllPrograms();
-
-//     return Response.json(programs, { status: 200 });
-//   } catch (error) {
-//     console.error("GET /api/programs error:", error);
-
-//     return Response.json(
-//       { message: "Failed to fetch programs" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-
-
-// app/api/programs/route.ts
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
 
 const isDevelopment = process.env.DB_TYPE === 'supabase';
 
-// MySQL connection config
 const mysqlConfig = {
   host: process.env.MYSQL_HOST || 'localhost',
   port: parseInt(process.env.MYSQL_PORT || '3303'),
@@ -36,7 +12,6 @@ const mysqlConfig = {
   database: process.env.MYSQL_DATABASE || 'loyola',
 };
 
-// Supabase config
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -68,7 +43,7 @@ async function fetchFromSupabase() {
 export async function GET() {
   try {
     const data = isDevelopment 
-      ?  await fetchFromSupabase()
+      ? await fetchFromSupabase()
       : await fetchFromMySQL();
     
     return NextResponse.json(data);
@@ -76,6 +51,44 @@ export async function GET() {
     console.error('Error fetching programs:', error);
     return NextResponse.json(
       { error: 'Failed to fetch programs' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { discipline } = body;
+
+    if (!discipline) {
+      return NextResponse.json(
+        { error: 'Program name is required' },
+        { status: 400 }
+      );
+    }
+
+    if (isDevelopment) {
+      const { data, error } = await supabase
+        .from('program_level')
+        .insert([{ discipline }])
+        .select();
+
+      if (error) throw error;
+      return NextResponse.json(data[0]);
+    } else {
+      const connection = await mysql.createConnection(mysqlConfig);
+      const [result] = await connection.execute(
+        'INSERT INTO program_level (discipline) VALUES (?)',
+        [discipline]
+      );
+      await connection.end();
+      return NextResponse.json({ id: (result as any).insertId, discipline });
+    }
+  } catch (error: any) {
+    console.error('Error creating program:', error);
+    return NextResponse.json(
+      { error: 'Failed to create program', details: error.message },
       { status: 500 }
     );
   }

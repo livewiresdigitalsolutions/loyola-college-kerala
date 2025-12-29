@@ -29,6 +29,11 @@ const menuItems = [
     path: "/sys-ops/admin-users",  
   },
   {
+    name: "Master Data",  
+    icon: Users,          
+    path: "/sys-ops/master-data",  
+  },
+  {
     name: "Analytics",
     icon: BarChart3,
     path: "/sys-ops/analytics",

@@ -25,6 +25,7 @@ interface Course {
 interface ExamCenter {
   id: number;
   centre_name: string;
+  location?: string;
 }
 
 interface FormData {
@@ -114,7 +115,8 @@ function AdmissionFormContent() {
 
   const [paymentStatus, setPaymentStatus] = useState<string>("");
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const [applicationData, setApplicationData] = useState<ExtendedFormData | null>(null);
+  const [applicationData, setApplicationData] =
+    useState<ExtendedFormData | null>(null);
 
   const [form, setForm] = useState<FormData>({
     program_level_id: "",
@@ -425,14 +427,18 @@ function AdmissionFormContent() {
 
         checkCompletedTabs(sanitizedData as FormData);
 
-        const savedTab = localStorage.getItem(`admission_active_tab_${userEmail}`);
+        const savedTab = localStorage.getItem(
+          `admission_active_tab_${userEmail}`
+        );
         if (savedTab && !isNaN(parseInt(savedTab))) {
           const tabIndex = parseInt(savedTab);
           if (tabIndex < getTabsForProgramLevel().length) {
             setActiveTab(tabIndex);
           }
         } else {
-          const firstIncompleteTab = findFirstIncompleteTab(sanitizedData as FormData);
+          const firstIncompleteTab = findFirstIncompleteTab(
+            sanitizedData as FormData
+          );
           setActiveTab(firstIncompleteTab);
         }
       }
@@ -497,6 +503,12 @@ function AdmissionFormContent() {
       case "father_name":
       case "mother_name":
       case "emergency_contact_name":
+      case "tenth_board":
+      case "tenth_school":
+      case "tenth_subjects":
+      case "twelfth_board":
+      case "twelfth_school":
+      case "twelfth_subjects":
         if (value && !validateName(value)) {
           isValid = false;
           errorMessage = "Only letters and spaces allowed";
@@ -740,7 +752,10 @@ function AdmissionFormContent() {
     if (activeTab < tabs.length - 1) {
       const newTab = activeTab + 1;
       setActiveTab(newTab);
-      localStorage.setItem(`admission_active_tab_${userEmail}`, newTab.toString());
+      localStorage.setItem(
+        `admission_active_tab_${userEmail}`,
+        newTab.toString()
+      );
       window.scrollTo({ top: 0, behavior: "smooth" });
       toast.success("Progress saved successfully!");
     }
@@ -750,7 +765,10 @@ function AdmissionFormContent() {
     if (activeTab > 0) {
       const newTab = activeTab - 1;
       setActiveTab(newTab);
-      localStorage.setItem(`admission_active_tab_${userEmail}`, newTab.toString());
+      localStorage.setItem(
+        `admission_active_tab_${userEmail}`,
+        newTab.toString()
+      );
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -758,7 +776,10 @@ function AdmissionFormContent() {
   const handleTabClick = (index: number) => {
     if (paymentStatus === "completed") {
       setActiveTab(index);
-      localStorage.setItem(`admission_active_tab_${userEmail}`, index.toString());
+      localStorage.setItem(
+        `admission_active_tab_${userEmail}`,
+        index.toString()
+      );
       return;
     }
 
@@ -768,7 +789,10 @@ function AdmissionFormContent() {
       completedTabs.includes(index - 1)
     ) {
       setActiveTab(index);
-      localStorage.setItem(`admission_active_tab_${userEmail}`, index.toString());
+      localStorage.setItem(
+        `admission_active_tab_${userEmail}`,
+        index.toString()
+      );
     } else {
       toast.error("Please complete previous sections first");
     }
@@ -850,8 +874,7 @@ function AdmissionFormContent() {
   };
 
   if (isLoading) {
-
-  return (
+    return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -890,7 +913,6 @@ function AdmissionFormContent() {
 
         <div className="container mx-auto px-4 py-10 max-w-7xl">
           <div className="bg-white rounded-2xl shadow-lg -mt-10 relative z-10 flex flex-col lg:flex-row overflow-hidden">
-            
             <div className="lg:w-64 bg-[#342D87] p-6">
               <nav className="space-y-2" role="tablist">
                 {tabs.map((tab, index) => (
@@ -933,7 +955,9 @@ function AdmissionFormContent() {
                       }
                     `}
                     >
-                      {completedTabs.includes(index) || isFormLocked ? "✓" : index + 1}
+                      {completedTabs.includes(index) || isFormLocked
+                        ? "✓"
+                        : index + 1}
                     </span>
                     <span className="text-sm">{tab.name}</span>
                   </button>
@@ -944,8 +968,13 @@ function AdmissionFormContent() {
             <div className="flex-1 p-6 md:p-10">
               {isFormLocked && (
                 <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700">
-                  <p className="font-semibold">✓ Application Submitted Successfully</p>
-                  <p className="text-sm">Viewing mode - You can view your submitted application but cannot edit it.</p>
+                  <p className="font-semibold">
+                    ✓ Application Submitted Successfully
+                  </p>
+                  <p className="text-sm">
+                    Viewing mode - You can view your submitted application but
+                    cannot edit it.
+                  </p>
                 </div>
               )}
 
@@ -1023,7 +1052,7 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Select Exam Center *
+                            Select Exam Center
                           </label>
                           <select
                             name="exam_center_id"
@@ -1036,7 +1065,10 @@ function AdmissionFormContent() {
                             <option value="">Select Exam Center</option>
                             {examCenters.map((center) => (
                               <option key={center.id} value={center.id}>
-                                {center.centre_name}
+                                {/* ✅ UPDATED: Show location if it exists */}
+                                {center.location
+                                  ? `${center.centre_name} - ${center.location}`
+                                  : center.centre_name}
                               </option>
                             ))}
                           </select>
@@ -1052,7 +1084,10 @@ function AdmissionFormContent() {
                       <div className="grid md:grid-cols-2 gap-4 mt-4">
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Full Name * <span className="text-xs text-gray-500">(Letters only)</span>
+                            Full Name *{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="full_name"
@@ -1124,7 +1159,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Nationality * <span className="text-xs text-gray-500">(Letters only)</span>
+                            Nationality *{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="nationality"
@@ -1139,7 +1177,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Religion <span className="text-xs text-gray-500">(Letters only)</span>
+                            Religion{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="religion"
@@ -1174,7 +1215,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Aadhaar Number * <span className="text-xs text-gray-500">(12 digits)</span>
+                            Aadhaar Number *{" "}
+                            <span className="text-xs text-gray-500">
+                              (12 digits)
+                            </span>
                           </label>
                           <input
                             name="aadhaar"
@@ -1202,7 +1246,10 @@ function AdmissionFormContent() {
                       <div className="grid md:grid-cols-2 gap-4 mt-4">
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Mobile Number * <span className="text-xs text-gray-500">(10 digits)</span>
+                            Mobile Number *{" "}
+                            <span className="text-xs text-gray-500">
+                              (10 digits)
+                            </span>
                           </label>
                           <input
                             name="mobile"
@@ -1252,7 +1299,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            City * <span className="text-xs text-gray-500">(Letters only)</span>
+                            City *{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="city"
@@ -1267,7 +1317,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            State * <span className="text-xs text-gray-500">(Letters only)</span>
+                            State *{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="state"
@@ -1282,7 +1335,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            PIN Code * <span className="text-xs text-gray-500">(6 digits)</span>
+                            PIN Code *{" "}
+                            <span className="text-xs text-gray-500">
+                              (6 digits)
+                            </span>
                           </label>
                           <input
                             name="pincode"
@@ -1306,12 +1362,15 @@ function AdmissionFormContent() {
                       <div className="grid md:grid-cols-2 gap-4 mt-4">
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Father\'s Name * <span className="text-xs text-gray-500">(Letters only)</span>
+                            Father's Name *{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="father_name"
                             value={form.father_name}
-                            placeholder="Father\'s full name"
+                            placeholder="Father's full name"
                             onChange={handleChange}
                             disabled={isFormLocked}
                             required
@@ -1321,12 +1380,15 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Mother\'s Name * <span className="text-xs text-gray-500">(Letters only)</span>
+                            Mother's Name *{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="mother_name"
                             value={form.mother_name}
-                            placeholder="Mother\'s full name"
+                            placeholder="Mother's full name"
                             onChange={handleChange}
                             disabled={isFormLocked}
                             required
@@ -1336,7 +1398,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Parent\'s Mobile * <span className="text-xs text-gray-500">(10 digits)</span>
+                            Parent's Mobile *{" "}
+                            <span className="text-xs text-gray-500">
+                              (10 digits)
+                            </span>
                           </label>
                           <input
                             name="parent_mobile"
@@ -1352,7 +1417,7 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Parent\'s Email
+                            Parent's Email
                           </label>
                           <input
                             type="email"
@@ -1375,7 +1440,10 @@ function AdmissionFormContent() {
                       <div className="grid md:grid-cols-3 gap-4 mt-4">
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Contact Name * <span className="text-xs text-gray-500">(Letters only)</span>
+                            Contact Name *{" "}
+                            <span className="text-xs text-gray-500">
+                              (Letters only)
+                            </span>
                           </label>
                           <input
                             name="emergency_contact_name"
@@ -1405,7 +1473,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Mobile * <span className="text-xs text-gray-500">(10 digits)</span>
+                            Mobile *{" "}
+                            <span className="text-xs text-gray-500">
+                              (10 digits)
+                            </span>
                           </label>
                           <input
                             name="emergency_contact_mobile"
@@ -1463,7 +1534,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Year of Passing * <span className="text-xs text-gray-500">(4 digits)</span>
+                            Year of Passing *{" "}
+                            <span className="text-xs text-gray-500">
+                              (4 digits)
+                            </span>
                           </label>
                           <input
                             name="tenth_year"
@@ -1479,7 +1553,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Percentage / CGPA * <span className="text-xs text-gray-500">(0-100)</span>
+                            Percentage / CGPA *{" "}
+                            <span className="text-xs text-gray-500">
+                              (0-100)
+                            </span>
                           </label>
                           <input
                             name="tenth_percentage"
@@ -1547,7 +1624,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Year of Passing * <span className="text-xs text-gray-500">(4 digits)</span>
+                            Year of Passing *{" "}
+                            <span className="text-xs text-gray-500">
+                              (4 digits)
+                            </span>
                           </label>
                           <input
                             name="twelfth_year"
@@ -1563,7 +1643,10 @@ function AdmissionFormContent() {
 
                         <div>
                           <label className="block text-sm font-semibold text-black mb-2">
-                            Percentage / CGPA * <span className="text-xs text-gray-500">(0-100)</span>
+                            Percentage / CGPA *{" "}
+                            <span className="text-xs text-gray-500">
+                              (0-100)
+                            </span>
                           </label>
                           <input
                             name="twelfth_percentage"
@@ -1612,7 +1695,8 @@ function AdmissionFormContent() {
                       </div>
                     </div>
 
-                    {(form.program_level_id === "2" || form.program_level_id === "3") && (
+                    {(form.program_level_id === "2" ||
+                      form.program_level_id === "3") && (
                       <div>
                         <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
                           Undergraduate (UG) Details
@@ -1666,7 +1750,10 @@ function AdmissionFormContent() {
 
                           <div>
                             <label className="block text-sm font-semibold text-black mb-2">
-                              Year of Passing * <span className="text-xs text-gray-500">(4 digits)</span>
+                              Year of Passing *{" "}
+                              <span className="text-xs text-gray-500">
+                                (4 digits)
+                              </span>
                             </label>
                             <input
                               name="ug_year"
@@ -1682,7 +1769,10 @@ function AdmissionFormContent() {
 
                           <div>
                             <label className="block text-sm font-semibold text-black mb-2">
-                              Percentage / CGPA * <span className="text-xs text-gray-500">(0-100)</span>
+                              Percentage / CGPA *{" "}
+                              <span className="text-xs text-gray-500">
+                                (0-100)
+                              </span>
                             </label>
                             <input
                               name="ug_percentage"
@@ -1752,7 +1842,10 @@ function AdmissionFormContent() {
 
                           <div>
                             <label className="block text-sm font-semibold text-black mb-2">
-                              Year of Passing * <span className="text-xs text-gray-500">(4 digits)</span>
+                              Year of Passing *{" "}
+                              <span className="text-xs text-gray-500">
+                                (4 digits)
+                              </span>
                             </label>
                             <input
                               name="pg_year"
@@ -1768,7 +1861,10 @@ function AdmissionFormContent() {
 
                           <div>
                             <label className="block text-sm font-semibold text-black mb-2">
-                              Percentage / CGPA * <span className="text-xs text-gray-500">(0-100)</span>
+                              Percentage / CGPA *{" "}
+                              <span className="text-xs text-gray-500">
+                                (0-100)
+                              </span>
                             </label>
                             <input
                               name="pg_percentage"
@@ -1784,7 +1880,7 @@ function AdmissionFormContent() {
                       </div>
                     )}
 
-                    <div>
+                    {/* <div>
                       <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
                         Additional Information
                       </h3>
@@ -1835,7 +1931,7 @@ function AdmissionFormContent() {
                           />
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 )}
 
@@ -1847,7 +1943,8 @@ function AdmissionFormContent() {
                           Application Submitted Successfully
                         </h3>
                         <p className="text-gray-600 mb-6">
-                          Your application has been processed and payment confirmed
+                          Your application has been processed and payment
+                          confirmed
                         </p>
 
                         <div className="bg-green-50 p-6 rounded-lg mb-6">
@@ -1902,7 +1999,8 @@ function AdmissionFormContent() {
                             </button>
                           </div>
                           <p className="text-center text-sm text-gray-600 mt-6">
-                            Please save this document for your records and future reference
+                            Please save this document for your records and
+                            future reference
                           </p>
                         </div>
                       </div>
@@ -2016,7 +2114,10 @@ function AdmissionFormContent() {
                       onClick={() => {
                         const newTab = activeTab + 1;
                         setActiveTab(newTab);
-                        localStorage.setItem(`admission_active_tab_${userEmail}`, newTab.toString());
+                        localStorage.setItem(
+                          `admission_active_tab_${userEmail}`,
+                          newTab.toString()
+                        );
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                       className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center gap-2"
@@ -2041,10 +2142,9 @@ function AdmissionFormContent() {
               </form>
 
               <p className="text-center text-sm text-gray-600 mt-6">
-                {isFormLocked 
+                {isFormLocked
                   ? "Application submitted. Contact support for any queries."
-                  : "By submitting, you agree to our terms and conditions"
-                }
+                  : "By submitting, you agree to our terms and conditions"}
               </p>
             </div>
           </div>
@@ -2069,14 +2169,16 @@ function AdmissionFormContent() {
 
 export default function AdmissionForm() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading form...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading form...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <AdmissionFormContent />
     </Suspense>
   );

@@ -8,21 +8,20 @@ import {
   Save,
   Download,
   Mail,
-  Phone,
-  Calendar,
-  MapPin,
   User,
   GraduationCap,
+  FileText,
+  BookOpen,
 } from "lucide-react";
 import StatusBadge from "../../components/StatusBadge";
 
 interface FormData {
   id: number;
   user_email: string;
-  program_level_id: string;
-  degree_id: string;
-  course_id: string;
-  exam_center_id: string;
+  program_level_id: number;
+  degree_id: number;
+  course_id: number;
+  exam_center_id: number;
   full_name: string;
   gender: string;
   dob: string;
@@ -70,8 +69,31 @@ interface FormData {
   achievements: string;
   form_status: string;
   payment_status: string;
+  payment_id: string;
+  payment_amount: number;
   updated_at: string;
+  created_at: string;
+  submitted_at: string;
 }
+
+interface ProgramDetails {
+  program: string;
+  degree: string;
+  course: string;
+  examCenter: string;
+}
+
+// Generate application ID with proper course ID padding
+const generateApplicationId = (
+  programLevelId: number,
+  degreeId: number,
+  courseId: number,
+  dbId: number
+): string => {
+  const paddedId = String(dbId).padStart(2, "0");
+  const paddedCourseId = String(courseId).padStart(2, "0");
+  return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
+};
 
 export default function AdmissionDetail() {
   const router = useRouter();
@@ -79,6 +101,7 @@ export default function AdmissionDetail() {
   const email = decodeURIComponent(params.email as string);
 
   const [formData, setFormData] = useState<FormData | null>(null);
+  const [programDetails, setProgramDetails] = useState<ProgramDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -95,6 +118,12 @@ export default function AdmissionDetail() {
         const result = await response.json();
         if (result.data) {
           setFormData(result.data);
+          await fetchProgramDetails(
+            result.data.program_level_id,
+            result.data.degree_id,
+            result.data.course_id,
+            result.data.exam_center_id
+          );
         } else {
           toast.error("Application not found");
           router.push("/sys-ops/admissions");
@@ -106,6 +135,54 @@ export default function AdmissionDetail() {
       setLoading(false);
     }
   };
+
+  // Around line 70-90 in your admission detail page
+const fetchProgramDetails = async (
+  programId: number,
+  degreeId: number,
+  courseId: number,
+  examCenterId: number
+) => {
+  try {
+    const [programRes, degreeRes, courseRes, examCenterRes] = await Promise.all([
+      fetch('/api/programs'),
+      fetch(`/api/degrees?program_id=${programId}`),
+      fetch(`/api/courses?degree_id=${degreeId}`),
+      examCenterId ? fetch('/api/exam-centers') : null,
+    ]);
+
+    const [programs, degrees, courses, examCenters] = await Promise.all([
+      programRes.json(),
+      degreeRes.json(),
+      courseRes.json(),
+      examCenterRes ? examCenterRes.json() : [],
+    ]);
+
+    const program = programs.find((p: any) => p.id === programId);
+    const degree = degrees.find((d: any) => d.id === degreeId);
+    const course = courses.find((c: any) => c.id === courseId);
+    const examCenter = examCenterId
+      ? examCenters.find((e: any) => e.id === examCenterId)
+      : null;
+
+    // ✅ UPDATED: Format exam center with location
+    const examCenterDisplay = examCenter
+      ? examCenter.location
+        ? `${examCenter.centre_name} - ${examCenter.location}`  // With location
+        : examCenter.centre_name  // Without location
+      : 'N/A';
+
+    setProgramDetails({
+      program: program?.discipline || 'N/A',
+      degree: degree?.degree_name || 'N/A',
+      course: course?.course_name || 'N/A',
+      examCenter: examCenterDisplay,  
+    });
+  } catch (error) {
+    console.error('Error fetching program details:', error);
+  }
+};
+
 
   const handleUpdate = async () => {
     if (!formData) return;
@@ -164,6 +241,13 @@ export default function AdmissionDetail() {
     );
   }
 
+  const applicationId = generateApplicationId(
+    formData.program_level_id,
+    formData.degree_id,
+    formData.course_id,
+    formData.id
+  );
+
   return (
     <>
       <Toaster position="top-right" />
@@ -181,7 +265,9 @@ export default function AdmissionDetail() {
               <h1 className="text-3xl font-bold text-gray-900">
                 {formData.full_name || "Application Details"}
               </h1>
-              <p className="text-gray-600 mt-1">Application ID: {formData.id}</p>
+              <p className="text-gray-600 mt-1">
+                Application ID: <span className="font-mono font-semibold text-[#342D87]">{applicationId}</span>
+              </p>
             </div>
           </div>
 
@@ -232,6 +318,98 @@ export default function AdmissionDetail() {
             )}
           </div>
         </div>
+
+        {/* Application Summary Card */}
+        <div className="bg-gradient-to-r from-[#342D87] to-[#4a3fa8] rounded-xl shadow-lg border border-gray-200 p-6 text-white">
+          <div className="flex items-center gap-2 mb-4">
+            <FileText className="w-6 h-6" />
+            <h2 className="text-2xl font-bold">Application Summary</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Application ID</p>
+              <p className="text-2xl font-bold font-mono">{applicationId}</p>
+            </div>
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Database ID</p>
+              <p className="text-xl font-semibold">#{formData.id}</p>
+            </div>
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Applicant Name</p>
+              <p className="text-xl font-semibold">{formData.full_name || "Not provided"}</p>
+            </div>
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Email</p>
+              <p className="text-lg font-medium truncate">{formData.user_email}</p>
+            </div>
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Mobile</p>
+              <p className="text-lg font-medium">{formData.mobile || "Not provided"}</p>
+            </div>
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Form Status</p>
+              <p className="text-lg font-semibold capitalize">{formData.form_status || "Draft"}</p>
+            </div>
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Payment Status</p>
+              <p className="text-lg font-semibold capitalize">{formData.payment_status || "Pending"}</p>
+            </div>
+            <div>
+              <p className="text-blue-100 text-sm font-medium mb-1">Last Updated</p>
+              <p className="text-lg font-medium">{new Date(formData.updated_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Program Details */}
+        {programDetails && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <BookOpen className="w-5 h-5 text-[#342D87]" />
+              <h2 className="text-xl font-bold text-gray-900">
+                Program Details
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Program Level
+                </label>
+                <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 text-gray-900 font-medium">
+                  {programDetails.program}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Degree
+                </label>
+                <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 text-gray-900 font-medium">
+                  {programDetails.degree}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Course
+                </label>
+                <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 text-gray-900 font-medium">
+                  {programDetails.course}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Exam Center
+                </label>
+                <div className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 text-gray-900 font-medium">
+                  {programDetails.examCenter}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Personal Information */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -554,6 +732,20 @@ export default function AdmissionDetail() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Emergency Relation
+              </label>
+              <input
+                type="text"
+                name="emergency_contact_relation"
+                value={formData.emergency_contact_relation || ""}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Emergency Contact Mobile
               </label>
               <input
@@ -638,6 +830,20 @@ export default function AdmissionDetail() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
+
+              <div className="md:col-span-2 lg:col-span-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Subjects
+                </label>
+                <textarea
+                  name="tenth_subjects"
+                  value={formData.tenth_subjects || ""}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  rows={2}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                />
+              </div>
             </div>
           </div>
 
@@ -702,12 +908,40 @@ export default function AdmissionDetail() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Stream
+                </label>
+                <input
+                  type="text"
+                  name="twelfth_stream"
+                  value={formData.twelfth_stream || ""}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                />
+              </div>
+
+              <div className="md:col-span-2 lg:col-span-3">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Subjects
+                </label>
+                <textarea
+                  name="twelfth_subjects"
+                  value={formData.twelfth_subjects || ""}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  rows={2}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                />
+              </div>
             </div>
           </div>
 
           {/* UG (if applicable) */}
-          {(formData.program_level_id === "2" ||
-            formData.program_level_id === "3" ||
+          {(formData.program_level_id === 2 ||
+            formData.program_level_id === 3 ||
             formData.ug_university) && (
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
@@ -736,6 +970,20 @@ export default function AdmissionDetail() {
                     type="text"
                     name="ug_college"
                     value={formData.ug_college || ""}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Degree
+                  </label>
+                  <input
+                    type="text"
+                    name="ug_degree"
+                    value={formData.ug_degree || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
@@ -774,7 +1022,7 @@ export default function AdmissionDetail() {
           )}
 
           {/* PG (if applicable) */}
-          {(formData.program_level_id === "3" || formData.pg_university) && (
+          {(formData.program_level_id === 3 || formData.pg_university) && (
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b">
                 Postgraduate (PG)
@@ -802,6 +1050,20 @@ export default function AdmissionDetail() {
                     type="text"
                     name="pg_college"
                     value={formData.pg_college || ""}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Degree
+                  </label>
+                  <input
+                    type="text"
+                    name="pg_degree"
+                    value={formData.pg_degree || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
@@ -849,6 +1111,20 @@ export default function AdmissionDetail() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Previous Gap (if any)
+              </label>
+              <textarea
+                name="previous_gap"
+                value={formData.previous_gap || ""}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                rows={2}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Extracurricular Activities
               </label>
               <textarea
@@ -873,37 +1149,6 @@ export default function AdmissionDetail() {
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
-            </div>
-          </div>
-        </div>
-
-        {/* Metadata */}
-        <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">
-            Application Metadata
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div>
-              <p className="text-gray-600">Application ID</p>
-              <p className="font-semibold text-gray-900">{formData.id}</p>
-            </div>
-            <div>
-              <p className="text-gray-600">Form Status</p>
-              <p className="font-semibold text-gray-900">
-                {formData.form_status || "Draft"}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-600">Payment Status</p>
-              <p className="font-semibold text-gray-900">
-                {formData.payment_status || "Pending"}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-600">Last Updated</p>
-              <p className="font-semibold text-gray-900">
-                {new Date(formData.updated_at).toLocaleString()}
-              </p>
             </div>
           </div>
         </div>
