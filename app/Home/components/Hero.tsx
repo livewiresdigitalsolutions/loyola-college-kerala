@@ -379,10 +379,6 @@ const Hero: React.FC = () => {
               </button>
 
               <button
-                onClick={() => {
-                  setShowForm(true);
-                  setShowLogin(false);
-                }}
                 className="rounded-md bg-white px-6 py-3 text-sm font-black text-[#342D87] hover:bg-yellow-600 hover:text-white transition-transform duration-200 hover:scale-105"
               >
                 Admissions 2026 →

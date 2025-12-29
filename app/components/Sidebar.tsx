@@ -1,13 +1,16 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+
 
 interface Program {
   id: number;
   discipline: string;
 }
+
 
 interface Degree {
   id: number;
@@ -15,17 +18,20 @@ interface Degree {
   program_level_id: number;
 }
 
+
 interface Course {
   id: number;
   course_name: string;
   degree_id: number;
 }
 
+
 const Sidebar: React.FC = () => {
   const router = useRouter();
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
 
   // Form data
   const [formData, setFormData] = useState({
@@ -37,6 +43,7 @@ const Sidebar: React.FC = () => {
     consent: false,
   });
 
+
   // Dropdown data
   const [programs, setPrograms] = useState<Program[]>([]);
   const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -45,15 +52,18 @@ const Sidebar: React.FC = () => {
   const [selectedDegree, setSelectedDegree] = useState<string>("");
   const [selectedCourse, setSelectedCourse] = useState<string>("");
 
+
   // Login data
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
+
   useEffect(() => {
     fetchPrograms();
   }, []);
+
 
   useEffect(() => {
     if (selectedProgram) {
@@ -64,12 +74,14 @@ const Sidebar: React.FC = () => {
     }
   }, [selectedProgram]);
 
+
   useEffect(() => {
     if (selectedDegree) {
       fetchCourses(selectedDegree);
       setSelectedCourse("");
     }
   }, [selectedDegree]);
+
 
   const fetchPrograms = async () => {
     try {
@@ -82,6 +94,7 @@ const Sidebar: React.FC = () => {
     }
   };
 
+
   const fetchDegrees = async (programId: string) => {
     try {
       const response = await fetch(`/api/degrees?program_id=${programId}`);
@@ -92,6 +105,7 @@ const Sidebar: React.FC = () => {
       toast.error("Failed to load degrees");
     }
   };
+
 
   const fetchCourses = async (degreeId: string) => {
     try {
@@ -104,11 +118,13 @@ const Sidebar: React.FC = () => {
     }
   };
 
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
+
 
     setFormData((prev) => ({
       ...prev,
@@ -116,9 +132,11 @@ const Sidebar: React.FC = () => {
     }));
   };
 
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
 
     if (!formData.name || !formData.email || !formData.mobileNumber) {
       toast.error("Please fill in all required fields");
@@ -126,11 +144,13 @@ const Sidebar: React.FC = () => {
       return;
     }
 
+
     if (!selectedProgram || !selectedDegree || !selectedCourse) {
       toast.error("Please select Program, Degree, and Course");
       setIsSubmitting(false);
       return;
     }
+
 
     if (!formData.consent) {
       toast.error("Please agree to receive information");
@@ -138,11 +158,13 @@ const Sidebar: React.FC = () => {
       return;
     }
 
+
     if (!/^\d{10}$/.test(formData.mobileNumber)) {
       toast.error("Please enter a valid 10-digit mobile number");
       setIsSubmitting(false);
       return;
     }
+
 
     try {
       const response = await fetch("/api/register", {
@@ -163,13 +185,16 @@ const Sidebar: React.FC = () => {
         }),
       });
 
+
       const data = await response.json();
+
 
       if (response.ok) {
         toast.success(
           "Registration successful! Please login with your email and mobile number.",
           { duration: 5000 }
         );
+
 
         setFormData({
           name: "",
@@ -182,6 +207,7 @@ const Sidebar: React.FC = () => {
         setSelectedProgram("");
         setSelectedDegree("");
         setSelectedCourse("");
+
 
         setTimeout(() => {
           setShowForm(false);
@@ -198,15 +224,18 @@ const Sidebar: React.FC = () => {
     }
   };
 
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
 
     if (!loginData.email || !loginData.password) {
       toast.error("Please enter email and password");
       setIsSubmitting(false);
       return;
     }
+
 
     try {
       const response = await fetch("/api/login", {
@@ -217,17 +246,22 @@ const Sidebar: React.FC = () => {
         body: JSON.stringify(loginData),
       });
 
+
       const data = await response.json();
+
 
       if (response.ok) {
         toast.success("Login successful! Redirecting...");
+
 
         if (typeof window !== "undefined") {
           sessionStorage.setItem("userEmail", loginData.email);
         }
 
+
         setLoginData({ email: "", password: "" });
         setShowLogin(false);
+
 
         router.push(
           `/admission-form?email=${encodeURIComponent(loginData.email)}`
@@ -243,8 +277,9 @@ const Sidebar: React.FC = () => {
     }
   };
 
+
   return (
-    <section>
+    <section className="text-black">
       <Toaster position="top-right" />
       {/* Modal Overlay - Full Screen with Backdrop */}
       {(showForm || showLogin) && (
@@ -252,16 +287,17 @@ const Sidebar: React.FC = () => {
           <div className="flex justify-end w-full max-w-7xl mx-auto">
             {showForm && !showLogin && (
               <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full max-h-[calc(100vh-200px)] overflow-y-auto">
-                <h2 className="text-xl font-bold text-center">
+                <h2 className="text-xl font-bold text-center text-black">
                   Admissions Open 2026
                 </h2>
                 <p className="text-sm text-center text-[#342D87] mb-4">
                   UG, PG and PhD Applications 2026
                 </p>
 
+
                 <form onSubmit={handleRegister} className="space-y-3">
                   <input
-                    className="w-full rounded border p-2 text-sm"
+                    className="w-full rounded border p-2 text-sm text-black"
                     placeholder="Enter Name *"
                     name="name"
                     value={formData.name}
@@ -269,8 +305,9 @@ const Sidebar: React.FC = () => {
                     required
                   />
 
+
                   <input
-                    className="w-full rounded border p-2 text-sm"
+                    className="w-full rounded border p-2 text-sm text-black"
                     placeholder="Enter Email Address *"
                     name="email"
                     type="email"
@@ -279,12 +316,13 @@ const Sidebar: React.FC = () => {
                     required
                   />
 
+
                   <div className="flex gap-2">
-                    <select className="rounded border p-2 w-20 text-sm">
+                    <select className="rounded border p-2 w-20 text-sm text-black">
                       <option>+91</option>
                     </select>
                     <input
-                      className="flex-1 rounded border p-2 text-sm"
+                      className="flex-1 rounded border p-2 text-sm text-black"
                       placeholder="Enter Mobile Number *"
                       name="mobileNumber"
                       type="tel"
@@ -294,9 +332,10 @@ const Sidebar: React.FC = () => {
                     />
                   </div>
 
+
                   <div className="grid grid-cols-2 gap-2">
                     <input
-                      className="w-full rounded border p-2 text-sm"
+                      className="w-full rounded border p-2 text-sm text-black"
                       placeholder="Enter State *"
                       name="state"
                       value={formData.state}
@@ -304,7 +343,7 @@ const Sidebar: React.FC = () => {
                       required
                     />
                     <input
-                      className="w-full rounded border p-2 text-sm"
+                      className="w-full rounded border p-2 text-sm text-black"
                       placeholder="Enter City *"
                       name="city"
                       value={formData.city}
@@ -313,9 +352,10 @@ const Sidebar: React.FC = () => {
                     />
                   </div>
 
+
                   <div className="grid grid-cols-2 gap-2">
                     <select
-                      className="rounded border p-2 text-sm"
+                      className="rounded border p-2 text-sm text-black"
                       value={selectedProgram}
                       onChange={(e) => setSelectedProgram(e.target.value)}
                       required
@@ -328,8 +368,9 @@ const Sidebar: React.FC = () => {
                       ))}
                     </select>
 
+
                     <select
-                      className="rounded border p-2 text-sm"
+                      className="rounded border p-2 text-sm text-black"
                       value={selectedDegree}
                       onChange={(e) => setSelectedDegree(e.target.value)}
                       disabled={!selectedProgram}
@@ -344,9 +385,10 @@ const Sidebar: React.FC = () => {
                     </select>
                   </div>
 
+
                   <div className="grid grid-cols-1 gap-2">
                     <select
-                      className="rounded border p-2 text-sm"
+                      className="rounded border p-2 text-sm text-black"
                       value={selectedCourse}
                       onChange={(e) => setSelectedCourse(e.target.value)}
                       disabled={!selectedDegree}
@@ -361,6 +403,7 @@ const Sidebar: React.FC = () => {
                     </select>
                   </div>
 
+
                   <div className="flex items-start gap-2">
                     <input
                       type="checkbox"
@@ -370,11 +413,12 @@ const Sidebar: React.FC = () => {
                       onChange={handleInputChange}
                       required
                     />
-                    <p className="text-xs">
+                    <p className="text-xs text-black">
                       I agree to receive information regarding my submitted
                       applications
                     </p>
                   </div>
+
 
                   <button
                     type="submit"
@@ -383,6 +427,7 @@ const Sidebar: React.FC = () => {
                   >
                     {isSubmitting ? "Registering..." : "Register"}
                   </button>
+
 
                   <p className="text-xs text-center text-black">
                     EXISTING USER?{" "}
@@ -400,16 +445,18 @@ const Sidebar: React.FC = () => {
               </div>
             )}
 
+
             {showLogin && (
               <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
-                <h2 className="text-xl font-bold text-center">Login</h2>
+                <h2 className="text-xl font-bold text-center text-black">Login</h2>
                 <p className="text-sm text-center text-[#342D87] mb-4">
                   Access your application
                 </p>
 
+
                 <form onSubmit={handleLogin} className="space-y-4">
                   <input
-                    className="w-full rounded border p-2"
+                    className="w-full rounded border p-2 text-black"
                     placeholder="Enter Email Address *"
                     type="email"
                     value={loginData.email}
@@ -419,8 +466,9 @@ const Sidebar: React.FC = () => {
                     required
                   />
 
+
                   <input
-                    className="w-full rounded border p-2"
+                    className="w-full rounded border p-2 text-black"
                     placeholder="Enter Mobile Number (Password) *"
                     type="password"
                     value={loginData.password}
@@ -430,6 +478,7 @@ const Sidebar: React.FC = () => {
                     required
                   />
 
+
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -437,6 +486,7 @@ const Sidebar: React.FC = () => {
                   >
                     {isSubmitting ? "Logging in..." : "Login"}
                   </button>
+
 
                   <p className="text-xs text-center text-black">
                     NEW USER?{" "}
@@ -457,8 +507,9 @@ const Sidebar: React.FC = () => {
         </div>
       )}
 
+
       {/* Fixed Side Button */}
-      <div className="fixed right-0 top-75 -translate-y-1/2 z-[9999]">
+      <div className="fixed right-0 top-1/3 -translate-y-1/2 z-[9999]">
         <button
           onClick={() => {
             setShowForm((prev) => !prev);
@@ -472,5 +523,6 @@ const Sidebar: React.FC = () => {
     </section>
   );
 };
+
 
 export default Sidebar;
