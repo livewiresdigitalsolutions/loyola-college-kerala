@@ -275,7 +275,7 @@ export default function Admissions() {
             className="flex items-center gap-2 px-4 py-2 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors"
           >
             <Download className="w-4 h-4" />
-            Export CSV
+            Export
           </button>
         </div>
 
