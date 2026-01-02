@@ -511,10 +511,8 @@ function AdmissionFormContent() {
       case "emergency_contact_name":
       case "tenth_board":
       case "tenth_school":
-      case "tenth_subjects":
       case "twelfth_board":
       case "twelfth_school":
-      case "twelfth_subjects":
         if (value && !validateName(value)) {
           isValid = false;
           errorMessage = "Only letters and spaces allowed";
