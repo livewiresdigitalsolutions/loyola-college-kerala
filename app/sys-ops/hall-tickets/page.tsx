@@ -212,7 +212,7 @@ export default function HallTicketsPage() {
         page: currentPage.toString(),
         perPage: perPage.toString(),
         search: searchTerm,
-        status: "completed", // Only completed payments
+        status: "completed",
         program: programFilter,
         degree: degreeFilter,
         course: courseFilter,
@@ -341,6 +341,7 @@ export default function HallTicketsPage() {
           const program = programs.find((p) => p.id === adm.program_level_id);
           const degree = degrees.find((d) => d.id === adm.degree_id);
           const course = courses.find((c) => c.id === adm.course_id);
+          const examCenter = examCenters.find((ec) => ec.id === adm.exam_center_id);
 
           return {
             "Application ID": generateApplicationId(
@@ -355,6 +356,7 @@ export default function HallTicketsPage() {
             "Program": program?.discipline || "N/A",
             "Degree": degree?.degree_name || "N/A",
             "Course": course?.course_name || "N/A",
+            "Exam Center": examCenter?.centre_name || "N/A",
             "Status": "Available for Allocation",
           };
         });
@@ -398,6 +400,12 @@ export default function HallTicketsPage() {
     programFilter !== "all" ||
     degreeFilter !== "all" ||
     courseFilter !== "all";
+
+  // Helper function to get exam center name
+  const getExamCenterName = (examCenterId: number): string => {
+    const center = examCenters.find((ec) => ec.id === examCenterId);
+    return center ? `${center.centre_name} (${center.location})` : "N/A";
+  };
 
   return (
     <>
@@ -612,6 +620,9 @@ export default function HallTicketsPage() {
                           Email
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                          Exam Center
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">
                           Exam Date
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
@@ -620,9 +631,6 @@ export default function HallTicketsPage() {
                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
                           Status
                         </th>
-                        {/* <th className="text-left py-3 px-4 font-semibold text-gray-700">
-                          Actions
-                        </th> */}
                       </tr>
                     </thead>
                     <tbody>
@@ -641,6 +649,9 @@ export default function HallTicketsPage() {
                             {ticket.email}
                           </td>
                           <td className="py-3 px-4 text-sm text-gray-600">
+                            {getExamCenterName(ticket.exam_center_id)}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-gray-600">
                             {new Date(ticket.exam_date).toLocaleDateString("en-IN")}
                           </td>
                           <td className="py-3 px-4 text-sm text-gray-600">
@@ -649,15 +660,6 @@ export default function HallTicketsPage() {
                           <td className="py-3 px-4">
                             <StatusBadge status={ticket.status} />
                           </td>
-                          {/* <td className="py-3 px-4">
-                            <button
-                              onClick={() => handleViewAllocated(ticket.id)}
-                              className="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
-                            >
-                              <Eye className="w-4 h-4" />
-                              View
-                            </button>
-                          </td> */}
                         </tr>
                       ))}
                     </tbody>
@@ -714,6 +716,9 @@ export default function HallTicketsPage() {
                           Program
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                          Exam Center
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">
                           Submitted
                         </th>
                       </tr>
@@ -767,6 +772,9 @@ export default function HallTicketsPage() {
                             </td>
                             <td className="py-3 px-4 text-sm text-gray-600">
                               {program?.discipline || "N/A"}
+                            </td>
+                            <td className="py-3 px-4 text-sm text-gray-600">
+                              {getExamCenterName(admission.exam_center_id)}
                             </td>
                             <td className="py-3 px-4 text-sm text-gray-600">
                               {new Date(admission.updated_at).toLocaleDateString()}

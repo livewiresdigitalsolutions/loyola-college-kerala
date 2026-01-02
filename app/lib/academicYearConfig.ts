@@ -13,9 +13,9 @@ export interface AcademicYearConfig {
  */
 export function getAcademicYearConfig(): AcademicYearConfig {
   return {
-    start: 2025,
-    end: 2026,
-    label: '2025-26',
+    start: 2026,
+    end: 2027,
+    label: '2026-27',
     isOpen: true, // Set to false when admissions close
   };
 }

@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAcademicYears, AcademicYear } from "@/app/hooks/useAcademicYears";
+
+interface AcademicYears {
+  id: number;
+  year_start: number;
+  year_end: number;
+  label: string;
+  is_current: boolean;
+}
 
 export default function AcademicYearsPage() {
   const router = useRouter();
-  const { years, loading, addYear, updateYear, deleteYear } = useAcademicYears();
+  const [years, setYears] = useState<AcademicYears[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -17,6 +25,25 @@ export default function AcademicYearsPage() {
     label: "",
     is_current: false,
   });
+
+  useEffect(() => {
+    fetchYears();
+  }, []);
+
+  const fetchYears = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/academic-years');
+      if (response.ok) {
+        const data = await response.json();
+        setYears(data);
+      }
+    } catch (error) {
+      console.error('Error fetching academic years:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAdd = async () => {
     if (!formData.year_start.trim() || !formData.year_end.trim()) {
@@ -32,19 +59,30 @@ export default function AcademicYearsPage() {
       return;
     }
 
-    const result = await addYear({
-      year_start: yearStart,
-      year_end: yearEnd,
-      label: formData.label || `${yearStart}-${yearEnd}`,
-      is_current: formData.is_current,
-    });
+    try {
+      const response = await fetch('/api/academic-years', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          year_start: yearStart,
+          year_end: yearEnd,
+          label: formData.label || `${yearStart}-${yearEnd}`,
+          is_current: formData.is_current,
+        }),
+      });
+      const result = await response.json();
 
-    if (result.success) {
-      toast.success("Academic year added successfully");
-      setFormData({ year_start: "", year_end: "", label: "", is_current: false });
-      setIsAdding(false);
-    } else {
-      toast.error(result.error || "Failed to add academic year");
+      if (result.success) {
+        toast.success("Academic year added successfully");
+        setFormData({ year_start: "", year_end: "", label: "", is_current: false });
+        setIsAdding(false);
+        await fetchYears();
+      } else {
+        toast.error(result.error || "Failed to add academic year");
+      }
+    } catch (error) {
+      console.error('Error adding academic year:', error);
+      toast.error("Failed to add academic year");
     }
   };
 
@@ -62,35 +100,55 @@ export default function AcademicYearsPage() {
       return;
     }
 
-    const result = await updateYear(id, {
-      year_start: yearStart,
-      year_end: yearEnd,
-      label: formData.label || `${yearStart}-${yearEnd}`,
-      is_current: formData.is_current,
-    });
+    try {
+      const response = await fetch(`/api/academic-years/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          year_start: yearStart,
+          year_end: yearEnd,
+          label: formData.label || `${yearStart}-${yearEnd}`,
+          is_current: formData.is_current,
+        }),
+      });
+      const result = await response.json();
 
-    if (result.success) {
-      toast.success("Academic year updated successfully");
-      setEditingId(null);
-      setFormData({ year_start: "", year_end: "", label: "", is_current: false });
-    } else {
-      toast.error(result.error || "Failed to update academic year");
+      if (result.success) {
+        toast.success("Academic year updated successfully");
+        setEditingId(null);
+        setFormData({ year_start: "", year_end: "", label: "", is_current: false });
+        await fetchYears();
+      } else {
+        toast.error(result.error || "Failed to update academic year");
+      }
+    } catch (error) {
+      console.error('Error updating academic year:', error);
+      toast.error("Failed to update academic year");
     }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this academic year?")) return;
 
-    const result = await deleteYear(id);
+    try {
+      const response = await fetch(`/api/academic-years/${id}`, {
+        method: 'DELETE',
+      });
+      const result = await response.json();
 
-    if (result.success) {
-      toast.success("Academic year deleted successfully");
-    } else {
-      toast.error(result.error || "Failed to delete academic year");
+      if (result.success) {
+        toast.success("Academic year deleted successfully");
+        await fetchYears();
+      } else {
+        toast.error(result.error || "Failed to delete academic year");
+      }
+    } catch (error) {
+      console.error('Error deleting academic year:', error);
+      toast.error("Failed to delete academic year");
     }
   };
 
-  const startEdit = (year: AcademicYear) => {
+  const startEdit = (year: AcademicYears) => {
     setEditingId(year.id);
     setFormData({
       year_start: year.year_start.toString(),
@@ -107,19 +165,29 @@ export default function AcademicYearsPage() {
     setFormData({ year_start: "", year_end: "", label: "", is_current: false });
   };
 
-  const toggleCurrent = async (year: AcademicYear) => {
-    const result = await updateYear(year.id, {
-      ...year,
-      is_current: !year.is_current,
-    });
+  const toggleCurrent = async (year: AcademicYears) => {
+    try {
+      const response = await fetch(`/api/academic-years/${year.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          is_current: !year.is_current,
+        }),
+      });
+      const result = await response.json();
 
-    if (result.success) {
-      toast.success(
-        year.is_current
-          ? "Academic year unmarked as current"
-          : "Academic year marked as current"
-      );
-    } else {
+      if (result.success) {
+        toast.success(
+          year.is_current
+            ? "Academic year unmarked as current"
+            : "Academic year marked as current"
+        );
+        await fetchYears();
+      } else {
+        toast.error("Failed to update academic year");
+      }
+    } catch (error) {
+      console.error('Error toggling current year:', error);
       toast.error("Failed to update academic year");
     }
   };
