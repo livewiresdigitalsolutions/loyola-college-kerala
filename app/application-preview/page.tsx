@@ -46,11 +46,13 @@ function ApplicationPreviewContent() {
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("email");
   const contentRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [applicationData, setApplicationData] = useState<ApplicationData | null>(null);
   const [programDetails, setProgramDetails] = useState<ProgramDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     if (!userEmail) {
@@ -60,6 +62,21 @@ function ApplicationPreviewContent() {
     }
     fetchApplicationData();
   }, [userEmail]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const a4Width = 794; // 210mm in pixels at 96 DPI
+        const newScale = Math.min(1, (containerWidth - 32) / a4Width);
+        setScale(newScale);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchApplicationData = async () => {
     try {
@@ -132,15 +149,15 @@ function ApplicationPreviewContent() {
   };
 
   const generateApplicationId = (
-  programLevelId: number,
-  degreeId: number,
-  courseId: number,
-  dbId: number
-): string => {
-  const paddedId = String(dbId).padStart(2, "0");
-  const paddedCourseId = String(courseId).padStart(2, "0");
-  return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
-};
+    programLevelId: number,
+    degreeId: number,
+    courseId: number,
+    dbId: number
+  ): string => {
+    const paddedId = String(dbId).padStart(2, "0");
+    const paddedCourseId = String(courseId).padStart(2, "0");
+    return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
+  };
 
   const handleDownloadPDF = async () => {
     if (!contentRef.current || !applicationData) return;
@@ -220,23 +237,23 @@ function ApplicationPreviewContent() {
     : "N/A";
 
   return (
-    <div className="min-h-screen bg-[#342D87] py-8">
+    <div className="min-h-screen bg-[#342D87] py-8 pt-30">
       {/* Floating Action Buttons */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-3">
         <button
           onClick={() => router.push("/")}
-          className="px-6 py-3 bg-[#342D87] border-2 border-white text-white font-bold rounded-lg transition-colors shadow-lg"
+          className="px-6 py-3 bg-[#342D87] border-2 border-white text-white font-bold rounded-lg transition-colors shadow-lg hover:bg-white hover:text-[#342D87]"
         >
           Back to Home
         </button>
         <button
           onClick={handleDownloadPDF}
           disabled={isDownloading}
-          className="px-6 py-3 bg-[#342D87] text-white border-white border-2 font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+          className="px-6 py-3 bg-[#342D87] text-white border-white border-2 font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-white hover:text-[#342D87]"
         >
           {isDownloading ? (
             <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#342D87]"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               Generating...
             </>
           ) : (
@@ -260,234 +277,60 @@ function ApplicationPreviewContent() {
         </button>
       </div>
 
-      {/* PDF Content Area */}
-      <div className="pt-20">
+      {/* PDF Content Area - Responsive Scaled A4 Container */}
+      <div 
+        ref={containerRef}
+        className="pt-8 pb-24 flex justify-center items-start px-4"
+      >
         <div
-          ref={contentRef}
-          className="max-w-[210mm] mx-auto bg-white shadow-2xl p-[15mm]"
+          style={{
+            transform: `scale(${scale})`,
+            transformOrigin: "top center",
+            transition: "transform 0.3s ease",
+          }}
         >
-          {/* Header with Logo */}
-          <div className="text-center mb-4 pt-20">
-            <img
-              src="/loyola-banner.jpg"
-              alt="Loyola College Logo"
-              className="w-[800px] h-auto mx-auto -mt-[100px] mb-[-50px] z-50"
-              crossOrigin="anonymous"
-            />
-          </div>
-          
-          <div className="bg-transparent text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase pt-10">
-          </div>
+          <div
+            ref={contentRef}
+            className="bg-white shadow-2xl"
+            style={{
+              width: "210mm",
+              minHeight: "297mm",
+              padding: "15mm",
+            }}
+          >
+            {/* Header with Logo */}
+            <div className="text-center mb-4 pt-20">
+              <img
+                src="/loyola-banner.jpg"
+                alt="Loyola College Logo"
+                className="w-[800px] h-auto mx-auto -mt-[100px] mb-[-50px] z-50"
+                crossOrigin="anonymous"
+              />
+            </div>
+            
+            <div className="bg-transparent text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase pt-10">
+            </div>
 
-          {/* Title */}
-          <div className="bg-[#342D87] text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase">
-            APPLICATION FORM 2026
-          </div>
+            {/* Title */}
+            <div className="bg-[#342D87] text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase">
+              APPLICATION FORM 2026
+            </div>
 
-          {/* Application ID */}
-          <table className="w-full border-collapse mb-0">
-            <tbody>
-              <tr>
-                <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Application ID
-                </td>
-                <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationId}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            {/* Application ID */}
+            <table className="w-full border-collapse mb-0">
+              <tbody>
+                <tr>
+                  <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Application ID
+                  </td>
+                  <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationId}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
-          {/* Personal Information */}
-          <table className="w-full border-collapse">
-            <tbody>
-              <tr>
-                <td
-                  colSpan={2}
-                  className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
-                  style={{ verticalAlign: 'middle' }}
-                >
-                  PERSONAL INFORMATION
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Full Name
-                </td>
-                <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.full_name}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Date of Birth
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {formattedDob}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Gender
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.gender || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Mobile Number
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.mobile}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Email Address
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.email}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* Contact Information */}
-          <table className="w-full border-collapse">
-            <tbody>
-              <tr>
-                <td
-                  colSpan={2}
-                  className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
-                  style={{ verticalAlign: 'middle' }}
-                >
-                  CONTACT INFORMATION
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Address
-                </td>
-                <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.address || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  City
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.city || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  State
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.state || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  PIN Code
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.pincode || "N/A"}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* Parent/Guardian Information */}
-          <table className="w-full border-collapse">
-            <tbody>
-              <tr>
-                <td
-                  colSpan={2}
-                  className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
-                  style={{ verticalAlign: 'middle' }}
-                >
-                  PARENT/GUARDIAN INFORMATION
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Father's Name
-                </td>
-                <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.father_name || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Mother's Name
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.mother_name || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Parent Mobile
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.parent_mobile || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Parent Email
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.parent_email || "N/A"}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* Emergency Contact */}
-          <table className="w-full border-collapse">
-            <tbody>
-              <tr>
-                <td
-                  colSpan={2}
-                  className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
-                  style={{ verticalAlign: 'middle' }}
-                >
-                  EMERGENCY CONTACT
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Emergency Contact Name
-                </td>
-                <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.emergency_contact_name || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Relation
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.emergency_contact_relation || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Emergency Mobile
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.emergency_contact_mobile || "N/A"}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          {/* Program Details */}
-          {programDetails && (
+            {/* Personal Information */}
             <table className="w-full border-collapse">
               <tbody>
                 <tr>
@@ -496,83 +339,273 @@ function ApplicationPreviewContent() {
                     className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
                     style={{ verticalAlign: 'middle' }}
                   >
-                    PROGRAM DETAILS
+                    PERSONAL INFORMATION
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    Program Level
+                    Full Name
                   </td>
                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {programDetails.program}
+                    {applicationData.full_name}
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    Degree
+                    Date of Birth
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {programDetails.degree}
+                    {formattedDob}
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    Course
+                    Gender
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {programDetails.course}
+                    {applicationData.gender || "N/A"}
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    Exam Center
+                    Mobile Number
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {programDetails.examCenter}
+                    {applicationData.mobile}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Email Address
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.email}
                   </td>
                 </tr>
               </tbody>
             </table>
-          )}
 
-          {/* Payment Details */}
-          <table className="w-full border-collapse">
-            <tbody>
-              <tr>
-                <td
-                  colSpan={2}
-                  className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
-                  style={{ verticalAlign: 'middle' }}
-                >
-                  PAYMENT DETAILS
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Payment ID
-                </td>
-                <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.payment_id || "N/A"}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Payment Amount
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  ₹{applicationData.payment_amount || 0}
-                </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                  Payment Status
-                </td>
-                <td className="border border-black p-1 px-3 text-[11pt] uppercase" style={{ verticalAlign: 'middle' }}>
-                  {applicationData.payment_status || "PENDING"}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            {/* Contact Information */}
+            <table className="w-full border-collapse">
+              <tbody>
+                <tr>
+                  <td
+                    colSpan={2}
+                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    style={{ verticalAlign: 'middle' }}
+                  >
+                    CONTACT INFORMATION
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Address
+                  </td>
+                  <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.address || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    City
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.city || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    State
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.state || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    PIN Code
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.pincode || "N/A"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Parent/Guardian Information */}
+            <table className="w-full border-collapse">
+              <tbody>
+                <tr>
+                  <td
+                    colSpan={2}
+                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    style={{ verticalAlign: 'middle' }}
+                  >
+                    PARENT/GUARDIAN INFORMATION
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Father's Name
+                  </td>
+                  <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.father_name || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Mother's Name
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.mother_name || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Parent Mobile
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.parent_mobile || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Parent Email
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.parent_email || "N/A"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Emergency Contact */}
+            <table className="w-full border-collapse">
+              <tbody>
+                <tr>
+                  <td
+                    colSpan={2}
+                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    style={{ verticalAlign: 'middle' }}
+                  >
+                    EMERGENCY CONTACT
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Emergency Contact Name
+                  </td>
+                  <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.emergency_contact_name || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Relation
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.emergency_contact_relation || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Emergency Mobile
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.emergency_contact_mobile || "N/A"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Program Details */}
+            {programDetails && (
+              <table className="w-full border-collapse">
+                <tbody>
+                  <tr>
+                    <td
+                      colSpan={2}
+                      className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                      style={{ verticalAlign: 'middle' }}
+                    >
+                      PROGRAM DETAILS
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      Program Level
+                    </td>
+                    <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      {programDetails.program}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      Degree
+                    </td>
+                    <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      {programDetails.degree}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      Course
+                    </td>
+                    <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      {programDetails.course}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      Exam Center
+                    </td>
+                    <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                      {programDetails.examCenter}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            )}
+
+            {/* Payment Details */}
+            <table className="w-full border-collapse">
+              <tbody>
+                <tr>
+                  <td
+                    colSpan={2}
+                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    style={{ verticalAlign: 'middle' }}
+                  >
+                    PAYMENT DETAILS
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Payment ID
+                  </td>
+                  <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.payment_id || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Payment Amount
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    ₹{applicationData.payment_amount || 0}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Payment Status
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt] uppercase" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.payment_status || "PENDING"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

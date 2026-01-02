@@ -8,6 +8,7 @@ import {
   MapPin,
   School,
   ImageIcon,
+  CalendarCog ,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -64,6 +65,15 @@ const masterDataCards: MasterDataCard[] = [
     description: "Manage hero section images and videos",
     icon: <ImageIcon className="w-8 h-8" />,
     href: "/sys-ops/master-data/hero-media",
+    color: "text-white",
+    bgColor: "bg-[#342D87]",
+  },
+  {
+    id: "academic-years",
+    title: "Academic Year",
+    description: "Manage academic year",
+    icon: <CalendarCog className="w-8 h-8" />,
+    href: "/sys-ops/master-data/configuration",
     color: "text-white",
     bgColor: "bg-[#342D87]",
   },

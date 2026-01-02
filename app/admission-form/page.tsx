@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import Script from "next/script";
+import { useAcademicYear } from "../hooks/useAcademicYears";
 
 interface Program {
   id: number;
@@ -101,6 +102,7 @@ function AdmissionFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("email");
+  const { academicYear, loading: yearLoading } = useAcademicYear();
 
   const [programs, setPrograms] = useState<Program[]>([]);
   const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -226,6 +228,10 @@ function AdmissionFormContent() {
 
   const handleViewApplication = () => {
     router.push(`/application-preview?email=${userEmail}`);
+  };
+
+  const handleViewHallticket = () => {
+    router.push(`/hall-ticket?email=${userEmail}`);
   };
 
   const getTabsForProgramLevel = (): Tab[] => {
@@ -906,7 +912,15 @@ function AdmissionFormContent() {
               <h1 className="text-4xl md:text-5xl font-bold mb-3">
                 Admission Application Form
               </h1>
-              <p className="text-lg md:text-xl">Academic Year 2025-26</p>
+              <p className="text-lg md:text-xl">
+                {yearLoading ? (
+                  <span className="animate-pulse">Loading...</span>
+                ) : academicYear ? (
+                  `Academic Year ${academicYear.label}`
+                ) : (
+                  "Academic Year Information"
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -1994,6 +2008,35 @@ function AdmissionFormContent() {
                                     />
                                   </svg>
                                   Download Application
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={handleViewHallticket}
+                              disabled={isDownloading}
+                              className="px-8 py-4 bg-[#342D87] text-white font-bold rounded-xl hover:bg-[#2a2470] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                            >
+                              {isDownloading ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                  Generating Document...
+                                </>
+                              ) : (
+                                <>
+                                  <svg
+                                    className="w-6 h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                  </svg>
+                                  Download Hallticket
                                 </>
                               )}
                             </button>

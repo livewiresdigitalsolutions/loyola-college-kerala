@@ -9,7 +9,11 @@ import {
   BarChart3,
   Users,
   FileBarChart,
+  Database,
+  Landmark,
   LogOut,
+  UserStar,
+  ShieldUser 
 } from "lucide-react";
 
 const menuItems = [
@@ -25,36 +29,24 @@ const menuItems = [
   },
   {
     name: "Admin Users",  
-    icon: Users,          
+    icon: ShieldUser ,          
     path: "/sys-ops/admin-users",  
   },
   {
     name: "Master Data",  
-    icon: Users,          
+    icon: Database,          
     path: "/sys-ops/master-data",  
   },
   {
-    name: "Analytics",
-    icon: BarChart3,
-    path: "/sys-ops/analytics",
-    disabled: true,
-  },
-  {
-    name: "Users",
-    icon: Users,
-    path: "/sys-ops/users",
-    disabled: true,
-  },
-  {
-    name: "Reports",
-    icon: FileBarChart,
-    path: "/sys-ops/reports",
-    disabled: true,
+    name: "Allot Enterance Exam",  
+    icon: Landmark,          
+    path: "/sys-ops/hall-tickets",  
   },
   {
     name: "Settings",
     icon: Settings,
     path: "/sys-ops/settings",
+    disabled : true,
   },
 ];
 

@@ -40,17 +40,17 @@ async function getStatsMySQL() {
       ['draft']
     );
     
-    const [rejectedResult] = await connection.execute<CountResult[]>(
-      'SELECT COUNT(*) as count FROM admission_form WHERE form_status = ?',
-      ['rejected']
+    const [paymentPendingResult] = await connection.execute<CountResult[]>(
+      'SELECT COUNT(*) as count FROM admission_form WHERE payment_status = ?',
+      ['pending']
     );
 
     const total = totalResult[0]?.count || 0;
     const submitted = submittedResult[0]?.count || 0;
     const draft = draftResult[0]?.count || 0;
-    const rejected = rejectedResult[0]?.count || 0;
+    const pending = paymentPendingResult[0]?.count || 0;
 
-    return { total, submitted, draft, rejected };
+    return { total, submitted, draft, pending };
   } catch (error) {
     console.error('MySQL Stats Error:', error);
     throw error;
@@ -75,16 +75,16 @@ async function getStatsSupabase() {
       .select('*', { count: 'exact', head: true })
       .or('form_status.eq.draft,form_status.is.null');
 
-    const { count: rejected } = await supabase
+    const { count: pending } = await supabase
       .from('admission_form')
       .select('*', { count: 'exact', head: true })
-      .eq('form_status', 'rejected');
+      .eq('payment_status', 'pending');
 
     return {
       total: total || 0,
       submitted: submitted || 0,
       draft: draft || 0,
-      rejected: rejected || 0,
+      pending: pending || 0,
     };
   } catch (error) {
     console.error('Supabase Stats Error:', error);

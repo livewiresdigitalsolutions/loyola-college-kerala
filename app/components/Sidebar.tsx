@@ -1,16 +1,15 @@
 "use client";
 
-
 import { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-
+import { usePathname } from 'next/navigation';
+import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 
 interface Program {
   id: number;
   discipline: string;
 }
-
 
 interface Degree {
   id: number;
@@ -18,20 +17,19 @@ interface Degree {
   program_level_id: number;
 }
 
-
 interface Course {
   id: number;
   course_name: string;
   degree_id: number;
 }
 
-
 const Sidebar: React.FC = () => {
   const router = useRouter();
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
+  const { academicYear, loading: yearLoading } = useAcademicYear();
+  const pathname = usePathname();
 
   // Form data
   const [formData, setFormData] = useState({
@@ -43,7 +41,6 @@ const Sidebar: React.FC = () => {
     consent: false,
   });
 
-
   // Dropdown data
   const [programs, setPrograms] = useState<Program[]>([]);
   const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -52,18 +49,15 @@ const Sidebar: React.FC = () => {
   const [selectedDegree, setSelectedDegree] = useState<string>("");
   const [selectedCourse, setSelectedCourse] = useState<string>("");
 
-
   // Login data
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
-
   useEffect(() => {
     fetchPrograms();
   }, []);
-
 
   useEffect(() => {
     if (selectedProgram) {
@@ -74,14 +68,12 @@ const Sidebar: React.FC = () => {
     }
   }, [selectedProgram]);
 
-
   useEffect(() => {
     if (selectedDegree) {
       fetchCourses(selectedDegree);
       setSelectedCourse("");
     }
   }, [selectedDegree]);
-
 
   const fetchPrograms = async () => {
     try {
@@ -94,7 +86,6 @@ const Sidebar: React.FC = () => {
     }
   };
 
-
   const fetchDegrees = async (programId: string) => {
     try {
       const response = await fetch(`/api/degrees?program_id=${programId}`);
@@ -105,7 +96,6 @@ const Sidebar: React.FC = () => {
       toast.error("Failed to load degrees");
     }
   };
-
 
   const fetchCourses = async (degreeId: string) => {
     try {
@@ -118,13 +108,11 @@ const Sidebar: React.FC = () => {
     }
   };
 
-
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-
 
     setFormData((prev) => ({
       ...prev,
@@ -132,11 +120,9 @@ const Sidebar: React.FC = () => {
     }));
   };
 
-
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
 
     if (!formData.name || !formData.email || !formData.mobileNumber) {
       toast.error("Please fill in all required fields");
@@ -144,13 +130,11 @@ const Sidebar: React.FC = () => {
       return;
     }
 
-
     if (!selectedProgram || !selectedDegree || !selectedCourse) {
       toast.error("Please select Program, Degree, and Course");
       setIsSubmitting(false);
       return;
     }
-
 
     if (!formData.consent) {
       toast.error("Please agree to receive information");
@@ -158,13 +142,17 @@ const Sidebar: React.FC = () => {
       return;
     }
 
-
     if (!/^\d{10}$/.test(formData.mobileNumber)) {
       toast.error("Please enter a valid 10-digit mobile number");
       setIsSubmitting(false);
       return;
     }
 
+    if (!academicYear || !academicYear.isOpen) {
+      toast.error("Admissions are currently closed.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/register", {
@@ -182,19 +170,17 @@ const Sidebar: React.FC = () => {
           degreeId: selectedDegree,
           courseId: selectedCourse,
           consent: formData.consent,
+          // No academicYearId needed - handled by API via config
         }),
       });
 
-
       const data = await response.json();
-
 
       if (response.ok) {
         toast.success(
-          "Registration successful! Please login with your email and mobile number.",
+          data.message || "Registration successful! Please login with your email and mobile number.",
           { duration: 5000 }
         );
-
 
         setFormData({
           name: "",
@@ -207,7 +193,6 @@ const Sidebar: React.FC = () => {
         setSelectedProgram("");
         setSelectedDegree("");
         setSelectedCourse("");
-
 
         setTimeout(() => {
           setShowForm(false);
@@ -224,18 +209,25 @@ const Sidebar: React.FC = () => {
     }
   };
 
+  const hideNavbarRoutes = ['/sys-ops','/admission-form'];
+  const shouldHideNavbar = hideNavbarRoutes.some(route => 
+    pathname?.startsWith(route)
+  );
+
+  // Don't render navbar on sys-ops pages
+  if (shouldHideNavbar) {
+    return null;
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
 
     if (!loginData.email || !loginData.password) {
       toast.error("Please enter email and password");
       setIsSubmitting(false);
       return;
     }
-
 
     try {
       const response = await fetch("/api/login", {
@@ -246,22 +238,17 @@ const Sidebar: React.FC = () => {
         body: JSON.stringify(loginData),
       });
 
-
       const data = await response.json();
-
 
       if (response.ok) {
         toast.success("Login successful! Redirecting...");
-
 
         if (typeof window !== "undefined") {
           sessionStorage.setItem("userEmail", loginData.email);
         }
 
-
         setLoginData({ email: "", password: "" });
         setShowLogin(false);
-
 
         router.push(
           `/admission-form?email=${encodeURIComponent(loginData.email)}`
@@ -277,6 +264,41 @@ const Sidebar: React.FC = () => {
     }
   };
 
+  // Render academic year header with loading and fallback states
+  const renderAcademicYearHeader = () => {
+    if (yearLoading) {
+      return (
+        <div className="text-center mb-4 animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-48 mx-auto mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-40 mx-auto"></div>
+        </div>
+      );
+    }
+
+    if (!academicYear || !academicYear.isOpen) {
+      return (
+        <>
+          <h2 className="text-xl font-bold text-center text-gray-600">
+            Admissions Opening Soon
+          </h2>
+          <p className="text-sm text-center text-gray-500 mb-4">
+            Academic year will be announced shortly
+          </p>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <h2 className="text-xl font-bold text-center text-black">
+          Admissions Open {academicYear.start}
+        </h2>
+        <p className="text-sm text-center text-[#342D87] mb-4">
+          UG, PG and PhD Applications {academicYear.label}
+        </p>
+      </>
+    );
+  };
 
   return (
     <section className="text-black">
@@ -287,13 +309,7 @@ const Sidebar: React.FC = () => {
           <div className="flex justify-end w-full max-w-7xl mx-auto">
             {showForm && !showLogin && (
               <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full max-h-[calc(100vh-200px)] overflow-y-auto">
-                <h2 className="text-xl font-bold text-center text-black">
-                  Admissions Open 2026
-                </h2>
-                <p className="text-sm text-center text-[#342D87] mb-4">
-                  UG, PG and PhD Applications 2026
-                </p>
-
+                {renderAcademicYearHeader()}
 
                 <form onSubmit={handleRegister} className="space-y-3">
                   <input
@@ -305,7 +321,6 @@ const Sidebar: React.FC = () => {
                     required
                   />
 
-
                   <input
                     className="w-full rounded border p-2 text-sm text-black"
                     placeholder="Enter Email Address *"
@@ -315,7 +330,6 @@ const Sidebar: React.FC = () => {
                     onChange={handleInputChange}
                     required
                   />
-
 
                   <div className="flex gap-2">
                     <select className="rounded border p-2 w-20 text-sm text-black">
@@ -331,7 +345,6 @@ const Sidebar: React.FC = () => {
                       required
                     />
                   </div>
-
 
                   <div className="grid grid-cols-2 gap-2">
                     <input
@@ -352,7 +365,6 @@ const Sidebar: React.FC = () => {
                     />
                   </div>
 
-
                   <div className="grid grid-cols-2 gap-2">
                     <select
                       className="rounded border p-2 text-sm text-black"
@@ -367,7 +379,6 @@ const Sidebar: React.FC = () => {
                         </option>
                       ))}
                     </select>
-
 
                     <select
                       className="rounded border p-2 text-sm text-black"
@@ -384,7 +395,6 @@ const Sidebar: React.FC = () => {
                       ))}
                     </select>
                   </div>
-
 
                   <div className="grid grid-cols-1 gap-2">
                     <select
@@ -403,7 +413,6 @@ const Sidebar: React.FC = () => {
                     </select>
                   </div>
 
-
                   <div className="flex items-start gap-2">
                     <input
                       type="checkbox"
@@ -419,15 +428,23 @@ const Sidebar: React.FC = () => {
                     </p>
                   </div>
 
-
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !academicYear?.isOpen}
                     className="w-full bg-[#342D87] text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? "Registering..." : "Register"}
+                    {isSubmitting
+                      ? "Registering..."
+                      : !academicYear?.isOpen
+                      ? "Registrations Not Open"
+                      : "Register"}
                   </button>
 
+                  {!academicYear?.isOpen && !yearLoading && (
+                    <p className="text-xs text-center text-red-600">
+                      Admissions are currently not open. Please check back later.
+                    </p>
+                  )}
 
                   <p className="text-xs text-center text-black">
                     EXISTING USER?{" "}
@@ -445,14 +462,15 @@ const Sidebar: React.FC = () => {
               </div>
             )}
 
-
             {showLogin && (
               <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
-                <h2 className="text-xl font-bold text-center text-black">Login</h2>
+                <h2 className="text-xl font-bold text-center text-black">
+                  Login
+                </h2>
                 <p className="text-sm text-center text-[#342D87] mb-4">
                   Access your application
+                  {academicYear && ` - ${academicYear.label}`}
                 </p>
-
 
                 <form onSubmit={handleLogin} className="space-y-4">
                   <input
@@ -466,7 +484,6 @@ const Sidebar: React.FC = () => {
                     required
                   />
 
-
                   <input
                     className="w-full rounded border p-2 text-black"
                     placeholder="Enter Mobile Number (Password) *"
@@ -478,7 +495,6 @@ const Sidebar: React.FC = () => {
                     required
                   />
 
-
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -486,7 +502,6 @@ const Sidebar: React.FC = () => {
                   >
                     {isSubmitting ? "Logging in..." : "Login"}
                   </button>
-
 
                   <p className="text-xs text-center text-black">
                     NEW USER?{" "}
@@ -507,7 +522,6 @@ const Sidebar: React.FC = () => {
         </div>
       )}
 
-
       {/* Fixed Side Button */}
       <div className="fixed right-0 top-1/3 -translate-y-1/2 z-[9999]">
         <button
@@ -515,14 +529,18 @@ const Sidebar: React.FC = () => {
             setShowForm((prev) => !prev);
             setShowLogin(false);
           }}
-          className="rotate-[-90deg] origin-bottom-right bg-yellow-600 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-[#342D87] hover:text-white transition-transform duration-200 hover:scale-105"
+          disabled={!academicYear?.isOpen}
+          className="rotate-[-90deg] origin-bottom-right bg-yellow-500 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-[#342D87] hover:text-white transition-transform duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          Admissions Enquiry →
+          {yearLoading
+            ? "Loading..."
+            : academicYear?.isOpen
+            ? `Admissions Enquiry ${academicYear.label} →`
+            : "Admissions Coming Soon →"}
         </button>
       </div>
     </section>
   );
 };
-
 
 export default Sidebar;

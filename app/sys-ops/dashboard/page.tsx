@@ -10,7 +10,7 @@ export default function Dashboard() {
     total: 0,
     submitted: 0,
     draft: 0,
-    rejected: 0,
+    pending: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -69,8 +69,8 @@ export default function Dashboard() {
           color="bg-yellow-500"
         />
         <StatsCard
-          title="Rejected"
-          value={stats.rejected}
+          title="Payment Pending"
+          value={stats.pending}
           icon={XCircle}
           color="bg-red-500"
         />

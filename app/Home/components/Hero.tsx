@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 
 interface Program {
   id: number;
@@ -40,6 +41,7 @@ const Hero: React.FC = () => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState<number>(0);
   const [heroMedia, setHeroMedia] = useState<HeroMedia[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { academicYear, loading: yearLoading } = useAcademicYear();
 
   // Form data
   const [formData, setFormData] = useState({
@@ -199,6 +201,12 @@ const Hero: React.FC = () => {
       return;
     }
 
+    if (!academicYear || !academicYear.isOpen) {
+      toast.error("Admissions are currently closed.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/register", {
         method: "POST",
@@ -215,6 +223,7 @@ const Hero: React.FC = () => {
           degreeId: selectedDegree,
           courseId: selectedCourse,
           consent: formData.consent,
+          // No academicYearId needed - handled by API via config
         }),
       });
 
@@ -222,7 +231,7 @@ const Hero: React.FC = () => {
 
       if (response.ok) {
         toast.success(
-          "Registration successful! Please login with your email and mobile number.",
+          data.message || "Registration successful! Please login with your email and mobile number.",
           { duration: 5000 }
         );
 
@@ -298,12 +307,47 @@ const Hero: React.FC = () => {
     }
   };
 
+  // Render academic year header
+  const renderAcademicYearHeader = () => {
+    if (yearLoading) {
+      return (
+        <div className="text-center mb-4 animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-48 mx-auto mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-40 mx-auto"></div>
+        </div>
+      );
+    }
+
+    if (!academicYear || !academicYear.isOpen) {
+      return (
+        <>
+          <h2 className="text-xl font-bold text-center text-gray-600">
+            Admissions Opening Soon
+          </h2>
+          <p className="text-sm text-center text-gray-500 mb-4">
+            Academic year will be announced shortly
+          </p>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <h2 className="text-xl font-bold text-center text-black">
+          Admissions Open {academicYear.start}
+        </h2>
+        <p className="text-sm text-center text-[#342D87] mb-4">
+          UG, PG and PhD Applications {academicYear.end}
+        </p>
+      </>
+    );
+  };
+
   const currentMedia = heroMedia[currentMediaIndex];
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
       <Toaster position="top-right" />
-      // In hero.tsx, replace the Image component with conditional rendering
       {heroMedia.length > 0 && currentMedia ? (
         currentMedia.type === "video" ? (
           <video
@@ -374,31 +418,35 @@ const Hero: React.FC = () => {
             </p>
 
             <div className="mt-6 flex gap-4">
-              <button className="rounded-md bg-[#342D87] px-6 py-3 text-sm font-black hover:bg-yellow-600 hover:text-white transition-transform duration-200 hover:scale-105">
+              <button className="rounded-md bg-[#342D87] px-6 py-3 text-sm font-black hover:bg-yellow-500 hover:text-white transition-transform duration-200 hover:scale-105">
                 Explore Academics
               </button>
 
               <button
-                className="rounded-md bg-white px-6 py-3 text-sm font-black text-[#342D87] hover:bg-yellow-600 hover:text-white transition-transform duration-200 hover:scale-105"
+                onClick={() => {
+                  setShowForm(true);
+                  setShowLogin(false);
+                }}
+                disabled={yearLoading || !academicYear?.isOpen}
+                className="rounded-md bg-white px-6 py-3 text-sm font-black text-[#342D87] hover:bg-yellow-500 hover:text-white transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Admissions 2026 →
+                {yearLoading
+                  ? "Loading..."
+                  : academicYear && academicYear.isOpen
+                  ? `Admissions ${academicYear.start} →`
+                  : "Admissions Coming Soon"}
               </button>
             </div>
           </div>
 
-          <div className="flex justify-end">
+          {/* <div className="flex justify-end">
             {showForm && !showLogin && (
               <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mt-24 max-h-[calc(100vh-200px)] overflow-y-auto">
-                <h2 className="text-xl font-bold text-center">
-                  Admissions Open 2026
-                </h2>
-                <p className="text-sm text-center text-[#342D87] mb-4">
-                  UG, PG and PhD Applications 2026
-                </p>
+                {renderAcademicYearHeader()}
 
                 <form onSubmit={handleRegister} className="space-y-3">
                   <input
-                    className="w-full rounded border p-2 text-sm"
+                    className="w-full rounded border p-2 text-sm text-black"
                     placeholder="Enter Name *"
                     name="name"
                     value={formData.name}
@@ -407,7 +455,7 @@ const Hero: React.FC = () => {
                   />
 
                   <input
-                    className="w-full rounded border p-2 text-sm"
+                    className="w-full rounded border p-2 text-sm text-black"
                     placeholder="Enter Email Address *"
                     name="email"
                     type="email"
@@ -417,11 +465,11 @@ const Hero: React.FC = () => {
                   />
 
                   <div className="flex gap-2">
-                    <select className="rounded border p-2 w-20 text-sm">
+                    <select className="rounded border p-2 w-20 text-sm text-black">
                       <option>+91</option>
                     </select>
                     <input
-                      className="flex-1 rounded border p-2 text-sm"
+                      className="flex-1 rounded border p-2 text-sm text-black"
                       placeholder="Enter Mobile Number *"
                       name="mobileNumber"
                       type="tel"
@@ -433,7 +481,7 @@ const Hero: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-2">
                     <input
-                      className="w-full rounded border p-2 text-sm"
+                      className="w-full rounded border p-2 text-sm text-black"
                       placeholder="Enter State *"
                       name="state"
                       value={formData.state}
@@ -441,7 +489,7 @@ const Hero: React.FC = () => {
                       required
                     />
                     <input
-                      className="w-full rounded border p-2 text-sm"
+                      className="w-full rounded border p-2 text-sm text-black"
                       placeholder="Enter City *"
                       name="city"
                       value={formData.city}
@@ -452,7 +500,7 @@ const Hero: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-2">
                     <select
-                      className="rounded border p-2 text-sm"
+                      className="rounded border p-2 text-sm text-black"
                       value={selectedProgram}
                       onChange={(e) => setSelectedProgram(e.target.value)}
                       required
@@ -466,7 +514,7 @@ const Hero: React.FC = () => {
                     </select>
 
                     <select
-                      className="rounded border p-2 text-sm"
+                      className="rounded border p-2 text-sm text-black"
                       value={selectedDegree}
                       onChange={(e) => setSelectedDegree(e.target.value)}
                       disabled={!selectedProgram}
@@ -483,7 +531,7 @@ const Hero: React.FC = () => {
 
                   <div className="grid grid-cols-1 gap-2">
                     <select
-                      className="rounded border p-2 text-sm"
+                      className="rounded border p-2 text-sm text-black"
                       value={selectedCourse}
                       onChange={(e) => setSelectedCourse(e.target.value)}
                       disabled={!selectedDegree}
@@ -507,7 +555,7 @@ const Hero: React.FC = () => {
                       onChange={handleInputChange}
                       required
                     />
-                    <p className="text-xs">
+                    <p className="text-xs text-black">
                       I agree to receive information regarding my submitted
                       applications
                     </p>
@@ -515,11 +563,21 @@ const Hero: React.FC = () => {
 
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !academicYear?.isOpen}
                     className="w-full bg-[#342D87] text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? "Registering..." : "Register"}
+                    {isSubmitting
+                      ? "Registering..."
+                      : !academicYear?.isOpen
+                      ? "Registrations Not Open"
+                      : "Register"}
                   </button>
+
+                  {!academicYear?.isOpen && !yearLoading && (
+                    <p className="text-xs text-center text-red-600">
+                      Admissions are currently not open. Please check back later.
+                    </p>
+                  )}
 
                   <p className="text-xs text-center text-black">
                     EXISTING USER?{" "}
@@ -539,14 +597,17 @@ const Hero: React.FC = () => {
 
             {showLogin && (
               <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full mt-24">
-                <h2 className="text-xl font-bold text-center">Login</h2>
+                <h2 className="text-xl font-bold text-center text-black">
+                  Login
+                </h2>
                 <p className="text-sm text-center text-[#342D87] mb-4">
                   Access your application
+                  {academicYear && ` - ${academicYear.label}`}
                 </p>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                   <input
-                    className="w-full rounded border p-2"
+                    className="w-full rounded border p-2 text-black"
                     placeholder="Enter Email Address *"
                     type="email"
                     value={loginData.email}
@@ -557,7 +618,7 @@ const Hero: React.FC = () => {
                   />
 
                   <input
-                    className="w-full rounded border p-2"
+                    className="w-full rounded border p-2 text-black"
                     placeholder="Enter Mobile Number (Password) *"
                     type="password"
                     value={loginData.password}
@@ -590,20 +651,8 @@ const Hero: React.FC = () => {
                 </form>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
-      </div>
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 z-50">
-        {/* <button
-          onClick={() => {
-            setShowForm((prev) => !prev);
-            setShowLogin(false);
-          }}
-          className="rotate-[-90deg] origin-bottom-right bg-yellow-600 px-4 py-2
-                     text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-[#342D87] hover:text-white transition-transform duration-200 hover:scale-105"
-        >
-          Admissions Enquiry →
-        </button> */}
       </div>
     </section>
   );
