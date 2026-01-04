@@ -73,7 +73,8 @@ export default function Footer() {
                   Now accepting applications for
                 </p>
                 <p className="text-sm font-semibold text-white">
-                  Academic Year {academicYear.label}
+                  Academic Year {academicYear.start}-
+          {parseInt(academicYear.start) + 1}
                 </p>
               </div>
             )}
@@ -122,7 +123,8 @@ export default function Footer() {
             © 2025 Loyola College Kerala. All Rights Reserved
             {academicYear && (
               <span className="ml-2 text-gray-500">
-                | Academic Year {academicYear.label}
+                | Academic Year {academicYear.start}-
+          {parseInt(academicYear.start) + 1}
               </span>
             )}
           </p>
