@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from 'recharts';
+import type { PieLabelRenderProps } from 'recharts';
 
 interface ProgramChartProps {
   data: Array<{ program_name: string; count: number }>;
@@ -59,10 +60,16 @@ export default function ProgramChart({ data }: ProgramChartProps) {
     setActiveIndex(null);
   };
 
+  // Fix 1: Handle potentially undefined percent value
+  const renderLabel = ({ percent }: PieLabelRenderProps) => {
+    if (percent === undefined) return '';
+    return `${(percent * 100).toFixed(1)}%`;
+  };
+
   return (
     <div className="flex flex-col w-full bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg border border-gray-100">
       {/* Pie Chart and Legend Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center ">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
         {/* Left: Pie Chart - Takes 2 columns (2/3) */}
         <div className="lg:col-span-2 flex justify-center">
           <ResponsiveContainer width="100%" height={400}>
@@ -72,15 +79,15 @@ export default function ProgramChart({ data }: ProgramChartProps) {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                label={renderLabel} // Fix 1: Use separate function
                 outerRadius={140}
                 fill="#8884d8"
                 dataKey="value"
                 animationDuration={800}
                 onMouseEnter={onPieEnter}
                 onMouseLeave={onPieLeave}
-                activeIndex={activeIndex !== null ? activeIndex : undefined}
-                activeShape={renderActiveShape}
+                // Fix 2: Remove activeIndex and activeShape props from Pie
+                // They should be handled through state and styling instead
               >
                 {chartData.map((entry, index) => (
                   <Cell 
@@ -88,13 +95,20 @@ export default function ProgramChart({ data }: ProgramChartProps) {
                     fill={COLORS[index % COLORS.length]}
                     style={{ 
                       cursor: 'pointer',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      // Add visual feedback for active state
+                      opacity: activeIndex === null || activeIndex === index ? 1 : 0.6,
+                      transform: activeIndex === index ? 'scale(1.05)' : 'scale(1)',
                     }}
                   />
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value: number) => [`${value} registrations`, 'Count']}
+                // Fix 3: Handle potentially undefined value in formatter
+                formatter={(value: number | string | undefined) => {
+                  if (value === undefined) return ['0 registrations', 'Count'];
+                  return [`${value} registrations`, 'Count'];
+                }}
                 contentStyle={{
                   backgroundColor: 'white',
                   border: '1px solid #e5e7eb',
