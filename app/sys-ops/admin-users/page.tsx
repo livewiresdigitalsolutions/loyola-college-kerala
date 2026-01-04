@@ -22,19 +22,30 @@ interface AdminUser {
   created_at: string;
   last_login: string | null;
   is_active: boolean;
+  can_edit: boolean; // New permission field
 }
 
 export default function AdminUsers() {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
 
   const [newAdmin, setNewAdmin] = useState({
     username: "",
     password: "",
     role: "admin",
+    can_edit: true, // Default to true
     masterKey: "",
+  });
+
+  const [editAdmin, setEditAdmin] = useState({
+    username: "",
+    role: "",
+    can_edit: true,
+    is_active: true,
   });
 
   useEffect(() => {
@@ -89,6 +100,7 @@ export default function AdminUsers() {
           username: "",
           password: "",
           role: "admin",
+          can_edit: true,
           masterKey: "",
         });
         fetchAdmins();
@@ -97,6 +109,44 @@ export default function AdminUsers() {
       }
     } catch (error) {
       toast.error("Error creating admin user");
+    }
+  };
+
+  const handleOpenEditModal = (admin: AdminUser) => {
+    setEditingAdmin(admin);
+    setEditAdmin({
+      username: admin.username,
+      role: admin.role,
+      can_edit: admin.can_edit,
+      is_active: admin.is_active,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editingAdmin) return;
+
+    try {
+      const response = await fetch(`/api/sys-ops/admin-users/${editingAdmin.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editAdmin),
+      });
+
+      if (response.ok) {
+        toast.success("Admin user updated successfully");
+        setShowEditModal(false);
+        setEditingAdmin(null);
+        fetchAdmins();
+      } else {
+        toast.error("Failed to update admin user");
+      }
+    } catch (error) {
+      toast.error("Error updating admin user");
     }
   };
 
@@ -197,6 +247,9 @@ export default function AdminUsers() {
                       Role
                     </th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                      Permissions
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">
                       Status
                     </th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">
@@ -248,6 +301,19 @@ export default function AdminUsers() {
                         </div>
                       </td>
                       <td className="py-3 px-4">
+                        {admin.can_edit ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                            <Edit className="w-3 h-3" />
+                            Can Edit
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 text-gray-600 text-xs font-medium rounded-full">
+                            <Eye className="w-3 h-3" />
+                            View Only
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
                         {admin.is_active ? (
                           <span className="flex items-center gap-1 text-green-600 text-sm">
                             <UserCheck className="w-4 h-4" />
@@ -270,6 +336,13 @@ export default function AdminUsers() {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleOpenEditModal(admin)}
+                            className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                            title="Edit user"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={() =>
                               handleToggleActive(admin.id, admin.is_active)
@@ -436,6 +509,25 @@ export default function AdminUsers() {
               </div>
 
               <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={newAdmin.can_edit}
+                    onChange={(e) =>
+                      setNewAdmin({ ...newAdmin, can_edit: e.target.checked })
+                    }
+                    className="w-4 h-4 text-[#342D87] border-gray-300 rounded focus:ring-[#342D87]"
+                  />
+                  <span className="text-sm font-semibold text-gray-700">
+                    Grant edit permissions
+                  </span>
+                </label>
+                <p className="text-xs text-gray-500 mt-1 ml-6">
+                  Allow this user to edit content (recommended for viewers)
+                </p>
+              </div>
+
+              <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Master Key *
                 </label>
@@ -463,6 +555,7 @@ export default function AdminUsers() {
                       username: "",
                       password: "",
                       role: "admin",
+                      can_edit: true,
                       masterKey: "",
                     });
                   }}
@@ -475,6 +568,103 @@ export default function AdminUsers() {
                   className="flex-1 px-4 py-3 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors font-semibold"
                 >
                   Create Admin
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Admin Modal */}
+      {showEditModal && editingAdmin && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              Edit Admin User
+            </h2>
+
+            <form onSubmit={handleUpdateAdmin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={editAdmin.username}
+                  onChange={(e) =>
+                    setEditAdmin({ ...editAdmin, username: e.target.value })
+                  }
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Role
+                </label>
+                <select
+                  value={editAdmin.role}
+                  onChange={(e) =>
+                    setEditAdmin({ ...editAdmin, role: e.target.value })
+                  }
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+                  required
+                >
+                  <option value="admin">Admin</option>
+                  <option value="super_admin">Super Admin</option>
+                  <option value="viewer">Viewer</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editAdmin.can_edit}
+                    onChange={(e) =>
+                      setEditAdmin({ ...editAdmin, can_edit: e.target.checked })
+                    }
+                    className="w-4 h-4 text-[#342D87] border-gray-300 rounded focus:ring-[#342D87]"
+                  />
+                  <span className="text-sm font-semibold text-gray-700">
+                    Grant edit permissions
+                  </span>
+                </label>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editAdmin.is_active}
+                    onChange={(e) =>
+                      setEditAdmin({ ...editAdmin, is_active: e.target.checked })
+                    }
+                    className="w-4 h-4 text-[#342D87] border-gray-300 rounded focus:ring-[#342D87]"
+                  />
+                  <span className="text-sm font-semibold text-gray-700">
+                    Active
+                  </span>
+                </label>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingAdmin(null);
+                  }}
+                  className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors font-semibold"
+                >
+                  Update Admin
                 </button>
               </div>
             </form>

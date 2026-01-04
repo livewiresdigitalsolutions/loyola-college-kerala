@@ -90,6 +90,9 @@
 // export default function HallTicketsPage() {
 //   const router = useRouter();
 
+//   // Academic Year
+//   const [academicYear, setAcademicYear] = useState("2026");
+
 //   // Available admissions (not yet allocated)
 //   const [admissions, setAdmissions] = useState<Admission[]>([]);
 //   const [selectedAdmissions, setSelectedAdmissions] = useState<number[]>([]);
@@ -124,7 +127,7 @@
 
 //   useEffect(() => {
 //     fetchAvailableAdmissions();
-//   }, [currentPage, searchTerm, programFilter, degreeFilter, courseFilter]);
+//   }, [currentPage, searchTerm, programFilter, degreeFilter, courseFilter, academicYear]);
 
 //   useEffect(() => {
 //     fetchPrograms();
@@ -132,7 +135,7 @@
 //     fetchAllCourses();
 //     fetchExamCenters();
 //     fetchAllocatedTickets();
-//   }, []);
+//   }, [academicYear]);
 
 //   useEffect(() => {
 //     if (programFilter !== "all") {
@@ -216,6 +219,7 @@
 //         program: programFilter,
 //         degree: degreeFilter,
 //         course: courseFilter,
+//         year: academicYear,
 //       });
 
 //       const response = await fetch(`/api/sys-ops/admissions/available?${params}`);
@@ -236,7 +240,7 @@
 
 //   const fetchAllocatedTickets = async () => {
 //     try {
-//       const response = await fetch("/api/sys-ops/hall-tickets?page=1&perPage=1000");
+//       const response = await fetch(`/api/sys-ops/hall-tickets?year=${academicYear}&page=1&perPage=1000`);
 //       if (response.ok) {
 //         const data = await response.json();
 //         setAllocatedTickets(data.data || []);
@@ -326,16 +330,27 @@
 //     try {
 //       const params = new URLSearchParams({
 //         page: "1",
-//         perPage: "10000",
+//         perPage: "100000",
 //         search: searchTerm,
 //         program: programFilter,
 //         degree: degreeFilter,
 //         course: courseFilter,
+//         year: academicYear,
 //       });
 
 //       const response = await fetch(`/api/sys-ops/admissions/available?${params}`);
 //       if (response.ok) {
 //         const result = await response.json();
+
+//         if (!result.data || result.data.length === 0) {
+//           toast("No data to export for the selected year and filters.", {
+//             style: {
+//               background: "#3b82f6",
+//               color: "#fff",
+//             },
+//           });
+//           return;
+//         }
 
 //         const exportData = result.data.map((adm: Admission) => {
 //           const program = programs.find((p) => p.id === adm.program_level_id);
@@ -358,6 +373,7 @@
 //             "Course": course?.course_name || "N/A",
 //             "Exam Center": examCenter?.centre_name || "N/A",
 //             "Status": "Available for Allocation",
+//             "Academic Year": academicYear,
 //           };
 //         });
 
@@ -365,20 +381,26 @@
 //           Object.keys(exportData[0]).join(","),
 //           ...exportData.map((row: any) =>
 //             Object.values(row)
-//               .map((val) => `"${val}"`)
+//               .map((val) => `"${String(val).replace(/"/g, '""')}"`)
 //               .join(",")
 //           ),
 //         ].join("\n");
 
-//         const blob = new Blob([csv], { type: "text/csv" });
+//         const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
 //         const url = window.URL.createObjectURL(blob);
 //         const a = document.createElement("a");
 //         a.href = url;
-//         a.download = `available-admissions-${new Date().toISOString().split("T")[0]}.csv`;
+//         a.download = `available-admissions-${academicYear}-${new Date().toISOString().split("T")[0]}.csv`;
+//         document.body.appendChild(a);
 //         a.click();
+//         document.body.removeChild(a);
+//         window.URL.revokeObjectURL(url);
 //         toast.success("Exported successfully");
+//       } else {
+//         toast.error("Export failed");
 //       }
 //     } catch (error) {
+//       console.error("Export error:", error);
 //       toast.error("Export failed");
 //     }
 //   };
@@ -401,7 +423,6 @@
 //     degreeFilter !== "all" ||
 //     courseFilter !== "all";
 
-//   // Helper function to get exam center name
 //   const getExamCenterName = (examCenterId: number): string => {
 //     const center = examCenters.find((ec) => ec.id === examCenterId);
 //     return center ? `${center.centre_name} (${center.location})` : "N/A";
@@ -419,7 +440,20 @@
 //               Allocate exam dates to students and manage hall tickets
 //             </p>
 //           </div>
-//           <div className="flex gap-3">
+//           <div className="flex gap-3 items-center">
+//             <div className="flex items-center gap-2">
+//               <span className="text-sm font-semibold text-gray-700">Academic Year:</span>
+//               <select
+//                 value={academicYear}
+//                 onChange={(e) => {
+//                   setAcademicYear(e.target.value);
+//                   setCurrentPage(1);
+//                 }}
+//                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm font-semibold"
+//               >
+//                 <option value="2026">2026</option>
+//               </select>
+//             </div>
 //             <button
 //               onClick={() => setShowAllocated(!showAllocated)}
 //               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -432,7 +466,7 @@
 //               className="flex items-center gap-2 px-4 py-2 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors"
 //             >
 //               <Download className="w-4 h-4" />
-//               Export CSV
+//               Export
 //             </button>
 //           </div>
 //         </div>
@@ -833,10 +867,7 @@
 
 
 
-
-
-
-
+// app/sys-ops/hall-tickets/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -855,6 +886,8 @@ import {
   CheckSquare,
   Square,
 } from "lucide-react";
+import { getAcademicYearConfig } from "@/app/lib/academicYearConfig";
+import { YearPicker } from "@/app/sys-ops/components/YearPicker";
 import StatusBadge from "../components/StatusBadge";
 
 interface Admission {
@@ -929,8 +962,13 @@ const generateApplicationId = (
 export default function HallTicketsPage() {
   const router = useRouter();
 
+  // Get academic year config
+  const academicYearConfig = getAcademicYearConfig();
+  const defaultYear = academicYearConfig.start.toString();
+
   // Academic Year
-  const [academicYear, setAcademicYear] = useState("2026");
+  const [academicYear, setAcademicYear] = useState(defaultYear);
+  const [availableYears, setAvailableYears] = useState<string[]>([]);
 
   // Available admissions (not yet allocated)
   const [admissions, setAdmissions] = useState<Admission[]>([]);
@@ -963,6 +1001,10 @@ export default function HallTicketsPage() {
   // Already allocated hall tickets
   const [allocatedTickets, setAllocatedTickets] = useState<HallTicket[]>([]);
   const [showAllocated, setShowAllocated] = useState(false);
+
+  useEffect(() => {
+    fetchAvailableYears();
+  }, []);
 
   useEffect(() => {
     fetchAvailableAdmissions();
@@ -1004,6 +1046,18 @@ export default function HallTicketsPage() {
       setFilteredCourses(courses);
     }
   }, [degreeFilter, programFilter, courses, filteredDegrees]);
+
+  const fetchAvailableYears = async () => {
+    try {
+      const response = await fetch("/api/sys-ops/available-years");
+      if (response.ok) {
+        const years = await response.json();
+        setAvailableYears(years);
+      }
+    } catch (error) {
+      console.error("Error fetching years:", error);
+    }
+  };
 
   const fetchPrograms = async () => {
     try {
@@ -1280,19 +1334,17 @@ export default function HallTicketsPage() {
             </p>
           </div>
           <div className="flex gap-3 items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-gray-700">Academic Year:</span>
-              <select
-                value={academicYear}
-                onChange={(e) => {
-                  setAcademicYear(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm font-semibold"
-              >
-                <option value="2026">2026</option>
-              </select>
-            </div>
+            {/* Year Picker with Calendar UI */}
+            <YearPicker
+              value={academicYear}
+              onChange={(year) => {
+                setAcademicYear(year);
+                setCurrentPage(1);
+              }}
+              availableYears={availableYears}
+              className="w-[160px]"
+            />
+            
             <button
               onClick={() => setShowAllocated(!showAllocated)}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -1466,6 +1518,7 @@ export default function HallTicketsPage() {
             </div>
           )}
 
+          {/* Rest of your table code remains the same... */}
           {/* Table */}
           {loadingAdmissions ? (
             <div className="flex items-center justify-center py-12">

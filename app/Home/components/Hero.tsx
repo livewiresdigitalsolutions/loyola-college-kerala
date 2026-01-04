@@ -337,7 +337,7 @@ const Hero: React.FC = () => {
           Admissions Open {academicYear.start}
         </h2>
         <p className="text-sm text-center text-[#342D87] mb-4">
-          UG, PG and PhD Applications {academicYear.end}
+          UG, PG and PhD Applications {academicYear.start}
         </p>
       </>
     );

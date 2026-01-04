@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
 import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 
 interface Program {
@@ -178,7 +178,8 @@ const Sidebar: React.FC = () => {
 
       if (response.ok) {
         toast.success(
-          data.message || "Registration successful! Please login with your email and mobile number.",
+          data.message ||
+            "Registration successful! Please login with your email and mobile number.",
           { duration: 5000 }
         );
 
@@ -209,8 +210,8 @@ const Sidebar: React.FC = () => {
     }
   };
 
-  const hideNavbarRoutes = ['/sys-ops','/admission-form'];
-  const shouldHideNavbar = hideNavbarRoutes.some(route => 
+  const hideNavbarRoutes = ["/sys-ops", "/admission-form"];
+  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
     pathname?.startsWith(route)
   );
 
@@ -294,7 +295,8 @@ const Sidebar: React.FC = () => {
           Admissions Open {academicYear.start}
         </h2>
         <p className="text-sm text-center text-[#342D87] mb-4">
-          UG, PG and PhD Applications {academicYear.label}
+          UG, PG and PhD Applications {academicYear.start}-
+          {parseInt(academicYear.start) + 1}
         </p>
       </>
     );
@@ -442,7 +444,8 @@ const Sidebar: React.FC = () => {
 
                   {!academicYear?.isOpen && !yearLoading && (
                     <p className="text-xs text-center text-red-600">
-                      Admissions are currently not open. Please check back later.
+                      Admissions are currently not open. Please check back
+                      later.
                     </p>
                   )}
 
@@ -469,7 +472,7 @@ const Sidebar: React.FC = () => {
                 </h2>
                 <p className="text-sm text-center text-[#342D87] mb-4">
                   Access your application
-                  {academicYear && ` - ${academicYear.label}`}
+                  {academicYear && ` ${academicYear.start}-${parseInt(academicYear.start) + 1}`}
                 </p>
 
                 <form onSubmit={handleLogin} className="space-y-4">
@@ -535,7 +538,7 @@ const Sidebar: React.FC = () => {
           {yearLoading
             ? "Loading..."
             : academicYear?.isOpen
-            ? `Admissions Enquiry ${academicYear.label} →`
+            ? `Admissions Enquiry ${academicYear.start} →`
             : "Admissions Coming Soon →"}
         </button>
       </div>

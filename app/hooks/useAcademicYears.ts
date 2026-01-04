@@ -1,52 +1,51 @@
-// app/hooks/useAcademicYear.ts
+// app/hooks/useAcademicYears.ts
 import { useState, useEffect } from 'react';
 
-export interface AcademicYear {
-  start: number;
-  end: number;
-  label: string;
+interface AcademicYearData {
+  start: string;
   isOpen: boolean;
 }
 
 export function useAcademicYear() {
-  const [academicYear, setAcademicYear] = useState<AcademicYear | null>(null);
+  const [academicYear, setAcademicYear] = useState<AcademicYearData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchAcademicYear = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch all configuration values
+        const response = await fetch('/api/config');
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch configuration');
+        }
+
+        // Find the specific config values
+        const yearConfig = data.find((item: any) => item.key === 'current_academic_year');
+        const admissionsConfig = data.find((item: any) => item.key === 'is_admissions_open');
+        
+        if (yearConfig && admissionsConfig) {
+          setAcademicYear({
+            start: yearConfig.value,
+            isOpen: admissionsConfig.value === 'true' || admissionsConfig.value === true,
+          });
+        } else {
+          setError('Configuration values not found');
+        }
+      } catch (err) {
+        console.error('Error fetching academic year:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchAcademicYear();
   }, []);
 
-  const fetchAcademicYear = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/config');
-      if (response.ok) {
-        const configs = await response.json();
-        
-        const startConfig = configs.find((c: any) => c.key === 'academic_year_start');
-        const endConfig = configs.find((c: any) => c.key === 'academic_year_end');
-        const labelConfig = configs.find((c: any) => c.key === 'academic_year_label');
-        const openConfig = configs.find((c: any) => c.key === 'admissions_open');
-
-        if (startConfig && endConfig) {
-          setAcademicYear({
-            start: parseInt(startConfig.value),
-            end: parseInt(endConfig.value),
-            label: labelConfig?.value || `${startConfig.value}-${endConfig.value}`,
-            isOpen: openConfig?.value === 'true',
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching academic year:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return {
-    academicYear,
-    loading,
-    refetch: fetchAcademicYear,
-  };
+  return { academicYear, loading, error };
 }

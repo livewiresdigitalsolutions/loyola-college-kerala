@@ -22,8 +22,22 @@ async function updateAdminMySQL(id: string, updates: any) {
   const connection = await mysql.createConnection(mysqlConfig);
   
   try {
-    const fields = Object.keys(updates).map(key => `${key} = ?`).join(', ');
-    const values = Object.values(updates);
+    // Whitelist allowed fields for security
+    const allowedFields = ['username', 'role', 'is_active', 'can_edit', 'last_login'];
+    const filteredUpdates: any = {};
+    
+    Object.keys(updates).forEach(key => {
+      if (allowedFields.includes(key)) {
+        filteredUpdates[key] = updates[key];
+      }
+    });
+
+    if (Object.keys(filteredUpdates).length === 0) {
+      throw new Error('No valid fields to update');
+    }
+
+    const fields = Object.keys(filteredUpdates).map(key => `${key} = ?`).join(', ');
+    const values = Object.values(filteredUpdates);
 
     await connection.execute(
       `UPDATE admin_users SET ${fields} WHERE id = ?`,
@@ -41,9 +55,23 @@ async function updateAdminMySQL(id: string, updates: any) {
 
 async function updateAdminSupabase(id: string, updates: any) {
   try {
+    // Whitelist allowed fields for security
+    const allowedFields = ['username', 'role', 'is_active', 'can_edit', 'last_login'];
+    const filteredUpdates: any = {};
+    
+    Object.keys(updates).forEach(key => {
+      if (allowedFields.includes(key)) {
+        filteredUpdates[key] = updates[key];
+      }
+    });
+
+    if (Object.keys(filteredUpdates).length === 0) {
+      throw new Error('No valid fields to update');
+    }
+
     const { error } = await supabase
       .from('admin_users')
-      .update(updates)
+      .update(filteredUpdates)
       .eq('id', id);
 
     if (error) throw error;

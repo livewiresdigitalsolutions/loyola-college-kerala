@@ -1,12 +1,15 @@
 "use client";
 
+import { Megaphone } from 'lucide-react';
+
 export default function AnnouncementMarquee() {
   return (
     <div className="max-w-screen bg-white border-b border-gray-200">
       <div className="flex items-center">
 
         {/* LEFT TAG */}
-        <div className="relative bg-[#1E2A7B] text-white px-6 py-3 text-sm font-medium shrink-0">
+        <div className="relative bg-[#1E2A7B] text-white px-6 py-3 text-sm font-medium shrink-0 flex items-center gap-2">
+          <Megaphone size={18} />
           Announcements
           <span
             className="

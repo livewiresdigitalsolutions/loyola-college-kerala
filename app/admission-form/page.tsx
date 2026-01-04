@@ -914,7 +914,7 @@ function AdmissionFormContent() {
                 {yearLoading ? (
                   <span className="animate-pulse">Loading...</span>
                 ) : academicYear ? (
-                  `Academic Year ${academicYear.label}`
+                  `Academic Year ${academicYear.start}`
                 ) : (
                   "Academic Year Information"
                 )}

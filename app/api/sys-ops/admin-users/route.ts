@@ -25,6 +25,7 @@ interface AdminUserRow extends RowDataPacket {
   created_at: string;
   last_login: string | null;
   is_active: boolean;
+  can_edit: boolean; // Added field
 }
 
 async function getAdminUsersMySQL() {
@@ -32,7 +33,7 @@ async function getAdminUsersMySQL() {
   
   try {
     const [rows] = await connection.execute<AdminUserRow[]>(
-      'SELECT id, username, role, created_at, last_login, is_active FROM admin_users ORDER BY created_at DESC'
+      'SELECT id, username, role, created_at, last_login, is_active, can_edit FROM admin_users ORDER BY created_at DESC'
     );
 
     return rows;
@@ -48,7 +49,7 @@ async function getAdminUsersSupabase() {
   try {
     const { data, error } = await supabase
       .from('admin_users')
-      .select('id, username, role, created_at, last_login, is_active')
+      .select('id, username, role, created_at, last_login, is_active, can_edit')
       .order('created_at', { ascending: false });
 
     if (error) throw error;

@@ -11,7 +11,9 @@ import {
   Facebook,
   X,
   Menu,
-  XIcon
+  XIcon,
+  Search,
+  ArrowRight
 } from 'lucide-react';
 
 const Navbar: React.FC = () => {
@@ -30,7 +32,6 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-
   const hideNavbarRoutes = ['/sys-ops'];
   const shouldHideNavbar = hideNavbarRoutes.some(route => 
     pathname?.startsWith(route)
@@ -42,20 +43,23 @@ const Navbar: React.FC = () => {
 
   const menuData = {
     about: {
-      title: 'About Us',
+      title: 'About Loyola College of Social Sciences',
+      description: 'A Jesuit institution committed to academic excellence, social responsibility, and transformative education since 1963.',
+      ctaText: 'Inside Loyola',
+      ctaLink: '/about',
       sections: [
         {
           title: 'About the Institution',
           links: [
-            { name: 'History', href: '/about/history' },
-            { name: 'Vision & Mission', href: '/about/vision-mission' },
-            { name: 'Administration', href: '/about/administration' },
-            { name: 'Governing Body', href: '/about/governing-body' },
-            { name: 'Academic Council', href: '/about/academic-council' }
+            { name: 'History', subtitle: 'Our journey, milestones, and the legacy.', href: '/about/history' },
+            { name: 'Vision & Mission', subtitle: 'Values and principles guiding education, research, and social engagement.', href: '/about/vision-mission' },
+            { name: 'Administration', subtitle: 'Academic and administrative leadership steering the institution.', href: '/about/administration' },
+            { name: 'Governing Body', subtitle: 'Strategic oversight and institutional governance.', href: '/about/governing-body' },
+            { name: 'Academic Council', subtitle: 'Curriculum leadership and academic policy framework.', href: '/about/academic-council' }
           ]
         },
         {
-          title: 'Associations & Identity',
+          title: 'Association & Identity',
           links: [
             { name: 'PTA', href: '/about/pta' },
             { name: 'RTI Declaration', href: '/about/rti-declaration' },
@@ -75,6 +79,9 @@ const Navbar: React.FC = () => {
     },
     academics: {
       title: 'Academics',
+      description: 'Comprehensive academic programs fostering excellence in teaching, learning, and research.',
+      ctaText: 'Explore Programs',
+      ctaLink: '/academics',
       sections: [
         {
           title: 'Programs',
@@ -107,6 +114,9 @@ const Navbar: React.FC = () => {
     },
     campusLife: {
       title: 'Campus Life',
+      description: 'Experience vibrant campus facilities, modern infrastructure, and holistic student living.',
+      ctaText: 'Explore Campus',
+      ctaLink: '/campus',
       sections: [
         {
           title: 'Learning Spaces',
@@ -147,211 +157,142 @@ const Navbar: React.FC = () => {
         }
       ]
     },
-    studentEngagement: {
-      title: 'Student Engagement',
+    iqac: {
+      title: 'IQAC',
+      description: 'Quality assurance initiatives and accreditation frameworks ensuring academic excellence.',
+      ctaText: 'Learn More',
+      ctaLink: '/iqac',
       sections: [
         {
-          title: 'Clubs & Forums',
+          title: 'Quality Assurance',
           links: [
-            { name: 'Student Associations', href: '/students/associations' },
-            { name: 'LITCOF', href: '/students/litcof' },
-            { name: 'LET', href: '/students/let' },
-            { name: 'EM & Biodiversity', href: '/students/biodiversity' },
-            { name: 'Women Cell', href: '/students/women-cell' }
+            { name: 'Autonomy', href: '/iqac/autonomy' },
+            { name: 'NAAC', href: '/iqac/naac' },
+            { name: 'NIRF', href: '/iqac/nirf' }
           ]
         },
         {
-          title: 'Development & Support',
+          title: 'Documentation',
           links: [
-            { name: 'Student Progression', href: '/students/progression' },
-            { name: 'LMP (Mentoring)', href: '/students/lmp' },
-            { name: 'LACE (Career Enhancement)', href: '/students/lace' },
-            { name: 'LILA (Language Advancement)', href: '/students/lila' }
-          ]
-        },
-        {
-          title: 'Leadership & Social',
-          links: [
-            { name: 'Loyola NSS Unit', href: '/students/nss' },
-            { name: 'College Union', href: '/students/union' }
-          ]
-        },
-        {
-          title: 'Others',
-          links: [
-            { name: 'View All', href: '/students/all' }
+            { name: 'AISHE', href: '/iqac/aishe' },
+            { name: 'SAAC', href: '/iqac/saac' },
+            { name: 'Others', href: '/iqac/others' }
           ]
         }
       ]
     },
-    iqac: {
-      title: 'IQAC',
-      links: [
-        { name: 'Autonomy', href: 'https://loyolacollegekerala.edu.in/iqac/autonomy/' },
-        { name: 'NAAC', href: 'https://loyolacollegekerala.edu.in/iqac/' },
-        { name: 'NIRF', href: 'https://loyolacollegekerala.edu.in/nirf/' },
-        { name: 'AISHE', href: 'https://loyolacollegekerala.edu.in/#' },
-        { name: 'SAAC', href: 'https://loyolacollegekerala.edu.in/#' },
-        { name: 'Others', href: 'https://loyolacollegekerala.edu.in/#' }
-      ]
-    },
     placements: {
       title: 'Placements',
-      links: [
-        { name: 'Placement Cell', href: '/placements/cell' },
-        { name: 'Placement Activities', href: '/placements/activities' },
-        { name: 'Training & Skill Development', href: '/placements/training' },
-        { name: 'Internship Opportunities', href: '/placements/internships' },
-        { name: 'Recruiters / Partner Companies', href: '/placements/recruiters' },
-        { name: 'Placement Statistics', href: '/placements/statistics' },
-        { name: 'Alumni Success Stories', href: '/placements/alumni' },
-        { name: 'Higher Studies Guidance', href: '/placements/higher-studies' },
-        { name: 'Contact Placement Officer', href: '/placements/contact' }
-      ]
-    },
-    newsEvents: {
-      title: 'News & Events',
-      links: [
-        { name: 'News Highlights', href: '/news/highlights' },
-        { name: 'Events Calendar', href: '/news/calendar' },
-        { name: 'Event Reports', href: '/news/reports' },
-        { name: 'Circulars & Notices', href: '/news/circulars' }
+      description: 'Career development, placement assistance, and industry partnerships for student success.',
+      ctaText: 'View Opportunities',
+      ctaLink: '/placements',
+      sections: [
+        {
+          title: 'Placement Services',
+          links: [
+            { name: 'Placement Cell', href: '/placements/cell' },
+            { name: 'Placement Activities', href: '/placements/activities' },
+            { name: 'Training & Skill Development', href: '/placements/training' }
+          ]
+        },
+        {
+          title: 'Opportunities',
+          links: [
+            { name: 'Internship Opportunities', href: '/placements/internships' },
+            { name: 'Recruiters / Partner Companies', href: '/placements/recruiters' },
+            { name: 'Placement Statistics', href: '/placements/statistics' }
+          ]
+        },
+        {
+          title: 'Career Guidance',
+          links: [
+            { name: 'Alumni Success Stories', href: '/placements/alumni' },
+            { name: 'Higher Studies Guidance', href: '/placements/higher-studies' },
+            { name: 'Contact Placement Officer', href: '/placements/contact' }
+          ]
+        }
       ]
     }
   };
 
   return (
     <>
-      <header
-        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-          scrolled ? 'bg-white shadow-md' : 'bg-transparent'
-        }`}
-      >
+      <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}>
         {/* Top bar */}
-        <div
-          className={`px-4 md:px-8 lg:px-20 text-white transition-colors duration-300 ${
-            scrolled ? 'bg-[#342D87]' : 'bg-transparent'
-          }`}
-        >
-          <div className="flex items-center justify-between py-2 text-sm">
+        <div className={`px-4 md:px-8 lg:px-20 text-white transition-colors duration-300 ${scrolled ? 'bg-[#4640A8]' : 'bg-transparent'}`}>
+          <div className="flex items-center justify-between py-2.5 text-sm">
             <div className="flex items-center gap-3 md:gap-4">
-              <Link href="#" aria-label="Instagram">
-                <Instagram size={20} className="md:w-6 md:h-6 hover:opacity-80 transition" />
+              <Link href="#" aria-label="Instagram" className="hover:opacity-75 transition">
+                <Instagram size={18} />
               </Link>
-              <Link href="#" aria-label="YouTube">
-                <Youtube size={20} className="md:w-6 md:h-6 hover:opacity-80 transition" />
+              <Link href="#" aria-label="YouTube" className="hover:opacity-75 transition">
+                <Youtube size={18} />
               </Link>
-              <Link href="#" aria-label="Facebook">
-                <Facebook size={20} className="md:w-6 md:h-6 hover:opacity-80 transition" />
+              <Link href="#" aria-label="Facebook" className="hover:opacity-75 transition">
+                <Facebook size={18} />
               </Link>
-              <Link href="#" aria-label="X (Twitter)">
-                <X size={20} className="md:w-6 md:h-6 hover:opacity-80 transition" />
+              <Link href="#" aria-label="X" className="hover:opacity-75 transition">
+                <X size={18} />
               </Link>
             </div>
 
             <div className="hidden lg:flex items-center gap-6">
-              <div 
-                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition"
-                onMouseEnter={() => setActiveDropdown('topStudent')}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
+              <div className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
                 Student <ChevronDown size={14} />
-                {activeDropdown === 'topStudent' && (
-                  <div className="absolute top-full right-0 mt-2 bg-white text-black rounded-md shadow-lg py-2 min-w-[200px]">
-                    <Link href="/student/portal" className="block px-4 py-2 hover:bg-gray-100">
-                      Student Portal
-                    </Link>
-                    <Link href="/student/resources" className="block px-4 py-2 hover:bg-gray-100">
-                      Student Resources
-                    </Link>
-                  </div>
-                )}
               </div>
-
-              <Link href="/alumni" className="hover:opacity-80 transition">
-                Alumni
-              </Link>
-
-              <div 
-                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition"
-                onMouseEnter={() => setActiveDropdown('topNews')}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
+              <Link href="/alumni" className="hover:opacity-80 transition">Alumni</Link>
+              <div className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
                 News & Events <ChevronDown size={14} />
-                {activeDropdown === 'topNews' && (
-                  <div className="absolute top-full right-0 mt-2 bg-white text-black rounded-md shadow-lg py-2 min-w-[200px]">
-                    {menuData.newsEvents.links.map((link, idx) => (
-                      <Link key={idx} href={link.href} className="block px-4 py-2 hover:bg-gray-100">
-                        {link.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+              </div>
+              <Link href="/contact" className="hover:opacity-80 transition">Contact Us</Link>
+              
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className={`rounded-md px-3 py-1.5 text-sm outline-none transition w-48 ${scrolled ? 'bg-white/20 placeholder-white text-white' : 'bg-white/30 placeholder-white/80 text-white'}`}
+                />
+                <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70" />
               </div>
 
-              <Link href="/contact" className="hover:opacity-80 transition">
-                Contact Us
-              </Link>
-
-              <input
-                type="text"
-                placeholder="Search..."
-                className={`rounded-md px-3 py-1 text-sm outline-none transition ${
-                  scrolled
-                    ? 'bg-gray-100 text-black'
-                    : 'bg-white/20 placeholder-white text-white'
-                }`}
-              />
+              <button className="bg-[#4640A8] hover:bg-[#3832A0] text-white px-4 py-1.5 rounded-md text-sm font-medium transition">
+                Login
+              </button>
             </div>
 
-            {/* Mobile Menu Toggle */}
             <button
               className="lg:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? (
-                <XIcon size={24} />
-              ) : (
-                <Menu size={24} />
-              )}
+              {mobileMenuOpen ? <XIcon size={24} /> : <Menu size={24} />}
             </button>
           </div>
-
-          <div
-            className={`h-[1px] w-full transition-colors duration-300 ${
-              scrolled ? 'bg-[#342D87]' : 'bg-white'
-            }`}
-          />
         </div>
 
         {/* Main navbar */}
-        <div
-          className={`px-4 md:px-8 lg:px-20 transition-colors duration-300 ${
-            scrolled ? 'text-[#342D87]' : 'text-white'
-          }`}
-        >
-          <div className="flex items-center justify-between py-3">
+        <div className={`px-4 md:px-8 lg:px-20 transition-colors duration-300 ${scrolled ? 'text-gray-900 bg-white' : 'text-white'}`}>
+          <div className="flex items-center justify-between py-4">
             <Link href="/">
               <Image
                 src={scrolled ? '/assets/loyoladarklogo.png' : '/assets/loyolalogo.png'}
                 alt="Loyola College"
-                width={140}
-                height={50}
-                className="md:w-40 md:h-auto"
+                width={160}
+                height={45}
+                className="h-12 w-auto"
                 priority
               />
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-5 xl:gap-7 font-medium">
+            <nav className="hidden lg:flex items-center gap-7 font-medium text-[15px]">
               <div 
                 className="relative"
                 onMouseEnter={() => setActiveDropdown('about')}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
-                  About <ChevronDown size={14} />
+                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                  About <ChevronDown size={16} />
                 </div>
               </div>
 
@@ -360,32 +301,20 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown('academics')}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
-                  Academics <ChevronDown size={14} />
+                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                  Academics <ChevronDown size={16} />
                 </div>
               </div>
 
-              <Link href="/research" className="hover:opacity-80 transition">
-                Research
-              </Link>
+              <Link href="/research" className="hover:text-[#4640A8] transition">Research</Link>
 
               <div 
                 className="relative"
                 onMouseEnter={() => setActiveDropdown('campusLife')}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition whitespace-nowrap">
-                  Campus Life <ChevronDown size={14} />
-                </div>
-              </div>
-
-              <div 
-                className="relative"
-                onMouseEnter={() => setActiveDropdown('studentEngagement')}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition whitespace-nowrap">
-                  Student Engagement <ChevronDown size={14} />
+                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition whitespace-nowrap">
+                  Campus Life <ChevronDown size={16} />
                 </div>
               </div>
 
@@ -394,8 +323,8 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown('iqac')}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
-                  IQAC <ChevronDown size={14} />
+                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                  IQAC <ChevronDown size={16} />
                 </div>
               </div>
 
@@ -404,59 +333,82 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown('placements')}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
-                  Placements <ChevronDown size={14} />
+                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                  Placements <ChevronDown size={16} />
                 </div>
               </div>
 
-              <Link href="/gallery" className="hover:opacity-80 transition">
-                Gallery
-              </Link>
+              <Link href="/gallery" className="hover:text-[#4640A8] transition">Gallery</Link>
             </nav>
           </div>
         </div>
       </header>
 
-      {/* Backdrop Overlay */}
+      {/* Backdrop - stays when hovering dropdown */}
       {activeDropdown && (
         <div 
-          className="fixed inset-0 bg-black/10 z-40 "
-          style={{ top: scrolled ? '100px' : '100px' }}
-          onMouseEnter={() => setActiveDropdown(null)}
+          className="fixed inset-0 z-40"
+          style={{ top: '100px' }}
         />
       )}
 
-      {/* Mega Menu Dropdowns - Card Style */}
+      {/* Mega Menu Dropdowns - With Left Blue Sidebar */}
       {activeDropdown === 'about' && (
         <div 
-          className="dropdown-container fixed left-0 right-0 z-40"
-          style={{ top: scrolled ? '100px' : '100px' }}
+          className="fixed left-0 right-0 z-50"
+          style={{ top: '100px' }}
           onMouseEnter={() => setActiveDropdown('about')}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-8">
-            <div className="dropdown-card bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-[#342D87] mb-6">About Us</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {menuData.about.sections.map((section, idx) => (
-                  <div key={idx} className="space-y-3">
-                    <h3 className="font-semibold text-[#342D87] text-base border-b border-gray-200 pb-2">
-                      {section.title}
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {section.links.map((link, linkIdx) => (
-                        <li key={linkIdx}>
-                          <Link 
-                            href={link.href} 
-                            className="text-sm text-gray-600 hover:text-[#342D87] hover:translate-x-2 transition-all duration-200 block"
-                          >
-                            → {link.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+              {/* Left Blue Sidebar */}
+              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-4 leading-tight">
+                    {menuData.about.title}
+                  </h2>
+                  <p className="text-white/90 text-sm leading-relaxed mb-6">
+                    {menuData.about.description}
+                  </p>
+                </div>
+                <Link 
+                  href={menuData.about.ctaLink}
+                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all"
+                >
+                  {menuData.about.ctaText} <ArrowRight size={18} />
+                </Link>
+              </div>
+
+              {/* Right White Content */}
+              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+                <div className="grid grid-cols-3 gap-8">
+                  {menuData.about.sections.map((section, idx) => (
+                    <div key={idx} className="space-y-4">
+                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+                        {section.title}
+                      </h3>
+                      <ul className="space-y-3">
+                        {section.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Link 
+                              href={link.href} 
+                              className="block group"
+                            >
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-[#4640A8] transition flex items-start gap-2">
+                                <ChevronDown size={16} className="mt-0.5 rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+                                <span>{link.name}</span>
+                              </div>
+                              {link.subtitle && (
+                                <p className="text-xs text-gray-500 mt-1 ml-6">{link.subtitle}</p>
+                              )}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -465,34 +417,41 @@ const Navbar: React.FC = () => {
 
       {activeDropdown === 'academics' && (
         <div 
-          className="dropdown-container fixed left-0 right-0 z-40"
-          style={{ top: scrolled ? '100px' : '100px' }}
+          className="fixed left-0 right-0 z-50"
+          style={{ top: '100px' }}
           onMouseEnter={() => setActiveDropdown('academics')}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-8">
-            <div className="dropdown-card bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-[#342D87] mb-6">Academics</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {menuData.academics.sections.map((section, idx) => (
-                  <div key={idx} className="space-y-3">
-                    <h3 className="font-semibold text-[#342D87] text-base border-b border-gray-200 pb-2">
-                      {section.title}
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {section.links.map((link, linkIdx) => (
-                        <li key={linkIdx}>
-                          <Link 
-                            href={link.href} 
-                            className="text-sm text-gray-600 hover:text-[#342D87] hover:translate-x-2 transition-all duration-200 block"
-                          >
-                            → {link.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">{menuData.academics.title}</h2>
+                  <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.academics.description}</p>
+                </div>
+                <Link href={menuData.academics.ctaLink} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
+                  {menuData.academics.ctaText} <ArrowRight size={18} />
+                </Link>
+              </div>
+
+              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+                <div className="grid grid-cols-3 gap-8">
+                  {menuData.academics.sections.map((section, idx) => (
+                    <div key={idx} className="space-y-4">
+                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">{section.title}</h3>
+                      <ul className="space-y-3">
+                        {section.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Link href={link.href} className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group">
+                              <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+                              {link.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -501,70 +460,43 @@ const Navbar: React.FC = () => {
 
       {activeDropdown === 'campusLife' && (
         <div 
-          className="dropdown-container fixed left-0 right-0 z-40"
-          style={{ top: scrolled ? '100px' : '100px' }}
+          className="fixed left-0 right-0 z-50"
+          style={{ top: '100px' }}
           onMouseEnter={() => setActiveDropdown('campusLife')}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-8">
-            <div className="dropdown-card bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-[#342D87] mb-6">Campus Life</h2>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-                {menuData.campusLife.sections.map((section, idx) => (
-                  <div key={idx} className="space-y-3">
-                    <h3 className="font-semibold text-[#342D87] text-base border-b border-gray-200 pb-2">
-                      {section.title}
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {section.links.map((link, linkIdx) => (
-                        <li key={linkIdx}>
-                          <Link 
-                            href={link.href} 
-                            className="text-sm text-gray-600 hover:text-[#342D87] hover:translate-x-2 transition-all duration-200 block"
-                          >
-                            → {link.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">{menuData.campusLife.title}</h2>
+                  <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.campusLife.description}</p>
+                </div>
+                <Link href={menuData.campusLife.ctaLink} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
+                  {menuData.campusLife.ctaText} <ArrowRight size={18} />
+                </Link>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {activeDropdown === 'studentEngagement' && (
-        <div 
-          className="dropdown-container fixed left-0 right-0 z-40"
-          style={{ top: scrolled ? '100px' : '100px' }}
-          onMouseEnter={() => setActiveDropdown('studentEngagement')}
-          onMouseLeave={() => setActiveDropdown(null)}
-        >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-8">
-            <div className="dropdown-card bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-              <h2 className="text-2xl font-bold text-[#342D87] mb-6">Student Engagement</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {menuData.studentEngagement.sections.map((section, idx) => (
-                  <div key={idx} className="space-y-3">
-                    <h3 className="font-semibold text-[#342D87] text-base border-b border-gray-200 pb-2">
-                      {section.title}
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {section.links.map((link, linkIdx) => (
-                        <li key={linkIdx}>
-                          <Link 
-                            href={link.href} 
-                            className="text-sm text-gray-600 hover:text-[#342D87] hover:translate-x-2 transition-all duration-200 block"
-                          >
-                            → {link.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+                <div className="grid grid-cols-5 gap-6">
+                  {menuData.campusLife.sections.map((section, idx) => (
+                    <div key={idx} className="space-y-4">
+                      <h3 className="text-[#252565] font-bold text-sm pb-2 border-b-2 border-gray-200">
+                        {section.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {section.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Link href={link.href} className="text-xs text-gray-700 hover:text-[#4640A8] transition flex items-center gap-1 group">
+                              <ChevronDown size={14} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+                              {link.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -573,26 +505,44 @@ const Navbar: React.FC = () => {
 
       {activeDropdown === 'iqac' && (
         <div 
-          className="dropdown-container fixed left-0 right-0 z-40"
-          style={{ top: scrolled ? '100px' : '100px' }}
+          className="fixed left-0 right-0 z-50"
+          style={{ top: '100px' }}
           onMouseEnter={() => setActiveDropdown('iqac')}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-8">
-            <div className="dropdown-card bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 max-w-2xl mx-auto">
-              <h2 className="text-2xl font-bold text-[#342D87] mb-6">IQAC</h2>
-              <ul className="grid grid-cols-2 gap-4">
-                {menuData.iqac.links.map((link, idx) => (
-                  <li key={idx}>
-                    <Link 
-                      href={link.href} 
-                      className="text-sm text-gray-600 hover:text-[#342D87] hover:translate-x-2 transition-all duration-200 block py-2"
-                    >
-                      → {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          <div className="max-w-5xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">{menuData.iqac.title}</h2>
+                  <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.iqac.description}</p>
+                </div>
+                <Link href={menuData.iqac.ctaLink} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
+                  {menuData.iqac.ctaText} <ArrowRight size={18} />
+                </Link>
+              </div>
+
+              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+                <div className="grid grid-cols-2 gap-8">
+                  {menuData.iqac.sections.map((section, idx) => (
+                    <div key={idx} className="space-y-4">
+                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+                        {section.title}
+                      </h3>
+                      <ul className="space-y-3">
+                        {section.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Link href={link.href} className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group">
+                              <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+                              {link.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -600,26 +550,44 @@ const Navbar: React.FC = () => {
 
       {activeDropdown === 'placements' && (
         <div 
-          className="dropdown-container fixed left-0 right-0 z-40"
-          style={{ top: scrolled ? '100px' : '100px' }}
+          className="fixed left-0 right-0 z-50"
+          style={{ top: '100px' }}
           onMouseEnter={() => setActiveDropdown('placements')}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-8">
-            <div className="dropdown-card bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 max-w-3xl mx-auto">
-              <h2 className="text-2xl font-bold text-[#342D87] mb-6">Placements</h2>
-              <ul className="grid grid-cols-2 gap-4">
-                {menuData.placements.links.map((link, idx) => (
-                  <li key={idx}>
-                    <Link 
-                      href={link.href} 
-                      className="text-sm text-gray-600 hover:text-[#342D87] hover:translate-x-2 transition-all duration-200 block py-2"
-                    >
-                      → {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          <div className="max-w-6xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">{menuData.placements.title}</h2>
+                  <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.placements.description}</p>
+                </div>
+                <Link href={menuData.placements.ctaLink} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
+                  {menuData.placements.ctaText} <ArrowRight size={18} />
+                </Link>
+              </div>
+
+              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+                <div className="grid grid-cols-3 gap-8">
+                  {menuData.placements.sections.map((section, idx) => (
+                    <div key={idx} className="space-y-4">
+                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+                        {section.title}
+                      </h3>
+                      <ul className="space-y-3">
+                        {section.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Link href={link.href} className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group">
+                              <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+                              {link.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -627,253 +595,28 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-          mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setMobileMenuOpen(false)}
       />
       
       <div
-        className={`lg:hidden fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 transform transition-transform duration-300 overflow-y-auto ${
-          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={`lg:hidden fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 transform transition-transform duration-300 overflow-y-auto ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="p-6">
-          <button
-            onClick={() => setMobileMenuOpen(false)}
-            className="mb-6 p-2 hover:bg-gray-100 rounded-full transition"
-          >
+          <button onClick={() => setMobileMenuOpen(false)} className="mb-6 p-2 hover:bg-gray-100 rounded-full transition">
             <XIcon size={24} className="text-gray-700" />
           </button>
-
           <nav className="space-y-4">
-            <div>
-              <button
-                onClick={() => setMobileDropdown(mobileDropdown === 'about' ? null : 'about')}
-                className="flex items-center justify-between w-full text-left font-medium text-gray-900 hover:text-[#342D87] transition"
-              >
-                About <ChevronDown size={16} className={`transform transition-transform ${mobileDropdown === 'about' ? 'rotate-180' : ''}`} />
-              </button>
-              {mobileDropdown === 'about' && (
-                <div className="mt-3 ml-4 space-y-3">
-                  {menuData.about.sections.map((section, idx) => (
-                    <div key={idx}>
-                      <h4 className="font-semibold text-sm text-[#342D87] mb-2">{section.title}</h4>
-                      <ul className="space-y-2">
-                        {section.links.map((link, li) => (
-                          <li key={li}>
-                            <Link href={link.href} className="text-sm text-gray-600 hover:text-[#342D87] block">
-                              {link.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <button
-                onClick={() => setMobileDropdown(mobileDropdown === 'academics' ? null : 'academics')}
-                className="flex items-center justify-between w-full text-left font-medium text-gray-900 hover:text-[#342D87] transition"
-              >
-                Academics <ChevronDown size={16} className={`transform transition-transform ${mobileDropdown === 'academics' ? 'rotate-180' : ''}`} />
-              </button>
-              {mobileDropdown === 'academics' && (
-                <div className="mt-3 ml-4 space-y-3">
-                  {menuData.academics.sections.map((section, idx) => (
-                    <div key={idx}>
-                      <h4 className="font-semibold text-sm text-[#342D87] mb-2">{section.title}</h4>
-                      <ul className="space-y-2">
-                        {section.links.map((link, li) => (
-                          <li key={li}>
-                            <Link href={link.href} className="text-sm text-gray-600 hover:text-[#342D87] block">
-                              {link.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <Link href="/research" className="block font-medium text-gray-900 hover:text-[#342D87] transition">
-              Research
-            </Link>
-
-            <div>
-              <button
-                onClick={() => setMobileDropdown(mobileDropdown === 'campusLife' ? null : 'campusLife')}
-                className="flex items-center justify-between w-full text-left font-medium text-gray-900 hover:text-[#342D87] transition"
-              >
-                Campus Life <ChevronDown size={16} className={`transform transition-transform ${mobileDropdown === 'campusLife' ? 'rotate-180' : ''}`} />
-              </button>
-              {mobileDropdown === 'campusLife' && (
-                <div className="mt-3 ml-4 space-y-3">
-                  {menuData.campusLife.sections.map((section, idx) => (
-                    <div key={idx}>
-                      <h4 className="font-semibold text-sm text-[#342D87] mb-2">{section.title}</h4>
-                      <ul className="space-y-2">
-                        {section.links.map((link, li) => (
-                          <li key={li}>
-                            <Link href={link.href} className="text-sm text-gray-600 hover:text-[#342D87] block">
-                              {link.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <button
-                onClick={() => setMobileDropdown(mobileDropdown === 'studentEngagement' ? null : 'studentEngagement')}
-                className="flex items-center justify-between w-full text-left font-medium text-gray-900 hover:text-[#342D87] transition"
-              >
-                Student Engagement <ChevronDown size={16} className={`transform transition-transform ${mobileDropdown === 'studentEngagement' ? 'rotate-180' : ''}`} />
-              </button>
-              {mobileDropdown === 'studentEngagement' && (
-                <div className="mt-3 ml-4 space-y-3">
-                  {menuData.studentEngagement.sections.map((section, idx) => (
-                    <div key={idx}>
-                      <h4 className="font-semibold text-sm text-[#342D87] mb-2">{section.title}</h4>
-                      <ul className="space-y-2">
-                        {section.links.map((link, li) => (
-                          <li key={li}>
-                            <Link href={link.href} className="text-sm text-gray-600 hover:text-[#342D87] block">
-                              {link.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <button
-                onClick={() => setMobileDropdown(mobileDropdown === 'iqac' ? null : 'iqac')}
-                className="flex items-center justify-between w-full text-left font-medium text-gray-900 hover:text-[#342D87] transition"
-              >
-                IQAC <ChevronDown size={16} className={`transform transition-transform ${mobileDropdown === 'iqac' ? 'rotate-180' : ''}`} />
-              </button>
-              {mobileDropdown === 'iqac' && (
-                <div className="mt-3 ml-4">
-                  <ul className="space-y-2">
-                    {menuData.iqac.links.map((link, idx) => (
-                      <li key={idx}>
-                        <Link href={link.href} className="text-sm text-gray-600 hover:text-[#342D87] block">
-                          {link.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <div>
-              <button
-                onClick={() => setMobileDropdown(mobileDropdown === 'placements' ? null : 'placements')}
-                className="flex items-center justify-between w-full text-left font-medium text-gray-900 hover:text-[#342D87] transition"
-              >
-                Placements <ChevronDown size={16} className={`transform transition-transform ${mobileDropdown === 'placements' ? 'rotate-180' : ''}`} />
-              </button>
-              {mobileDropdown === 'placements' && (
-                <div className="mt-3 ml-4">
-                  <ul className="space-y-2">
-                    {menuData.placements.links.map((link, idx) => (
-                      <li key={idx}>
-                        <Link href={link.href} className="text-sm text-gray-600 hover:text-[#342D87] block">
-                          {link.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <Link href="/gallery" className="block font-medium text-gray-900 hover:text-[#342D87] transition">
-              Gallery
-            </Link>
-
-            <div className="pt-4 border-t">
-              <Link href="/alumni" className="block py-2 text-gray-700 hover:text-[#342D87]">Alumni</Link>
-              <Link href="/contact" className="block py-2 text-gray-700 hover:text-[#342D87]">Contact Us</Link>
-            </div>
+            <Link href="/about" className="block font-medium text-gray-900 hover:text-[#4640A8]">About</Link>
+            <Link href="/academics" className="block font-medium text-gray-900 hover:text-[#4640A8]">Academics</Link>
+            <Link href="/research" className="block font-medium text-gray-900 hover:text-[#4640A8]">Research</Link>
+            <Link href="/campus" className="block font-medium text-gray-900 hover:text-[#4640A8]">Campus Life</Link>
+            <Link href="/iqac" className="block font-medium text-gray-900 hover:text-[#4640A8]">IQAC</Link>
+            <Link href="/placements" className="block font-medium text-gray-900 hover:text-[#4640A8]">Placements</Link>
+            <Link href="/gallery" className="block font-medium text-gray-900 hover:text-[#4640A8]">Gallery</Link>
           </nav>
         </div>
       </div>
-
-      {/* Optimized CSS Animations */}
-      <style jsx global>{`
-        .dropdown-container {
-          animation: dropdownSlide 0.25s ease-out forwards;
-          will-change: opacity, transform;
-        }
-
-        .dropdown-card {
-          animation: cardFadeIn 0.3s ease-out forwards;
-          will-change: opacity, transform;
-        }
-
-        @keyframes dropdownSlide {
-          0% {
-            opacity: 0;
-            transform: translateY(-15px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes cardFadeIn {
-          0% {
-            opacity: 0;
-            transform: scale(0.98);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        /* Hardware acceleration for smooth animations */
-        .dropdown-container,
-        .dropdown-card {
-          transform: translateZ(0);
-          backface-visibility: hidden;
-          perspective: 1000px;
-        }
-
-        /* Prevent text overlap during animation */
-        .dropdown-card h2,
-        .dropdown-card h3,
-        .dropdown-card ul {
-          opacity: 0;
-          animation: textFadeIn 0.3s ease-out 0.1s forwards;
-        }
-
-        @keyframes textFadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </>
   );
 };
