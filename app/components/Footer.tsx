@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Twitter, Instagram, Send } from "lucide-react";
+import { Facebook, Twitter, Instagram, Send, Megaphone } from "lucide-react";
 import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -68,13 +68,14 @@ export default function Footer() {
 
             {/* Optional: Display current academic year info */}
             {academicYear && academicYear.isOpen && !yearLoading && (
-              <div className="mt-3 p-3 bg-[#342D87] rounded-lg">
+              <div className="mt-3 p-3 bg-[#342D87] rounded-lg max-w-58 animate-breathe">
                 <p className="text-xs text-gray-200">
                   Now accepting applications for
                 </p>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-white flex items-center gap-2">
+                  <Megaphone size={16} className="animate-pulse" />
                   Academic Year {academicYear.start}-
-          {parseInt(academicYear.start) + 1}
+                  {parseInt(academicYear.start) + 1}
                 </p>
               </div>
             )}
@@ -124,7 +125,7 @@ export default function Footer() {
             {academicYear && (
               <span className="ml-2 text-gray-500">
                 | Academic Year {academicYear.start}-
-          {parseInt(academicYear.start) + 1}
+                {parseInt(academicYear.start) + 1}
               </span>
             )}
           </p>
@@ -144,21 +145,21 @@ export default function Footer() {
 
           {/* SOCIALS */}
           <div className="flex items-center gap-4">
-            <SocialIcon 
-              icon={<Facebook className="w-4 h-4" />} 
-              href="https://facebook.com/loyolacollege" 
+            <SocialIcon
+              icon={<Facebook className="w-4 h-4" />}
+              href="https://facebook.com/loyolacollege"
             />
-            <SocialIcon 
-              icon={<Twitter className="w-4 h-4" />} 
-              href="https://twitter.com/loyolacollege" 
+            <SocialIcon
+              icon={<Twitter className="w-4 h-4" />}
+              href="https://twitter.com/loyolacollege"
             />
-            <SocialIcon 
-              icon={<Instagram className="w-4 h-4" />} 
-              href="https://instagram.com/loyolacollege" 
+            <SocialIcon
+              icon={<Instagram className="w-4 h-4" />}
+              href="https://instagram.com/loyolacollege"
             />
-            <SocialIcon 
-              icon={<Send className="w-4 h-4" />} 
-              href="https://t.me/loyolacollege" 
+            <SocialIcon
+              icon={<Send className="w-4 h-4" />}
+              href="https://t.me/loyolacollege"
             />
           </div>
         </div>
@@ -168,6 +169,19 @@ export default function Footer() {
       <style jsx>{`
         .clip-diagonal {
           clip-path: polygon(60% 0, 100% 0, 100% 100%, 35% 100%);
+        }
+        @keyframes breathe {
+          0%,
+          100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.10);
+          }
+        }
+
+        .animate-breathe {
+          animation: breathe 3s ease-in-out infinite;
         }
       `}</style>
     </footer>
@@ -199,13 +213,7 @@ function FooterCol({
   );
 }
 
-function SocialIcon({ 
-  icon, 
-  href 
-}: { 
-  icon: React.ReactNode; 
-  href: string; 
-}) {
+function SocialIcon({ icon, href }: { icon: React.ReactNode; href: string }) {
   return (
     <a
       href={href}

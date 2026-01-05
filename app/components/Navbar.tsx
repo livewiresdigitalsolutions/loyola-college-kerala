@@ -1107,7 +1107,7 @@ const Navbar: React.FC = () => {
       {activeDropdown === "about" && (
         <div
           className="fixed left-0 right-0 z-50"
-          style={{ top: "100px" }}
+          style={{ top: "117px" }}
           onMouseEnter={() => setActiveDropdown("about")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
@@ -1182,14 +1182,25 @@ const Navbar: React.FC = () => {
       {activeDropdown === "academics" && (
         <div
           className="fixed left-0 right-0 z-50"
-          style={{ top: "100px" }}
+          style={{ top: "117px" }}
           onMouseEnter={() => setActiveDropdown("academics")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
-                <div>
+              
+              <div
+                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                style={{
+                  backgroundImage: "url(/assets/loyola-building.png)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+
+                <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
                     {menuData.academics.title}
                   </h2>
@@ -1199,13 +1210,13 @@ const Navbar: React.FC = () => {
                 </div>
                 <Link
                   href={menuData.academics.ctaLink}
-                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10"
                 >
                   {menuData.academics.ctaText} <ArrowRight size={18} />
                 </Link>
               </div>
 
-              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+              <div className="flex-1 bg-white p-8 border-l border-gray-100 ">
                 <div className="grid grid-cols-3 gap-8">
                   {menuData.academics.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
@@ -1240,14 +1251,24 @@ const Navbar: React.FC = () => {
       {activeDropdown === "campusLife" && (
         <div
           className="fixed left-0 right-0 z-50"
-          style={{ top: "100px" }}
+          style={{ top: "117px" }}
           onMouseEnter={() => setActiveDropdown("campusLife")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+          <div className="max-w-7xl ml-auto mr-30 px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
-                <div>
+<div
+                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                style={{
+                  backgroundImage: "url(/assets/loyola-building.png)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+
+                <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
                     {menuData.campusLife.title}
                   </h2>
@@ -1257,7 +1278,7 @@ const Navbar: React.FC = () => {
                 </div>
                 <Link
                   href={menuData.campusLife.ctaLink}
-                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10"
                 >
                   {menuData.campusLife.ctaText} <ArrowRight size={18} />
                 </Link>
@@ -1298,14 +1319,23 @@ const Navbar: React.FC = () => {
       {activeDropdown === "iqac" && (
         <div
           className="fixed left-0 right-0 z-50"
-          style={{ top: "100px" }}
+          style={{ top: "117px" }}
           onMouseEnter={() => setActiveDropdown("iqac")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-5xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+          <div className="max-w-5xl ml-auto mr-30 px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
-                <div>
+<div
+                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                style={{
+                  backgroundImage: "url(/assets/loyola-building.png)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+                <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
                     {menuData.iqac.title}
                   </h2>
@@ -1315,7 +1345,7 @@ const Navbar: React.FC = () => {
                 </div>
                 <Link
                   href={menuData.iqac.ctaLink}
-                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10"
                 >
                   {menuData.iqac.ctaText} <ArrowRight size={18} />
                 </Link>
@@ -1356,14 +1386,24 @@ const Navbar: React.FC = () => {
       {activeDropdown === "placements" && (
         <div
           className="fixed left-0 right-0 z-50"
-          style={{ top: "100px" }}
+          style={{ top: "117px" }}
           onMouseEnter={() => setActiveDropdown("placements")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-6xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+          <div className="max-w-6xl ml-auto mr-2 px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-              <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
-                <div>
+<div
+                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                style={{
+                  backgroundImage: "url(/assets/loyola-building.png)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+
+                <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
                     {menuData.placements.title}
                   </h2>
@@ -1373,7 +1413,7 @@ const Navbar: React.FC = () => {
                 </div>
                 <Link
                   href={menuData.placements.ctaLink}
-                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10"
                 >
                   {menuData.placements.ctaText} <ArrowRight size={18} />
                 </Link>
