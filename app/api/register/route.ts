@@ -4,7 +4,7 @@ import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcrypt';
 
-const isDevelopment = process.env.DB_TYPE === 'supabase';
+const useSupabase = process.env.DB_TYPE === 'supabase';
 const SALT_ROUNDS = 10;
 
 const mysqlConfig = {
@@ -30,13 +30,13 @@ interface RegistrationData {
   degreeId: number;
   courseId: number;
   consent: boolean;
-  academicYear: string;
+  academicYear: string; // e.g. "2025-2026"
 }
 
-// Fetch configuration value
+// Generic helper to read a config key
 async function fetchConfigValue(key: string): Promise<string | null> {
   try {
-    if (isDevelopment) {
+    if (useSupabase) {
       const { data, error } = await supabase
         .from('configuration_values')
         .select('value')
@@ -44,7 +44,7 @@ async function fetchConfigValue(key: string): Promise<string | null> {
         .single();
 
       if (error) throw error;
-      return data?.value || null;
+      return data?.value ?? null;
     } else {
       const connection = await mysql.createConnection(mysqlConfig);
       const [rows] = await connection.execute(
@@ -52,7 +52,7 @@ async function fetchConfigValue(key: string): Promise<string | null> {
         [key]
       );
       await connection.end();
-      
+
       const result = rows as any[];
       return result.length > 0 ? result[0].value : null;
     }
@@ -62,9 +62,21 @@ async function fetchConfigValue(key: string): Promise<string | null> {
   }
 }
 
+// Build academic year label from current_academic_year
+async function getAcademicYearLabel(): Promise<string | null> {
+  const currentYearStr = await fetchConfigValue('current_academic_year');
+  if (!currentYearStr) return null;
+
+  const start = parseInt(currentYearStr, 10);
+  if (Number.isNaN(start)) return null;
+
+  const end = start + 1;
+  return `${start}-${end}`; // e.g. "2025-2026"
+}
+
 async function registerWithMySQL(data: RegistrationData) {
   const connection = await mysql.createConnection(mysqlConfig);
-  
+
   try {
     await connection.beginTransaction();
 
@@ -88,7 +100,7 @@ async function registerWithMySQL(data: RegistrationData) {
 
     if (Array.isArray(existingCred) && existingCred.length > 0) {
       const existingUser = existingCred[0] as any;
-      
+
       // If user exists but not as admission enquiry, update the flag
       if (!existingUser.is_admission_enquiry) {
         await connection.execute(
@@ -97,7 +109,7 @@ async function registerWithMySQL(data: RegistrationData) {
         );
       }
     } else {
-      // New user - create credentials
+      // New user - create credentials (mobile number as password)
       isNewCredential = true;
       const passwordHash = await bcrypt.hash(data.mobileNumber, SALT_ROUNDS);
 
@@ -107,7 +119,7 @@ async function registerWithMySQL(data: RegistrationData) {
       );
     }
 
-    // Insert into admission_enquiry with academic year
+    // Insert into admission_enquiry with academic year label
     await connection.execute(
       `INSERT INTO admission_enquiry 
        (name, email, mobile_number, state, city, program_level_id, degree_id, course_id, consent, academic_year) 
@@ -138,23 +150,32 @@ async function registerWithMySQL(data: RegistrationData) {
 
 async function registerWithSupabase(data: RegistrationData) {
   // Check if email already exists for this academic year
-  const { data: existingEnquiry } = await supabase
+  const { data: existingEnquiry, error: existingEnquiryError } = await supabase
     .from('admission_enquiry')
     .select('email')
     .eq('email', data.email)
     .eq('academic_year', data.academicYear)
-    .single();
+    .maybeSingle(); // avoid throwing if none
+
+  if (existingEnquiryError && existingEnquiryError.code !== 'PGRST116') {
+    // PGRST116 = no rows found; anything else is real error
+    throw existingEnquiryError;
+  }
 
   if (existingEnquiry) {
     throw new Error('Already registered for this academic year');
   }
 
   // Check if email exists in user_credentials
-  const { data: existingCred } = await supabase
+  const { data: existingCred, error: existingCredError } = await supabase
     .from('user_credentials')
     .select('email, is_admission_enquiry')
     .eq('email', data.email)
-    .single();
+    .maybeSingle();
+
+  if (existingCredError && existingCredError.code !== 'PGRST116') {
+    throw existingCredError;
+  }
 
   let isNewCredential = false;
 
@@ -175,16 +196,16 @@ async function registerWithSupabase(data: RegistrationData) {
 
     const { error: credError } = await supabase
       .from('user_credentials')
-      .insert({ 
-        email: data.email, 
+      .insert({
+        email: data.email,
         password_hash: passwordHash,
-        is_admission_enquiry: true
+        is_admission_enquiry: true,
       });
 
     if (credError) throw credError;
   }
 
-  // Insert into admission_enquiry with academic year
+  // Insert into admission_enquiry with academic year label
   const { error: enquiryError } = await supabase
     .from('admission_enquiry')
     .insert({
@@ -209,22 +230,28 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Fetch academic year configuration
-    const admissionsOpen = await fetchConfigValue('admissions_open');
-    const academicYearLabel = await fetchConfigValue('academic_year_label');
+    // Fetch config flags
+    const admissionsOpen = await fetchConfigValue('is_admissions_open');
+    const academicYearLabel = await getAcademicYearLabel();
 
     // Check if admissions are open
     if (admissionsOpen !== 'true') {
       return NextResponse.json(
-        { error: 'Admissions are currently closed. Please check back later.' },
+        {
+          error:
+            'Admissions are currently closed. Please check back later.',
+        },
         { status: 400 }
       );
     }
 
-    // Check if academic year is configured
+    // Check if academic year is configured correctly
     if (!academicYearLabel) {
       return NextResponse.json(
-        { error: 'Academic year not configured. Please contact administration.' },
+        {
+          error:
+            'Academic year not configured correctly. Please contact administration.',
+        },
         { status: 400 }
       );
     }
@@ -235,15 +262,19 @@ export async function POST(request: Request) {
       mobileNumber: body.mobileNumber,
       state: body.state,
       city: body.city,
-      programId: parseInt(body.programId),
-      degreeId: parseInt(body.degreeId),
-      courseId: parseInt(body.courseId),
+      programId: parseInt(body.programId, 10),
+      degreeId: parseInt(body.degreeId, 10),
+      courseId: parseInt(body.courseId, 10),
       consent: body.consent,
-      academicYear: academicYearLabel,
+      academicYear: academicYearLabel, // e.g. "2025-2026"
     };
 
     // Validate required fields
-    if (!registrationData.name || !registrationData.email || !registrationData.mobileNumber) {
+    if (
+      !registrationData.name ||
+      !registrationData.email ||
+      !registrationData.mobileNumber
+    ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -258,22 +289,37 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = isDevelopment
+    // Validate IDs are numbers
+    if (
+      Number.isNaN(registrationData.programId) ||
+      Number.isNaN(registrationData.degreeId) ||
+      Number.isNaN(registrationData.courseId)
+    ) {
+      return NextResponse.json(
+        { error: 'Invalid program, degree, or course selected.' },
+        { status: 400 }
+      );
+    }
+
+    const result = useSupabase
       ? await registerWithSupabase(registrationData)
       : await registerWithMySQL(registrationData);
 
     return NextResponse.json({
       success: true,
-      message: result.isNewCredential 
+      message: result.isNewCredential
         ? `Registration successful for ${academicYearLabel}! Please login with your email and mobile number.`
         : `Registration successful for ${academicYearLabel}! You can login with your existing credentials.`,
     });
   } catch (error: any) {
     console.error('Registration error:', error);
-    
-    if (error.message === 'Already registered for this academic year') {
+
+    if (error?.message === 'Already registered for this academic year') {
       return NextResponse.json(
-        { error: 'You have already registered for this academic year. Please login to continue.' },
+        {
+          error:
+            'You have already registered for this academic year. Please login to continue.',
+        },
         { status: 409 }
       );
     }
