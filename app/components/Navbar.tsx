@@ -219,7 +219,7 @@
 //     <>
 //       <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled ? 'bg-white shadow-md' : 'bg-transparent'}`}>
 //         {/* Top bar */}
-//         <div className={`px-4 md:px-8 lg:px-20 text-white transition-colors duration-300 ${scrolled ? 'bg-[#4640A8]' : 'bg-transparent'}`}>
+//         <div className={`px-4 md:px-8 lg:px-20 text-white transition-colors duration-300 ${scrolled ? 'bg-primary' : 'bg-transparent'}`}>
 //           <div className="flex items-center justify-between py-2.5 text-sm">
 //             <div className="flex items-center gap-3 md:gap-4">
 //               <Link href="#" aria-label="Instagram" className="hover:opacity-75 transition">
@@ -255,7 +255,7 @@
 //                 <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70" />
 //               </div>
 
-//               <button className="bg-[#4640A8] hover:bg-[#3832A0] text-white px-4 py-1.5 rounded-md text-sm font-medium transition">
+//               <button className="bg-primary hover:bg-[#3832A0] text-white px-4 py-1.5 rounded-md text-sm font-medium transition">
 //                 Login
 //               </button>
 //             </div>
@@ -291,7 +291,7 @@
 //                 onMouseEnter={() => setActiveDropdown('about')}
 //                 onMouseLeave={() => setActiveDropdown(null)}
 //               >
-//                 <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+//                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
 //                   About <ChevronDown size={16} />
 //                 </div>
 //               </div>
@@ -301,19 +301,19 @@
 //                 onMouseEnter={() => setActiveDropdown('academics')}
 //                 onMouseLeave={() => setActiveDropdown(null)}
 //               >
-//                 <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+//                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
 //                   Academics <ChevronDown size={16} />
 //                 </div>
 //               </div>
 
-//               <Link href="/research" className="hover:text-[#4640A8] transition">Research</Link>
+//               <Link href="/research" className="hover:text-primary transition">Research</Link>
 
 //               <div
 //                 className="relative"
 //                 onMouseEnter={() => setActiveDropdown('campusLife')}
 //                 onMouseLeave={() => setActiveDropdown(null)}
 //               >
-//                 <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition whitespace-nowrap">
+//                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition whitespace-nowrap">
 //                   Campus Life <ChevronDown size={16} />
 //                 </div>
 //               </div>
@@ -323,7 +323,7 @@
 //                 onMouseEnter={() => setActiveDropdown('iqac')}
 //                 onMouseLeave={() => setActiveDropdown(null)}
 //               >
-//                 <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+//                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
 //                   IQAC <ChevronDown size={16} />
 //                 </div>
 //               </div>
@@ -333,12 +333,12 @@
 //                 onMouseEnter={() => setActiveDropdown('placements')}
 //                 onMouseLeave={() => setActiveDropdown(null)}
 //               >
-//                 <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+//                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
 //                   Placements <ChevronDown size={16} />
 //                 </div>
 //               </div>
 
-//               <Link href="/gallery" className="hover:text-[#4640A8] transition">Gallery</Link>
+//               <Link href="/gallery" className="hover:text-primary transition">Gallery</Link>
 //             </nav>
 //           </div>
 //         </div>
@@ -363,7 +363,7 @@
 //           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
 //             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
 //               {/* Left Blue Sidebar */}
-//               <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+//               <div className="w-80 bg-gradient-to-br from-primary to-primary text-white p-8 flex flex-col justify-between">
 //                 <div>
 //                   <h2 className="text-2xl font-bold mb-4 leading-tight">
 //                     {menuData.about.title}
@@ -385,7 +385,7 @@
 //                 <div className="grid grid-cols-3 gap-8">
 //                   {menuData.about.sections.map((section, idx) => (
 //                     <div key={idx} className="space-y-4">
-//                       <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+//                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
 //                         {section.title}
 //                       </h3>
 //                       <ul className="space-y-3">
@@ -395,8 +395,8 @@
 //                               href={link.href}
 //                               className="block group"
 //                             >
-//                               <div className="text-sm font-medium text-gray-800 group-hover:text-[#4640A8] transition flex items-start gap-2">
-//                                 <ChevronDown size={16} className="mt-0.5 rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+//                               <div className="text-sm font-medium text-gray-800 group-hover:text-primary transition flex items-start gap-2">
+//                                 <ChevronDown size={16} className="mt-0.5 rotate-[-90deg] text-gray-400 group-hover:text-primary" />
 //                                 <span>{link.name}</span>
 //                               </div>
 //                               {link.subtitle && (
@@ -424,7 +424,7 @@
 //         >
 //           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
 //             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-//               <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+//               <div className="w-80 bg-gradient-to-br from-primary to-primary text-white p-8 flex flex-col justify-between">
 //                 <div>
 //                   <h2 className="text-2xl font-bold mb-4">{menuData.academics.title}</h2>
 //                   <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.academics.description}</p>
@@ -438,12 +438,12 @@
 //                 <div className="grid grid-cols-3 gap-8">
 //                   {menuData.academics.sections.map((section, idx) => (
 //                     <div key={idx} className="space-y-4">
-//                       <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">{section.title}</h3>
+//                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">{section.title}</h3>
 //                       <ul className="space-y-3">
 //                         {section.links.map((link, linkIdx) => (
 //                           <li key={linkIdx}>
-//                             <Link href={link.href} className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group">
-//                               <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+//                             <Link href={link.href} className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group">
+//                               <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-primary" />
 //                               {link.name}
 //                             </Link>
 //                           </li>
@@ -467,7 +467,7 @@
 //         >
 //           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
 //             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-//               <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+//               <div className="w-80 bg-gradient-to-br from-primary to-primary text-white p-8 flex flex-col justify-between">
 //                 <div>
 //                   <h2 className="text-2xl font-bold mb-4">{menuData.campusLife.title}</h2>
 //                   <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.campusLife.description}</p>
@@ -481,14 +481,14 @@
 //                 <div className="grid grid-cols-5 gap-6">
 //                   {menuData.campusLife.sections.map((section, idx) => (
 //                     <div key={idx} className="space-y-4">
-//                       <h3 className="text-[#252565] font-bold text-sm pb-2 border-b-2 border-gray-200">
+//                       <h3 className="text-primary font-bold text-sm pb-2 border-b-2 border-gray-200">
 //                         {section.title}
 //                       </h3>
 //                       <ul className="space-y-2">
 //                         {section.links.map((link, linkIdx) => (
 //                           <li key={linkIdx}>
-//                             <Link href={link.href} className="text-xs text-gray-700 hover:text-[#4640A8] transition flex items-center gap-1 group">
-//                               <ChevronDown size={14} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+//                             <Link href={link.href} className="text-xs text-gray-700 hover:text-primary transition flex items-center gap-1 group">
+//                               <ChevronDown size={14} className="rotate-[-90deg] text-gray-400 group-hover:text-primary" />
 //                               {link.name}
 //                             </Link>
 //                           </li>
@@ -512,7 +512,7 @@
 //         >
 //           <div className="max-w-5xl mx-auto px-4 md:px-8 lg:px-20 py-4">
 //             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-//               <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+//               <div className="w-80 bg-gradient-to-br from-primary to-primary text-white p-8 flex flex-col justify-between">
 //                 <div>
 //                   <h2 className="text-2xl font-bold mb-4">{menuData.iqac.title}</h2>
 //                   <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.iqac.description}</p>
@@ -526,14 +526,14 @@
 //                 <div className="grid grid-cols-2 gap-8">
 //                   {menuData.iqac.sections.map((section, idx) => (
 //                     <div key={idx} className="space-y-4">
-//                       <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+//                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
 //                         {section.title}
 //                       </h3>
 //                       <ul className="space-y-3">
 //                         {section.links.map((link, linkIdx) => (
 //                           <li key={linkIdx}>
-//                             <Link href={link.href} className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group">
-//                               <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+//                             <Link href={link.href} className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group">
+//                               <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-primary" />
 //                               {link.name}
 //                             </Link>
 //                           </li>
@@ -557,7 +557,7 @@
 //         >
 //           <div className="max-w-6xl mx-auto px-4 md:px-8 lg:px-20 py-4">
 //             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-//               <div className="w-80 bg-gradient-to-br from-[#4640A8] to-[#3530A0] text-white p-8 flex flex-col justify-between">
+//               <div className="w-80 bg-gradient-to-br from-primary to-primary text-white p-8 flex flex-col justify-between">
 //                 <div>
 //                   <h2 className="text-2xl font-bold mb-4">{menuData.placements.title}</h2>
 //                   <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.placements.description}</p>
@@ -571,14 +571,14 @@
 //                 <div className="grid grid-cols-3 gap-8">
 //                   {menuData.placements.sections.map((section, idx) => (
 //                     <div key={idx} className="space-y-4">
-//                       <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+//                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
 //                         {section.title}
 //                       </h3>
 //                       <ul className="space-y-3">
 //                         {section.links.map((link, linkIdx) => (
 //                           <li key={linkIdx}>
-//                             <Link href={link.href} className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group">
-//                               <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]" />
+//                             <Link href={link.href} className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group">
+//                               <ChevronDown size={16} className="rotate-[-90deg] text-gray-400 group-hover:text-primary" />
 //                               {link.name}
 //                             </Link>
 //                           </li>
@@ -607,13 +607,13 @@
 //             <XIcon size={24} className="text-gray-700" />
 //           </button>
 //           <nav className="space-y-4">
-//             <Link href="/about" className="block font-medium text-gray-900 hover:text-[#4640A8]">About</Link>
-//             <Link href="/academics" className="block font-medium text-gray-900 hover:text-[#4640A8]">Academics</Link>
-//             <Link href="/research" className="block font-medium text-gray-900 hover:text-[#4640A8]">Research</Link>
-//             <Link href="/campus" className="block font-medium text-gray-900 hover:text-[#4640A8]">Campus Life</Link>
-//             <Link href="/iqac" className="block font-medium text-gray-900 hover:text-[#4640A8]">IQAC</Link>
-//             <Link href="/placements" className="block font-medium text-gray-900 hover:text-[#4640A8]">Placements</Link>
-//             <Link href="/gallery" className="block font-medium text-gray-900 hover:text-[#4640A8]">Gallery</Link>
+//             <Link href="/about" className="block font-medium text-gray-900 hover:text-primary">About</Link>
+//             <Link href="/academics" className="block font-medium text-gray-900 hover:text-primary">Academics</Link>
+//             <Link href="/research" className="block font-medium text-gray-900 hover:text-primary">Research</Link>
+//             <Link href="/campus" className="block font-medium text-gray-900 hover:text-primary">Campus Life</Link>
+//             <Link href="/iqac" className="block font-medium text-gray-900 hover:text-primary">IQAC</Link>
+//             <Link href="/placements" className="block font-medium text-gray-900 hover:text-primary">Placements</Link>
+//             <Link href="/gallery" className="block font-medium text-gray-900 hover:text-primary">Gallery</Link>
 //           </nav>
 //         </div>
 //       </div>
@@ -922,7 +922,7 @@ const Navbar: React.FC = () => {
         {/* Top bar */}
         <div
           className={`px-4 md:px-8 lg:px-20 text-white transition-colors duration-300 ${
-            scrolled ? "bg-[#4640A8]" : "bg-transparent"
+            scrolled ? "bg-primary" : "bg-transparent"
           }`}
         >
           <div className="flex items-center justify-between py-2.5 text-sm">
@@ -987,9 +987,9 @@ const Navbar: React.FC = () => {
                 />
               </div>
 
-              <button className="bg-[#4640A8] hover:bg-[#3832A0] text-white px-4 py-1.5 rounded-md text-sm font-medium transition">
+              {/* <button className="bg-primary hover:bg-[#3832A0] text-white px-4 py-1.5 rounded-md text-sm font-medium transition">
                 Login
-              </button>
+              </button> */}
             </div>
 
             <button
@@ -1020,7 +1020,7 @@ const Navbar: React.FC = () => {
               <Image
                 src={
                   scrolled
-                    ? "/assets/loyoladarklogo.png"
+                    ? "/assets/loyolalogogreen.png"
                     : "/assets/loyolalogo.png"
                 }
                 alt="Loyola College"
@@ -1038,7 +1038,7 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown("about")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   About <ChevronDown size={16} />
                 </div>
               </div>
@@ -1048,14 +1048,14 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown("academics")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   Academics <ChevronDown size={16} />
                 </div>
               </div>
 
               <Link
                 href="/research"
-                className="hover:text-[#4640A8] transition"
+                className="hover:text-primary transition"
               >
                 Research
               </Link>
@@ -1065,7 +1065,7 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown("campusLife")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition whitespace-nowrap">
+                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition whitespace-nowrap">
                   Campus Life <ChevronDown size={16} />
                 </div>
               </div>
@@ -1075,7 +1075,7 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown("iqac")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   IQAC <ChevronDown size={16} />
                 </div>
               </div>
@@ -1085,12 +1085,12 @@ const Navbar: React.FC = () => {
                 onMouseEnter={() => setActiveDropdown("placements")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-[#4640A8] transition">
+                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   Placements <ChevronDown size={16} />
                 </div>
               </div>
 
-              <Link href="/gallery" className="hover:text-[#4640A8] transition">
+              <Link href="/gallery" className="hover:text-primary transition">
                 Gallery
               </Link>
             </nav>
@@ -1115,7 +1115,7 @@ const Navbar: React.FC = () => {
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
               {/* Left Blue Sidebar with Background Image */}
               <div
-                className="w-80 bg-gradient-to-br from-[#4640A8]/95 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                className="w-80 bg-gradient-to-br from-primary/95 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
                   backgroundImage: "url(/assets/loyola-building.png)",
                   backgroundSize: "cover",
@@ -1123,7 +1123,7 @@ const Navbar: React.FC = () => {
                 }}
               >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/90 z-0" />
 
                 <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4 leading-tight">
@@ -1146,17 +1146,17 @@ const Navbar: React.FC = () => {
                 <div className="grid grid-cols-3 gap-8">
                   {menuData.about.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
-                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+                      <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
                       <ul className="space-y-3">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
                             <Link href={link.href} className="block group">
-                              <div className="text-sm font-medium text-gray-800 group-hover:text-[#4640A8] transition flex items-start gap-2">
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-primary transition flex items-start gap-2">
                                 <ChevronDown
                                   size={16}
-                                  className="mt-0.5 rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]"
+                                  className="mt-0.5 rotate-[-90deg] text-gray-400 group-hover:text-primary"
                                 />
                                 <span>{link.name}</span>
                               </div>
@@ -1190,7 +1190,7 @@ const Navbar: React.FC = () => {
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
               
               <div
-                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
                   backgroundImage: "url(/assets/loyola-building.png)",
                   backgroundSize: "cover",
@@ -1198,7 +1198,7 @@ const Navbar: React.FC = () => {
                 }}
               >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/90 z-0" />
 
                 <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
@@ -1220,7 +1220,7 @@ const Navbar: React.FC = () => {
                 <div className="grid grid-cols-3 gap-8">
                   {menuData.academics.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
-                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+                      <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
                       <ul className="space-y-3">
@@ -1228,11 +1228,11 @@ const Navbar: React.FC = () => {
                           <li key={linkIdx}>
                             <Link
                               href={link.href}
-                              className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group"
+                              className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group"
                             >
                               <ChevronDown
                                 size={16}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]"
+                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
                               />
                               {link.name}
                             </Link>
@@ -1258,7 +1258,7 @@ const Navbar: React.FC = () => {
           <div className="max-w-7xl ml-auto mr-30 px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
 <div
-                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
                   backgroundImage: "url(/assets/loyola-building.png)",
                   backgroundSize: "cover",
@@ -1266,7 +1266,7 @@ const Navbar: React.FC = () => {
                 }}
               >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/90 z-0" />
 
                 <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
@@ -1288,7 +1288,7 @@ const Navbar: React.FC = () => {
                 <div className="grid grid-cols-5 gap-6">
                   {menuData.campusLife.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
-                      <h3 className="text-[#252565] font-bold text-sm pb-2 border-b-2 border-gray-200">
+                      <h3 className="text-primary font-bold text-sm pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
                       <ul className="space-y-2">
@@ -1296,11 +1296,11 @@ const Navbar: React.FC = () => {
                           <li key={linkIdx}>
                             <Link
                               href={link.href}
-                              className="text-xs text-gray-700 hover:text-[#4640A8] transition flex items-center gap-1 group"
+                              className="text-xs text-gray-700 hover:text-primary transition flex items-center gap-1 group"
                             >
                               <ChevronDown
                                 size={14}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]"
+                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
                               />
                               {link.name}
                             </Link>
@@ -1326,7 +1326,7 @@ const Navbar: React.FC = () => {
           <div className="max-w-5xl ml-auto mr-30 px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
 <div
-                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
                   backgroundImage: "url(/assets/loyola-building.png)",
                   backgroundSize: "cover",
@@ -1334,7 +1334,7 @@ const Navbar: React.FC = () => {
                 }}
               >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/90 z-0" />
                 <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
                     {menuData.iqac.title}
@@ -1355,7 +1355,7 @@ const Navbar: React.FC = () => {
                 <div className="grid grid-cols-2 gap-8">
                   {menuData.iqac.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
-                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+                      <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
                       <ul className="space-y-3">
@@ -1363,11 +1363,11 @@ const Navbar: React.FC = () => {
                           <li key={linkIdx}>
                             <Link
                               href={link.href}
-                              className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group"
+                              className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group"
                             >
                               <ChevronDown
                                 size={16}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]"
+                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
                               />
                               {link.name}
                             </Link>
@@ -1393,7 +1393,7 @@ const Navbar: React.FC = () => {
           <div className="max-w-6xl ml-auto mr-2 px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
 <div
-                className="w-80 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
+                className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
                   backgroundImage: "url(/assets/loyola-building.png)",
                   backgroundSize: "cover",
@@ -1401,7 +1401,7 @@ const Navbar: React.FC = () => {
                 }}
               >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#4640A8]/90 to-[#3530A0]/90 z-0" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/90 z-0" />
 
                 <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
@@ -1423,7 +1423,7 @@ const Navbar: React.FC = () => {
                 <div className="grid grid-cols-3 gap-8">
                   {menuData.placements.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
-                      <h3 className="text-[#252565] font-bold text-base pb-2 border-b-2 border-gray-200">
+                      <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
                       <ul className="space-y-3">
@@ -1431,11 +1431,11 @@ const Navbar: React.FC = () => {
                           <li key={linkIdx}>
                             <Link
                               href={link.href}
-                              className="text-sm text-gray-700 hover:text-[#4640A8] transition flex items-center gap-2 group"
+                              className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group"
                             >
                               <ChevronDown
                                 size={16}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-[#4640A8]"
+                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
                               />
                               {link.name}
                             </Link>
@@ -1474,43 +1474,43 @@ const Navbar: React.FC = () => {
           <nav className="space-y-4">
             <Link
               href="/about"
-              className="block font-medium text-gray-900 hover:text-[#4640A8]"
+              className="block font-medium text-gray-900 hover:text-primary"
             >
               About
             </Link>
             <Link
               href="/academics"
-              className="block font-medium text-gray-900 hover:text-[#4640A8]"
+              className="block font-medium text-gray-900 hover:text-primary"
             >
               Academics
             </Link>
             <Link
               href="/research"
-              className="block font-medium text-gray-900 hover:text-[#4640A8]"
+              className="block font-medium text-gray-900 hover:text-primary"
             >
               Research
             </Link>
             <Link
               href="/campus"
-              className="block font-medium text-gray-900 hover:text-[#4640A8]"
+              className="block font-medium text-gray-900 hover:text-primary"
             >
               Campus Life
             </Link>
             <Link
               href="/iqac"
-              className="block font-medium text-gray-900 hover:text-[#4640A8]"
+              className="block font-medium text-gray-900 hover:text-primary"
             >
               IQAC
             </Link>
             <Link
               href="/placements"
-              className="block font-medium text-gray-900 hover:text-[#4640A8]"
+              className="block font-medium text-gray-900 hover:text-primary"
             >
               Placements
             </Link>
             <Link
               href="/gallery"
-              className="block font-medium text-gray-900 hover:text-[#4640A8]"
+              className="block font-medium text-gray-900 hover:text-primary"
             >
               Gallery
             </Link>

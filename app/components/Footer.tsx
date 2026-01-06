@@ -17,9 +17,9 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative w-full bg-[#1F2227] text-white overflow-hidden">
+    <footer className="relative w-full bg-green-950 text-white overflow-hidden">
       {/* Diagonal overlay */}
-      <div className="absolute inset-0 bg-[#2A2D32] clip-diagonal pointer-events-none" />
+      <div className="absolute inset-0 bg-primary clip-diagonal pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-6 py-16">
         {/* TOP GRID */}
@@ -68,7 +68,7 @@ export default function Footer() {
 
             {/* Optional: Display current academic year info */}
             {academicYear && academicYear.isOpen && !yearLoading && (
-              <div className="mt-3 p-3 bg-[#342D87] rounded-lg max-w-58 animate-breathe">
+              <div className="mt-3 p-3 bg-primary rounded-lg max-w-58 animate-breathe border border-white">
                 <p className="text-xs text-gray-200">
                   Now accepting applications for
                 </p>

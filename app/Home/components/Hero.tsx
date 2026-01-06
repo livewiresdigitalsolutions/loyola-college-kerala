@@ -336,7 +336,7 @@ const Hero: React.FC = () => {
         <h2 className="text-xl font-bold text-center text-black">
           Admissions Open {academicYear.start}
         </h2>
-        <p className="text-sm text-center text-[#342D87] mb-4">
+        <p className="text-sm text-center text-primary mb-4">
           UG, PG and PhD Applications {academicYear.start}
         </p>
       </>
@@ -418,7 +418,7 @@ const Hero: React.FC = () => {
             </p>
 
             <div className="mt-6 flex gap-4">
-              <button className="rounded-md bg-[#342D87] px-6 py-3 text-sm font-black hover:bg-yellow-500 hover:text-white transition-transform duration-200 hover:scale-105">
+              <button className="rounded-md bg-primary px-6 py-3 text-sm font-black hover:bg-yellow-500 hover:text-white transition-transform duration-200 hover:scale-105">
                 Explore Academics
               </button>
 
@@ -428,7 +428,7 @@ const Hero: React.FC = () => {
                   setShowLogin(false);
                 }}
                 disabled={yearLoading || !academicYear?.isOpen}
-                className="rounded-md bg-white px-6 py-3 text-sm font-black text-[#342D87] hover:bg-yellow-500 hover:text-white transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="rounded-md bg-white px-6 py-3 text-sm font-black text-primary hover:bg-yellow-500 hover:text-white transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {yearLoading
                   ? "Loading..."

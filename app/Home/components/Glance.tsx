@@ -20,7 +20,7 @@ export default function LoyolaAtAGlance() {
 
           {/* RIGHT CONTENT */}
           <div className="space-y-6">
-            <h2 className="text-4xl font-bold text-[#2F2A8A]">
+            <h2 className="text-4xl font-bold text-primary">
               Loyola at a Glance
             </h2>
 
@@ -31,7 +31,7 @@ export default function LoyolaAtAGlance() {
 
             <div className="space-y-5 pt-4">
               <div>
-                <h4 className="text-lg font-semibold text-[#2F2A8A]">
+                <h4 className="text-lg font-semibold text-primary">
                   Established 1963
                 </h4>
                 <p className="text-gray-600">
@@ -40,7 +40,7 @@ export default function LoyolaAtAGlance() {
               </div>
 
               <div>
-                <h4 className="text-lg font-semibold text-[#2F2A8A]">
+                <h4 className="text-lg font-semibold text-primary">
                   NAAC A++ Accredited
                 </h4>
                 <p className="text-gray-600">
@@ -49,7 +49,7 @@ export default function LoyolaAtAGlance() {
               </div>
 
               <div>
-                <h4 className="text-lg font-semibold text-[#2F2A8A]">
+                <h4 className="text-lg font-semibold text-primary">
                   Our Focus
                 </h4>
                 <p className="text-gray-600">
@@ -58,7 +58,7 @@ export default function LoyolaAtAGlance() {
               </div>
 
               <div>
-                <h4 className="text-lg font-semibold text-[#2F2A8A]">
+                <h4 className="text-lg font-semibold text-primary">
                   How We Learn
                 </h4>
                 <p className="text-gray-600">

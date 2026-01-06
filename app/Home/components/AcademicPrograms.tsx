@@ -31,12 +31,12 @@ const programmes = [
 
 export default function AcademicProgrammes() {
   return (
-    <section className="w-full bg-blue-50 py-20">
+    <section className="w-full bg-green-50 py-20">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* HEADER */}
         <div className="mb-12">
-          <h2 className="text-4xl font-bold text-[#2F2A8A]">
+          <h2 className="text-4xl font-bold text-primary">
             Academic Programmes
           </h2>
           <p className="mt-2 text-gray-600 max-w-2xl">
@@ -67,8 +67,8 @@ export default function AcademicProgrammes() {
 
                 {/* ICON + TITLE */}
                 <div className="flex items-center gap-3 px-4">
-                  <Icon className="w-7 h-7 text-[#2F2A8A]" />
-                  <h3 className="text-xl font-semibold text-[#2F2A8A]">
+                  <Icon className="w-7 h-7 text-primary" />
+                  <h3 className="text-xl font-semibold text-primary">
                     {item.title}
                   </h3>
                 </div>
@@ -81,7 +81,7 @@ export default function AcademicProgrammes() {
                 {/* LINK */}
                 <Link
                   href={item.link}
-                  className="inline-flex items-center gap-2 text-[#2F2A8A] font-medium hover:underline px-4 mb-3"
+                  className="inline-flex items-center gap-2 text-primary font-medium hover:underline px-4 mb-3"
                 >
                   View Programmes →
                 </Link>

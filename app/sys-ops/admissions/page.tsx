@@ -70,9 +70,9 @@ const generateApplicationId = (
   courseId: number,
   dbId: number
 ): string => {
-  const paddedId = String(dbId).padStart(2, "0");
+  const paddedId = String(dbId).padStart(3, "0");
   const paddedCourseId = String(courseId).padStart(2, "0");
-  return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
+  return `LC${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
 };
 
 export default function Admissions() {
@@ -345,7 +345,7 @@ export default function Admissions() {
           </div>
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
           >
             <Download className="w-4 h-4" />
             Export
@@ -364,7 +364,7 @@ export default function Admissions() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
               />
             </div>
 
@@ -392,7 +392,7 @@ export default function Admissions() {
                   setStatusFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
               >
                 <option value="all">All Status</option>
                 <option value="draft">Draft</option>
@@ -406,7 +406,7 @@ export default function Admissions() {
                   setProgramFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
               >
                 <option value="all">All Programs</option>
                 {programs.map((program) => (
@@ -425,7 +425,7 @@ export default function Admissions() {
                 disabled={
                   programFilter === "all" && filteredDegrees.length === 0
                 }
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="all">All Degrees</option>
                 {filteredDegrees.map((degree) => (
@@ -445,7 +445,7 @@ export default function Admissions() {
                   (programFilter === "all" && degreeFilter === "all") ||
                   filteredCourses.length === 0
                 }
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <option value="all">All Courses</option>
                 {filteredCourses.map((course) => (
@@ -564,7 +564,7 @@ export default function Admissions() {
 
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#342D87]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
           ) : admissions.length === 0 ? (
             <div className="text-center py-12">
@@ -572,7 +572,7 @@ export default function Admissions() {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="mt-4 text-[#342D87] hover:underline"
+                  className="mt-4 text-primary hover:underline"
                 >
                   Clear all filters
                 </button>
@@ -620,7 +620,7 @@ export default function Admissions() {
                           key={admission.id}
                           className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >
-                          <td className="py-3 px-4 text-sm font-mono text-[#342D87] font-semibold">
+                          <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
                             {generateApplicationId(
                               admission.program_level_id,
                               admission.degree_id,

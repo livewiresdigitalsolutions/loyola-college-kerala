@@ -228,7 +228,7 @@ const fetchProgramDetails = async (
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#342D87]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -266,7 +266,7 @@ const fetchProgramDetails = async (
                 {formData.full_name || "Application Details"}
               </h1>
               <p className="text-gray-600 mt-1">
-                Application ID: <span className="font-mono font-semibold text-[#342D87]">{applicationId}</span>
+                Application ID: <span className="font-mono font-semibold text-primary">{applicationId}</span>
               </p>
             </div>
           </div>
@@ -283,13 +283,13 @@ const fetchProgramDetails = async (
               <>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-green-900 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   onClick={handleDownload}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   Download
@@ -320,7 +320,7 @@ const fetchProgramDetails = async (
         </div>
 
         {/* Application Summary Card */}
-        <div className="bg-gradient-to-r from-[#342D87] to-[#4a3fa8] rounded-xl shadow-lg border border-gray-200 p-6 text-white">
+        <div className="bg-gradient-to-r from-primary to-green-950 rounded-xl shadow-lg border border-gray-200 p-6 text-white">
           <div className="flex items-center gap-2 mb-4">
             <FileText className="w-6 h-6" />
             <h2 className="text-2xl font-bold">Application Summary</h2>
@@ -365,7 +365,7 @@ const fetchProgramDetails = async (
         {programDetails && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center gap-2 mb-6">
-              <BookOpen className="w-5 h-5 text-[#342D87]" />
+              <BookOpen className="w-5 h-5 text-primary" />
               <h2 className="text-xl font-bold text-gray-900">
                 Program Details
               </h2>
@@ -414,7 +414,7 @@ const fetchProgramDetails = async (
         {/* Personal Information */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-6">
-            <User className="w-5 h-5 text-[#342D87]" />
+            <User className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-bold text-gray-900">
               Personal Information
             </h2>
@@ -431,7 +431,7 @@ const fetchProgramDetails = async (
                 value={formData.full_name || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -444,7 +444,7 @@ const fetchProgramDetails = async (
                 value={formData.gender || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select</option>
                 <option value="Male">Male</option>
@@ -463,7 +463,7 @@ const fetchProgramDetails = async (
                 value={formData.dob || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -477,7 +477,7 @@ const fetchProgramDetails = async (
                 value={formData.aadhaar || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -491,7 +491,7 @@ const fetchProgramDetails = async (
                 value={formData.nationality || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -504,7 +504,7 @@ const fetchProgramDetails = async (
                 value={formData.category || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select</option>
                 <option value="General">General</option>
@@ -525,7 +525,7 @@ const fetchProgramDetails = async (
                 value={formData.religion || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -538,7 +538,7 @@ const fetchProgramDetails = async (
                 value={formData.blood_group || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               >
                 <option value="">Select</option>
                 <option value="A+">A+</option>
@@ -557,7 +557,7 @@ const fetchProgramDetails = async (
         {/* Contact Information */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-6">
-            <Mail className="w-5 h-5 text-[#342D87]" />
+            <Mail className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-bold text-gray-900">
               Contact Information
             </h2>
@@ -574,7 +574,7 @@ const fetchProgramDetails = async (
                 value={formData.email || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -588,7 +588,7 @@ const fetchProgramDetails = async (
                 value={formData.mobile || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -602,7 +602,7 @@ const fetchProgramDetails = async (
                 value={formData.city || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -616,7 +616,7 @@ const fetchProgramDetails = async (
                 value={formData.state || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -630,7 +630,7 @@ const fetchProgramDetails = async (
                 value={formData.pincode || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -644,7 +644,7 @@ const fetchProgramDetails = async (
                 onChange={handleInputChange}
                 disabled={!isEditing}
                 rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
           </div>
@@ -653,7 +653,7 @@ const fetchProgramDetails = async (
         {/* Parent Information */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-6">
-            <User className="w-5 h-5 text-[#342D87]" />
+            <User className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-bold text-gray-900">
               Parent & Emergency Contact
             </h2>
@@ -670,7 +670,7 @@ const fetchProgramDetails = async (
                 value={formData.father_name || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -684,7 +684,7 @@ const fetchProgramDetails = async (
                 value={formData.mother_name || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -698,7 +698,7 @@ const fetchProgramDetails = async (
                 value={formData.parent_mobile || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -712,7 +712,7 @@ const fetchProgramDetails = async (
                 value={formData.parent_email || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -726,7 +726,7 @@ const fetchProgramDetails = async (
                 value={formData.emergency_contact_name || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -740,7 +740,7 @@ const fetchProgramDetails = async (
                 value={formData.emergency_contact_relation || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -754,7 +754,7 @@ const fetchProgramDetails = async (
                 value={formData.emergency_contact_mobile || ""}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
           </div>
@@ -763,7 +763,7 @@ const fetchProgramDetails = async (
         {/* Academic Information */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-6">
-            <GraduationCap className="w-5 h-5 text-[#342D87]" />
+            <GraduationCap className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-bold text-gray-900">
               Academic Records
             </h2>
@@ -785,7 +785,7 @@ const fetchProgramDetails = async (
                   value={formData.tenth_board || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -799,7 +799,7 @@ const fetchProgramDetails = async (
                   value={formData.tenth_school || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -813,7 +813,7 @@ const fetchProgramDetails = async (
                   value={formData.tenth_year || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -827,7 +827,7 @@ const fetchProgramDetails = async (
                   value={formData.tenth_percentage || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -841,7 +841,7 @@ const fetchProgramDetails = async (
                   onChange={handleInputChange}
                   disabled={!isEditing}
                   rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -863,7 +863,7 @@ const fetchProgramDetails = async (
                   value={formData.twelfth_board || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -877,7 +877,7 @@ const fetchProgramDetails = async (
                   value={formData.twelfth_school || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -891,7 +891,7 @@ const fetchProgramDetails = async (
                   value={formData.twelfth_year || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -905,7 +905,7 @@ const fetchProgramDetails = async (
                   value={formData.twelfth_percentage || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -919,7 +919,7 @@ const fetchProgramDetails = async (
                   value={formData.twelfth_stream || ""}
                   onChange={handleInputChange}
                   disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -933,7 +933,7 @@ const fetchProgramDetails = async (
                   onChange={handleInputChange}
                   disabled={!isEditing}
                   rows={2}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
             </div>
@@ -958,7 +958,7 @@ const fetchProgramDetails = async (
                     value={formData.ug_university || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -972,7 +972,7 @@ const fetchProgramDetails = async (
                     value={formData.ug_college || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -986,7 +986,7 @@ const fetchProgramDetails = async (
                     value={formData.ug_degree || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -1000,7 +1000,7 @@ const fetchProgramDetails = async (
                     value={formData.ug_year || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -1014,7 +1014,7 @@ const fetchProgramDetails = async (
                     value={formData.ug_percentage || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -1038,7 +1038,7 @@ const fetchProgramDetails = async (
                     value={formData.pg_university || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -1052,7 +1052,7 @@ const fetchProgramDetails = async (
                     value={formData.pg_college || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -1066,7 +1066,7 @@ const fetchProgramDetails = async (
                     value={formData.pg_degree || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -1080,7 +1080,7 @@ const fetchProgramDetails = async (
                     value={formData.pg_year || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -1094,7 +1094,7 @@ const fetchProgramDetails = async (
                     value={formData.pg_percentage || ""}
                     onChange={handleInputChange}
                     disabled={!isEditing}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -1119,7 +1119,7 @@ const fetchProgramDetails = async (
                 onChange={handleInputChange}
                 disabled={!isEditing}
                 rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -1133,7 +1133,7 @@ const fetchProgramDetails = async (
                 onChange={handleInputChange}
                 disabled={!isEditing}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -1147,7 +1147,7 @@ const fetchProgramDetails = async (
                 onChange={handleInputChange}
                 disabled={!isEditing}
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
             </div>
           </div>

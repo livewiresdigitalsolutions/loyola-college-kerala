@@ -8,7 +8,7 @@ export default function AnnouncementMarquee() {
       <div className="flex items-center">
 
         {/* LEFT TAG */}
-        <div className="relative bg-[#1E2A7B] text-white px-6 py-3 text-sm font-medium shrink-0 flex items-center gap-2">
+        <div className="relative bg-primary text-white px-6 py-3 text-sm font-medium shrink-0 flex items-center gap-2">
           <Megaphone size={18} />
           Announcements
           <span
@@ -16,7 +16,7 @@ export default function AnnouncementMarquee() {
               absolute top-1 -right-2
               w-0 h-0
               border-t-[20px] border-b-[20px]
-              border-l-[12px] border-l-[#1E2A7B]
+              border-l-[12px] border-l-primary
               border-t-transparent border-b-transparent
             "
           />

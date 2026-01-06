@@ -62,7 +62,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-[#342D87] text-white flex flex-col">
+    <aside className="w-64 bg-primary text-white flex flex-col">
       <div className="p-6 border-b border-white/10">
         <Image
           src="/assets/loyolalogo.png"
@@ -89,7 +89,7 @@ export default function Sidebar() {
                 w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200
                 ${
                   isActive
-                    ? "bg-white text-[#342D87] shadow-lg"
+                    ? "bg-white text-primary shadow-lg"
                     : item.disabled
                     ? "text-white/40 cursor-not-allowed"
                     : "text-white hover:bg-white/10"

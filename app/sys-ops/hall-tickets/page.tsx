@@ -449,7 +449,7 @@
 //                   setAcademicYear(e.target.value);
 //                   setCurrentPage(1);
 //                 }}
-//                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm font-semibold"
+//                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm font-semibold"
 //               >
 //                 <option value="2026">2026</option>
 //               </select>
@@ -463,7 +463,7 @@
 //             </button>
 //             <button
 //               onClick={handleExport}
-//               className="flex items-center gap-2 px-4 py-2 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors"
+//               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#2a2470] transition-colors"
 //             >
 //               <Download className="w-4 h-4" />
 //               Export
@@ -489,7 +489,7 @@
 //                       type="date"
 //                       value={examDate}
 //                       onChange={(e) => setExamDate(e.target.value)}
-//                       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+//                       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
 //                       min={new Date().toISOString().split('T')[0]}
 //                     />
 //                   </div>
@@ -502,7 +502,7 @@
 //                       type="time"
 //                       value={examTime}
 //                       onChange={(e) => setExamTime(e.target.value)}
-//                       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+//                       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
 //                     />
 //                   </div>
 //                   <button
@@ -549,7 +549,7 @@
 //                     setSearchTerm(e.target.value);
 //                     setCurrentPage(1);
 //                   }}
-//                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+//                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
 //                 />
 //               </div>
 
@@ -567,7 +567,7 @@
 //                     setProgramFilter(e.target.value);
 //                     setCurrentPage(1);
 //                   }}
-//                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm"
+//                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
 //                 >
 //                   <option value="all">All Programs</option>
 //                   {programs.map((program) => (
@@ -584,7 +584,7 @@
 //                     setCurrentPage(1);
 //                   }}
 //                   disabled={programFilter === "all" && filteredDegrees.length === 0}
-//                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+//                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
 //                 >
 //                   <option value="all">All Degrees</option>
 //                   {filteredDegrees.map((degree) => (
@@ -604,7 +604,7 @@
 //                     (programFilter === "all" && degreeFilter === "all") ||
 //                     filteredCourses.length === 0
 //                   }
-//                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+//                   className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
 //                 >
 //                   <option value="all">All Courses</option>
 //                   {filteredCourses.map((course) => (
@@ -630,7 +630,7 @@
 //           {/* Table */}
 //           {loadingAdmissions ? (
 //             <div className="flex items-center justify-center py-12">
-//               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#342D87]"></div>
+//               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
 //             </div>
 //           ) : showAllocated ? (
 //             // Allocated Tickets Table
@@ -673,7 +673,7 @@
 //                           key={ticket.id}
 //                           className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
 //                         >
-//                           <td className="py-3 px-4 text-sm font-mono text-[#342D87] font-semibold">
+//                           <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
 //                             {ticket.application_id}
 //                           </td>
 //                           <td className="py-3 px-4 text-sm font-medium text-gray-900">
@@ -709,7 +709,7 @@
 //                 {hasActiveFilters && (
 //                   <button
 //                     onClick={clearFilters}
-//                     className="mt-4 text-[#342D87] hover:underline"
+//                     className="mt-4 text-primary hover:underline"
 //                   >
 //                     Clear all filters
 //                   </button>
@@ -724,10 +724,10 @@
 //                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
 //                           <button
 //                             onClick={handleSelectAll}
-//                             className="flex items-center gap-2 hover:text-[#342D87] transition-colors"
+//                             className="flex items-center gap-2 hover:text-primary transition-colors"
 //                           >
 //                             {selectedAdmissions.length === admissions.length ? (
-//                               <CheckSquare className="w-5 h-5 text-[#342D87]" />
+//                               <CheckSquare className="w-5 h-5 text-primary" />
 //                             ) : (
 //                               <Square className="w-5 h-5" />
 //                             )}
@@ -781,13 +781,13 @@
 //                                 className="hover:scale-110 transition-transform"
 //                               >
 //                                 {isSelected ? (
-//                                   <CheckSquare className="w-5 h-5 text-[#342D87]" />
+//                                   <CheckSquare className="w-5 h-5 text-primary" />
 //                                 ) : (
 //                                   <Square className="w-5 h-5 text-gray-400" />
 //                                 )}
 //                               </button>
 //                             </td>
-//                             <td className="py-3 px-4 text-sm font-mono text-[#342D87] font-semibold">
+//                             <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
 //                               {generateApplicationId(
 //                                 admission.program_level_id,
 //                                 admission.degree_id,
@@ -1347,14 +1347,14 @@ export default function HallTicketsPage() {
             
             <button
               onClick={() => setShowAllocated(!showAllocated)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Eye className="w-4 h-4" />
               {showAllocated ? "Show Available" : "Show Allocated"} ({showAllocated ? admissions.length : allocatedTickets.length})
             </button>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 bg-[#342D87] text-white rounded-lg hover:bg-[#2a2470] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-yellow-500 transition-colors"
             >
               <Download className="w-4 h-4" />
               Export
@@ -1380,7 +1380,7 @@ export default function HallTicketsPage() {
                       type="date"
                       value={examDate}
                       onChange={(e) => setExamDate(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                       min={new Date().toISOString().split('T')[0]}
                     />
                   </div>
@@ -1393,7 +1393,7 @@ export default function HallTicketsPage() {
                       type="time"
                       value={examTime}
                       onChange={(e) => setExamTime(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     />
                   </div>
                   <button
@@ -1440,7 +1440,7 @@ export default function HallTicketsPage() {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                 />
               </div>
 
@@ -1458,7 +1458,7 @@ export default function HallTicketsPage() {
                     setProgramFilter(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
                 >
                   <option value="all">All Programs</option>
                   {programs.map((program) => (
@@ -1475,7 +1475,7 @@ export default function HallTicketsPage() {
                     setCurrentPage(1);
                   }}
                   disabled={programFilter === "all" && filteredDegrees.length === 0}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="all">All Degrees</option>
                   {filteredDegrees.map((degree) => (
@@ -1495,7 +1495,7 @@ export default function HallTicketsPage() {
                     (programFilter === "all" && degreeFilter === "all") ||
                     filteredCourses.length === 0
                   }
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="all">All Courses</option>
                   {filteredCourses.map((course) => (
@@ -1522,7 +1522,7 @@ export default function HallTicketsPage() {
           {/* Table */}
           {loadingAdmissions ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#342D87]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
           ) : showAllocated ? (
             // Allocated Tickets Table
@@ -1565,7 +1565,7 @@ export default function HallTicketsPage() {
                           key={ticket.id}
                           className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >
-                          <td className="py-3 px-4 text-sm font-mono text-[#342D87] font-semibold">
+                          <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
                             {ticket.application_id}
                           </td>
                           <td className="py-3 px-4 text-sm font-medium text-gray-900">
@@ -1601,7 +1601,7 @@ export default function HallTicketsPage() {
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="mt-4 text-[#342D87] hover:underline"
+                    className="mt-4 text-primary hover:underline"
                   >
                     Clear all filters
                   </button>
@@ -1616,10 +1616,10 @@ export default function HallTicketsPage() {
                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
                           <button
                             onClick={handleSelectAll}
-                            className="flex items-center gap-2 hover:text-[#342D87] transition-colors"
+                            className="flex items-center gap-2 hover:text-primary transition-colors"
                           >
                             {selectedAdmissions.length === admissions.length ? (
-                              <CheckSquare className="w-5 h-5 text-[#342D87]" />
+                              <CheckSquare className="w-5 h-5 text-primary" />
                             ) : (
                               <Square className="w-5 h-5" />
                             )}
@@ -1673,13 +1673,13 @@ export default function HallTicketsPage() {
                                 className="hover:scale-110 transition-transform"
                               >
                                 {isSelected ? (
-                                  <CheckSquare className="w-5 h-5 text-[#342D87]" />
+                                  <CheckSquare className="w-5 h-5 text-primary" />
                                 ) : (
                                   <Square className="w-5 h-5 text-gray-400" />
                                 )}
                               </button>
                             </td>
-                            <td className="py-3 px-4 text-sm font-mono text-[#342D87] font-semibold">
+                            <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
                               {generateApplicationId(
                                 admission.program_level_id,
                                 admission.degree_id,

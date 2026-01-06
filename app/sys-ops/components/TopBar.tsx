@@ -20,7 +20,7 @@ export default function TopBar() {
             <input
               type="text"
               placeholder="Search applications..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             />
           </div>
         </div>
@@ -28,7 +28,7 @@ export default function TopBar() {
         <div className="flex items-center gap-4 ml-6">
 
           <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
-            <div className="w-10 h-10 bg-[#342D87] rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
               <User className="w-6 h-6 text-white" />
             </div>
             <div>

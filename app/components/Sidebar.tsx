@@ -294,7 +294,7 @@ const Sidebar: React.FC = () => {
         <h2 className="text-xl font-bold text-center text-black">
           Admissions Open {academicYear.start}
         </h2>
-        <p className="text-sm text-center text-[#342D87] mb-4">
+        <p className="text-sm text-center text-primary mb-4">
           UG, PG and PhD Applications {academicYear.start}-
           {parseInt(academicYear.start) + 1}
         </p>
@@ -433,7 +433,7 @@ const Sidebar: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting || !academicYear?.isOpen}
-                    className="w-full bg-[#342D87] text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-primary text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting
                       ? "Registering..."
@@ -470,7 +470,7 @@ const Sidebar: React.FC = () => {
                 <h2 className="text-xl font-bold text-center text-black">
                   Login
                 </h2>
-                <p className="text-sm text-center text-[#342D87] mb-4">
+                <p className="text-sm text-center text-primary mb-4">
                   Access your application
                   {academicYear && ` ${academicYear.start}-${parseInt(academicYear.start) + 1}`}
                 </p>
@@ -501,7 +501,7 @@ const Sidebar: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#342D87] text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-primary text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? "Logging in..." : "Login"}
                   </button>
@@ -533,7 +533,7 @@ const Sidebar: React.FC = () => {
             setShowLogin(false);
           }}
           disabled={!academicYear?.isOpen}
-          className="rotate-[-90deg] origin-bottom-right bg-yellow-500 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-[#342D87] hover:text-white transition-transform duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="rotate-[-90deg] origin-bottom-right bg-yellow-500 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-primary hover:text-white transition-transform duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {yearLoading
             ? "Loading..."

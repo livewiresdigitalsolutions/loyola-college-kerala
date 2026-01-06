@@ -8,7 +8,7 @@ export default function LatestNews() {
       <div className="max-w-7xl mx-auto px-6">
 
         {/* TITLE */}
-        <h2 className="text-center text-4xl font-semibold text-[#2F2A8A] mb-12">
+        <h2 className="text-center text-4xl font-semibold text-primary mb-12">
           Latest News & Updates
         </h2>
 
@@ -29,11 +29,11 @@ export default function LatestNews() {
 
             {/* CONTENT */}
             <div className="space-y-4">
-              <span className="inline-block px-4 py-1 text-sm rounded-full bg-[#ECEBFA] text-[#2F2A8A] font-medium">
+              <span className="inline-block px-4 py-1 text-sm rounded-full bg-[#ECEBFA] text-primary font-medium">
                 WORKSHOP
               </span>
 
-              <h3 className="text-2xl font-semibold text-[#2F2A8A] leading-snug">
+              <h3 className="text-2xl font-semibold text-primary leading-snug">
                 Three-Day Intensive Skill Training on Dialectical Behavioural Therapy
               </h3>
 
@@ -49,7 +49,7 @@ export default function LatestNews() {
 
               <Link
                 href="#"
-                className="inline-flex items-center gap-2 text-[#2F2A8A] font-medium hover:underline"
+                className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
               >
                 Read More <ArrowRight className="w-4 h-4" />
               </Link>
@@ -90,7 +90,7 @@ export default function LatestNews() {
         <div className="mt-10 text-center">
           <Link
             href="#"
-            className="inline-flex items-center gap-2 text-[#2F2A8A] font-medium hover:underline"
+            className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
           >
             View All News <ArrowRight className="w-4 h-4" />
           </Link>
@@ -118,7 +118,7 @@ function NewsCard({
     <div className=" rounded-2xl p-4 shadow-xl bg-white space-y-4 transition-transform duration-300 hover:scale-105 ">
       <div className="text-sm text-gray-500">{date}</div>
 
-      <h4 className="text-lg font-semibold text-[#2F2A8A]">
+      <h4 className="text-lg font-semibold text-primary">
         {title}
       </h4>
 
@@ -138,7 +138,7 @@ function NewsCard({
 
       <Link
         href="#"
-        className="inline-flex items-center gap-2 text-[#2F2A8A] font-medium hover:underline"
+        className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
       >
         Read More <ArrowRight className="w-4 h-4" />
       </Link>

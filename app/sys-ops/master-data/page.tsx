@@ -30,7 +30,7 @@ const masterDataCards: MasterDataCard[] = [
     icon: <School className="w-8 h-8" />,
     href: "/sys-ops/master-data/programs",
     color: "text-white",
-    bgColor: "bg-[#342D87]",
+    bgColor: "bg-primary",
   },
   {
     id: "degrees",
@@ -39,7 +39,7 @@ const masterDataCards: MasterDataCard[] = [
     icon: <GraduationCap className="w-8 h-8" />,
     href: "/sys-ops/master-data/degrees",
     color: "text-white",
-    bgColor: "bg-[#342D87]",
+    bgColor: "bg-primary",
   },
   {
     id: "courses",
@@ -48,7 +48,7 @@ const masterDataCards: MasterDataCard[] = [
     icon: <BookOpen className="w-8 h-8" />,
     href: "/sys-ops/master-data/courses",
     color: "text-white",
-    bgColor: "bg-[#342D87]",
+    bgColor: "bg-primary",
   },
   {
     id: "exam-centers",
@@ -57,7 +57,7 @@ const masterDataCards: MasterDataCard[] = [
     icon: <MapPin className="w-8 h-8" />,
     href: "/sys-ops/master-data/exam-centers",
     color: "text-white",
-    bgColor: "bg-[#342D87]",
+    bgColor: "bg-primary",
   },
   {
     id: "hero-media",
@@ -66,7 +66,7 @@ const masterDataCards: MasterDataCard[] = [
     icon: <ImageIcon className="w-8 h-8" />,
     href: "/sys-ops/master-data/hero-media",
     color: "text-white",
-    bgColor: "bg-[#342D87]",
+    bgColor: "bg-primary",
   },
   {
     id: "academic-years",
@@ -75,7 +75,7 @@ const masterDataCards: MasterDataCard[] = [
     icon: <CalendarCog className="w-8 h-8" />,
     href: "/sys-ops/master-data/configuration",
     color: "text-white",
-    bgColor: "bg-[#342D87]",
+    bgColor: "bg-primary",
   },
 ];
 
@@ -94,16 +94,16 @@ export default function MasterData() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {masterDataCards.map((card) => (
           <Link key={card.id} href={card.href}>
-            <div className="bg-white rounded-xl shadow-xl border border-[#342D87] p-6 h-50 hover:shadow-md transition-all duration-200 hover:-translate-y-1 cursor-pointer group">
+            <div className="bg-white rounded-xl shadow-xl border border-primary p-6 h-50 hover:shadow-md transition-all duration-200 hover:-translate-y-1 cursor-pointer group">
               <div
                 className={`${card.bgColor} ${card.color} w-16 h-16 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
               >
                 {card.icon}
               </div>
-              <h3 className="text-xl font-bold text-[#342D87] mb-2">
+              <h3 className="text-xl font-bold text-primary mb-2">
                 {card.title}
               </h3>
-              <p className="text-[#342D87] text-sm">{card.description}</p>
+              <p className="text-primary text-sm">{card.description}</p>
             </div>
           </Link>
         ))}
