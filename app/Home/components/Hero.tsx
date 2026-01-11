@@ -404,10 +404,11 @@ const Hero: React.FC = () => {
         </div>
       )}
       <div className="absolute inset-0 bg-black/40" />
-      <div className="relative z-10 flex min-h-screen items-center px-6 md:px-16">
-        <div className="grid w-full grid-cols-1 lg:grid-cols-2 gap-12">
-          <div className="text-white max-w-2xl flex flex-col justify-center h-full">
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight pt-26">
+  
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-6 md:px-16">
+        <div className="w-full max-w-7xl">
+          <div className="text-white max-w-2xl mx-auto flex flex-col items-center justify-center text-center">
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
               Empowering Minds. <br />
               Enriching Society.
             </h1>
@@ -417,7 +418,7 @@ const Hero: React.FC = () => {
               shaping leaders through values, excellence, and innovation.
             </p>
 
-            <div className="mt-6 flex gap-4">
+            <div className="mt-6 flex flex-wrap gap-4 justify-center">
               <button className="rounded-md bg-primary px-6 py-3 text-sm font-black hover:bg-yellow-500 hover:text-white transition-transform duration-200 hover:scale-105">
                 Explore Academics
               </button>
@@ -440,6 +441,12 @@ const Hero: React.FC = () => {
           </div>
         </div>
       </div>
+
+
+
+
+
+
     </section>
   );
 };
