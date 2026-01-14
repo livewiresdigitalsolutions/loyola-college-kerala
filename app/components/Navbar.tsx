@@ -1296,7 +1296,7 @@ const Navbar: React.FC = () => {
                           <li key={linkIdx}>
                             <Link
                               href={link.href}
-                              className="text-xs text-gray-700 hover:text-primary transition flex items-center gap-1 group"
+                              className="text-xm text-gray-700 hover:text-primary transition flex items-center gap-1 group"
                             >
                               <ChevronDown
                                 size={14}
