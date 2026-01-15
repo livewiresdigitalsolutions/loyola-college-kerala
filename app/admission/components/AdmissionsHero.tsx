@@ -1,12 +1,41 @@
-
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { ArrowRight, Award, UserCheck, CheckCircle2 } from "lucide-react";
+import AdmissionModal from "@/app/admission/components/AdmissionModal";
+import { Toaster } from "react-hot-toast";
 
 export default function AdmissionsHero() {
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+
+  const handleStartApplicationClick = () => {
+    setShowModal(true);
+    setShowLogin(false);
+  };
+
+  const handleDownloadBrochureClick = () => {
+    // Replace with your actual brochure PDF path
+    window.open("/assets/brochure.pdf", "_blank");
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setShowLogin(false);
+  };
+
   return (
     <>
+      <Toaster position="top-right" />
+
+      {/* ADMISSION MODAL */}
+      <AdmissionModal
+        isOpen={showModal}
+        onClose={handleCloseModal}
+        showLogin={showLogin}
+        setShowLogin={setShowLogin}
+      />
+
       {/* HERO SECTION WITH IMAGE AND GREEN OVERLAY */}
       <section className="relative w-full h-[600px] md:h-[700px]">
         {/* BACKGROUND IMAGE */}
@@ -83,11 +112,17 @@ export default function AdmissionsHero() {
 
               {/* CTA BUTTONS */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-white text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/90 transition-all duration-300 inline-flex items-center justify-center gap-2 group shadow-xl">
+                <button
+                  onClick={handleStartApplicationClick}
+                  className="bg-white text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/90 transition-all duration-300 inline-flex items-center justify-center gap-2 group shadow-xl"
+                >
                   Start Application
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <button className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm">
+                <button
+                  onClick={handleDownloadBrochureClick}
+                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm"
+                >
                   Download Brochure
                 </button>
               </div>

@@ -958,6 +958,9 @@ const Navbar: React.FC = () => {
             </div>
 
             <div className="hidden lg:flex items-center gap-6">
+              <Link href="/admission" className="hover:opacity-80 transition">
+                Admissions
+              </Link>
               <div className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
                 Student <ChevronDown size={14} />
               </div>
@@ -1468,6 +1471,8 @@ const Navbar: React.FC = () => {
           <button
             onClick={() => setMobileMenuOpen(false)}
             className="mb-6 p-2 hover:bg-gray-100 rounded-full transition"
+            title="Close menu"
+            aria-label="Close menu"
           >
             <XIcon size={24} className="text-gray-700" />
           </button>

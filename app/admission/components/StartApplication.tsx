@@ -1,16 +1,45 @@
-
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { ArrowRight, Mail, Phone } from "lucide-react";
+import AdmissionModal from "@/app/admission/components/AdmissionModal";
+import { Toaster } from "react-hot-toast";
 
 export default function StartApplication() {
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+
+  const handleApplyNowClick = () => {
+    setShowModal(true);
+    setShowLogin(false);
+  };
+
+  const handleContactClick = () => {
+    // Scroll to contact section or open contact modal
+    window.location.href = "mailto:admissions@college.edu";
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setShowLogin(false);
+  };
+
   return (
     <>
+      <Toaster position="top-right" />
+
+      {/* ADMISSION MODAL */}
+      <AdmissionModal
+        isOpen={showModal}
+        onClose={handleCloseModal}
+        showLogin={showLogin}
+        setShowLogin={setShowLogin}
+      />
+
       {/* CTA SECTION - MINIMAL CENTERED */}
-      <section className="w-full  py-20">
+      <section className="w-full py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[450px]">
-            {/* BACKGROUND IMAGE - UNSPLASH */}
+            {/* BACKGROUND IMAGE */}
             <img
               src="./assets/loyola.png"
               alt="University campus"
@@ -33,22 +62,34 @@ export default function StartApplication() {
 
                 {/* CTA BUTTONS */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                  <button className="bg-primary text-white px-10 py-4 rounded-lg font-bold text-lg hover:bg-primary/90 hover:scale-105 transition-all duration-300 inline-flex items-center justify-center gap-2 group shadow-2xl">
+                  <button
+                    onClick={handleApplyNowClick}
+                    className="bg-primary text-white px-10 py-4 rounded-lg font-bold text-lg hover:bg-primary/90 hover:scale-105 transition-all duration-300 inline-flex items-center justify-center gap-2 group shadow-2xl"
+                  >
                     Apply Now
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
-                  <button className="border-2 border-white bg-transparent text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-black  transition-all duration-300">
+                  <button
+                    onClick={handleContactClick}
+                    className="border-2 border-white bg-transparent text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-black transition-all duration-300"
+                  >
                     Contact Us
                   </button>
                 </div>
 
                 {/* CONTACT INFO */}
                 <div className="flex flex-col sm:flex-row gap-6 justify-center text-white/80 text-sm">
-                  <a href="mailto:admissions@college.edu" className="hover:text-white transition-colors flex items-center justify-center gap-2">
+                  <a
+                    href="mailto:admissions@college.edu"
+                    className="hover:text-white transition-colors flex items-center justify-center gap-2"
+                  >
                     <Mail className="w-4 h-4" />
                     <span>admissions@college.edu</span>
                   </a>
-                  <a href="tel:+91XXXXXXXXXX" className="hover:text-white transition-colors flex items-center justify-center gap-2">
+                  <a
+                    href="tel:+91XXXXXXXXXX"
+                    className="hover:text-white transition-colors flex items-center justify-center gap-2"
+                  >
                     <Phone className="w-4 h-4" />
                     <span>+91-XXXXXXXXXX</span>
                   </a>
