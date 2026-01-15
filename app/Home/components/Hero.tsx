@@ -393,6 +393,8 @@ const Hero: React.FC = () => {
           {heroMedia.map((_, index) => (
             <button
               key={index}
+              type="button"
+              aria-label={`Go to media ${index + 1}`}
               onClick={() => setCurrentMediaIndex(index)}
               className={`w-2 h-2 rounded-full transition-all ${
                 index === currentMediaIndex
@@ -408,7 +410,7 @@ const Hero: React.FC = () => {
       <div className="relative z-10 flex min-h-screen items-center justify-center px-6 md:px-16">
         <div className="w-full max-w-7xl">
           <div className="text-white max-w-2xl mx-auto flex flex-col items-center justify-center text-center">
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+            <h1 className="text-4xl md:text-7xl font-extrabold leading-tight tracking-tighter">
               Empowering Minds. <br />
               Enriching Society.
             </h1>
