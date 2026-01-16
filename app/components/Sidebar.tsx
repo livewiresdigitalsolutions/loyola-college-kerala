@@ -558,20 +558,13 @@
 
 
 
-
-
-
-
-
-
-
 "use client";
 
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { usePathname } from "next/navigation";
 import { useAcademicYear } from "@/app/hooks/useAcademicYears";
-import AdmissionModal from "../admission/components/AdmissionModal";
+import ApplicationModal from "@/app/admission/components/ApplicationModal";
 
 const Sidebar: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -584,7 +577,7 @@ const Sidebar: React.FC = () => {
     pathname?.startsWith(route)
   );
 
-  // Don't render navbar on sys-ops pages
+  // Don't render sidebar on sys-ops pages
   if (shouldHideNavbar) {
     return null;
   }
@@ -603,8 +596,8 @@ const Sidebar: React.FC = () => {
     <section className="text-black">
       <Toaster position="top-right" />
 
-      {/* Admission Modal */}
-      <AdmissionModal
+      {/* Application Modal */}
+      <ApplicationModal
         isOpen={showModal}
         onClose={handleCloseModal}
         showLogin={showLogin}
@@ -617,6 +610,13 @@ const Sidebar: React.FC = () => {
           onClick={handleOpenModal}
           disabled={!academicYear?.isOpen}
           className="rotate-[-90deg] origin-bottom-right bg-yellow-500 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-primary hover:text-white transition-transform duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          aria-label={
+            yearLoading
+              ? "Loading admission information"
+              : academicYear?.isOpen
+              ? `Open admission enquiry form for ${academicYear.start}`
+              : "Admissions opening soon"
+          }
         >
           {yearLoading
             ? "Loading..."

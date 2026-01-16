@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ArrowRight, Award, UserCheck, CheckCircle2 } from "lucide-react";
-import AdmissionModal from "@/app/admission/components/AdmissionModal";
+import ApplicationModal from "@/app/admission/components/ApplicationModal";
 import { Toaster } from "react-hot-toast";
 
 export default function AdmissionsHero() {
@@ -29,7 +29,7 @@ export default function AdmissionsHero() {
       <Toaster position="top-right" />
 
       {/* ADMISSION MODAL */}
-      <AdmissionModal
+      <ApplicationModal
         isOpen={showModal}
         onClose={handleCloseModal}
         showLogin={showLogin}

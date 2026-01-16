@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { ArrowRight, Mail, Phone } from "lucide-react";
-import AdmissionModal from "@/app/admission/components/AdmissionModal";
 import { Toaster } from "react-hot-toast";
+import ApplicationModal from "./ApplicationModal";
 
 export default function StartApplication() {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -28,7 +28,7 @@ export default function StartApplication() {
       <Toaster position="top-right" />
 
       {/* ADMISSION MODAL */}
-      <AdmissionModal
+      <ApplicationModal
         isOpen={showModal}
         onClose={handleCloseModal}
         showLogin={showLogin}

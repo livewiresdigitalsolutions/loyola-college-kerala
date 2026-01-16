@@ -1681,6 +1681,7 @@ function AdmissionFormContent() {
                             onChange={handleChange}
                             disabled={isFormLocked}
                             required
+                            title="Select your 12th stream"
                             className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
                           >
                             <option value="">Select stream</option>
