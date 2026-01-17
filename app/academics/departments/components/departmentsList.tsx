@@ -162,7 +162,7 @@ export default function DepartmentsList() {
           {departments.map((dept) => (
             <Link
               key={dept.id}
-              href={`/departments/${dept.slug}`}
+              href={`/academics/departments/${dept.slug}`}
               className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col"
             >
               {/* IMAGE CONTAINER */}
