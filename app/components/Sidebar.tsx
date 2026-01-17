@@ -577,11 +577,11 @@
 
 "use client";
 
-import { useState } from "react";
-import { Toaster } from "react-hot-toast";
+import { useState, useEffect } from "react";
+import { toast, Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useAcademicYear } from "@/app/hooks/useAcademicYears";
-import { User, Calendar } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -603,8 +603,10 @@ interface Course {
 }
 
 const Sidebar: React.FC = () => {
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const router = useRouter();
+  const [showForm, setShowForm] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { academicYear, loading: yearLoading } = useAcademicYear();
   const pathname = usePathname();
 
@@ -814,7 +816,7 @@ const Sidebar: React.FC = () => {
     pathname?.startsWith(route)
   );
 
-  // Don't render sidebar on sys-ops pages
+  // Don't render navbar on sys-ops pages
   if (shouldHideNavbar) {
     return null;
   }
@@ -1100,10 +1102,20 @@ const Sidebar: React.FC = () => {
                 <form onSubmit={handleLogin} className="space-y-4">
                   {/* Email Input with User Icon */}
                   <div className="relative flex items-center">
-                    <User
-                      size={20}
-                      className="absolute ml-3 text-gray-400 pointer-events-none"
-                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 absolute ml-3 text-gray-400 pointer-events-none"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
                     <input
                       className="w-full rounded border p-2 pl-10 pr-3 text-black focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Enter Email Address *"
@@ -1118,10 +1130,20 @@ const Sidebar: React.FC = () => {
 
                   {/* DatePicker with Calendar Icon */}
                   <div className="relative flex items-center">
-                    <Calendar
-                      size={20}
-                      className="absolute ml-3 text-gray-400 pointer-events-none z-10"
-                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 absolute ml-3 text-gray-400 pointer-events-none z-10"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
                     <DatePicker
                       selected={loginData.dob}
                       onChange={(date: Date | null) =>
@@ -1169,16 +1191,12 @@ const Sidebar: React.FC = () => {
       {/* Fixed Side Button */}
       <div className="fixed right-0 top-1/3 -translate-y-1/2 z-[9999]">
         <button
-          onClick={handleOpenModal}
+          onClick={() => {
+            setShowForm((prev) => !prev);
+            setShowLogin(false);
+          }}
           disabled={!academicYear?.isOpen}
           className="rotate-[-90deg] origin-bottom-right bg-yellow-500 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-primary hover:text-white transition-transform duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          aria-label={
-            yearLoading
-              ? "Loading admission information"
-              : academicYear?.isOpen
-              ? `Open admission enquiry form for ${academicYear.start}`
-              : "Admissions opening soon"
-          }
         >
           {yearLoading
             ? "Loading..."
