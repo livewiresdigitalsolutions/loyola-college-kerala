@@ -1,9 +1,658 @@
+// "use client";
+
+// import { Suspense, useEffect, useState, useRef } from "react";
+// import { useRouter, useSearchParams } from "next/navigation";
+// import toast, { Toaster } from "react-hot-toast";
+// import html2canvas from "html2canvas";
+// import { jsPDF } from "jspdf";
+
+// interface ApplicationData {
+//   id: number;
+//   full_name: string;
+//   email: string;
+//   mobile: string;
+//   dob: string;
+//   gender: string;
+//   address: string;
+//   city: string;
+//   state: string;
+//   pincode: string;
+//   father_name: string;
+//   mother_name: string;
+//   parent_mobile: string;
+//   parent_email: string;
+//   emergency_contact_name: string;
+//   emergency_contact_relation: string;
+//   emergency_contact_mobile: string;
+//   program_level_id: number;
+//   degree_id: number;
+//   course_id: number;
+//   exam_center_id: number;
+//   payment_id: string;
+//   payment_amount: number;
+//   payment_status: string;
+//   submitted_at: string;
+// }
+
+// interface ProgramDetails {
+//   program: string;
+//   degree: string;
+//   course: string;
+//   examCenter: string;
+// }
+
+// function ApplicationPreviewContent() {
+//   const router = useRouter();
+//   const searchParams = useSearchParams();
+//   const userEmail = searchParams.get("email");
+//   const contentRef = useRef<HTMLDivElement>(null);
+//   const containerRef = useRef<HTMLDivElement>(null);
+
+//   const [applicationData, setApplicationData] = useState<ApplicationData | null>(null);
+//   const [programDetails, setProgramDetails] = useState<ProgramDetails | null>(null);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [isDownloading, setIsDownloading] = useState(false);
+//   const [scale, setScale] = useState(1);
+
+//   useEffect(() => {
+//     if (!userEmail) {
+//       toast.error("No email provided");
+//       router.push("/");
+//       return;
+//     }
+//     fetchApplicationData();
+//   }, [userEmail]);
+
+//   useEffect(() => {
+//     const handleResize = () => {
+//       if (containerRef.current) {
+//         const containerWidth = containerRef.current.offsetWidth;
+//         const a4Width = 794; // 210mm in pixels at 96 DPI
+//         const newScale = Math.min(1, (containerWidth - 32) / a4Width);
+//         setScale(newScale);
+//       }
+//     };
+
+//     handleResize();
+//     window.addEventListener("resize", handleResize);
+//     return () => window.removeEventListener("resize", handleResize);
+//   }, []);
+
+//   const fetchApplicationData = async () => {
+//     try {
+//       const response = await fetch(`/api/admission-form?email=${userEmail}`);
+//       const result = await response.json();
+
+//       if (result.data) {
+//         if (result.data.payment_status !== "completed") {
+//           toast.error("Payment not completed");
+//           router.push(`/admission-form?email=${userEmail}`);
+//           return;
+//         }
+//         setApplicationData(result.data);
+
+//         await fetchProgramDetails(
+//           result.data.program_level_id,
+//           result.data.degree_id,
+//           result.data.course_id,
+//           result.data.exam_center_id
+//         );
+//       } else {
+//         toast.error("Application not found");
+//         router.push("/");
+//       }
+//     } catch (error) {
+//       console.error("Error fetching application:", error);
+//       toast.error("Failed to load application");
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const fetchProgramDetails = async (
+//     programId: number,
+//     degreeId: number,
+//     courseId: number,
+//     examCenterId: number
+//   ) => {
+//     try {
+//       const [programRes, degreeRes, courseRes, examCenterRes] = await Promise.all([
+//         fetch(`/api/programs`),
+//         fetch(`/api/degrees?programid=${programId}`),
+//         fetch(`/api/courses?degreeid=${degreeId}`),
+//         examCenterId ? fetch(`/api/exam-centers`) : null,
+//       ]);
+
+//       const [programs, degrees, courses, examCenters] = await Promise.all([
+//         programRes.json(),
+//         degreeRes.json(),
+//         courseRes.json(),
+//         examCenterRes ? examCenterRes.json() : [],
+//       ]);
+
+//       const program = programs.find((p: any) => p.id === programId);
+//       const degree = degrees.find((d: any) => d.id === degreeId);
+//       const course = courses.find((c: any) => c.id === courseId);
+//       const examCenter = examCenterId
+//         ? examCenters.find((e: any) => e.id === examCenterId)
+//         : null;
+
+//       setProgramDetails({
+//         program: program?.discipline || "N/A",
+//         degree: degree?.degree_name || "N/A",
+//         course: course?.course_name || "N/A",
+//         examCenter: examCenter?.centre_name || "N/A",
+//       });
+//     } catch (error) {
+//       console.error("Error fetching program details:", error);
+//     }
+//   };
+
+//   const generateApplicationId = (
+//     programLevelId: number,
+//     degreeId: number,
+//     courseId: number,
+//     dbId: number
+//   ): string => {
+//     const paddedId = String(dbId).padStart(2, "0");
+//     const paddedCourseId = String(courseId).padStart(2, "0");
+//     return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
+//   };
+
+//   const handleDownloadPDF = async () => {
+//     if (!contentRef.current || !applicationData) return;
+
+//     setIsDownloading(true);
+//     try {
+//       const canvas = await html2canvas(contentRef.current, {
+//         scale: 2,
+//         useCORS: true,
+//         logging: false,
+//         backgroundColor: "#ffffff",
+//       });
+
+//       const imgData = canvas.toDataURL("image/png");
+
+//       const pdf = new jsPDF({
+//         orientation: "portrait",
+//         unit: "mm",
+//         format: "a4",
+//       });
+
+//       const pdfWidth = pdf.internal.pageSize.getWidth();
+//       const pdfHeight = pdf.internal.pageSize.getHeight();
+//       const imgWidth = canvas.width;
+//       const imgHeight = canvas.height;
+//       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+//       const imgX = (pdfWidth - imgWidth * ratio) / 2;
+//       const imgY = 0;
+
+//       pdf.addImage(imgData, "PNG", imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+
+//       const applicationId = generateApplicationId(
+//         applicationData.program_level_id,
+//         applicationData.degree_id,
+//         applicationData.course_id,
+//         applicationData.id
+//       );
+
+//       pdf.save(`Application-${applicationId}.pdf`);
+//       toast.success("PDF downloaded successfully!");
+//     } catch (error) {
+//       console.error("Error generating PDF:", error);
+//       toast.error("Failed to generate PDF. Please try again.");
+//     } finally {
+//       setIsDownloading(false);
+//     }
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center bg-[#342D87]">
+//         <div className="text-center">
+//           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto"></div>
+//           <p className="mt-6 text-lg text-white font-semibold">
+//             Loading your application...
+//           </p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   if (!applicationData) return null;
+
+//   const applicationId = generateApplicationId(
+//     applicationData.program_level_id,
+//     applicationData.degree_id,
+//     applicationData.course_id,
+//     applicationData.id
+//   );
+
+//   const formattedDob = applicationData.dob
+//     ? new Date(applicationData.dob).toLocaleDateString("en-IN", {
+//         day: "2-digit",
+//         month: "2-digit",
+//         year: "numeric",
+//       })
+//     : "N/A";
+
+//   return (
+//     <div className="min-h-screen bg-[#342D87] py-8 pt-30">
+//       {/* Floating Action Buttons */}
+//       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-3">
+//         <button
+//           onClick={() => router.push("/")}
+//           className="px-6 py-3 bg-[#342D87] border-2 border-white text-white font-bold rounded-lg transition-colors shadow-lg hover:bg-white hover:text-[#342D87]"
+//         >
+//           Back to Home
+//         </button>
+//         <button
+//           onClick={handleDownloadPDF}
+//           disabled={isDownloading}
+//           className="px-6 py-3 bg-[#342D87] text-white border-white border-2 font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-white hover:text-[#342D87]"
+//         >
+//           {isDownloading ? (
+//             <>
+//               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+//               Generating...
+//             </>
+//           ) : (
+//             <>
+//               <svg
+//                 className="w-5 h-5"
+//                 fill="none"
+//                 stroke="currentColor"
+//                 viewBox="0 0 24 24"
+//               >
+//                 <path
+//                   strokeLinecap="round"
+//                   strokeLinejoin="round"
+//                   strokeWidth={2}
+//                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+//                 />
+//               </svg>
+//               Download PDF
+//             </>
+//           )}
+//         </button>
+//       </div>
+
+//       {/* PDF Content Area - Responsive Scaled A4 Container */}
+//       <div 
+//         ref={containerRef}
+//         className="pt-8 pb-24 flex justify-center items-start px-4"
+//       >
+//         <div
+//           style={{
+//             transform: `scale(${scale})`,
+//             transformOrigin: "top center",
+//             transition: "transform 0.3s ease",
+//           }}
+//         >
+//           <div
+//             ref={contentRef}
+//             className="bg-white shadow-2xl"
+//             style={{
+//               width: "210mm",
+//               minHeight: "297mm",
+//               padding: "15mm",
+//             }}
+//           >
+//             {/* Header with Logo */}
+//             <div className="text-center mb-4 pt-20">
+//               <img
+//                 src="/loyola-banner.jpg"
+//                 alt="Loyola College Logo"
+//                 className="w-[800px] h-auto mx-auto -mt-[100px] mb-[-50px] z-50"
+//                 crossOrigin="anonymous"
+//               />
+//             </div>
+            
+//             <div className="bg-transparent text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase pt-10">
+//             </div>
+
+//             {/* Title */}
+//             <div className="bg-[#342D87] text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase">
+//               APPLICATION FORM 2026
+//             </div>
+
+//             {/* Application ID */}
+//             <table className="w-full border-collapse mb-0">
+//               <tbody>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Application ID
+//                   </td>
+//                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationId}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+
+//             {/* Personal Information */}
+//             <table className="w-full border-collapse">
+//               <tbody>
+//                 <tr>
+//                   <td
+//                     colSpan={2}
+//                     className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+//                     style={{ verticalAlign: 'middle' }}
+//                   >
+//                     PERSONAL INFORMATION
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Full Name
+//                   </td>
+//                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.full_name}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Date of Birth
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {formattedDob}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Gender
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.gender || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Mobile Number
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.mobile}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Email Address
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.email}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+
+//             {/* Contact Information */}
+//             <table className="w-full border-collapse">
+//               <tbody>
+//                 <tr>
+//                   <td
+//                     colSpan={2}
+//                     className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+//                     style={{ verticalAlign: 'middle' }}
+//                   >
+//                     CONTACT INFORMATION
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Address
+//                   </td>
+//                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.address || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     City
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.city || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     State
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.state || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     PIN Code
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.pincode || "N/A"}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+
+//             {/* Parent/Guardian Information */}
+//             <table className="w-full border-collapse">
+//               <tbody>
+//                 <tr>
+//                   <td
+//                     colSpan={2}
+//                     className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+//                     style={{ verticalAlign: 'middle' }}
+//                   >
+//                     PARENT/GUARDIAN INFORMATION
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Father's Name
+//                   </td>
+//                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.father_name || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Mother's Name
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.mother_name || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Parent Mobile
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.parent_mobile || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Parent Email
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.parent_email || "N/A"}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+
+//             {/* Emergency Contact */}
+//             <table className="w-full border-collapse">
+//               <tbody>
+//                 <tr>
+//                   <td
+//                     colSpan={2}
+//                     className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+//                     style={{ verticalAlign: 'middle' }}
+//                   >
+//                     EMERGENCY CONTACT
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Emergency Contact Name
+//                   </td>
+//                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.emergency_contact_name || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Relation
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.emergency_contact_relation || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Emergency Mobile
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.emergency_contact_mobile || "N/A"}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+
+//             {/* Program Details */}
+//             {programDetails && (
+//               <table className="w-full border-collapse">
+//                 <tbody>
+//                   <tr>
+//                     <td
+//                       colSpan={2}
+//                       className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+//                       style={{ verticalAlign: 'middle' }}
+//                     >
+//                       PROGRAM DETAILS
+//                     </td>
+//                   </tr>
+//                   <tr>
+//                     <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       Program Level
+//                     </td>
+//                     <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       {programDetails.program}
+//                     </td>
+//                   </tr>
+//                   <tr>
+//                     <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       Degree
+//                     </td>
+//                     <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       {programDetails.degree}
+//                     </td>
+//                   </tr>
+//                   <tr>
+//                     <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       Course
+//                     </td>
+//                     <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       {programDetails.course}
+//                     </td>
+//                   </tr>
+//                   <tr>
+//                     <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       Exam Center
+//                     </td>
+//                     <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                       {programDetails.examCenter}
+//                     </td>
+//                   </tr>
+//                 </tbody>
+//               </table>
+//             )}
+
+//             {/* Payment Details */}
+//             <table className="w-full border-collapse">
+//               <tbody>
+//                 <tr>
+//                   <td
+//                     colSpan={2}
+//                     className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+//                     style={{ verticalAlign: 'middle' }}
+//                   >
+//                     PAYMENT DETAILS
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Payment ID
+//                   </td>
+//                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.payment_id || "N/A"}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Payment Amount
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     ₹{applicationData.payment_amount || 0}
+//                   </td>
+//                 </tr>
+//                 <tr>
+//                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+//                     Payment Status
+//                   </td>
+//                   <td className="border border-black p-1 px-3 text-[11pt] uppercase" style={{ verticalAlign: 'middle' }}>
+//                     {applicationData.payment_status || "PENDING"}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default function ApplicationPreview() {
+//   return (
+//     <>
+//       <Toaster position="top-right" />
+//       <Suspense
+//         fallback={
+//           <div className="min-h-screen flex items-center justify-center bg-[#342D87]">
+//             <div className="text-center">
+//               <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto"></div>
+//               <p className="mt-6 text-lg text-white font-semibold">
+//                 Loading application...
+//               </p>
+//             </div>
+//           </div>
+//         }
+//       >
+//         <ApplicationPreviewContent />
+//       </Suspense>
+//     </>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { Suspense, useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
 
 interface ApplicationData {
@@ -13,14 +662,21 @@ interface ApplicationData {
   mobile: string;
   dob: string;
   gender: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
+  nationality: string;
+  category: string;
+  aadhaar: string;
+  communication_address: string;
+  communication_city: string;
+  communication_state: string;
+  communication_pincode: string;
+  permanent_address: string;
+  permanent_city: string;
+  permanent_state: string;
+  permanent_pincode: string;
   father_name: string;
   mother_name: string;
-  parent_mobile: string;
-  parent_email: string;
+  father_mobile: string;
+  mother_mobile: string;
   emergency_contact_name: string;
   emergency_contact_relation: string;
   emergency_contact_mobile: string;
@@ -32,6 +688,7 @@ interface ApplicationData {
   payment_amount: number;
   payment_status: string;
   submitted_at: string;
+  academic_year: string;
 }
 
 interface ProgramDetails {
@@ -67,7 +724,7 @@ function ApplicationPreviewContent() {
     const handleResize = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
-        const a4Width = 794; // 210mm in pixels at 96 DPI
+        const a4Width = 794;
         const newScale = Math.min(1, (containerWidth - 32) / a4Width);
         setScale(newScale);
       }
@@ -80,22 +737,64 @@ function ApplicationPreviewContent() {
 
   const fetchApplicationData = async () => {
     try {
-      const response = await fetch(`/api/admission-form?email=${userEmail}`);
+      // Use the complete API endpoint
+      const response = await fetch(`/api/admission-form/complete?email=${encodeURIComponent(userEmail!)}`);
       const result = await response.json();
 
+      console.log('Application data:', result);
+
       if (result.data) {
+        // Check payment status
         if (result.data.payment_status !== "completed") {
           toast.error("Payment not completed");
           router.push(`/admission-form?email=${userEmail}`);
           return;
         }
-        setApplicationData(result.data);
+
+        // Map the nested structure to flat structure for display
+        const flattenedData: ApplicationData = {
+          id: result.data.id,
+          full_name: result.data.full_name || result.data.personalInfo?.full_name || '',
+          email: result.data.email || result.data.personalInfo?.email || userEmail || '',
+          mobile: result.data.mobile || result.data.personalInfo?.mobile || '',
+          dob: result.data.dob || result.data.personalInfo?.dob || '',
+          gender: result.data.gender || result.data.personalInfo?.gender || '',
+          nationality: result.data.nationality || result.data.personalInfo?.nationality || '',
+          category: result.data.category || result.data.personalInfo?.category || '',
+          aadhaar: result.data.aadhaar || result.data.personalInfo?.aadhaar || '',
+          communication_address: result.data.communication_address || result.data.addressInfo?.communication_address || '',
+          communication_city: result.data.communication_city || result.data.addressInfo?.communication_city || '',
+          communication_state: result.data.communication_state || result.data.addressInfo?.communication_state || '',
+          communication_pincode: result.data.communication_pincode || result.data.addressInfo?.communication_pincode || '',
+          permanent_address: result.data.permanent_address || result.data.addressInfo?.permanent_address || '',
+          permanent_city: result.data.permanent_city || result.data.addressInfo?.permanent_city || '',
+          permanent_state: result.data.permanent_state || result.data.addressInfo?.permanent_state || '',
+          permanent_pincode: result.data.permanent_pincode || result.data.addressInfo?.permanent_pincode || '',
+          father_name: result.data.father_name || result.data.familyInfo?.father_name || '',
+          mother_name: result.data.mother_name || result.data.familyInfo?.mother_name || '',
+          father_mobile: result.data.father_mobile || result.data.familyInfo?.father_mobile || '',
+          mother_mobile: result.data.mother_mobile || result.data.familyInfo?.mother_mobile || '',
+          emergency_contact_name: result.data.emergency_contact_name || result.data.familyInfo?.emergency_contact_name || '',
+          emergency_contact_relation: result.data.emergency_contact_relation || result.data.familyInfo?.emergency_contact_relation || '',
+          emergency_contact_mobile: result.data.emergency_contact_mobile || result.data.familyInfo?.emergency_contact_mobile || '',
+          program_level_id: result.data.program_level_id || result.data.basicInfo?.program_level_id || 0,
+          degree_id: result.data.degree_id || result.data.basicInfo?.degree_id || 0,
+          course_id: result.data.course_id || result.data.basicInfo?.course_id || 0,
+          exam_center_id: result.data.exam_center_id || result.data.basicInfo?.exam_center_id || 0,
+          payment_id: result.data.payment_id || '',
+          payment_amount: result.data.payment_amount || 1000,
+          payment_status: result.data.payment_status || 'completed',
+          submitted_at: result.data.submitted_at || result.data.updated_at || '',
+          academic_year: result.data.academic_year || '2026',
+        };
+
+        setApplicationData(flattenedData);
 
         await fetchProgramDetails(
-          result.data.program_level_id,
-          result.data.degree_id,
-          result.data.course_id,
-          result.data.exam_center_id
+          flattenedData.program_level_id,
+          flattenedData.degree_id,
+          flattenedData.course_id,
+          flattenedData.exam_center_id
         );
       } else {
         toast.error("Application not found");
@@ -118,8 +817,8 @@ function ApplicationPreviewContent() {
     try {
       const [programRes, degreeRes, courseRes, examCenterRes] = await Promise.all([
         fetch(`/api/programs`),
-        fetch(`/api/degrees?programid=${programId}`),
-        fetch(`/api/courses?degreeid=${degreeId}`),
+        fetch(`/api/degrees?program_id=${programId}`),
+        fetch(`/api/courses?degree_id=${degreeId}`),
         examCenterId ? fetch(`/api/exam-centers`) : null,
       ]);
 
@@ -154,9 +853,9 @@ function ApplicationPreviewContent() {
     courseId: number,
     dbId: number
   ): string => {
-    const paddedId = String(dbId).padStart(2, "0");
+    const paddedId = String(dbId).padStart(3, "0");
     const paddedCourseId = String(courseId).padStart(2, "0");
-    return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
+    return `LCSS${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
   };
 
   const handleDownloadPDF = async () => {
@@ -208,7 +907,7 @@ function ApplicationPreviewContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#342D87]">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto"></div>
           <p className="mt-6 text-lg text-white font-semibold">
@@ -237,19 +936,19 @@ function ApplicationPreviewContent() {
     : "N/A";
 
   return (
-    <div className="min-h-screen bg-[#342D87] py-8 pt-30">
+    <div className="min-h-screen bg-white py-8 pt-30">
       {/* Floating Action Buttons */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-3">
         <button
           onClick={() => router.push("/")}
-          className="px-6 py-3 bg-[#342D87] border-2 border-white text-white font-bold rounded-lg transition-colors shadow-lg hover:bg-white hover:text-[#342D87]"
+          className="px-6 py-3 bg-primary border-2 border-white text-white font-bold rounded-lg transition-colors shadow-lg hover:bg-white hover:text-primary"
         >
           Back to Home
         </button>
         <button
           onClick={handleDownloadPDF}
           disabled={isDownloading}
-          className="px-6 py-3 bg-[#342D87] text-white border-white border-2 font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-white hover:text-[#342D87]"
+          className="px-6 py-3 bg-primary text-white border-white border-2 font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-white hover:text-primary"
         >
           {isDownloading ? (
             <>
@@ -277,7 +976,7 @@ function ApplicationPreviewContent() {
         </button>
       </div>
 
-      {/* PDF Content Area - Responsive Scaled A4 Container */}
+      {/* PDF Content Area */}
       <div 
         ref={containerRef}
         className="pt-8 pb-24 flex justify-center items-start px-4"
@@ -312,8 +1011,8 @@ function ApplicationPreviewContent() {
             </div>
 
             {/* Title */}
-            <div className="bg-[#342D87] text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase">
-              APPLICATION FORM 2026
+            <div className="bg-primary text-white text-center text-xl font-bold py-2.5 mb-2.5 uppercase">
+              APPLICATION FORM {applicationData.academic_year}
             </div>
 
             {/* Application ID */}
@@ -336,7 +1035,7 @@ function ApplicationPreviewContent() {
                 <tr>
                   <td
                     colSpan={2}
-                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    className="bg-primary text-white font-bold p-1.5 px-2 text-[12pt]"
                     style={{ verticalAlign: 'middle' }}
                   >
                     PERSONAL INFORMATION
@@ -362,8 +1061,24 @@ function ApplicationPreviewContent() {
                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
                     Gender
                   </td>
-                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                  <td className="border border-black p-1 px-3 text-[11pt] capitalize" style={{ verticalAlign: 'middle' }}>
                     {applicationData.gender || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Nationality
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.nationality || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Category
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt] uppercase" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.category || "N/A"}
                   </td>
                 </tr>
                 <tr>
@@ -391,7 +1106,7 @@ function ApplicationPreviewContent() {
                 <tr>
                   <td
                     colSpan={2}
-                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    className="bg-primary text-white font-bold p-1.5 px-2 text-[12pt]"
                     style={{ verticalAlign: 'middle' }}
                   >
                     CONTACT INFORMATION
@@ -399,10 +1114,10 @@ function ApplicationPreviewContent() {
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 w-2/5 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    Address
+                    Communication Address
                   </td>
                   <td className="border border-black p-1 px-3 w-3/5 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {applicationData.address || "N/A"}
+                    {applicationData.communication_address || "N/A"}
                   </td>
                 </tr>
                 <tr>
@@ -410,7 +1125,7 @@ function ApplicationPreviewContent() {
                     City
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {applicationData.city || "N/A"}
+                    {applicationData.communication_city || "N/A"}
                   </td>
                 </tr>
                 <tr>
@@ -418,7 +1133,7 @@ function ApplicationPreviewContent() {
                     State
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {applicationData.state || "N/A"}
+                    {applicationData.communication_state || "N/A"}
                   </td>
                 </tr>
                 <tr>
@@ -426,7 +1141,7 @@ function ApplicationPreviewContent() {
                     PIN Code
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {applicationData.pincode || "N/A"}
+                    {applicationData.communication_pincode || "N/A"}
                   </td>
                 </tr>
               </tbody>
@@ -438,7 +1153,7 @@ function ApplicationPreviewContent() {
                 <tr>
                   <td
                     colSpan={2}
-                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    className="bg-primary text-white font-bold p-1.5 px-2 text-[12pt]"
                     style={{ verticalAlign: 'middle' }}
                   >
                     PARENT/GUARDIAN INFORMATION
@@ -454,6 +1169,14 @@ function ApplicationPreviewContent() {
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    Father's Mobile
+                  </td>
+                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.father_mobile || "N/A"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
                     Mother's Name
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
@@ -462,18 +1185,10 @@ function ApplicationPreviewContent() {
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    Parent Mobile
+                    Mother's Mobile
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {applicationData.parent_mobile || "N/A"}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    Parent Email
-                  </td>
-                  <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    {applicationData.parent_email || "N/A"}
+                    {applicationData.mother_mobile || "N/A"}
                   </td>
                 </tr>
               </tbody>
@@ -485,7 +1200,7 @@ function ApplicationPreviewContent() {
                 <tr>
                   <td
                     colSpan={2}
-                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    className="bg-primary text-white font-bold p-1.5 px-2 text-[12pt]"
                     style={{ verticalAlign: 'middle' }}
                   >
                     EMERGENCY CONTACT
@@ -525,7 +1240,7 @@ function ApplicationPreviewContent() {
                   <tr>
                     <td
                       colSpan={2}
-                      className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                      className="bg-primary text-white font-bold p-1.5 px-2 text-[12pt]"
                       style={{ verticalAlign: 'middle' }}
                     >
                       PROGRAM DETAILS
@@ -573,7 +1288,7 @@ function ApplicationPreviewContent() {
                 <tr>
                   <td
                     colSpan={2}
-                    className="bg-[#342D87] text-white font-bold p-1.5 px-2 text-[12pt]"
+                    className="bg-primary text-white font-bold p-1.5 px-2 text-[12pt]"
                     style={{ verticalAlign: 'middle' }}
                   >
                     PAYMENT DETAILS
@@ -592,15 +1307,15 @@ function ApplicationPreviewContent() {
                     Payment Amount
                   </td>
                   <td className="border border-black p-1 px-3 text-[11pt]" style={{ verticalAlign: 'middle' }}>
-                    ₹{applicationData.payment_amount || 0}
+                    ₹{applicationData.payment_amount || 1000}
                   </td>
                 </tr>
                 <tr>
                   <td className="border border-black p-1 px-3 font-semibold text-[11pt]" style={{ verticalAlign: 'middle' }}>
                     Payment Status
                   </td>
-                  <td className="border border-black p-1 px-3 text-[11pt] uppercase" style={{ verticalAlign: 'middle' }}>
-                    {applicationData.payment_status || "PENDING"}
+                  <td className="border border-black p-1 px-3 text-[11pt] uppercase font-semibold text-green-600" style={{ verticalAlign: 'middle' }}>
+                    {applicationData.payment_status || "COMPLETED"}
                   </td>
                 </tr>
               </tbody>
@@ -618,7 +1333,7 @@ export default function ApplicationPreview() {
       <Toaster position="top-right" />
       <Suspense
         fallback={
-          <div className="min-h-screen flex items-center justify-center bg-[#342D87]">
+          <div className="min-h-screen flex items-center justify-center bg-primary">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto"></div>
               <p className="mt-6 text-lg text-white font-semibold">

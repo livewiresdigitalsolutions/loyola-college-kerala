@@ -72,7 +72,7 @@ const generateApplicationId = (
 ): string => {
   const paddedId = String(dbId).padStart(3, "0");
   const paddedCourseId = String(courseId).padStart(2, "0");
-  return `LC${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
+  return `LCSS${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
 };
 
 export default function Admissions() {
@@ -238,9 +238,31 @@ export default function Admissions() {
     }
   };
 
-  const handleView = (email: string) => {
-    router.push(`/sys-ops/admissions/${encodeURIComponent(email)}`);
-  };
+  const handleViewDetails = (userEmail: string) => {
+  router.push(`/sys-ops/admissions/${encodeURIComponent(userEmail)}`);
+};
+
+const handleDelete = async (userEmail: string) => {
+  if (!confirm("Are you sure you want to delete this admission?")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/sys-ops/admissions/${encodeURIComponent(userEmail)}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      toast.success("Admission deleted successfully");
+      fetchAdmissions();
+    } else {
+      toast.error("Failed to delete admission");
+    }
+  } catch (error) {
+    toast.error("Error deleting admission");
+  }
+};
+
 
   const handleExport = async () => {
     try {
@@ -666,7 +688,7 @@ export default function Admissions() {
 
                           <td className="py-3 px-4">
                             <button
-                              onClick={() => handleView(admission.user_email)}
+                              onClick={() => handleViewDetails(admission.user_email)}
                               className="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
                             >
                               <Eye className="w-4 h-4" />

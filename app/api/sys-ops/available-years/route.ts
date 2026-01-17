@@ -1,4 +1,3 @@
-// app/api/sys-ops/available-years/route.ts
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
@@ -18,49 +17,54 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+async function getAvailableYearsMySQL() {
+  const connection = await mysql.createConnection(mysqlConfig);
+
+  try {
+    const [rows] = await connection.execute(`
+      SELECT DISTINCT academic_year
+      FROM admission_basic_info
+      WHERE academic_year IS NOT NULL AND academic_year != ''
+      ORDER BY academic_year DESC
+    `);
+
+    await connection.end();
+    return rows as { academic_year: string }[];
+  } catch (error) {
+    await connection.end();
+    throw error;
+  }
+}
+
+async function getAvailableYearsSupabase() {
+  const { data, error } = await supabase
+    .from('admission_basic_info')
+    .select('academic_year')
+    .not('academic_year', 'is', null)
+    .neq('academic_year', '')
+    .order('academic_year', { ascending: false });
+
+  if (error) throw error;
+
+  // Get unique years
+  const uniqueYears = [...new Set(data.map((item: any) => item.academic_year))];
+  return uniqueYears.map((year) => ({ academic_year: year }));
+}
+
 export async function GET() {
   try {
-    if (isDevelopment) {
-      // Supabase query
-      const { data, error } = await supabase
-        .from('admission_form')
-        .select('academic_year')
-        .not('academic_year', 'is', null);
+    const years = isDevelopment
+      ? await getAvailableYearsSupabase()
+      : await getAvailableYearsMySQL();
 
-      if (error) throw error;
+    // Extract just the year values as an array of strings
+    const yearList = years.map((row) => row.academic_year);
 
-      // Get unique years and sort them in descending order
-      const uniqueYears = [...new Set(data.map(item => item.academic_year))]
-        .filter(year => year && year.trim() !== '')
-        .sort((a, b) => {
-          // Extract start year from format "2024-2025"
-          const yearA = parseInt(a.split('-')[0]);
-          const yearB = parseInt(b.split('-')[0]);
-          return yearB - yearA; // Descending order
-        });
-
-      return NextResponse.json(uniqueYears);
-    } else {
-      // MySQL query
-      const connection = await mysql.createConnection(mysqlConfig);
-      
-      const [rows] = await connection.execute(`
-        SELECT DISTINCT academic_year
-        FROM admission_form
-        WHERE academic_year IS NOT NULL AND academic_year != ''
-        ORDER BY academic_year DESC
-      `);
-      
-      await connection.end();
-      
-      const years = (rows as any[]).map(row => row.academic_year);
-      return NextResponse.json(years);
-    }
+    // Return as an array, not an object with years property
+    return NextResponse.json(yearList);
   } catch (error: any) {
     console.error('Error fetching available years:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch available years', details: error.message },
-      { status: 500 }
-    );
+    // Return empty array on error
+    return NextResponse.json([], { status: 500 });
   }
 }

@@ -1,4 +1,3 @@
-// app/api/sys-ops/admissions/route.ts
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
@@ -28,6 +27,7 @@ interface AdmissionRow extends RowDataPacket {
   user_email: string;
   full_name: string;
   mobile: string;
+  email: string;
   program_level_id: number;
   degree_id: number;
   course_id: number;
@@ -59,36 +59,36 @@ async function getAdmissionsMySQL(
     // Status filter
     if (status && status !== 'all') {
       if (status === 'completed') {
-        whereClause += ' AND af.payment_status = ?';
+        whereClause += ' AND bi.payment_status = ?';
         params.push('completed');
       } else {
-        whereClause += ' AND (af.form_status = ? OR af.form_status IS NULL)';
+        whereClause += ' AND (bi.form_status = ? OR bi.form_status IS NULL)';
         params.push(status);
       }
     }
 
     // Program filter
     if (program && program !== 'all') {
-      whereClause += ' AND af.program_level_id = ?';
+      whereClause += ' AND bi.program_level_id = ?';
       params.push(parseInt(program));
     }
 
     // Degree filter
     if (degree && degree !== 'all') {
-      whereClause += ' AND af.degree_id = ?';
+      whereClause += ' AND bi.degree_id = ?';
       params.push(parseInt(degree));
     }
 
     // Course filter
     if (course && course !== 'all') {
-      whereClause += ' AND af.course_id = ?';
+      whereClause += ' AND bi.course_id = ?';
       params.push(parseInt(course));
     }
 
     // Search filter
     const applySearch = process.env.SEARCH_ON_SERVER !== 'false';
     if (search && applySearch) {
-      whereClause += ' AND (af.full_name LIKE ? OR af.user_email LIKE ? OR af.mobile LIKE ?)';
+      whereClause += ' AND (pi.full_name LIKE ? OR bi.user_email LIKE ? OR pi.mobile LIKE ?)';
       const searchPattern = `%${search}%`;
       params.push(searchPattern, searchPattern, searchPattern);
     }
@@ -96,29 +96,34 @@ async function getAdmissionsMySQL(
     // Get total count with filters
     const [countResult] = await connection.execute<CountResult[]>(
       `SELECT COUNT(*) as total 
-       FROM admission_form af 
+       FROM admission_basic_info bi
+       LEFT JOIN admission_personal_info pi ON bi.id = pi.admission_id
        WHERE ${whereClause}`,
       params
     );
     const total = countResult[0]?.total || 0;
 
-    // Get paginated data with filters and exam center JOIN
+    // Get paginated data with filters and JOINs
     const [rows] = await connection.execute<AdmissionRow[]>(
-      `SELECT af.id, af.user_email, af.full_name, af.mobile, 
-              af.program_level_id, af.degree_id, af.course_id, 
-              af.exam_center_id, af.form_status, af.payment_status, 
-              af.updated_at, af.created_at,
-              ec.centre_name as exam_center_name,
-              ec.location as exam_center_location
-       FROM admission_form af
-       LEFT JOIN exam_centers ec ON af.exam_center_id = ec.id
+      `SELECT 
+        bi.id, bi.user_email, bi.program_level_id, bi.degree_id, 
+        bi.course_id, bi.exam_center_id, bi.form_status, 
+        bi.payment_status, bi.updated_at, bi.created_at,
+        pi.full_name, pi.mobile, pi.email,
+        ec.centre_name as exam_center_name,
+        ec.location as exam_center_location
+       FROM admission_basic_info bi
+       LEFT JOIN admission_personal_info pi ON bi.id = pi.admission_id
+       LEFT JOIN exam_centers ec ON bi.exam_center_id = ec.id
        WHERE ${whereClause}
-       ORDER BY af.updated_at DESC
+       ORDER BY bi.updated_at DESC
        LIMIT ? OFFSET ?`,
       [...params, perPage, offset]
     );
 
     const pages = Math.ceil(total / perPage);
+
+    await connection.end();
 
     return {
       data: rows,
@@ -129,9 +134,8 @@ async function getAdmissionsMySQL(
     };
   } catch (error) {
     console.error('MySQL Get Admissions Error:', error);
-    throw error;
-  } finally {
     await connection.end();
+    throw error;
   }
 }
 
@@ -149,12 +153,14 @@ async function getAdmissionsSupabase(
     const to = from + perPage - 1;
 
     let query = supabase
-      .from('admission_form')
+      .from('admission_basic_info')
       .select(`
-        id, user_email, full_name, mobile, 
-        program_level_id, degree_id, course_id, 
+        id, user_email, program_level_id, degree_id, course_id, 
         exam_center_id, form_status, payment_status, 
         updated_at, created_at,
+        admission_personal_info (
+          full_name, mobile, email
+        ),
         exam_centers!exam_center_id (
           centre_name,
           location
@@ -188,7 +194,7 @@ async function getAdmissionsSupabase(
     // Search filter
     const applySearch = process.env.SEARCH_ON_SERVER !== 'false';
     if (search && applySearch) {
-      query = query.or(`full_name.ilike.%${search}%,user_email.ilike.%${search}%,mobile.ilike.%${search}%`);
+      query = query.or(`admission_personal_info.full_name.ilike.%${search}%,user_email.ilike.%${search}%,admission_personal_info.mobile.ilike.%${search}%`);
     }
 
     const { data, count, error } = await query
@@ -200,6 +206,9 @@ async function getAdmissionsSupabase(
     // Transform Supabase response to match MySQL format
     const transformedData = data?.map((item: any) => ({
       ...item,
+      full_name: item.admission_personal_info?.full_name || null,
+      mobile: item.admission_personal_info?.mobile || null,
+      email: item.admission_personal_info?.email || null,
       exam_center_name: item.exam_centers?.centre_name || null,
       exam_center_location: item.exam_centers?.location || null,
     })) || [];
@@ -219,7 +228,6 @@ async function getAdmissionsSupabase(
     throw error;
   }
 }
-
 
 export async function GET(request: Request) {
   try {

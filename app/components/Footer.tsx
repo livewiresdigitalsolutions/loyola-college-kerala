@@ -17,7 +17,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative w-full bg-green-950 text-white overflow-hidden">
+    <footer className="relative w-full bg-emerald-800 text-white overflow-hidden">
       {/* Diagonal overlay */}
       <div className="absolute inset-0 bg-primary clip-diagonal pointer-events-none" />
 

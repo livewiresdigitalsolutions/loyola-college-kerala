@@ -1,3 +1,1272 @@
+// "use client";
+
+// import { useEffect, useState, Suspense } from "react";
+// import { useRouter, useSearchParams } from "next/navigation";
+// import { toast, Toaster } from "react-hot-toast";
+// import Script from "next/script";
+// import { useAcademicYear } from "../hooks/useAcademicYears";
+// import { useAdmissionForm } from "../hooks/useAdmissionForm";
+// import {
+//   Program,
+//   Degree,
+//   Course,
+//   ExamCenter,
+//   SubjectMark,
+//   AcademicMark,
+//   CompleteFormData,
+// } from "@/types/admission";
+// import {
+//   validateName,
+//   validateMobile,
+//   validateEmail,
+//   validateAadhaar,
+//   validatePincode,
+//   validateYear,
+//   validatePercentage,
+// } from "../lib/validators";
+
+// // Import tab components
+// import ProgramPersonalTab from "./components/ProgramPersonalTab";
+// import ContactFamilyTab from "./components/ContactFamilyTab";
+// import AcademicRecordsTab from "./components/AcademicRecordsTab";
+// import PaymentTab from "./components/PaymentTab";
+
+// interface Tab {
+//   name: string;
+//   id: string;
+//   fields: string[];
+// }
+
+// declare global {
+//   interface Window {
+//     Razorpay: any;
+//   }
+// }
+
+// function AdmissionFormContent() {
+//   const router = useRouter();
+//   const searchParams = useSearchParams();
+//   const userEmail = searchParams.get("email");
+//   const { academicYear, loading: yearLoading } = useAcademicYear();
+//   const {
+//     saveCompleteForm,
+//     loadCompleteForm,
+//     isLoading: formSaving,
+//   } = useAdmissionForm(userEmail);
+
+//   // Dropdown data
+//   const [programs, setPrograms] = useState<Program[]>([]);
+//   const [degrees, setDegrees] = useState<Degree[]>([]);
+//   const [courses, setCourses] = useState<Course[]>([]);
+//   const [examCenters, setExamCenters] = useState<ExamCenter[]>([]);
+
+//   // UI states
+//   const [activeTab, setActiveTab] = useState<number>(0);
+//   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+//   const [isLoading, setIsLoading] = useState<boolean>(true);
+//   const [completedTabs, setCompletedTabs] = useState<number[]>([]);
+//   const [paymentStatus, setPaymentStatus] = useState<string>("");
+//   const [admissionId, setAdmissionId] = useState<number | undefined>();
+//   const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
+
+//   // 12th standard subjects
+//   const [twelfthSubjects, setTwelfthSubjects] = useState<SubjectMark[]>([
+//     { subject_name: "", marks_obtained: undefined, max_marks: undefined },
+//   ]);
+
+//   // Form data - flattened structure for easier form handling
+//   const [form, setForm] = useState<any>({
+//     // Basic Info
+//     program_level_id: "",
+//     degree_id: "",
+//     course_id: "",
+//     second_preference_course_id: "",
+//     third_preference_course_id: "",
+//     exam_center_id: "",
+
+//     // Personal Info
+//     full_name: "",
+//     gender: "",
+//     dob: "",
+//     mobile: "",
+//     email: "",
+//     aadhaar: "",
+//     nationality: "",
+//     religion: "",
+//     category: "",
+//     seat_reservation_quota: "",
+//     caste: "",
+//     mother_tongue: "",
+//     nativity: "",
+//     blood_group: "",
+
+//     // Family Info
+//     father_name: "",
+//     father_mobile: "",
+//     father_education: "",
+//     father_occupation: "",
+//     mother_name: "",
+//     mother_mobile: "",
+//     mother_education: "",
+//     mother_occupation: "",
+//     annual_family_income: "",
+//     is_disabled: "no",
+//     disability_type: "",
+//     disability_percentage: "",
+//     dependent_of: "none",
+//     seeking_admission_under_quota: "no",
+//     scholarship_or_fee_concession: "no",
+//     hostel_accommodation_required: "no",
+//     emergency_contact_name: "",
+//     emergency_contact_relation: "",
+//     emergency_contact_mobile: "",
+
+//     // Address Info
+//     communication_address: "",
+//     communication_city: "",
+//     communication_state: "",
+//     communication_district: "",
+//     communication_pincode: "",
+//     communication_country: "",
+//     permanent_address: "",
+//     permanent_city: "",
+//     permanent_state: "",
+//     permanent_district: "",
+//     permanent_pincode: "",
+//     permanent_country: "",
+
+//     // Academic Info (temporary flat structure)
+//     tenth_register_number: "",
+//     tenth_board: "",
+//     tenth_school: "",
+//     tenth_year: "",
+//     tenth_percentage: "",
+//     twelfth_register_number: "",
+//     twelfth_board: "",
+//     twelfth_school: "",
+//     twelfth_year: "",
+//     twelfth_percentage: "",
+//     twelfth_stream: "",
+//     ug_university: "",
+//     ug_college: "",
+//     ug_degree: "",
+//     ug_year: "",
+//     ug_percentage: "",
+//     pg_university: "",
+//     pg_college: "",
+//     pg_degree: "",
+//     pg_year: "",
+//     pg_percentage: "",
+
+//     // Additional
+//     previous_gap: "",
+//     extracurricular: "",
+//     achievements: "",
+//   });
+
+//   // Define tabs based on payment status
+//   const getTabsForProgramLevel = (): Tab[] => {
+//     const baseTabs: Tab[] = [
+//       {
+//         name: "Program & Personal",
+//         id: "personal",
+//         fields: [
+//           "program_level_id",
+//           "degree_id",
+//           "course_id",
+//           "exam_center_id",
+//           "full_name",
+//           "gender",
+//           "dob",
+//           "nationality",
+//           "category",
+//           "seat_reservation_quota",
+//           "caste",
+//           "mother_tongue",
+//           "nativity",
+//           "aadhaar",
+//         ],
+//       },
+//       {
+//         name: "Contact & Family",
+//         id: "contact",
+//         fields: [
+//           "mobile",
+//           "email",
+//           "communication_address",
+//           "communication_city",
+//           "communication_state",
+//           "communication_district",
+//           "communication_pincode",
+//           "communication_country",
+//           "permanent_address",
+//           "permanent_city",
+//           "permanent_state",
+//           "permanent_district",
+//           "permanent_pincode",
+//           "permanent_country",
+//           "father_name",
+//           "father_mobile",
+//           "father_education",
+//           "father_occupation",
+//           "mother_name",
+//           "mother_mobile",
+//           "mother_education",
+//           "mother_occupation",
+//           "annual_family_income",
+//           "emergency_contact_name",
+//           "emergency_contact_relation",
+//           "emergency_contact_mobile",
+//         ],
+//       },
+//       {
+//         name: "Academic Records",
+//         id: "academic",
+//         fields: [],
+//       },
+//     ];
+
+//     if (paymentStatus === "completed") {
+//       baseTabs.push({
+//         name: "Download Application",
+//         id: "download",
+//         fields: [],
+//       });
+//     } else {
+//       baseTabs.push({
+//         name: "Payment",
+//         id: "payment",
+//         fields: [],
+//       });
+//     }
+
+//     return baseTabs;
+//   };
+
+//   const tabs = getTabsForProgramLevel();
+  
+
+//   const handleNext = async () => {
+//   if (paymentStatus === "completed") {
+//     toast.error("Form is locked. Cannot make changes.");
+//     return;
+//   }
+
+//   // Validate current tab fields
+//   const currentTab = tabs[activeTab];
+//   const missingFields = currentTab.fields.filter(
+//     field => !form[field] || form[field].toString().trim() === ""
+//   );
+
+//   if (missingFields.length > 0) {
+//     toast.error("Please fill all required fields before proceeding");
+//     return;
+//   }
+
+//   setIsSubmitting(true);
+
+//   try {
+//     // Prepare data for saving
+//     const formDataToSave: CompleteFormData = {
+//       ...form,
+//       academicMarks: [], // Add your academic marks here
+//       form_status: 'draft',
+//     };
+
+//     // Save the form
+//     const result = await saveCompleteForm(formDataToSave, admissionId);
+
+//     if (result.success) {
+//       // Update admission ID if this is first save
+//       if (!admissionId && result.admissionId) {
+//         setAdmissionId(result.admissionId);
+//       }
+
+//       // Mark current tab as completed
+//       if (!completedTabs.includes(activeTab)) {
+//         setCompletedTabs(prev => [...prev, activeTab]);
+//       }
+
+//       // Move to next tab - THIS IS THE KEY PART
+//       if (activeTab < tabs.length - 1) {
+//         setActiveTab(activeTab + 1);
+//         toast.success("Progress saved! Moving to next section.");
+//       } else {
+//         toast.success("Form saved successfully!");
+//       }
+//     } else {
+//       toast.error(result.error || "Failed to save form");
+//     }
+//   } catch (error: any) {
+//     console.error("Save error:", error);
+//     toast.error("An error occurred while saving");
+//   } finally {
+//     setIsSubmitting(false);
+//   }
+// };
+
+
+// // Save active tab whenever it changes
+// useEffect(() => {
+//   if (userEmail) {
+//     localStorage.setItem(`admission_active_tab_${userEmail}`, activeTab.toString());
+//   }
+// }, [activeTab, userEmail]);
+
+// // Load active tab on mount
+// useEffect(() => {
+//   if (userEmail) {
+//     const savedTab = localStorage.getItem(`admission_active_tab_${userEmail}`);
+//     if (savedTab !== null) {
+//       setActiveTab(parseInt(savedTab, 10));
+//     }
+//   }
+// }, [userEmail]);
+
+
+//   // Handle authentication errors on mount
+//   useEffect(() => {
+//     const error = searchParams.get("error");
+
+//     if (error === "login_required") {
+//       toast.error("Please login to access the admission form");
+//       setTimeout(() => router.push("/"), 2000);
+//       return;
+//     } else if (error === "unauthorized") {
+//       toast.error("Unauthorized access. Please login with your account.");
+//       setTimeout(() => router.push("/"), 2000);
+//       return;
+//     } else if (error === "session_expired") {
+//       toast.error("Your session has expired. Please login again.");
+//       setTimeout(() => router.push("/"), 2000);
+//       return;
+//     }
+//   }, [searchParams, router]);
+
+//   // Logout function
+//   const handleLogout = async () => {
+//     if (isLoggingOut) return;
+
+//     const confirmLogout = window.confirm(
+//       "Are you sure you want to logout? Any unsaved changes will be lost."
+//     );
+//     if (!confirmLogout) return;
+
+//     setIsLoggingOut(true);
+
+//     try {
+//       const response = await fetch("/api/logout", {
+//         method: "POST",
+//         credentials: "include",
+//       });
+
+//       if (response.ok) {
+//         toast.success("Logged out successfully");
+//         // Clear any local storage
+//         if (userEmail) {
+//           localStorage.removeItem(`admission_active_tab_${userEmail}`);
+//         }
+//         setTimeout(() => {
+//           router.push("/");
+//         }, 500);
+//       } else {
+//         toast.error("Logout failed. Please try again.");
+//         setIsLoggingOut(false);
+//       }
+//     } catch (error) {
+//       console.error("Logout error:", error);
+//       toast.error("An error occurred during logout");
+//       setIsLoggingOut(false);
+//     }
+//   };
+
+//   // Load initial data
+//   useEffect(() => {
+//     if (!userEmail) {
+//       toast.error("Please login to access this form");
+//       router.push("/");
+//       return;
+//     }
+//     fetchPrograms();
+//     fetchExamCenters();
+//     loadFormData();
+//   }, [userEmail]);
+
+//   // Fetch degrees when program changes
+//   useEffect(() => {
+//     if (form.program_level_id) {
+//       fetchDegrees(form.program_level_id);
+//     }
+//   }, [form.program_level_id]);
+
+//   // Fetch courses when degree changes
+//   useEffect(() => {
+//     if (form.degree_id) {
+//       fetchCourses(form.degree_id);
+//     }
+//   }, [form.degree_id]);
+
+//   // Listen for copy address event
+//   useEffect(() => {
+//     const handleCopyAddress = () => {
+//       setForm((prev: any) => ({
+//         ...prev,
+//         permanent_address: prev.communication_address,
+//         permanent_city: prev.communication_city,
+//         permanent_state: prev.communication_state,
+//         permanent_district: prev.communication_district,
+//         permanent_pincode: prev.communication_pincode,
+//         permanent_country: prev.communication_country,
+//       }));
+//       toast.success("Address copied!");
+//     };
+
+//     window.addEventListener("copyAddress", handleCopyAddress);
+//     return () => window.removeEventListener("copyAddress", handleCopyAddress);
+//   }, []);
+
+//   // Fetch functions
+//   const fetchPrograms = async () => {
+//     try {
+//       const response = await fetch("/api/programs");
+//       const data = await response.json();
+//       setPrograms(data);
+//     } catch (error) {
+//       toast.error("Failed to load programs");
+//     }
+//   };
+
+//   const fetchDegrees = async (programId: string) => {
+//     try {
+//       const response = await fetch(`/api/degrees?program_id=${programId}`);
+//       const data = await response.json();
+//       setDegrees(data);
+//     } catch (error) {
+//       toast.error("Failed to load degrees");
+//     }
+//   };
+
+//   const fetchCourses = async (degreeId: string) => {
+//     try {
+//       const response = await fetch(`/api/courses?degree_id=${degreeId}`);
+//       const data = await response.json();
+//       setCourses(data);
+//     } catch (error) {
+//       toast.error("Failed to load courses");
+//     }
+//   };
+
+//   const fetchExamCenters = async () => {
+//     try {
+//       const response = await fetch("/api/exam-centers");
+//       const data = await response.json();
+//       setExamCenters(data);
+//     } catch (error) {
+//       toast.error("Failed to load exam centers");
+//     }
+//   };
+
+//   // Load existing form data
+//   const loadFormData = async () => {
+//     if (!userEmail) return;
+
+//     try {
+//       console.log("Starting to load form data...");
+//       const data = await loadCompleteForm();
+
+//       if (data) {
+//         console.log("Form data received:", {
+//           hasBasicInfo: !!data.basicInfo,
+//           hasPersonalInfo: !!data.personalInfo,
+//         });
+
+//         // Populate form fields
+//         const sanitizedData: any = {};
+//         Object.keys(form).forEach((key) => {
+//           const value = (data as any)[key];
+//           sanitizedData[key] =
+//             value === null || value === undefined ? "" : String(value);
+//         });
+
+//         setForm(sanitizedData);
+//         setPaymentStatus(data.payment_status || "");
+//         setAdmissionId((data as any).id);
+
+//         // Load academic marks
+//         if (data.academicMarks && Array.isArray(data.academicMarks)) {
+//           data.academicMarks.forEach((mark: any) => {
+//             if (mark.qualification_level === "12th" && mark.subjects) {
+//               setTwelfthSubjects(
+//                 mark.subjects.length > 0
+//                   ? mark.subjects
+//                   : [
+//                       {
+//                         subject_name: "",
+//                         marks_obtained: undefined,
+//                         max_marks: undefined,
+//                       },
+//                     ]
+//               );
+//             }
+//           });
+//         }
+
+//         checkCompletedTabs(sanitizedData);
+//         console.log("Form data loaded and populated successfully");
+//       } else {
+//         console.log("No existing form data - user can start fresh");
+//       }
+//     } catch (error) {
+//       console.error("Error loading form:", error);
+//       // Don't show error to user for initial load - they might be a new user
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   // Check which tabs are completed
+//   const checkCompletedTabs = (formData: any) => {
+//     const completed: number[] = [];
+//     const currentTabs = getTabsForProgramLevel();
+
+//     currentTabs.forEach((tab, index) => {
+//       if (index < currentTabs.length - 1 && tab.fields.length > 0) {
+//         const allFieldsFilled = tab.fields.every(
+//           (field) => formData[field] && formData[field].toString().trim() !== ""
+//         );
+//         if (allFieldsFilled) {
+//           completed.push(index);
+//         }
+//       }
+//     });
+
+//     setCompletedTabs(completed);
+//   };
+
+//   // Handle form input changes
+//   const handleChange = (
+//     e: React.ChangeEvent<
+//       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+//     >
+//   ) => {
+//     const { name, value } = e.target;
+
+//     if (paymentStatus === "completed") {
+//       toast.error("Form is locked. Cannot make changes.");
+//       return;
+//     }
+
+//     setForm((prev: any) => ({ ...prev, [name]: value }));
+
+//     // Reset dependent fields
+//     if (name === "program_level_id") {
+//       setForm((prev: any) => ({
+//         ...prev,
+//         program_level_id: value,
+//         degree_id: "",
+//         course_id: "",
+//         second_preference_course_id: "",
+//         third_preference_course_id: "",
+//       }));
+//       setDegrees([]);
+//       setCourses([]);
+//     }
+
+//     if (name === "degree_id") {
+//       setForm((prev: any) => ({
+//         ...prev,
+//         degree_id: value,
+//         course_id: "",
+//         second_preference_course_id: "",
+//         third_preference_course_id: "",
+//       }));
+//       setCourses([]);
+//     }
+//   };
+
+//   // Subject management
+//   const addSubject = () => {
+//     if (twelfthSubjects.length < 10) {
+//       setTwelfthSubjects([
+//         ...twelfthSubjects,
+//         { subject_name: "", marks_obtained: undefined, max_marks: undefined },
+//       ]);
+//     } else {
+//       toast.error("Maximum 10 subjects allowed");
+//     }
+//   };
+
+//   const removeSubject = (index: number) => {
+//     if (twelfthSubjects.length > 1) {
+//       setTwelfthSubjects(twelfthSubjects.filter((_, i) => i !== index));
+//     }
+//   };
+
+//   const handleSubjectChange = (
+//     index: number,
+//     field: keyof SubjectMark,
+//     value: any
+//   ) => {
+//     const updated = [...twelfthSubjects];
+//     updated[index] = { ...updated[index], [field]: value };
+
+//     // Auto-calculate percentage
+//     if (field === "marks_obtained" || field === "max_marks") {
+//       const marks =
+//         field === "marks_obtained"
+//           ? parseFloat(value)
+//           : updated[index].marks_obtained;
+//       const maxMarks =
+//         field === "max_marks" ? parseFloat(value) : updated[index].max_marks;
+
+//       if (marks && maxMarks && maxMarks > 0) {
+//         updated[index].percentage = parseFloat(
+//           ((marks / maxMarks) * 100).toFixed(2)
+//         );
+//       }
+//     }
+
+//     setTwelfthSubjects(updated);
+//   };
+
+//   // Validate tab
+//   const validateTab = (tabIndex: number): boolean => {
+//     const tab = tabs[tabIndex];
+
+//     if (tab.fields.length === 0) return true;
+
+//     const emptyFields = tab.fields.filter(
+//       (field) => !form[field] || form[field].toString().trim() === ""
+//     );
+
+//     if (emptyFields.length > 0) {
+//       toast.error(`Please fill all required fields in ${tab.name}`);
+//       return false;
+//     }
+
+//     // Tab-specific validations
+//     if (tabIndex === 0) {
+//       if (!validateName(form.full_name)) {
+//         toast.error("Invalid full name format");
+//         return false;
+//       }
+//       if (!validateAadhaar(form.aadhaar)) {
+//         toast.error("Aadhaar must be exactly 12 digits");
+//         return false;
+//       }
+//     }
+
+//     if (tabIndex === 1) {
+//       if (!validateMobile(form.mobile)) {
+//         toast.error("Mobile must be exactly 10 digits");
+//         return false;
+//       }
+//       if (!validateEmail(form.email)) {
+//         toast.error("Invalid email format");
+//         return false;
+//       }
+//       if (!validatePincode(form.communication_pincode)) {
+//         toast.error("Communication PIN code must be exactly 6 digits");
+//         return false;
+//       }
+//       if (!validatePincode(form.permanent_pincode)) {
+//         toast.error("Permanent PIN code must be exactly 6 digits");
+//         return false;
+//       }
+//       if (!validateMobile(form.father_mobile)) {
+//         toast.error("Father's mobile must be exactly 10 digits");
+//         return false;
+//       }
+//       if (!validateMobile(form.mother_mobile)) {
+//         toast.error("Mother's mobile must be exactly 10 digits");
+//         return false;
+//       }
+//       if (!validateMobile(form.emergency_contact_mobile)) {
+//         toast.error("Emergency contact mobile must be exactly 10 digits");
+//         return false;
+//       }
+//     }
+
+//     if (tabIndex === 2) {
+//       // Academic validation
+//       if (!form.tenth_board || !form.tenth_year || !form.tenth_percentage) {
+//         toast.error("Please fill all 10th standard details");
+//         return false;
+//       }
+//       if (!validateYear(form.tenth_year)) {
+//         toast.error("Invalid 10th passing year");
+//         return false;
+//       }
+//       if (!validatePercentage(form.tenth_percentage)) {
+//         toast.error("Invalid 10th percentage");
+//         return false;
+//       }
+
+//       if (
+//         !form.twelfth_board ||
+//         !form.twelfth_year ||
+//         !form.twelfth_percentage
+//       ) {
+//         toast.error("Please fill all 12th standard details");
+//         return false;
+//       }
+//       if (!validateYear(form.twelfth_year)) {
+//         toast.error("Invalid 12th passing year");
+//         return false;
+//       }
+//       if (!validatePercentage(form.twelfth_percentage)) {
+//         toast.error("Invalid 12th percentage");
+//         return false;
+//       }
+
+//       // Validate at least one subject for 12th
+//       const validSubjects = twelfthSubjects.filter(
+//         (s) => s.subject_name && s.marks_obtained && s.max_marks
+//       );
+//       if (validSubjects.length === 0) {
+//         toast.error("Please add at least one subject for 12th standard");
+//         return false;
+//       }
+
+//       // Validate UG for PG and PhD
+//       if (form.program_level_id === "2" || form.program_level_id === "3") {
+//         if (!form.ug_university || !form.ug_year || !form.ug_percentage) {
+//           toast.error("Please fill all UG details");
+//           return false;
+//         }
+//         if (!validateYear(form.ug_year)) {
+//           toast.error("Invalid UG passing year");
+//           return false;
+//         }
+//         if (!validatePercentage(form.ug_percentage)) {
+//           toast.error("Invalid UG percentage");
+//           return false;
+//         }
+//       }
+
+//       // Validate PG for PhD
+//       if (form.program_level_id === "3") {
+//         if (!form.pg_university || !form.pg_year || !form.pg_percentage) {
+//           toast.error("Please fill all PG details");
+//           return false;
+//         }
+//         if (!validateYear(form.pg_year)) {
+//           toast.error("Invalid PG passing year");
+//           return false;
+//         }
+//         if (!validatePercentage(form.pg_percentage)) {
+//           toast.error("Invalid PG percentage");
+//           return false;
+//         }
+//       }
+//     }
+
+//     return true;
+//   };
+
+//   // Build academic marks array from form data
+//   const buildAcademicMarks = (): AcademicMark[] => {
+//     const academicMarks: AcademicMark[] = [];
+
+//     // 10th standard
+//     if (form.tenth_board) {
+//       academicMarks.push({
+//         qualification_level: "10th",
+//         register_number: form.tenth_register_number || undefined,
+//         board_or_university: form.tenth_board,
+//         school_or_college: form.tenth_school,
+//         year_of_passing: form.tenth_year,
+//         percentage_or_cgpa: form.tenth_percentage,
+//       });
+//     }
+
+//     // 12th standard with subjects
+//     if (form.twelfth_board) {
+//       const validSubjects = twelfthSubjects.filter(
+//         (s) => s.subject_name && s.marks_obtained && s.max_marks
+//       );
+//       academicMarks.push({
+//         qualification_level: "12th",
+//         register_number: form.twelfth_register_number || undefined,
+//         board_or_university: form.twelfth_board,
+//         school_or_college: form.twelfth_school,
+//         year_of_passing: form.twelfth_year,
+//         percentage_or_cgpa: form.twelfth_percentage,
+//         stream_or_degree: form.twelfth_stream,
+//         subjects: validSubjects,
+//       });
+//     }
+
+//     // UG
+//     if (form.ug_university) {
+//       academicMarks.push({
+//         qualification_level: "ug",
+//         board_or_university: form.ug_university,
+//         school_or_college: form.ug_college,
+//         year_of_passing: form.ug_year,
+//         percentage_or_cgpa: form.ug_percentage,
+//         stream_or_degree: form.ug_degree,
+//       });
+//     }
+
+//     // PG
+//     if (form.pg_university) {
+//       academicMarks.push({
+//         qualification_level: "pg",
+//         board_or_university: form.pg_university,
+//         school_or_college: form.pg_college,
+//         year_of_passing: form.pg_year,
+//         percentage_or_cgpa: form.pg_percentage,
+//         stream_or_degree: form.pg_degree,
+//       });
+//     }
+
+//     return academicMarks;
+//   };
+
+//   // Save form
+//   const saveForm = async (status: string = "draft") => {
+//     if (!userEmail) {
+//       toast.error("User email not found");
+//       return false;
+//     }
+
+//     try {
+//       const academicMarks = buildAcademicMarks();
+
+//       const completeData: CompleteFormData = {
+//         ...form,
+//         form_status: status,
+//         academicMarks,
+//       };
+
+//       const result = await saveCompleteForm(completeData, admissionId);
+
+//       if (result.success) {
+//         if (result.admissionId && !admissionId) {
+//           setAdmissionId(result.admissionId);
+//         }
+//         return true;
+//       }
+//       return false;
+//     } catch (error) {
+//       console.error("Save error:", error);
+//       toast.error("Failed to save form");
+//       return false;
+//     }
+//   };
+
+//   // Navigation
+//   const nextTab = async () => {
+//     if (!validateTab(activeTab)) return;
+
+//     setIsSubmitting(true);
+//     const saved = await saveForm();
+//     setIsSubmitting(false);
+
+//     if (!saved) {
+//       toast.error("Please fix the errors before continuing");
+//       return;
+//     }
+
+//     if (!completedTabs.includes(activeTab)) {
+//       setCompletedTabs([...completedTabs, activeTab]);
+//     }
+
+//     if (activeTab < tabs.length - 1) {
+//       const newTab = activeTab + 1;
+//       setActiveTab(newTab);
+//       localStorage.setItem(
+//         `admission_active_tab_${userEmail}`,
+//         newTab.toString()
+//       );
+//       window.scrollTo({ top: 0, behavior: "smooth" });
+//       toast.success("Progress saved successfully!");
+//     }
+//   };
+
+//   const prevTab = () => {
+//     if (activeTab > 0) {
+//       const newTab = activeTab - 1;
+//       setActiveTab(newTab);
+//       localStorage.setItem(
+//         `admission_active_tab_${userEmail}`,
+//         newTab.toString()
+//       );
+//       window.scrollTo({ top: 0, behavior: "smooth" });
+//     }
+//   };
+
+//   const handleTabClick = (index: number) => {
+//     if (paymentStatus === "completed") {
+//       setActiveTab(index);
+//       localStorage.setItem(
+//         `admission_active_tab_${userEmail}`,
+//         index.toString()
+//       );
+//       return;
+//     }
+
+//     if (
+//       completedTabs.includes(index) ||
+//       index === 0 ||
+//       completedTabs.includes(index - 1)
+//     ) {
+//       setActiveTab(index);
+//       localStorage.setItem(
+//         `admission_active_tab_${userEmail}`,
+//         index.toString()
+//       );
+//     } else {
+//       toast.error("Please complete previous sections first");
+//     }
+//   };
+
+//   // Payment handling
+//   const handlePayment = async () => {
+//     setIsSubmitting(true);
+
+//     try {
+//       const orderResponse = await fetch("/api/payment/create-order", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ amount: 1000 }),
+//       });
+
+//       const { orderId, amount, currency } = await orderResponse.json();
+
+//       const options = {
+//         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+//         amount: amount,
+//         currency: currency,
+//         name: "Loyola College",
+//         description: "Admission Application Fee",
+//         order_id: orderId,
+//         handler: async function (response: any) {
+//           const verifyResponse = await fetch("/api/payment/verify", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({
+//               razorpay_order_id: response.razorpay_order_id,
+//               razorpay_payment_id: response.razorpay_payment_id,
+//               razorpay_signature: response.razorpay_signature,
+//               email: userEmail,
+//               amount: amount / 100,
+//             }),
+//           });
+
+//           if (verifyResponse.ok) {
+//             toast.success("Application submitted successfully!");
+//             setTimeout(() => {
+//               if (userEmail) {
+//                 router.push(
+//                   `/application-download?email=${encodeURIComponent(userEmail)}`
+//                 );
+//               } else {
+//                 toast.error("User email not found");
+//                 router.push("/");
+//               }
+//             }, 1500);
+//           }
+//         },
+//         prefill: {
+//           name: form.full_name,
+//           email: form.email,
+//           contact: form.mobile,
+//         },
+//         theme: {
+//           color: "#342D87",
+//         },
+//       };
+
+//       const paymentObject = new window.Razorpay(options);
+//       paymentObject.open();
+
+//       paymentObject.on("payment.failed", function (response: any) {
+//         toast.error("Payment failed. Please try again.");
+//         setIsSubmitting(false);
+//       });
+//     } catch (error) {
+//       console.error("Payment error:", error);
+//       toast.error("Payment initialization failed");
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   const handleViewApplication = () => {
+//     router.push(`/application-preview?email=${userEmail}`);
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center">
+//         <div className="text-center">
+//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+//           <p className="mt-4 text-gray-600">Loading form...</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   const isFormLocked = paymentStatus === "completed";
+
+//   return (
+//     <>
+//       <Script
+//         id="razorpay-checkout-js"
+//         src="https://checkout.razorpay.com/v1/checkout.js"
+//       />
+//       <Toaster position="top-right" />
+
+//       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+//         {/* Header Banner */}
+//         <div className="relative h-72 md:h-90 overflow-hidden">
+//           <img
+//             src="/assets/loyolabanner.jpg"
+//             alt="University Campus"
+//             className="w-full h-full object-cover"
+//           />
+//           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+//             <div className="text-center text-white px-4 pt-10">
+//               <h1 className="text-4xl md:text-5xl font-bold mb-3">
+//                 Admission Application Form
+//               </h1>
+//               <p className="text-lg md:text-xl">
+//                 {yearLoading ? (
+//                   <span className="animate-pulse">Loading...</span>
+//                 ) : academicYear ? (
+//                   `Academic Year ${academicYear.start}`
+//                 ) : (
+//                   "Academic Year Information"
+//                 )}
+//               </p>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Main Container */}
+//         <div className="container mx-auto px-4 py-10 max-w-7xl">
+//           <div className="bg-white rounded-2xl shadow-lg -mt-10 relative z-10 flex flex-col lg:flex-row overflow-hidden">
+//             {/* Sidebar Tabs */}
+//             <div className="lg:w-64 bg-primary p-6">
+//               <nav className="space-y-2" role="tablist">
+//                 {tabs.map((tab, index) => (
+//                   <button
+//                     key={tab.id}
+//                     onClick={() => handleTabClick(index)}
+//                     disabled={
+//                       !isFormLocked &&
+//                       index > 0 &&
+//                       !completedTabs.includes(index - 1) &&
+//                       !completedTabs.includes(index)
+//                     }
+//                     className={`
+//           w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3
+//           ${
+//             activeTab === index
+//               ? "bg-white text-primary shadow-lg"
+//               : completedTabs.includes(index)
+//               ? "bg-primary text-white hover:bg-primary"
+//               : "text-white hover:bg-white/10"
+//           }
+//           ${
+//             !isFormLocked &&
+//             index > 0 &&
+//             !completedTabs.includes(index - 1) &&
+//             !completedTabs.includes(index)
+//               ? "opacity-50 cursor-not-allowed"
+//               : "cursor-pointer"
+//           }
+//         `}
+//                     role="tab"
+//                     aria-selected={activeTab === index}
+//                   >
+//                     <span
+//                       className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2
+//           ${
+//             activeTab === index
+//               ? "border-primary text-primary"
+//               : "border-current"
+//           }
+//         `}
+//                     >
+//                       {completedTabs.includes(index) || isFormLocked
+//                         ? "✓"
+//                         : index + 1}
+//                     </span>
+//                     <span className="text-sm">{tab.name}</span>
+//                   </button>
+//                 ))}
+//               </nav>
+
+//               {/* Logout Button - Below all tabs */}
+//               <div className="mt-6 pt-6 border-t border-white/20">
+//                 <button
+//                   onClick={handleLogout}
+//                   disabled={isLoggingOut}
+//                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+//                 >
+//                   {isLoggingOut ? (
+//                     <>
+//                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+//                       <span className="text-sm">Logging out...</span>
+//                     </>
+//                   ) : (
+//                     <>
+//                       <svg
+//                         xmlns="http://www.w3.org/2000/svg"
+//                         className="h-5 w-5"
+//                         fill="none"
+//                         viewBox="0 0 24 24"
+//                         stroke="currentColor"
+//                       >
+//                         <path
+//                           strokeLinecap="round"
+//                           strokeLinejoin="round"
+//                           strokeWidth={2}
+//                           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+//                         />
+//                       </svg>
+//                       <span className="text-sm">Logout</span>
+//                     </>
+//                   )}
+//                 </button>
+//               </div>
+//             </div>
+
+//             {/* Main Form Content */}
+//             <div className="flex-1 p-6 md:p-10">
+//               {isFormLocked && (
+//                 <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700">
+//                   <p className="font-semibold">
+//                     ✓ Application Submitted Successfully
+//                   </p>
+//                   <p className="text-sm">
+//                     Viewing mode - You can view your submitted application but
+//                     cannot edit it.
+//                   </p>
+//                 </div>
+//               )}
+
+//               <form onSubmit={(e) => e.preventDefault()}>
+//                 {/* Tab 0: Program & Personal */}
+//                 {activeTab === 0 && (
+//                   <ProgramPersonalTab
+//                     form={form}
+//                     programs={programs}
+//                     degrees={degrees}
+//                     courses={courses}
+//                     examCenters={examCenters}
+//                     isFormLocked={isFormLocked}
+//                     handleChange={handleChange}
+//                   />
+//                 )}
+
+//                 {/* Tab 1: Contact & Family */}
+//                 {activeTab === 1 && (
+//                   <ContactFamilyTab
+//                     form={form}
+//                     isFormLocked={isFormLocked}
+//                     handleChange={handleChange}
+//                   />
+//                 )}
+
+//                 {/* Tab 2: Academic Records */}
+//                 {activeTab === 2 && (
+//                   <AcademicRecordsTab
+//                     form={form}
+//                     programLevelId={form.program_level_id}
+//                     isFormLocked={isFormLocked}
+//                     twelfthSubjects={twelfthSubjects}
+//                     handleChange={handleChange}
+//                     handleSubjectChange={handleSubjectChange}
+//                     addSubject={addSubject}
+//                     removeSubject={removeSubject}
+//                   />
+//                 )}
+
+//                 {/* Tab 3: Payment/Download */}
+//                 {activeTab === 3 && (
+//                   <PaymentTab
+//                     isFormLocked={isFormLocked}
+//                     isSubmitting={isSubmitting}
+//                     handlePayment={handlePayment}
+//                     handleViewApplication={handleViewApplication}
+//                   />
+//                 )}
+
+//                 {/* Navigation Buttons */}
+//                 {activeTab < tabs.length - 1 && (
+//                   <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+//                     <button
+//                       type="button"
+//                       onClick={prevTab}
+//                       disabled={activeTab === 0}
+//                       className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+//                     >
+//                       ← Previous
+//                     </button>
+//                     <button
+//                       type="button"
+//                       onClick={nextTab}
+//                       disabled={isSubmitting || isFormLocked}
+//                       className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
+//                     >
+//                       {isSubmitting ? (
+//                         <>
+//                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+//                           Saving...
+//                         </>
+//                       ) : (
+//                         <>Next →</>
+//                       )}
+//                     </button>
+//                   </div>
+//                 )}
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+// export default function AdmissionFormPage() {
+//   return (
+//     <Suspense
+//       fallback={
+//         <div className="min-h-screen flex items-center justify-center">
+//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+//         </div>
+//       }
+//     >
+//       <AdmissionFormContent />
+//     </Suspense>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
@@ -5,91 +1274,36 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import Script from "next/script";
 import { useAcademicYear } from "../hooks/useAcademicYears";
+import { useAdmissionForm } from "../hooks/useAdmissionForm";
+import {
+  Program,
+  Degree,
+  Course,
+  ExamCenter,
+  SubjectMark,
+  AcademicMark,
+  CompleteFormData,
+} from "@/types/admission";
+import {
+  validateName,
+  validateMobile,
+  validateEmail,
+  validateAadhaar,
+  validatePincode,
+  validateYear,
+  validatePercentage,
+} from "../lib/validators";
 
-interface Program {
-  id: number;
-  discipline: string;
-}
-
-interface Degree {
-  id: number;
-  degree_name: string;
-  program_level_id: number;
-}
-
-interface Course {
-  id: number;
-  course_name: string;
-  degree_id: number;
-}
-
-interface ExamCenter {
-  id: number;
-  centre_name: string;
-  location?: string;
-}
-
-interface FormData {
-  program_level_id: string;
-  degree_id: string;
-  course_id: string;
-  exam_center_id: string;
-  full_name: string;
-  gender: string;
-  dob: string;
-  mobile: string;
-  email: string;
-  aadhaar: string;
-  father_name: string;
-  mother_name: string;
-  parent_mobile: string;
-  parent_email: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-  nationality: string;
-  religion: string;
-  category: string;
-  blood_group: string;
-  tenth_board: string;
-  tenth_school: string;
-  tenth_year: string;
-  tenth_percentage: string;
-  tenth_subjects: string;
-  twelfth_board: string;
-  twelfth_school: string;
-  twelfth_year: string;
-  twelfth_percentage: string;
-  twelfth_stream: string;
-  twelfth_subjects: string;
-  ug_university: string;
-  ug_college: string;
-  ug_degree: string;
-  ug_year: string;
-  ug_percentage: string;
-  pg_university: string;
-  pg_college: string;
-  pg_degree: string;
-  pg_year: string;
-  pg_percentage: string;
-  emergency_contact_name: string;
-  emergency_contact_relation: string;
-  emergency_contact_mobile: string;
-  previous_gap: string;
-  extracurricular: string;
-  achievements: string;
-}
-
-interface ExtendedFormData extends FormData {
-  payment_status?: string;
-  id?: number;
-}
+// Import tab components
+import ProgramPersonalTab from "./components/ProgramPersonalTab";
+import ContactFamilyTab from "./components/ContactFamilyTab";
+import AcademicRecordsTab from "./components/AcademicRecordsTab";
+import PaymentTab from "./components/PaymentTab";
 
 interface Tab {
   name: string;
   id: string;
-  fields: (keyof FormData)[];
+  fields: string[];
 }
 
 declare global {
@@ -103,57 +1317,105 @@ function AdmissionFormContent() {
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("email");
   const { academicYear, loading: yearLoading } = useAcademicYear();
+  const {
+    saveCompleteForm,
+    loadCompleteForm,
+    isLoading: formSaving,
+  } = useAdmissionForm(userEmail);
 
+  // Dropdown data
   const [programs, setPrograms] = useState<Program[]>([]);
   const [degrees, setDegrees] = useState<Degree[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [examCenters, setExamCenters] = useState<ExamCenter[]>([]);
 
+  // UI states
   const [activeTab, setActiveTab] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [completedTabs, setCompletedTabs] = useState<number[]>([]);
-  const [selectedProgramLevel, setSelectedProgramLevel] = useState<string>("");
-
   const [paymentStatus, setPaymentStatus] = useState<string>("");
-  const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  const [applicationData, setApplicationData] =
-    useState<ExtendedFormData | null>(null);
+  const [admissionId, setAdmissionId] = useState<number | undefined>();
+  const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
 
-  const [form, setForm] = useState<FormData>({
+  // 12th standard subjects
+  const [twelfthSubjects, setTwelfthSubjects] = useState<SubjectMark[]>([
+    { subject_name: "", marks_obtained: undefined, max_marks: undefined },
+  ]);
+
+  // Form data - flattened structure for easier form handling
+  const [form, setForm] = useState<any>({
+    // Basic Info
     program_level_id: "",
     degree_id: "",
     course_id: "",
+    second_preference_course_id: "",
+    third_preference_course_id: "",
     exam_center_id: "",
+
+    // Personal Info
     full_name: "",
     gender: "",
     dob: "",
     mobile: "",
     email: "",
     aadhaar: "",
-    father_name: "",
-    mother_name: "",
-    parent_mobile: "",
-    parent_email: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
     nationality: "",
     religion: "",
     category: "",
+    seat_reservation_quota: "",
+    caste: "",
+    mother_tongue: "",
+    nativity: "",
     blood_group: "",
+
+    // Family Info
+    father_name: "",
+    father_mobile: "",
+    father_education: "",
+    father_occupation: "",
+    mother_name: "",
+    mother_mobile: "",
+    mother_education: "",
+    mother_occupation: "",
+    annual_family_income: "",
+    is_disabled: "no",
+    disability_type: "",
+    disability_percentage: "",
+    dependent_of: "none",
+    seeking_admission_under_quota: "no",
+    scholarship_or_fee_concession: "no",
+    hostel_accommodation_required: "no",
+    emergency_contact_name: "",
+    emergency_contact_relation: "",
+    emergency_contact_mobile: "",
+
+    // Address Info
+    communication_address: "",
+    communication_city: "",
+    communication_state: "",
+    communication_district: "",
+    communication_pincode: "",
+    communication_country: "",
+    permanent_address: "",
+    permanent_city: "",
+    permanent_state: "",
+    permanent_district: "",
+    permanent_pincode: "",
+    permanent_country: "",
+
+    // Academic Info (temporary flat structure)
+    tenth_register_number: "",
     tenth_board: "",
     tenth_school: "",
     tenth_year: "",
     tenth_percentage: "",
-    tenth_subjects: "",
+    twelfth_register_number: "",
     twelfth_board: "",
     twelfth_school: "",
     twelfth_year: "",
     twelfth_percentage: "",
     twelfth_stream: "",
-    twelfth_subjects: "",
     ug_university: "",
     ug_college: "",
     ug_degree: "",
@@ -164,113 +1426,15 @@ function AdmissionFormContent() {
     pg_degree: "",
     pg_year: "",
     pg_percentage: "",
-    emergency_contact_name: "",
-    emergency_contact_relation: "",
-    emergency_contact_mobile: "",
+
+    // Additional
     previous_gap: "",
     extracurricular: "",
     achievements: "",
   });
 
-  // Validation functions
-  const validateName = (value: string): boolean => {
-    const nameRegex = /^[a-zA-Z\s]+$/;
-    return nameRegex.test(value);
-  };
-
-  const validateMobile = (value: string): boolean => {
-    const mobileRegex = /^[0-9]{10}$/;
-    return mobileRegex.test(value);
-  };
-
-  const validateEmail = (value: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value);
-  };
-
-  const validateAadhaar = (value: string): boolean => {
-    const aadhaarRegex = /^[0-9]{12}$/;
-    return aadhaarRegex.test(value);
-  };
-
-  const validatePincode = (value: string): boolean => {
-    const pincodeRegex = /^[0-9]{6}$/;
-    return pincodeRegex.test(value);
-  };
-
-  const validateYear = (value: string): boolean => {
-    const yearRegex = /^[0-9]{4}$/;
-    if (!yearRegex.test(value)) return false;
-    const year = parseInt(value);
-    return year >= 1950 && year <= new Date().getFullYear();
-  };
-
-  const validatePercentage = (value: string): boolean => {
-    const percentageRegex = /^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)$/;
-    if (!percentageRegex.test(value)) return false;
-    const num = parseFloat(value);
-    return num >= 0 && num <= 100;
-  };
-
-  const validateTextOnly = (value: string): boolean => {
-    const textRegex = /^[a-zA-Z\s,.\-()]+$/;
-    return textRegex.test(value);
-  };
-
-  const generateApplicationId = (
-    programLevelId: number,
-    degreeId: number,
-    courseId: number,
-    id: number
-  ) => {
-    return `${programLevelId}${degreeId}${courseId}${id}`;
-  };
-
-  const handleViewApplication = () => {
-    router.push(`/application-preview?email=${userEmail}`);
-  };
-
-  const handleViewHallticket = () => {
-    router.push(`/hall-ticket?email=${userEmail}`);
-  };
-
+  // Define tabs based on payment status
   const getTabsForProgramLevel = (): Tab[] => {
-    const baseAcademicFields: (keyof FormData)[] = [
-      "tenth_board",
-      "tenth_school",
-      "tenth_year",
-      "tenth_percentage",
-      "tenth_subjects",
-      "twelfth_board",
-      "twelfth_school",
-      "twelfth_year",
-      "twelfth_percentage",
-      "twelfth_stream",
-      "twelfth_subjects",
-    ];
-
-    let academicFields = [...baseAcademicFields];
-
-    if (form.program_level_id === "2" || form.program_level_id === "3") {
-      academicFields.push(
-        "ug_university",
-        "ug_college",
-        "ug_degree",
-        "ug_year",
-        "ug_percentage"
-      );
-    }
-
-    if (form.program_level_id === "3") {
-      academicFields.push(
-        "pg_university",
-        "pg_college",
-        "pg_degree",
-        "pg_year",
-        "pg_percentage"
-      );
-    }
-
     const baseTabs: Tab[] = [
       {
         name: "Program & Personal",
@@ -285,22 +1449,40 @@ function AdmissionFormContent() {
           "dob",
           "nationality",
           "category",
+          "seat_reservation_quota",
+          "caste",
+          "mother_tongue",
+          "nativity",
           "aadhaar",
         ],
       },
       {
-        name: "Contact & Parents",
+        name: "Contact & Family",
         id: "contact",
         fields: [
           "mobile",
           "email",
-          "address",
-          "city",
-          "state",
-          "pincode",
+          "communication_address",
+          "communication_city",
+          "communication_state",
+          "communication_district",
+          "communication_pincode",
+          "communication_country",
+          "permanent_address",
+          "permanent_city",
+          "permanent_state",
+          "permanent_district",
+          "permanent_pincode",
+          "permanent_country",
           "father_name",
+          "father_mobile",
+          "father_education",
+          "father_occupation",
           "mother_name",
-          "parent_mobile",
+          "mother_mobile",
+          "mother_education",
+          "mother_occupation",
+          "annual_family_income",
           "emergency_contact_name",
           "emergency_contact_relation",
           "emergency_contact_mobile",
@@ -309,7 +1491,7 @@ function AdmissionFormContent() {
       {
         name: "Academic Records",
         id: "academic",
-        fields: academicFields,
+        fields: [],
       },
     ];
 
@@ -332,6 +1514,80 @@ function AdmissionFormContent() {
 
   const tabs = getTabsForProgramLevel();
 
+  // Save active tab whenever it changes
+  useEffect(() => {
+    if (userEmail) {
+      localStorage.setItem(`admission_active_tab_${userEmail}`, activeTab.toString());
+    }
+  }, [activeTab, userEmail]);
+
+  // Load active tab on mount
+  useEffect(() => {
+    if (userEmail) {
+      const savedTab = localStorage.getItem(`admission_active_tab_${userEmail}`);
+      if (savedTab !== null) {
+        setActiveTab(parseInt(savedTab, 10));
+      }
+    }
+  }, [userEmail]);
+
+  // Handle authentication errors on mount
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (error === "login_required") {
+      toast.error("Please login to access the admission form");
+      setTimeout(() => router.push("/"), 2000);
+      return;
+    } else if (error === "unauthorized") {
+      toast.error("Unauthorized access. Please login with your account.");
+      setTimeout(() => router.push("/"), 2000);
+      return;
+    } else if (error === "session_expired") {
+      toast.error("Your session has expired. Please login again.");
+      setTimeout(() => router.push("/"), 2000);
+      return;
+    }
+  }, [searchParams, router]);
+
+  // Logout function
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    const confirmLogout = window.confirm(
+      "Are you sure you want to logout? Any unsaved changes will be lost."
+    );
+    if (!confirmLogout) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        toast.success("Logged out successfully");
+        // Clear any local storage
+        if (userEmail) {
+          localStorage.removeItem(`admission_active_tab_${userEmail}`);
+        }
+        setTimeout(() => {
+          router.push("/");
+        }, 500);
+      } else {
+        toast.error("Logout failed. Please try again.");
+        setIsLoggingOut(false);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("An error occurred during logout");
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Load initial data
   useEffect(() => {
     if (!userEmail) {
       toast.error("Please login to access this form");
@@ -343,18 +1599,40 @@ function AdmissionFormContent() {
     loadFormData();
   }, [userEmail]);
 
+  // Fetch degrees when program changes
   useEffect(() => {
     if (form.program_level_id) {
       fetchDegrees(form.program_level_id);
     }
   }, [form.program_level_id]);
 
+  // Fetch courses when degree changes
   useEffect(() => {
     if (form.degree_id) {
       fetchCourses(form.degree_id);
     }
   }, [form.degree_id]);
 
+  // Listen for copy address event
+  useEffect(() => {
+    const handleCopyAddress = () => {
+      setForm((prev: any) => ({
+        ...prev,
+        permanent_address: prev.communication_address,
+        permanent_city: prev.communication_city,
+        permanent_state: prev.communication_state,
+        permanent_district: prev.communication_district,
+        permanent_pincode: prev.communication_pincode,
+        permanent_country: prev.communication_country,
+      }));
+      toast.success("Address copied!");
+    };
+
+    window.addEventListener("copyAddress", handleCopyAddress);
+    return () => window.removeEventListener("copyAddress", handleCopyAddress);
+  }, []);
+
+  // Fetch functions
   const fetchPrograms = async () => {
     try {
       const response = await fetch("/api/programs");
@@ -395,88 +1673,71 @@ function AdmissionFormContent() {
     }
   };
 
+  // Load existing form data
   const loadFormData = async () => {
     if (!userEmail) return;
 
     try {
-      const response = await fetch(`/api/admission-form?email=${userEmail}`);
-      const result = await response.json();
+      console.log("Starting to load form data...");
+      const data = await loadCompleteForm();
 
-      if (result.data) {
-        const sanitizedData: Partial<ExtendedFormData> = {};
-        Object.keys(form).forEach((key) => {
-          const value = result.data[key];
-          sanitizedData[key as keyof FormData] =
-            value === null ? "" : String(value);
+      if (data) {
+        console.log("Form data received:", {
+          hasBasicInfo: !!data.basicInfo,
+          hasPersonalInfo: !!data.personalInfo,
         });
 
-        const status = result.data.payment_status || "";
-        setPaymentStatus(status);
+        // Populate form fields
+        const sanitizedData: any = {};
+        Object.keys(form).forEach((key) => {
+          const value = (data as any)[key];
+          sanitizedData[key] =
+            value === null || value === undefined ? "" : String(value);
+        });
 
-        const fullData = {
-          ...sanitizedData,
-          payment_status: status,
-          id: result.data.id,
-        } as ExtendedFormData;
+        setForm(sanitizedData);
+        setPaymentStatus(data.payment_status || "");
+        setAdmissionId((data as any).id);
 
-        setApplicationData(fullData);
-        setForm(sanitizedData as FormData);
-
-        if (sanitizedData.program_level_id) {
-          const program = programs.find(
-            (p) => p.id === parseInt(sanitizedData.program_level_id as string)
-          );
-          if (program) {
-            setSelectedProgramLevel(program.discipline);
-          }
+        // Load academic marks
+        if (data.academicMarks && Array.isArray(data.academicMarks)) {
+          data.academicMarks.forEach((mark: any) => {
+            if (mark.qualification_level === "12th" && mark.subjects) {
+              setTwelfthSubjects(
+                mark.subjects.length > 0
+                  ? mark.subjects
+                  : [
+                      {
+                        subject_name: "",
+                        marks_obtained: undefined,
+                        max_marks: undefined,
+                      },
+                    ]
+              );
+            }
+          });
         }
 
-        checkCompletedTabs(sanitizedData as FormData);
-
-        const savedTab = localStorage.getItem(
-          `admission_active_tab_${userEmail}`
-        );
-        if (savedTab && !isNaN(parseInt(savedTab))) {
-          const tabIndex = parseInt(savedTab);
-          if (tabIndex < getTabsForProgramLevel().length) {
-            setActiveTab(tabIndex);
-          }
-        } else {
-          const firstIncompleteTab = findFirstIncompleteTab(
-            sanitizedData as FormData
-          );
-          setActiveTab(firstIncompleteTab);
-        }
+        checkCompletedTabs(sanitizedData);
+        console.log("Form data loaded and populated successfully");
+      } else {
+        console.log("No existing form data - user can start fresh");
       }
     } catch (error) {
       console.error("Error loading form:", error);
+      // Don't show error to user for initial load - they might be a new user
     } finally {
       setIsLoading(false);
     }
   };
 
-  const findFirstIncompleteTab = (formData: FormData): number => {
-    const currentTabs = getTabsForProgramLevel();
-
-    for (let i = 0; i < currentTabs.length - 1; i++) {
-      const tab = currentTabs[i];
-      const allFieldsFilled = tab.fields.every(
-        (field) => formData[field] && formData[field].toString().trim() !== ""
-      );
-      if (!allFieldsFilled) {
-        return i;
-      }
-    }
-
-    return currentTabs.length - 1;
-  };
-
-  const checkCompletedTabs = (formData: FormData) => {
+  // Check which tabs are completed
+  const checkCompletedTabs = (formData: any) => {
     const completed: number[] = [];
     const currentTabs = getTabsForProgramLevel();
 
     currentTabs.forEach((tab, index) => {
-      if (index < currentTabs.length - 1) {
+      if (index < currentTabs.length - 1 && tab.fields.length > 0) {
         const allFieldsFilled = tab.fields.every(
           (field) => formData[field] && formData[field].toString().trim() !== ""
         );
@@ -489,6 +1750,7 @@ function AdmissionFormContent() {
     setCompletedTabs(completed);
   };
 
+  // Handle form input changes
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -501,114 +1763,85 @@ function AdmissionFormContent() {
       return;
     }
 
-    let isValid = true;
-    let errorMessage = "";
+    setForm((prev: any) => ({ ...prev, [name]: value }));
 
-    switch (name) {
-      case "full_name":
-      case "father_name":
-      case "mother_name":
-      case "emergency_contact_name":
-      case "tenth_board":
-      case "tenth_school":
-      case "twelfth_board":
-      case "twelfth_school":
-        if (value && !validateName(value)) {
-          isValid = false;
-          errorMessage = "Only letters and spaces allowed";
-        }
-        break;
-
-      case "mobile":
-      case "parent_mobile":
-      case "emergency_contact_mobile":
-        if (value && !/^[0-9]{0,10}$/.test(value)) {
-          isValid = false;
-          errorMessage = "Only numbers allowed (max 10 digits)";
-        }
-        break;
-
-      case "aadhaar":
-        if (value && !/^[0-9]{0,12}$/.test(value)) {
-          isValid = false;
-          errorMessage = "Only numbers allowed (max 12 digits)";
-        }
-        break;
-
-      case "pincode":
-        if (value && !/^[0-9]{0,6}$/.test(value)) {
-          isValid = false;
-          errorMessage = "Only numbers allowed (max 6 digits)";
-        }
-        break;
-
-      case "tenth_year":
-      case "twelfth_year":
-      case "ug_year":
-      case "pg_year":
-        if (value && !/^[0-9]{0,4}$/.test(value)) {
-          isValid = false;
-          errorMessage = "Only numbers allowed (4 digits)";
-        }
-        break;
-
-      case "tenth_percentage":
-      case "twelfth_percentage":
-      case "ug_percentage":
-      case "pg_percentage":
-        if (value && !/^\d{0,3}(\.\d{0,2})?$/.test(value)) {
-          isValid = false;
-          errorMessage = "Enter valid percentage (0-100)";
-        }
-        break;
-
-      case "city":
-      case "state":
-      case "nationality":
-      case "religion":
-      case "emergency_contact_relation":
-        if (value && !validateTextOnly(value)) {
-          isValid = false;
-          errorMessage = "Only letters and basic punctuation allowed";
-        }
-        break;
-    }
-
-    if (!isValid) {
-      toast.error(errorMessage);
-      return;
-    }
-
-    setForm({ ...form, [name]: value });
-
+    // Reset dependent fields
     if (name === "program_level_id") {
-      const selectedProgram = programs.find((p) => p.id === parseInt(value));
-      if (selectedProgram) {
-        setSelectedProgramLevel(selectedProgram.discipline);
-      }
-
-      setForm((prev) => ({
+      setForm((prev: any) => ({
         ...prev,
         program_level_id: value,
         degree_id: "",
         course_id: "",
+        second_preference_course_id: "",
+        third_preference_course_id: "",
       }));
       setDegrees([]);
       setCourses([]);
     }
 
     if (name === "degree_id") {
-      setForm((prev) => ({
+      setForm((prev: any) => ({
         ...prev,
         degree_id: value,
         course_id: "",
+        second_preference_course_id: "",
+        third_preference_course_id: "",
       }));
       setCourses([]);
     }
   };
 
+  // Subject management
+  const addSubject = () => {
+    if (twelfthSubjects.length < 10) {
+      setTwelfthSubjects([
+        ...twelfthSubjects,
+        { subject_name: "", marks_obtained: undefined, max_marks: undefined },
+      ]);
+    } else {
+      toast.error("Maximum 10 subjects allowed");
+    }
+  };
+
+  const removeSubject = (index: number) => {
+    if (twelfthSubjects.length > 1) {
+      setTwelfthSubjects(twelfthSubjects.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleSubjectChange = (
+    index: number,
+    field: keyof SubjectMark,
+    value: any
+  ) => {
+    const updated = [...twelfthSubjects];
+    updated[index] = { ...updated[index], [field]: value };
+
+    // Auto-calculate percentage
+    if (field === "marks_obtained" || field === "max_marks") {
+      const marks =
+        field === "marks_obtained"
+          ? parseFloat(value)
+          : updated[index].marks_obtained;
+      const maxMarks =
+        field === "max_marks" ? parseFloat(value) : updated[index].max_marks;
+
+      if (marks && maxMarks && maxMarks > 0) {
+        updated[index].percentage = parseFloat(
+          ((marks / maxMarks) * 100).toFixed(2)
+        );
+      }
+    }
+
+    setTwelfthSubjects(updated);
+  };
+
+  // Validate tab
   const validateTab = (tabIndex: number): boolean => {
     const tab = tabs[tabIndex];
+
+    if (tab.fields.length === 0) return true;
+
     const emptyFields = tab.fields.filter(
       (field) => !form[field] || form[field].toString().trim() === ""
     );
@@ -618,6 +1851,7 @@ function AdmissionFormContent() {
       return false;
     }
 
+    // Tab-specific validations
     if (tabIndex === 0) {
       if (!validateName(form.full_name)) {
         toast.error("Invalid full name format");
@@ -638,16 +1872,20 @@ function AdmissionFormContent() {
         toast.error("Invalid email format");
         return false;
       }
-      if (!validatePincode(form.pincode)) {
-        toast.error("Pincode must be exactly 6 digits");
+      if (!validatePincode(form.communication_pincode)) {
+        toast.error("Communication PIN code must be exactly 6 digits");
         return false;
       }
-      if (!validateName(form.father_name) || !validateName(form.mother_name)) {
-        toast.error("Invalid parent name format");
+      if (!validatePincode(form.permanent_pincode)) {
+        toast.error("Permanent PIN code must be exactly 6 digits");
         return false;
       }
-      if (!validateMobile(form.parent_mobile)) {
-        toast.error("Parent mobile must be exactly 10 digits");
+      if (!validateMobile(form.father_mobile)) {
+        toast.error("Father's mobile must be exactly 10 digits");
+        return false;
+      }
+      if (!validateMobile(form.mother_mobile)) {
+        toast.error("Mother's mobile must be exactly 10 digits");
         return false;
       }
       if (!validateMobile(form.emergency_contact_mobile)) {
@@ -657,12 +1895,26 @@ function AdmissionFormContent() {
     }
 
     if (tabIndex === 2) {
+      // Academic validation
+      if (!form.tenth_board || !form.tenth_year || !form.tenth_percentage) {
+        toast.error("Please fill all 10th standard details");
+        return false;
+      }
       if (!validateYear(form.tenth_year)) {
         toast.error("Invalid 10th passing year");
         return false;
       }
       if (!validatePercentage(form.tenth_percentage)) {
         toast.error("Invalid 10th percentage");
+        return false;
+      }
+
+      if (
+        !form.twelfth_board ||
+        !form.twelfth_year ||
+        !form.twelfth_percentage
+      ) {
+        toast.error("Please fill all 12th standard details");
         return false;
       }
       if (!validateYear(form.twelfth_year)) {
@@ -674,7 +1926,21 @@ function AdmissionFormContent() {
         return false;
       }
 
+      // Validate at least one subject for 12th
+      const validSubjects = twelfthSubjects.filter(
+        (s) => s.subject_name && s.marks_obtained && s.max_marks
+      );
+      if (validSubjects.length === 0) {
+        toast.error("Please add at least one subject for 12th standard");
+        return false;
+      }
+
+      // Validate UG for PG and PhD
       if (form.program_level_id === "2" || form.program_level_id === "3") {
+        if (!form.ug_university || !form.ug_year || !form.ug_percentage) {
+          toast.error("Please fill all UG details");
+          return false;
+        }
         if (!validateYear(form.ug_year)) {
           toast.error("Invalid UG passing year");
           return false;
@@ -685,7 +1951,12 @@ function AdmissionFormContent() {
         }
       }
 
+      // Validate PG for PhD
       if (form.program_level_id === "3") {
+        if (!form.pg_university || !form.pg_year || !form.pg_percentage) {
+          toast.error("Please fill all PG details");
+          return false;
+        }
         if (!validateYear(form.pg_year)) {
           toast.error("Invalid PG passing year");
           return false;
@@ -700,6 +1971,67 @@ function AdmissionFormContent() {
     return true;
   };
 
+  // Build academic marks array from form data
+  const buildAcademicMarks = (): AcademicMark[] => {
+    const academicMarks: AcademicMark[] = [];
+
+    // 10th standard
+    if (form.tenth_board) {
+      academicMarks.push({
+        qualification_level: "10th",
+        register_number: form.tenth_register_number || undefined,
+        board_or_university: form.tenth_board,
+        school_or_college: form.tenth_school,
+        year_of_passing: form.tenth_year,
+        percentage_or_cgpa: form.tenth_percentage,
+      });
+    }
+
+    // 12th standard with subjects
+    if (form.twelfth_board) {
+      const validSubjects = twelfthSubjects.filter(
+        (s) => s.subject_name && s.marks_obtained && s.max_marks
+      );
+      academicMarks.push({
+        qualification_level: "12th",
+        register_number: form.twelfth_register_number || undefined,
+        board_or_university: form.twelfth_board,
+        school_or_college: form.twelfth_school,
+        year_of_passing: form.twelfth_year,
+        percentage_or_cgpa: form.twelfth_percentage,
+        stream_or_degree: form.twelfth_stream,
+        subjects: validSubjects,
+      });
+    }
+
+    // UG
+    if (form.ug_university) {
+      academicMarks.push({
+        qualification_level: "ug",
+        board_or_university: form.ug_university,
+        school_or_college: form.ug_college,
+        year_of_passing: form.ug_year,
+        percentage_or_cgpa: form.ug_percentage,
+        stream_or_degree: form.ug_degree,
+      });
+    }
+
+    // PG
+    if (form.pg_university) {
+      academicMarks.push({
+        qualification_level: "pg",
+        board_or_university: form.pg_university,
+        school_or_college: form.pg_college,
+        year_of_passing: form.pg_year,
+        percentage_or_cgpa: form.pg_percentage,
+        stream_or_degree: form.pg_degree,
+      });
+    }
+
+    return academicMarks;
+  };
+
+  // Save form
   const saveForm = async (status: string = "draft") => {
     if (!userEmail) {
       toast.error("User email not found");
@@ -707,61 +2039,70 @@ function AdmissionFormContent() {
     }
 
     try {
-      const response = await fetch("/api/admission-form", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: userEmail,
-          formData: {
-            ...form,
-            form_status: status,
-          },
-        }),
-      });
+      const academicMarks = buildAcademicMarks();
 
-      const result = await response.json();
+      const completeData: CompleteFormData = {
+        ...form,
+        form_status: status,
+        academicMarks,
+      };
 
-      if (response.ok && result.success) {
+      const result = await saveCompleteForm(completeData, admissionId);
+
+      if (result.success) {
+        if (result.admissionId && !admissionId) {
+          setAdmissionId(result.admissionId);
+        }
         return true;
-      } else {
-        console.error("Save failed:", result);
-        toast.error(result.error || result.details || "Failed to save form");
-        return false;
       }
+      return false;
     } catch (error) {
       console.error("Save error:", error);
-      toast.error("Network error while saving form");
+      toast.error("Failed to save form");
       return false;
     }
   };
 
+  // Navigation - FIXED VERSION
   const nextTab = async () => {
+    // Validate current tab
     if (!validateTab(activeTab)) return;
 
     setIsSubmitting(true);
-    const saved = await saveForm();
-    setIsSubmitting(false);
 
-    if (!saved) {
-      toast.error("Please fix the errors before continuing");
-      return;
-    }
+    try {
+      // Save the form
+      const saved = await saveForm();
 
-    if (!completedTabs.includes(activeTab)) {
-      setCompletedTabs([...completedTabs, activeTab]);
-    }
+      if (!saved) {
+        toast.error("Please fix the errors before continuing");
+        setIsSubmitting(false);
+        return;
+      }
 
-    if (activeTab < tabs.length - 1) {
-      const newTab = activeTab + 1;
-      setActiveTab(newTab);
-      localStorage.setItem(
-        `admission_active_tab_${userEmail}`,
-        newTab.toString()
-      );
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      toast.success("Progress saved successfully!");
+      // Mark current tab as completed
+      if (!completedTabs.includes(activeTab)) {
+        setCompletedTabs([...completedTabs, activeTab]);
+      }
+
+      // Move to next tab - THIS IS THE KEY FIX
+      if (activeTab < tabs.length - 1) {
+        const newTab = activeTab + 1;
+        setActiveTab(newTab);
+        localStorage.setItem(
+          `admission_active_tab_${userEmail}`,
+          newTab.toString()
+        );
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        toast.success("Progress saved! Moving to next section.");
+      } else {
+        toast.success("Form saved successfully!");
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
+      toast.error("An error occurred while saving");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -802,18 +2143,15 @@ function AdmissionFormContent() {
     }
   };
 
+  // Payment handling
   const handlePayment = async () => {
     setIsSubmitting(true);
 
     try {
       const orderResponse = await fetch("/api/payment/create-order", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: 1000,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 1000 }),
       });
 
       const { orderId, amount, currency } = await orderResponse.json();
@@ -852,7 +2190,6 @@ function AdmissionFormContent() {
             }, 1500);
           }
         },
-
         prefill: {
           name: form.full_name,
           email: form.email,
@@ -877,6 +2214,10 @@ function AdmissionFormContent() {
     }
   };
 
+  const handleViewApplication = () => {
+    router.push(`/application-preview?email=${userEmail}`);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -899,6 +2240,7 @@ function AdmissionFormContent() {
       <Toaster position="top-right" />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+        {/* Header Banner */}
         <div className="relative h-72 md:h-90 overflow-hidden">
           <img
             src="/assets/loyolabanner.jpg"
@@ -923,9 +2265,11 @@ function AdmissionFormContent() {
           </div>
         </div>
 
+        {/* Main Container */}
         <div className="container mx-auto px-4 py-10 max-w-7xl">
           <div className="bg-white rounded-2xl shadow-lg -mt-10 relative z-10 flex flex-col lg:flex-row overflow-hidden">
-            <div className="lg:w-64 bg-[#342D87] p-6">
+            {/* Sidebar Tabs */}
+            <div className="lg:w-64 bg-primary p-6">
               <nav className="space-y-2" role="tablist">
                 {tabs.map((tab, index) => (
                   <button
@@ -941,9 +2285,9 @@ function AdmissionFormContent() {
                       w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3
                       ${
                         activeTab === index
-                          ? "bg-white text-[#342D87] shadow-lg"
+                          ? "bg-white text-primary shadow-lg"
                           : completedTabs.includes(index)
-                          ? "bg-[#342D87] text-white hover:bg-[#342D87]"
+                          ? "bg-primary text-white hover:bg-primary"
                           : "text-white hover:bg-white/10"
                       }
                       ${
@@ -960,12 +2304,12 @@ function AdmissionFormContent() {
                   >
                     <span
                       className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border-2
-                      ${
-                        activeTab === index
-                          ? "border-[#342D87] text-[#342D87]"
-                          : "border-current"
-                      }
-                    `}
+                        ${
+                          activeTab === index
+                            ? "border-primary text-primary"
+                            : "border-current"
+                        }
+                      `}
                     >
                       {completedTabs.includes(index) || isFormLocked
                         ? "✓"
@@ -975,8 +2319,43 @@ function AdmissionFormContent() {
                   </button>
                 ))}
               </nav>
+
+              {/* Logout Button */}
+              <div className="mt-6 pt-6 border-t border-white/20">
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoggingOut ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span className="text-sm">Logging out...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
+                      </svg>
+                      <span className="text-sm">Logout</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
+            {/* Main Form Content */}
             <div className="flex-1 p-6 md:p-10">
               {isFormLocked && (
                 <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700">
@@ -991,1216 +2370,82 @@ function AdmissionFormContent() {
               )}
 
               <form onSubmit={(e) => e.preventDefault()}>
+                {/* Tab 0: Program & Personal */}
                 {activeTab === 0 && (
-                  <div className="space-y-8 animate-fadeIn">
-                    <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        Program Selection
-                      </h3>
-
-                      <div className="grid md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Select Program Level *
-                          </label>
-                          <select
-                            name="program_level_id"
-                            value={form.program_level_id}
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select Level</option>
-                            {programs.map((p) => (
-                              <option key={p.id} value={p.id}>
-                                {p.discipline}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Select Degree *
-                          </label>
-                          <select
-                            name="degree_id"
-                            value={form.degree_id}
-                            onChange={handleChange}
-                            disabled={!form.program_level_id || isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select Degree</option>
-                            {degrees.map((d) => (
-                              <option key={d.id} value={d.id}>
-                                {d.degree_name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Select Course *
-                          </label>
-                          <select
-                            name="course_id"
-                            value={form.course_id}
-                            onChange={handleChange}
-                            disabled={!form.degree_id || isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select Course</option>
-                            {courses.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.course_name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Select Exam Center
-                          </label>
-                          <select
-                            name="exam_center_id"
-                            value={form.exam_center_id}
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select Exam Center</option>
-                            {examCenters.map((center) => (
-                              <option key={center.id} value={center.id}>
-                                {/* ✅ UPDATED: Show location if it exists */}
-                                {center.location
-                                  ? `${center.centre_name} - ${center.location}`
-                                  : center.centre_name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        Personal Information
-                      </h3>
-
-                      <div className="grid md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Full Name *{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="full_name"
-                            value={form.full_name}
-                            placeholder="Enter your full name"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Gender *
-                          </label>
-                          <select
-                            name="gender"
-                            value={form.gender}
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select gender</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Other</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Date of Birth *
-                          </label>
-                          <input
-                            type="date"
-                            name="dob"
-                            value={form.dob}
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Blood Group
-                          </label>
-                          <select
-                            name="blood_group"
-                            value={form.blood_group}
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select blood group</option>
-                            <option>A+</option>
-                            <option>A-</option>
-                            <option>B+</option>
-                            <option>B-</option>
-                            <option>O+</option>
-                            <option>O-</option>
-                            <option>AB+</option>
-                            <option>AB-</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Nationality *{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="nationality"
-                            value={form.nationality}
-                            placeholder="e.g., Indian"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Religion{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="religion"
-                            value={form.religion}
-                            placeholder="Enter religion"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Category *
-                          </label>
-                          <select
-                            name="category"
-                            value={form.category}
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select category</option>
-                            <option>General</option>
-                            <option>OBC</option>
-                            <option>SC</option>
-                            <option>ST</option>
-                            <option>Other</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Aadhaar Number *{" "}
-                            <span className="text-xs text-gray-500">
-                              (12 digits)
-                            </span>
-                          </label>
-                          <input
-                            name="aadhaar"
-                            value={form.aadhaar}
-                            placeholder="123456789012"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            maxLength={12}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ProgramPersonalTab
+                    form={form}
+                    programs={programs}
+                    degrees={degrees}
+                    courses={courses}
+                    examCenters={examCenters}
+                    isFormLocked={isFormLocked}
+                    handleChange={handleChange}
+                  />
                 )}
 
+                {/* Tab 1: Contact & Family */}
                 {activeTab === 1 && (
-                  <div className="space-y-8 animate-fadeIn">
-                    <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        Contact Information
-                      </h3>
-
-                      <div className="grid md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Mobile Number *{" "}
-                            <span className="text-xs text-gray-500">
-                              (10 digits)
-                            </span>
-                          </label>
-                          <input
-                            name="mobile"
-                            value={form.mobile}
-                            placeholder="9876543210"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            maxLength={10}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Email Address *
-                          </label>
-                          <input
-                            type="email"
-                            name="email"
-                            value={form.email}
-                            placeholder="your.email@example.com"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-4 mt-4">
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Address *
-                          </label>
-                          <textarea
-                            name="address"
-                            value={form.address}
-                            placeholder="House No., Street, Locality"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            rows={2}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            City *{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="city"
-                            value={form.city}
-                            placeholder="City"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            State *{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="state"
-                            value={form.state}
-                            placeholder="State"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            PIN Code *{" "}
-                            <span className="text-xs text-gray-500">
-                              (6 digits)
-                            </span>
-                          </label>
-                          <input
-                            name="pincode"
-                            value={form.pincode}
-                            placeholder="600001"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            maxLength={6}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        Parent / Guardian Information
-                      </h3>
-
-                      <div className="grid md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Father's Name *{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="father_name"
-                            value={form.father_name}
-                            placeholder="Father's full name"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Mother's Name *{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="mother_name"
-                            value={form.mother_name}
-                            placeholder="Mother's full name"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Parent's Mobile *{" "}
-                            <span className="text-xs text-gray-500">
-                              (10 digits)
-                            </span>
-                          </label>
-                          <input
-                            name="parent_mobile"
-                            value={form.parent_mobile}
-                            placeholder="9876543210"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            maxLength={10}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Parent's Email
-                          </label>
-                          <input
-                            type="email"
-                            name="parent_email"
-                            value={form.parent_email}
-                            placeholder="parent@example.com"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        Emergency Contact
-                      </h3>
-
-                      <div className="grid md:grid-cols-3 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Contact Name *{" "}
-                            <span className="text-xs text-gray-500">
-                              (Letters only)
-                            </span>
-                          </label>
-                          <input
-                            name="emergency_contact_name"
-                            value={form.emergency_contact_name}
-                            placeholder="Emergency contact name"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Relationship *
-                          </label>
-                          <input
-                            name="emergency_contact_relation"
-                            value={form.emergency_contact_relation}
-                            placeholder="e.g., Uncle, Aunt"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Mobile *{" "}
-                            <span className="text-xs text-gray-500">
-                              (10 digits)
-                            </span>
-                          </label>
-                          <input
-                            name="emergency_contact_mobile"
-                            value={form.emergency_contact_mobile}
-                            placeholder="9876543210"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            maxLength={10}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ContactFamilyTab
+                    form={form}
+                    isFormLocked={isFormLocked}
+                    handleChange={handleChange}
+                  />
                 )}
 
+                {/* Tab 2: Academic Records */}
                 {activeTab === 2 && (
-                  <div className="space-y-8 animate-fadeIn">
-                    <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        10th Standard Details
-                      </h3>
-
-                      <div className="grid md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Board *
-                          </label>
-                          <input
-                            name="tenth_board"
-                            value={form.tenth_board}
-                            placeholder="e.g., CBSE, State Board"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            School Name *
-                          </label>
-                          <input
-                            name="tenth_school"
-                            value={form.tenth_school}
-                            placeholder="School name"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Year of Passing *{" "}
-                            <span className="text-xs text-gray-500">
-                              (4 digits)
-                            </span>
-                          </label>
-                          <input
-                            name="tenth_year"
-                            value={form.tenth_year}
-                            placeholder="2020"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            maxLength={4}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Percentage / CGPA *{" "}
-                            <span className="text-xs text-gray-500">
-                              (0-100)
-                            </span>
-                          </label>
-                          <input
-                            name="tenth_percentage"
-                            value={form.tenth_percentage}
-                            placeholder="85.5 or 8.5"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Main Subjects *
-                          </label>
-                          <input
-                            name="tenth_subjects"
-                            value={form.tenth_subjects}
-                            placeholder="e.g., English, Mathematics, Science"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        12th Standard Details
-                      </h3>
-
-                      <div className="grid md:grid-cols-2 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Board *
-                          </label>
-                          <input
-                            name="twelfth_board"
-                            value={form.twelfth_board}
-                            placeholder="e.g., CBSE, State Board"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            School Name *
-                          </label>
-                          <input
-                            name="twelfth_school"
-                            value={form.twelfth_school}
-                            placeholder="School name"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Year of Passing *{" "}
-                            <span className="text-xs text-gray-500">
-                              (4 digits)
-                            </span>
-                          </label>
-                          <input
-                            name="twelfth_year"
-                            value={form.twelfth_year}
-                            placeholder="2022"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            maxLength={4}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Percentage / CGPA *{" "}
-                            <span className="text-xs text-gray-500">
-                              (0-100)
-                            </span>
-                          </label>
-                          <input
-                            name="twelfth_percentage"
-                            value={form.twelfth_percentage}
-                            placeholder="85.5 or 8.5"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Stream *
-                          </label>
-                          <select
-                            name="twelfth_stream"
-                            value={form.twelfth_stream}
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          >
-                            <option value="">Select stream</option>
-                            <option>Science</option>
-                            <option>Commerce</option>
-                            <option>Arts</option>
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Main Subjects *
-                          </label>
-                          <input
-                            name="twelfth_subjects"
-                            value={form.twelfth_subjects}
-                            placeholder="e.g., Physics, Chemistry, Maths"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            required
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {(form.program_level_id === "2" ||
-                      form.program_level_id === "3") && (
-                      <div>
-                        <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                          Undergraduate (UG) Details
-                        </h3>
-
-                        <div className="grid md:grid-cols-2 gap-4 mt-4">
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              University *
-                            </label>
-                            <input
-                              name="ug_university"
-                              value={form.ug_university}
-                              placeholder="University name"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              College Name *
-                            </label>
-                            <input
-                              name="ug_college"
-                              value={form.ug_college}
-                              placeholder="College name"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              Degree *
-                            </label>
-                            <input
-                              name="ug_degree"
-                              value={form.ug_degree}
-                              placeholder="e.g., B.Sc, B.Com, B.A"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              Year of Passing *{" "}
-                              <span className="text-xs text-gray-500">
-                                (4 digits)
-                              </span>
-                            </label>
-                            <input
-                              name="ug_year"
-                              value={form.ug_year}
-                              placeholder="2024"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              maxLength={4}
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              Percentage / CGPA *{" "}
-                              <span className="text-xs text-gray-500">
-                                (0-100)
-                              </span>
-                            </label>
-                            <input
-                              name="ug_percentage"
-                              value={form.ug_percentage}
-                              placeholder="75.5 or 7.5"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {form.program_level_id === "3" && (
-                      <div>
-                        <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                          Postgraduate (PG) Details
-                        </h3>
-
-                        <div className="grid md:grid-cols-2 gap-4 mt-4">
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              University *
-                            </label>
-                            <input
-                              name="pg_university"
-                              value={form.pg_university}
-                              placeholder="University name"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              College Name *
-                            </label>
-                            <input
-                              name="pg_college"
-                              value={form.pg_college}
-                              placeholder="College name"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              Degree *
-                            </label>
-                            <input
-                              name="pg_degree"
-                              value={form.pg_degree}
-                              placeholder="e.g., M.Sc, M.Com, M.A"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              Year of Passing *{" "}
-                              <span className="text-xs text-gray-500">
-                                (4 digits)
-                              </span>
-                            </label>
-                            <input
-                              name="pg_year"
-                              value={form.pg_year}
-                              placeholder="2024"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              maxLength={4}
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-black mb-2">
-                              Percentage / CGPA *{" "}
-                              <span className="text-xs text-gray-500">
-                                (0-100)
-                              </span>
-                            </label>
-                            <input
-                              name="pg_percentage"
-                              value={form.pg_percentage}
-                              placeholder="75.5 or 7.5"
-                              onChange={handleChange}
-                              disabled={isFormLocked}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* <div>
-                      <h3 className="text-lg font-bold text-black mb-4 pb-2 border-b border-blue-200">
-                        Additional Information
-                      </h3>
-
-                      <div className="grid md:grid-cols-1 gap-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Gap in Education (if any)
-                          </label>
-                          <textarea
-                            name="previous_gap"
-                            value={form.previous_gap}
-                            placeholder="Mention any gap years and reason"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            rows={2}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Extracurricular Activities
-                          </label>
-                          <textarea
-                            name="extracurricular"
-                            value={form.extracurricular}
-                            placeholder="Sports, cultural activities, clubs, etc."
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            rows={2}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-black mb-2">
-                            Achievements & Awards
-                          </label>
-                          <textarea
-                            name="achievements"
-                            value={form.achievements}
-                            placeholder="Academic awards, competitions, certifications"
-                            onChange={handleChange}
-                            disabled={isFormLocked}
-                            rows={2}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-white text-black placeholder-gray-400 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          />
-                        </div>
-                      </div>
-                    </div> */}
-                  </div>
+                  <AcademicRecordsTab
+                    form={form}
+                    programLevelId={form.program_level_id}
+                    isFormLocked={isFormLocked}
+                    twelfthSubjects={twelfthSubjects}
+                    handleChange={handleChange}
+                    handleSubjectChange={handleSubjectChange}
+                    addSubject={addSubject}
+                    removeSubject={removeSubject}
+                  />
                 )}
 
+                {/* Tab 3: Payment/Download */}
                 {activeTab === 3 && (
-                  <div className="space-y-8 animate-fadeIn">
-                    {paymentStatus === "completed" ? (
-                      <div className="text-center">
-                        <h3 className="text-2xl font-bold text-black mb-4">
-                          Application Submitted Successfully
-                        </h3>
-                        <p className="text-gray-600 mb-6">
-                          Your application has been processed and payment
-                          confirmed
-                        </p>
-
-                        <div className="bg-green-50 p-6 rounded-lg mb-6">
-                          <svg
-                            className="w-16 h-16 text-green-500 mx-auto mb-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          <p className="text-lg font-semibold text-green-700">
-                            Payment Completed
-                          </p>
-                        </div>
-
-                        <div className="mt-12 pt-8 border-t-2 border-gray-200">
-                          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button
-                              onClick={handleViewApplication}
-                              disabled={isDownloading}
-                              className="px-8 py-4 bg-[#342D87] text-white font-bold rounded-xl hover:bg-[#2a2470] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                            >
-                              {isDownloading ? (
-                                <>
-                                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                  Generating Document...
-                                </>
-                              ) : (
-                                <>
-                                  <svg
-                                    className="w-6 h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    />
-                                  </svg>
-                                  Download Application
-                                </>
-                              )}
-                            </button>
-                            <button
-                              onClick={handleViewHallticket}
-                              disabled={isDownloading}
-                              className="px-8 py-4 bg-[#342D87] text-white font-bold rounded-xl hover:bg-[#2a2470] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                            >
-                              {isDownloading ? (
-                                <>
-                                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                  Generating Document...
-                                </>
-                              ) : (
-                                <>
-                                  <svg
-                                    className="w-6 h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    />
-                                  </svg>
-                                  Download Hallticket
-                                </>
-                              )}
-                            </button>
-                          </div>
-                          <p className="text-center text-sm text-gray-600 mt-6">
-                            Please save this document for your records and
-                            future reference
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <h3 className="text-2xl font-bold text-black mb-4">
-                          Application Fee Payment
-                        </h3>
-                        <p className="text-gray-600 mb-6">
-                          Complete your application by paying the admission fee
-                        </p>
-
-                        <div className="bg-blue-50 p-6 rounded-lg mb-6">
-                          <p className="text-3xl font-bold text-blue-600 mb-2">
-                            ₹1000
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Application Processing Fee
-                          </p>
-                        </div>
-
-                        <button
-                          onClick={handlePayment}
-                          disabled={isSubmitting}
-                          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isSubmitting
-                            ? "Processing..."
-                            : "Pay Now with Razorpay"}
-                        </button>
-
-                        <p className="text-xs text-gray-500 mt-4">
-                          Secure payment powered by Razorpay
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  <PaymentTab
+                    isFormLocked={isFormLocked}
+                    isSubmitting={isSubmitting}
+                    handlePayment={handlePayment}
+                    handleViewApplication={handleViewApplication}
+                  />
                 )}
 
-                <div className="flex justify-between items-center pt-8 mt-8 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={prevTab}
-                    disabled={activeTab === 0}
-                    className={`
-                      px-6 py-3 rounded-lg font-semibold transition-all duration-200
-                      ${
-                        activeTab === 0
-                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }
-                    `}
-                  >
-                    ← Previous
-                  </button>
-
-                  <div className="flex items-center gap-2">
-                    {tabs.map((_, index) => (
-                      <div
-                        key={index}
-                        className={`
-                          w-2 h-2 rounded-full transition-all duration-200
-                          ${
-                            activeTab === index
-                              ? "bg-blue-600 w-8"
-                              : completedTabs.includes(index) || isFormLocked
-                              ? "bg-green-500"
-                              : "bg-gray-300"
-                          }
-                        `}
-                      />
-                    ))}
-                  </div>
-
-                  {activeTab < tabs.length - 1 && !isFormLocked && (
+                {/* Navigation Buttons */}
+                {activeTab < tabs.length - 1 && (
+                  <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+                    <button
+                      type="button"
+                      onClick={prevTab}
+                      disabled={activeTab === 0}
+                      className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      ← Previous
+                    </button>
                     <button
                       type="button"
                       onClick={nextTab}
-                      disabled={isSubmitting}
-                      className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      disabled={isSubmitting || isFormLocked}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                           Saving...
                         </>
                       ) : (
-                        <>
-                          Save & Continue
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </>
+                        <>Next →</>
                       )}
                     </button>
-                  )}
-
-                  {isFormLocked && activeTab < tabs.length - 1 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newTab = activeTab + 1;
-                        setActiveTab(newTab);
-                        localStorage.setItem(
-                          `admission_active_tab_${userEmail}`,
-                          newTab.toString()
-                        );
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center gap-2"
-                    >
-                      Next
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
-                  )}
-                </div>
+                  </div>
+                )}
               </form>
-
-              <p className="text-center text-sm text-gray-600 mt-6">
-                {isFormLocked
-                  ? "Application submitted. Contact support for any queries."
-                  : "By submitting, you agree to our terms and conditions"}
-              </p>
             </div>
-          </div>
-
-          <div className="mt-8 text-center text-black">
-            <p className="text-sm">
-              Need help? Contact:{" "}
-              <span className="font-semibold text-blue-600">
-                admissions@loyola.edu
-              </span>{" "}
-              |{" "}
-              <span className="font-semibold text-blue-600">
-                +91-XXXXXXXXXX
-              </span>
-            </p>
           </div>
         </div>
       </div>
@@ -2208,15 +2453,12 @@ function AdmissionFormContent() {
   );
 }
 
-export default function AdmissionForm() {
+export default function AdmissionFormPage() {
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading form...</p>
-          </div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       }
     >

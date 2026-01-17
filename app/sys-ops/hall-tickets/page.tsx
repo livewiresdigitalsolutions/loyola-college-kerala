@@ -16,6 +16,8 @@
 //   CheckSquare,
 //   Square,
 // } from "lucide-react";
+// import { getAcademicYearConfig } from "@/app/lib/academicYearConfig";
+// import { YearPicker } from "@/app/sys-ops/components/YearPicker";
 // import StatusBadge from "../components/StatusBadge";
 
 // interface Admission {
@@ -90,8 +92,13 @@
 // export default function HallTicketsPage() {
 //   const router = useRouter();
 
+//   // Get academic year config
+//   const academicYearConfig = getAcademicYearConfig();
+//   const defaultYear = academicYearConfig.start.toString();
+
 //   // Academic Year
-//   const [academicYear, setAcademicYear] = useState("2026");
+//   const [academicYear, setAcademicYear] = useState(defaultYear);
+//   const [availableYears, setAvailableYears] = useState<string[]>([]);
 
 //   // Available admissions (not yet allocated)
 //   const [admissions, setAdmissions] = useState<Admission[]>([]);
@@ -123,7 +130,13 @@
 
 //   // Already allocated hall tickets
 //   const [allocatedTickets, setAllocatedTickets] = useState<HallTicket[]>([]);
+//   const [allocatedAdmissions, setAllocatedAdmissions] = useState<Record<number, Admission>>({});
 //   const [showAllocated, setShowAllocated] = useState(false);
+//   const [loadingAllocated, setLoadingAllocated] = useState(false);
+
+//   useEffect(() => {
+//     fetchAvailableYears();
+//   }, []);
 
 //   useEffect(() => {
 //     fetchAvailableAdmissions();
@@ -165,6 +178,18 @@
 //       setFilteredCourses(courses);
 //     }
 //   }, [degreeFilter, programFilter, courses, filteredDegrees]);
+
+//   const fetchAvailableYears = async () => {
+//     try {
+//       const response = await fetch("/api/sys-ops/available-years");
+//       if (response.ok) {
+//         const years = await response.json();
+//         setAvailableYears(years);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching years:", error);
+//     }
+//   };
 
 //   const fetchPrograms = async () => {
 //     try {
@@ -239,14 +264,46 @@
 //   };
 
 //   const fetchAllocatedTickets = async () => {
+//     setLoadingAllocated(true);
 //     try {
 //       const response = await fetch(`/api/sys-ops/hall-tickets?year=${academicYear}&page=1&perPage=1000`);
 //       if (response.ok) {
 //         const data = await response.json();
 //         setAllocatedTickets(data.data || []);
+        
+//         // Fetch admission details for allocated tickets
+//         if (data.data && data.data.length > 0) {
+//           const admissionIds = data.data.map((ticket: HallTicket) => ticket.admission_id);
+//           await fetchAdmissionsForTickets(admissionIds);
+//         }
 //       }
 //     } catch (error) {
 //       console.error("Error fetching allocated tickets:", error);
+//     } finally {
+//       setLoadingAllocated(false);
+//     }
+//   };
+
+//   const fetchAdmissionsForTickets = async (admissionIds: number[]) => {
+//     try {
+//       const response = await fetch('/api/sys-ops/admissions/by-ids', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ ids: admissionIds }),
+//       });
+      
+//       if (response.ok) {
+//         const admissions = await response.json();
+//         const admissionsMap: Record<number, Admission> = {};
+//         admissions.forEach((adm: Admission) => {
+//           admissionsMap[adm.id] = adm;
+//         });
+//         setAllocatedAdmissions(admissionsMap);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching admissions for tickets:", error);
 //     }
 //   };
 
@@ -428,6 +485,21 @@
 //     return center ? `${center.centre_name} (${center.location})` : "N/A";
 //   };
 
+//   const getProgramName = (programId: number): string => {
+//     const program = programs.find((p) => p.id === programId);
+//     return program?.discipline || "N/A";
+//   };
+
+//   const getDegreeName = (degreeId: number): string => {
+//     const degree = degrees.find((d) => d.id === degreeId);
+//     return degree?.degree_name || "N/A";
+//   };
+
+//   const getCourseName = (courseId: number): string => {
+//     const course = courses.find((c) => c.id === courseId);
+//     return course?.course_name || "N/A";
+//   };
+
 //   return (
 //     <>
 //       <Toaster position="top-right" />
@@ -441,29 +513,27 @@
 //             </p>
 //           </div>
 //           <div className="flex gap-3 items-center">
-//             <div className="flex items-center gap-2">
-//               <span className="text-sm font-semibold text-gray-700">Academic Year:</span>
-//               <select
-//                 value={academicYear}
-//                 onChange={(e) => {
-//                   setAcademicYear(e.target.value);
-//                   setCurrentPage(1);
-//                 }}
-//                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm font-semibold"
-//               >
-//                 <option value="2026">2026</option>
-//               </select>
-//             </div>
+//             {/* Year Picker with Calendar UI */}
+//             <YearPicker
+//               value={academicYear}
+//               onChange={(year) => {
+//                 setAcademicYear(year);
+//                 setCurrentPage(1);
+//               }}
+//               availableYears={availableYears}
+//               className="w-[160px]"
+//             />
+
 //             <button
 //               onClick={() => setShowAllocated(!showAllocated)}
-//               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+//               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors"
 //             >
 //               <Eye className="w-4 h-4" />
 //               {showAllocated ? "Show Available" : "Show Allocated"} ({showAllocated ? admissions.length : allocatedTickets.length})
 //             </button>
 //             <button
 //               onClick={handleExport}
-//               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#2a2470] transition-colors"
+//               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-yellow-500 transition-colors"
 //             >
 //               <Download className="w-4 h-4" />
 //               Export
@@ -628,7 +698,7 @@
 //           )}
 
 //           {/* Table */}
-//           {loadingAdmissions ? (
+//           {loadingAdmissions || loadingAllocated ? (
 //             <div className="flex items-center justify-center py-12">
 //               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
 //             </div>
@@ -654,6 +724,18 @@
 //                           Email
 //                         </th>
 //                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
+//                           Mobile
+//                         </th>
+//                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
+//                           Program
+//                         </th>
+//                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
+//                           Degree
+//                         </th>
+//                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
+//                           Course
+//                         </th>
+//                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
 //                           Exam Center
 //                         </th>
 //                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
@@ -668,34 +750,59 @@
 //                       </tr>
 //                     </thead>
 //                     <tbody>
-//                       {allocatedTickets.map((ticket) => (
-//                         <tr
-//                           key={ticket.id}
-//                           className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-//                         >
-//                           <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
-//                             {ticket.application_id}
-//                           </td>
-//                           <td className="py-3 px-4 text-sm font-medium text-gray-900">
-//                             {ticket.full_name}
-//                           </td>
-//                           <td className="py-3 px-4 text-sm text-gray-600">
-//                             {ticket.email}
-//                           </td>
-//                           <td className="py-3 px-4 text-sm text-gray-600">
-//                             {getExamCenterName(ticket.exam_center_id)}
-//                           </td>
-//                           <td className="py-3 px-4 text-sm text-gray-600">
-//                             {new Date(ticket.exam_date).toLocaleDateString("en-IN")}
-//                           </td>
-//                           <td className="py-3 px-4 text-sm text-gray-600">
-//                             {ticket.exam_time}
-//                           </td>
-//                           <td className="py-3 px-4">
-//                             <StatusBadge status={ticket.status} />
-//                           </td>
-//                         </tr>
-//                       ))}
+//                       {allocatedTickets.map((ticket) => {
+//                         const admission = allocatedAdmissions[ticket.admission_id];
+
+//                         return (
+//                           <tr
+//                             key={ticket.id}
+//                             className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+//                           >
+//                             <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
+//                               {admission
+//                                 ? generateApplicationId(
+//                                     admission.program_level_id,
+//                                     admission.degree_id,
+//                                     admission.course_id,
+//                                     admission.id
+//                                   )
+//                                 : ticket.application_id || "N/A"}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm font-medium text-gray-900">
+//                               {admission?.full_name || ticket.full_name || "N/A"}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {admission?.email || ticket.email || "N/A"}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {admission?.mobile || ticket.mobile || "N/A"}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {admission ? getProgramName(admission.program_level_id) : getProgramName(ticket.program_level_id)}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {admission ? getDegreeName(admission.degree_id) : getDegreeName(ticket.degree_id)}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {admission ? getCourseName(admission.course_id) : getCourseName(ticket.course_id)}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {getExamCenterName(
+//                                 admission?.exam_center_id || ticket.exam_center_id
+//                               )}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {new Date(ticket.exam_date).toLocaleDateString("en-IN")}
+//                             </td>
+//                             <td className="py-3 px-4 text-sm text-gray-600">
+//                               {ticket.exam_time}
+//                             </td>
+//                             <td className="py-3 px-4">
+//                               <StatusBadge status={ticket.status} />
+//                             </td>
+//                           </tr>
+//                         );
+//                       })}
 //                     </tbody>
 //                   </table>
 //                 </div>
@@ -867,7 +974,19 @@
 
 
 
-// app/sys-ops/hall-tickets/page.tsx
+
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -893,10 +1012,6 @@ import StatusBadge from "../components/StatusBadge";
 interface Admission {
   id: number;
   user_email: string;
-  full_name: string;
-  father_name: string;
-  mobile: string;
-  email: string;
   program_level_id: number;
   degree_id: number;
   course_id: number;
@@ -905,24 +1020,32 @@ interface Admission {
   form_status: string;
   created_at: string;
   updated_at: string;
+  // Fields from joined tables
+  full_name?: string;
+  father_name?: string;
+  mobile?: string;
+  email?: string;
+  gender?: string;
+  dob?: string;
 }
 
 interface HallTicket {
   id: number;
   admission_id: number;
-  application_id: string;
-  full_name: string;
-  father_name: string;
-  mobile: string;
-  email: string;
-  program_level_id: number;
-  degree_id: number;
-  course_id: number;
-  exam_center_id: number;
   exam_date: string;
   exam_time: string;
   status: string;
   created_at: string;
+  // Fields from JOINs (not stored in hall_ticket table)
+  academic_year?: string;
+  program_level_id?: number;
+  degree_id?: number;
+  course_id?: number;
+  exam_center_id?: number;
+  full_name?: string;
+  father_name?: string;
+  mobile?: string;
+  email?: string;
 }
 
 interface Program {
@@ -954,9 +1077,9 @@ const generateApplicationId = (
   courseId: number,
   dbId: number
 ): string => {
-  const paddedId = String(dbId).padStart(2, "0");
+  const paddedId = String(dbId).padStart(3, "0");
   const paddedCourseId = String(courseId).padStart(2, "0");
-  return `LC${programLevelId}${degreeId}${paddedCourseId}20265${paddedId}`;
+  return `LCSS${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
 };
 
 export default function HallTicketsPage() {
@@ -1001,6 +1124,7 @@ export default function HallTicketsPage() {
   // Already allocated hall tickets
   const [allocatedTickets, setAllocatedTickets] = useState<HallTicket[]>([]);
   const [showAllocated, setShowAllocated] = useState(false);
+  const [loadingAllocated, setLoadingAllocated] = useState(false);
 
   useEffect(() => {
     fetchAvailableYears();
@@ -1118,13 +1242,35 @@ export default function HallTicketsPage() {
       const response = await fetch(`/api/sys-ops/admissions/available?${params}`);
       if (response.ok) {
         const data = await response.json();
-        setAdmissions(data.data || []);
-        setTotalPages(data.pages || 1);
+        
+        // Map the response to ensure all fields are at root level
+        const mappedAdmissions = (data.admissions || data.data || []).map((adm: any) => ({
+          id: adm.id,
+          user_email: adm.user_email,
+          program_level_id: adm.program_level_id,
+          degree_id: adm.degree_id,
+          course_id: adm.course_id,
+          exam_center_id: adm.exam_center_id,
+          payment_status: adm.payment_status,
+          form_status: adm.form_status,
+          created_at: adm.created_at,
+          updated_at: adm.updated_at,
+          full_name: adm.full_name,
+          father_name: adm.father_name,
+          mobile: adm.mobile,
+          email: adm.email,
+          gender: adm.gender,
+          dob: adm.dob,
+        }));
+
+        setAdmissions(mappedAdmissions);
+        setTotalPages(data.totalPages || data.pages || 1);
         setTotalRecords(data.total || 0);
       } else {
         toast.error("Failed to load admissions");
       }
     } catch (error) {
+      console.error("Error loading admissions:", error);
       toast.error("Error loading admissions");
     } finally {
       setLoadingAdmissions(false);
@@ -1132,6 +1278,7 @@ export default function HallTicketsPage() {
   };
 
   const fetchAllocatedTickets = async () => {
+    setLoadingAllocated(true);
     try {
       const response = await fetch(`/api/sys-ops/hall-tickets?year=${academicYear}&page=1&perPage=1000`);
       if (response.ok) {
@@ -1140,6 +1287,8 @@ export default function HallTicketsPage() {
       }
     } catch (error) {
       console.error("Error fetching allocated tickets:", error);
+    } finally {
+      setLoadingAllocated(false);
     }
   };
 
@@ -1170,28 +1319,12 @@ export default function HallTicketsPage() {
 
     setIsAllocating(true);
     try {
-      const tickets = selectedAdmissions.map((admissionId) => {
-        const admission = admissions.find((a) => a.id === admissionId)!;
-        return {
-          admission_id: admission.id,
-          application_id: generateApplicationId(
-            admission.program_level_id,
-            admission.degree_id,
-            admission.course_id,
-            admission.id
-          ),
-          full_name: admission.full_name,
-          father_name: admission.father_name,
-          mobile: admission.mobile,
-          email: admission.email,
-          program_level_id: admission.program_level_id,
-          degree_id: admission.degree_id,
-          course_id: admission.course_id,
-          exam_center_id: admission.exam_center_id,
-          exam_date: examDate,
-          exam_time: examTime,
-        };
-      });
+      // Only send admission_id, exam_date, exam_time
+      const tickets = selectedAdmissions.map((admissionId) => ({
+        admission_id: admissionId,
+        exam_date: examDate,
+        exam_time: examTime,
+      }));
 
       const response = await fetch("/api/sys-ops/hall-tickets", {
         method: "POST",
@@ -1201,6 +1334,8 @@ export default function HallTicketsPage() {
         body: JSON.stringify({ tickets }),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
         toast.success(`${tickets.length} hall ticket(s) allocated successfully`);
         setSelectedAdmissions([]);
@@ -1209,10 +1344,11 @@ export default function HallTicketsPage() {
         fetchAvailableAdmissions();
         fetchAllocatedTickets();
       } else {
-        const error = await response.json();
-        toast.error(error.error || "Failed to allocate hall tickets");
+        console.error('Allocation failed:', result);
+        toast.error(result.error || result.details || "Failed to allocate hall tickets");
       }
     } catch (error) {
+      console.error("Error allocating hall tickets:", error);
       toast.error("Error allocating hall tickets");
     } finally {
       setIsAllocating(false);
@@ -1234,8 +1370,9 @@ export default function HallTicketsPage() {
       const response = await fetch(`/api/sys-ops/admissions/available?${params}`);
       if (response.ok) {
         const result = await response.json();
+        const dataToExport = result.admissions || result.data || [];
 
-        if (!result.data || result.data.length === 0) {
+        if (dataToExport.length === 0) {
           toast("No data to export for the selected year and filters.", {
             style: {
               background: "#3b82f6",
@@ -1245,7 +1382,7 @@ export default function HallTicketsPage() {
           return;
         }
 
-        const exportData = result.data.map((adm: Admission) => {
+        const exportData = dataToExport.map((adm: any) => {
           const program = programs.find((p) => p.id === adm.program_level_id);
           const degree = degrees.find((d) => d.id === adm.degree_id);
           const course = courses.find((c) => c.id === adm.course_id);
@@ -1259,7 +1396,7 @@ export default function HallTicketsPage() {
               adm.id
             ),
             "Name": adm.full_name || "N/A",
-            "Email": adm.email,
+            "Email": adm.email || adm.user_email || "N/A",
             "Mobile": adm.mobile || "N/A",
             "Program": program?.discipline || "N/A",
             "Degree": degree?.degree_name || "N/A",
@@ -1321,6 +1458,21 @@ export default function HallTicketsPage() {
     return center ? `${center.centre_name} (${center.location})` : "N/A";
   };
 
+  const getProgramName = (programId: number): string => {
+    const program = programs.find((p) => p.id === programId);
+    return program?.discipline || "N/A";
+  };
+
+  const getDegreeName = (degreeId: number): string => {
+    const degree = degrees.find((d) => d.id === degreeId);
+    return degree?.degree_name || "N/A";
+  };
+
+  const getCourseName = (courseId: number): string => {
+    const course = courses.find((c) => c.id === courseId);
+    return course?.course_name || "N/A";
+  };
+
   return (
     <>
       <Toaster position="top-right" />
@@ -1344,7 +1496,7 @@ export default function HallTicketsPage() {
               availableYears={availableYears}
               className="w-[160px]"
             />
-            
+
             <button
               onClick={() => setShowAllocated(!showAllocated)}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -1518,9 +1670,8 @@ export default function HallTicketsPage() {
             </div>
           )}
 
-          {/* Rest of your table code remains the same... */}
           {/* Table */}
-          {loadingAdmissions ? (
+          {loadingAdmissions || loadingAllocated ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
@@ -1546,6 +1697,18 @@ export default function HallTicketsPage() {
                           Email
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                          Mobile
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                          Program
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                          Degree
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                          Course
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700">
                           Exam Center
                         </th>
                         <th className="text-left py-3 px-4 font-semibold text-gray-700">
@@ -1566,16 +1729,35 @@ export default function HallTicketsPage() {
                           className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >
                           <td className="py-3 px-4 text-sm font-mono text-primary font-semibold">
-                            {ticket.application_id}
+                            {ticket.program_level_id && ticket.degree_id && ticket.course_id && ticket.admission_id
+                              ? generateApplicationId(
+                                  ticket.program_level_id,
+                                  ticket.degree_id,
+                                  ticket.course_id,
+                                  ticket.admission_id
+                                )
+                              : "N/A"}
                           </td>
                           <td className="py-3 px-4 text-sm font-medium text-gray-900">
-                            {ticket.full_name}
+                            {ticket.full_name || "N/A"}
                           </td>
                           <td className="py-3 px-4 text-sm text-gray-600">
-                            {ticket.email}
+                            {ticket.email || "N/A"}
                           </td>
                           <td className="py-3 px-4 text-sm text-gray-600">
-                            {getExamCenterName(ticket.exam_center_id)}
+                            {ticket.mobile || "N/A"}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-gray-600">
+                            {ticket.program_level_id ? getProgramName(ticket.program_level_id) : "N/A"}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-gray-600">
+                            {ticket.degree_id ? getDegreeName(ticket.degree_id) : "N/A"}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-gray-600">
+                            {ticket.course_id ? getCourseName(ticket.course_id) : "N/A"}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-gray-600">
+                            {ticket.exam_center_id ? getExamCenterName(ticket.exam_center_id) : "N/A"}
                           </td>
                           <td className="py-3 px-4 text-sm text-gray-600">
                             {new Date(ticket.exam_date).toLocaleDateString("en-IN")}
