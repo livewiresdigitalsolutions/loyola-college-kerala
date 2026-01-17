@@ -577,9 +577,8 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { toast, Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Toaster } from "react-hot-toast";
 import { usePathname } from "next/navigation";
 import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 import { User, Calendar } from "lucide-react";
@@ -604,10 +603,8 @@ interface Course {
 }
 
 const Sidebar: React.FC = () => {
-  const router = useRouter();
-  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [showLogin, setShowLogin] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { academicYear, loading: yearLoading } = useAcademicYear();
   const pathname = usePathname();
 
@@ -817,7 +814,7 @@ const Sidebar: React.FC = () => {
     pathname?.startsWith(route)
   );
 
-  // Don't render navbar on sys-ops pages
+  // Don't render sidebar on sys-ops pages
   if (shouldHideNavbar) {
     return null;
   }
@@ -1172,12 +1169,16 @@ const Sidebar: React.FC = () => {
       {/* Fixed Side Button */}
       <div className="fixed right-0 top-1/3 -translate-y-1/2 z-[9999]">
         <button
-          onClick={() => {
-            setShowForm((prev) => !prev);
-            setShowLogin(false);
-          }}
+          onClick={handleOpenModal}
           disabled={!academicYear?.isOpen}
           className="rotate-[-90deg] origin-bottom-right bg-yellow-500 px-4 py-2 text-sm font-semibold text-white shadow-lg rounded-t-md hover:bg-primary hover:text-white transition-transform duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          aria-label={
+            yearLoading
+              ? "Loading admission information"
+              : academicYear?.isOpen
+              ? `Open admission enquiry form for ${academicYear.start}`
+              : "Admissions opening soon"
+          }
         >
           {yearLoading
             ? "Loading..."
