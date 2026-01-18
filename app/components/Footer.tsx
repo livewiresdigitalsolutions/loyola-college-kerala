@@ -61,7 +61,7 @@ export default function Footer() {
                   disabled
                   className="mt-4 px-6 py-3 bg-gray-400 text-gray-600 font-black rounded-xl cursor-not-allowed"
                 >
-                  Admissions Coming Soon
+                  Admissions Closed for {academicYear?.start}
                 </button>
               )}
             </div>

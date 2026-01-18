@@ -244,7 +244,6 @@
 //   };
 
 //   const tabs = getTabsForProgramLevel();
-  
 
 //   const handleNext = async () => {
 //   if (paymentStatus === "completed") {
@@ -305,7 +304,6 @@
 //   }
 // };
 
-
 // // Save active tab whenever it changes
 // useEffect(() => {
 //   if (userEmail) {
@@ -322,7 +320,6 @@
 //     }
 //   }
 // }, [userEmail]);
-
 
 //   // Handle authentication errors on mount
 //   useEffect(() => {
@@ -1257,16 +1254,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
@@ -1299,17 +1286,12 @@ import ProgramPersonalTab from "./components/ProgramPersonalTab";
 import ContactFamilyTab from "./components/ContactFamilyTab";
 import AcademicRecordsTab from "./components/AcademicRecordsTab";
 import PaymentTab from "./components/PaymentTab";
+import EasebuzzCheckout from "@/components/EasebuzzCheckout";
 
 interface Tab {
   name: string;
   id: string;
   fields: string[];
-}
-
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
 }
 
 function AdmissionFormContent() {
@@ -1337,6 +1319,7 @@ function AdmissionFormContent() {
   const [paymentStatus, setPaymentStatus] = useState<string>("");
   const [admissionId, setAdmissionId] = useState<number | undefined>();
   const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
+  const [showEasebuzzCheckout, setShowEasebuzzCheckout] = useState(false);
 
   // 12th standard subjects
   const [twelfthSubjects, setTwelfthSubjects] = useState<SubjectMark[]>([
@@ -1517,14 +1500,19 @@ function AdmissionFormContent() {
   // Save active tab whenever it changes
   useEffect(() => {
     if (userEmail) {
-      localStorage.setItem(`admission_active_tab_${userEmail}`, activeTab.toString());
+      localStorage.setItem(
+        `admission_active_tab_${userEmail}`,
+        activeTab.toString()
+      );
     }
   }, [activeTab, userEmail]);
 
   // Load active tab on mount
   useEffect(() => {
     if (userEmail) {
-      const savedTab = localStorage.getItem(`admission_active_tab_${userEmail}`);
+      const savedTab = localStorage.getItem(
+        `admission_active_tab_${userEmail}`
+      );
       if (savedTab !== null) {
         setActiveTab(parseInt(savedTab, 10));
       }
@@ -2143,75 +2131,20 @@ function AdmissionFormContent() {
     }
   };
 
-  // Payment handling
+  // Replace handlePayment function
   const handlePayment = async () => {
-    setIsSubmitting(true);
-
-    try {
-      const orderResponse = await fetch("/api/payment/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: 1000 }),
-      });
-
-      const { orderId, amount, currency } = await orderResponse.json();
-
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: amount,
-        currency: currency,
-        name: "Loyola College",
-        description: "Admission Application Fee",
-        order_id: orderId,
-        handler: async function (response: any) {
-          const verifyResponse = await fetch("/api/payment/verify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              email: userEmail,
-              amount: amount / 100,
-            }),
-          });
-
-          if (verifyResponse.ok) {
-            toast.success("Application submitted successfully!");
-            setTimeout(() => {
-              if (userEmail) {
-                router.push(
-                  `/application-download?email=${encodeURIComponent(userEmail)}`
-                );
-              } else {
-                toast.error("User email not found");
-                router.push("/");
-              }
-            }, 1500);
-          }
-        },
-        prefill: {
-          name: form.full_name,
-          email: form.email,
-          contact: form.mobile,
-        },
-        theme: {
-          color: "#342D87",
-        },
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-
-      paymentObject.on("payment.failed", function (response: any) {
-        toast.error("Payment failed. Please try again.");
-        setIsSubmitting(false);
-      });
-    } catch (error) {
-      console.error("Payment error:", error);
-      toast.error("Payment initialization failed");
-      setIsSubmitting(false);
+    // Validate that all previous tabs are complete
+    if (
+      !completedTabs.includes(0) ||
+      !completedTabs.includes(1) ||
+      !completedTabs.includes(2)
+    ) {
+      toast.error("Please complete all sections before payment");
+      return;
     }
+
+    // Show Easebuzz checkout
+    setShowEasebuzzCheckout(true);
   };
 
   const handleViewApplication = () => {
@@ -2233,10 +2166,6 @@ function AdmissionFormContent() {
 
   return (
     <>
-      <Script
-        id="razorpay-checkout-js"
-        src="https://checkout.razorpay.com/v1/checkout.js"
-      />
       <Toaster position="top-right" />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -2406,13 +2335,14 @@ function AdmissionFormContent() {
                   />
                 )}
 
-                {/* Tab 3: Payment/Download */}
                 {activeTab === 3 && (
                   <PaymentTab
                     isFormLocked={isFormLocked}
                     isSubmitting={isSubmitting}
                     handlePayment={handlePayment}
                     handleViewApplication={handleViewApplication}
+                    userName={form.full_name}
+                    userPhone={form.mobile}
                   />
                 )}
 
@@ -2448,6 +2378,16 @@ function AdmissionFormContent() {
             </div>
           </div>
         </div>
+        {showEasebuzzCheckout && (
+            <EasebuzzCheckout
+              amount={1}
+              firstname={form.full_name}
+              email={form.email}
+              phone={form.mobile}
+              productinfo="Admission Application Fee"
+              onClose={() => setShowEasebuzzCheckout(false)}
+            />
+          )}
       </div>
     </>
   );

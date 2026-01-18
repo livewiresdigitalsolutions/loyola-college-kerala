@@ -1202,7 +1202,7 @@ const Sidebar: React.FC = () => {
             ? "Loading..."
             : academicYear?.isOpen
             ? `Admissions Enquiry ${academicYear.start} →`
-            : "Admissions Coming Soon →"}
+            : `Admissions Closed for ${academicYear?.start}`}
         </button>
       </div>
     </section>

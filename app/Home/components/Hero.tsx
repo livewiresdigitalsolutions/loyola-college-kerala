@@ -437,7 +437,7 @@ const Hero: React.FC = () => {
                   ? "Loading..."
                   : academicYear && academicYear.isOpen
                   ? `Admissions ${academicYear.start} →`
-                  : "Admissions Coming Soon"}
+                  : `Admissions Closed for ${academicYear?.start}`}
               </button>
             </div>
           </div>
