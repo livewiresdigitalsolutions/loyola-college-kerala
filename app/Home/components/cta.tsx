@@ -7,7 +7,7 @@ import { Phone, Mail } from "lucide-react";
 export default function Cta() {
   return (
     <section className="w-full bg-[#F6F6EE] py-20">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-360 mx-auto px-2">
         {/* MAIN CTA CARD */}
         <div className="bg-primary rounded-3xl overflow-hidden shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -29,10 +29,7 @@ export default function Cta() {
 
                 {/* DESCRIPTION */}
                 <p className="text-lg text-white/90 leading-relaxed max-w-xl">
-                  For over six decades, Loyola College of Social Sciences has
-                  cultivated leaders who combine academic excellence with social
-                  responsibility. Begin your transformative educational journey at
-                  Kerala's premier institution for social sciences.
+                  Begin your transformative educational journey at Kerala's premier institution for social sciences.
                 </p>
 
 
@@ -56,20 +53,22 @@ export default function Cta() {
 
 
                 {/* BUTTONS */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                  <Link
-                    href="/admissions"
-                    className="inline-flex items-center text-center justify-center px-8 py-4 bg-white text-primary font-bold hover:bg-white/90 transition-all duration-300 shadow-lg"
-                  >
-                    View Application Requirements
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center text-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white font-bold hover:bg-white/10 transition-all duration-300"
-                  >
-                    Request Information
-                  </Link>
-                </div>
+                  <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center text-center justify-center px-8 py-4 rounded-md font-bold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 hover:brightness-90"
+                      style={{ backgroundColor: '#F0B129', color: '#fff' }}
+                    >
+                      Request Information
+                    </Link>
+                    <Link
+                      href="/admissions"
+                      className="inline-flex items-center text-center justify-center px-8 py-4 bg-white text-primary font-bold rounded-md transition-all duration-300 shadow-lg hover:bg-gray-100 hover:shadow-xl hover:scale-105"
+                    >
+                      View Application Requirements
+                    </Link>
+                  </div>
+
               </div>
 
 
