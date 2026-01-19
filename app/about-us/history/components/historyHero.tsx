@@ -8,7 +8,7 @@ export default function HistoryHero() {
   return (
     <>
       {/* HERO SECTION WITH IMAGE AND GREEN OVERLAY */}
-      <section className="relative w-full h-[600px] md:h-[700px]">
+      <section className="relative w-full h-[600px] md:h-[800px]">
         {/* BACKGROUND IMAGE */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -30,12 +30,12 @@ export default function HistoryHero() {
           <div className="max-w-7xl mx-auto px-6 w-full">
             <div className="max-w-3xl">
               {/* BADGE */}
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full mb-8">
+              {/* <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full mb-8">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 <span className="text-white font-medium text-sm tracking-wide">
                   OUR HISTORY
                 </span>
-              </div>
+              </div> */}
 
 
               {/* MAIN HEADING */}
