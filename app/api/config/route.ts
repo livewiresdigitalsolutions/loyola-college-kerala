@@ -5,12 +5,23 @@ import { createClient } from '@supabase/supabase-js';
 
 const isDevelopment = process.env.DB_TYPE === 'supabase';
 
+console.log('[DB ENV]', {
+  DB_TYPE: process.env.DB_TYPE,
+  DB_HOST: process.env.DB_HOST,
+  DB_PORT: process.env.DB_PORT,
+  DB_USER: process.env.DB_USER,
+  DB_DATABASE: process.env.DB_DATABASE,
+  DB_PASSWORD: process.env.DB_PASSWORD ? '***loaded***' : 'missing',
+});
+
+
+
 const mysqlConfig = {
-  host: process.env.MYSQL_HOST || 'localhost',
-  port: parseInt(process.env.MYSQL_PORT || '3303'),
-  user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || '',
-  database: process.env.MYSQL_DATABASE || 'loyola',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '3303'),
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_DATABASE || 'loyola',
 };
 
 const supabase = createClient(
@@ -46,13 +57,24 @@ export async function GET(request: Request) {
         return NextResponse.json(data);
       }
     } else {
-      const connection = await mysql.createConnection(mysqlConfig);
+      let connection;
+
+try {
+  console.log(mysqlConfig);
+  connection = await mysql.createConnection(mysqlConfig);
+  console.log('MySQL connected successfully');
+} catch (err) {
+  console.error('MySQL connection failed', err);
+  throw err;
+}
+
       
       const query = key
         ? 'SELECT id, `key`, `value`, description, data_type, updated_at FROM configuration_values WHERE `key` = ?'
         : 'SELECT id, `key`, `value`, description, data_type, updated_at FROM configuration_values ORDER BY `key`';
       
       const params = key ? [key] : [];
+      console.log('[MYSQL QUERY]', query, params);
       const [rows] = await connection.execute(query, params);
       await connection.end();
       

@@ -91,6 +91,3 @@ export default function FacultySection({ faculty }: FacultySectionProps) {
     </section>
   );
 }
-
-
-
