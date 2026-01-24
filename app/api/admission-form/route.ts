@@ -26,6 +26,16 @@ async function saveFormMySQL(email: string, formData: any) {
     await connection.beginTransaction();
 
     const academicYear = getAcademicYearConfig();
+    
+    // Fix DOB before saving - ensure it's stored as DATE only
+    let dobValue = formData.dob || null;
+    if (dobValue && typeof dobValue === 'string') {
+      // Extract just YYYY-MM-DD if it contains time
+      if (dobValue.includes('T')) {
+        dobValue = dobValue.split('T')[0];
+      }
+    }
+
 
     // Check if form already exists
     const [existing] = await connection.execute(
@@ -73,7 +83,7 @@ async function saveFormMySQL(email: string, formData: any) {
           formData.exam_center_id || null,
           formData.full_name || null,
           formData.gender || null,
-          formData.dob || null,
+          dobValue,
           formData.mobile || null,
           formData.email || null,
           formData.aadhaar || null,
@@ -133,119 +143,96 @@ async function saveFormMySQL(email: string, formData: any) {
     } else {
       // Insert new form
       const [insertResult] = await connection.execute(
-  `INSERT INTO admission_form (
-    user_email, program_level_id, degree_id, course_id,
-    second_preference_course_id, third_preference_course_id,
-    exam_center_id,
-    full_name, gender, dob, mobile, email,
-    aadhaar, nationality, religion, category,
-    seat_reservation_quota, caste, mother_tongue, nativity,
-    blood_group,
-    father_name, father_mobile, father_education, father_occupation,
-    mother_name, mother_mobile, mother_education, mother_occupation,
-    annual_family_income, parent_mobile, parent_email,
-    address,
-    communication_address, communication_city, communication_state,
-    communication_district, communication_pincode, communication_country,
-    permanent_address, permanent_city, permanent_state,
-    permanent_district, permanent_pincode, permanent_country,
-    city, state, pincode,
-    is_disabled, disability_type, disability_percentage,
-    dependent_of, seeking_admission_under_quota,
-    scholarship_or_fee_concession, hostel_accommodation_required,
-    emergency_contact_name, emergency_contact_relation, emergency_contact_mobile,
-    previous_gap, extracurricular, achievements,
-    academic_year, form_status
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  [
-    // Line 1-7: Program & Course Selection
-    formData.user_email || email,
-    formData.program_level_id,
-    formData.degree_id,
-    formData.course_id,
-    formData.second_preference_course_id || null,
-    formData.third_preference_course_id || null,
-    formData.exam_center_id,
-
-    // Line 8-21: Personal Information
-    formData.full_name,
-    formData.gender,
-    formData.dob,
-    formData.mobile,
-    formData.email,
-    formData.aadhaar,
-    formData.nationality,
-    formData.religion || null,
-    formData.category,
-    formData.seat_reservation_quota,
-    formData.caste,
-    formData.mother_tongue,
-    formData.nativity,
-    formData.blood_group || null,
-
-    // Line 22-32: Parent Information
-    formData.father_name,
-    formData.father_mobile,
-    formData.father_education,
-    formData.father_occupation,
-    formData.mother_name,
-    formData.mother_mobile,
-    formData.mother_education,
-    formData.mother_occupation,
-    formData.annual_family_income,
-    formData.parent_mobile || null,
-    formData.parent_email || null,
-
-    // Line 33: Legacy address (can be null)
-    formData.address || null,
-
-    // Line 34-39: Communication Address
-    formData.communication_address,
-    formData.communication_city,
-    formData.communication_state,
-    formData.communication_district,
-    formData.communication_pincode,
-    formData.communication_country,
-
-    // Line 40-45: Permanent Address
-    formData.permanent_address,
-    formData.permanent_city,
-    formData.permanent_state,
-    formData.permanent_district,
-    formData.permanent_pincode,
-    formData.permanent_country,
-
-    // Line 46-48: Legacy location fields (can be null)
-    formData.city || null,
-    formData.state || null,
-    formData.pincode || null,
-
-    // Line 49-51: Disability Information
-    formData.is_disabled || 'no',
-    formData.disability_type || null,
-    formData.disability_percentage || null,
-
-    // Line 52-55: Additional Information
-    formData.dependent_of || 'none',
-    formData.seeking_admission_under_quota || 'no',
-    formData.scholarship_or_fee_concession || 'no',
-    formData.hostel_accommodation_required || 'no',
-
-    // Line 56-58: Emergency Contact
-    formData.emergency_contact_name,
-    formData.emergency_contact_relation,
-    formData.emergency_contact_mobile,
-
-    // Line 59-61: Optional Additional Info
-    formData.previous_gap || null,
-    formData.extracurricular || null,
-    formData.achievements || null,
-
-    // Line 62-63: System fields
-    academicYear.start,
-    formData.form_status || 'draft'
-  ]
-);
+        `INSERT INTO admission_form (
+          user_email, program_level_id, degree_id, course_id,
+          second_preference_course_id, third_preference_course_id,
+          exam_center_id,
+          full_name, gender, dob, mobile, email,
+          aadhaar, nationality, religion, category,
+          seat_reservation_quota, caste, mother_tongue, nativity,
+          blood_group,
+          father_name, father_mobile, father_education, father_occupation,
+          mother_name, mother_mobile, mother_education, mother_occupation,
+          annual_family_income, parent_mobile, parent_email,
+          address,
+          communication_address, communication_city, communication_state,
+          communication_district, communication_pincode, communication_country,
+          permanent_address, permanent_city, permanent_state,
+          permanent_district, permanent_pincode, permanent_country,
+          city, state, pincode,
+          is_disabled, disability_type, disability_percentage,
+          dependent_of, seeking_admission_under_quota,
+          scholarship_or_fee_concession, hostel_accommodation_required,
+          emergency_contact_name, emergency_contact_relation, emergency_contact_mobile,
+          previous_gap, extracurricular, achievements,
+          academic_year, form_status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          formData.user_email || email,
+          formData.program_level_id,
+          formData.degree_id,
+          formData.course_id,
+          formData.second_preference_course_id || null,
+          formData.third_preference_course_id || null,
+          formData.exam_center_id,
+          formData.full_name,
+          formData.gender,
+          dobValue,
+          formData.mobile,
+          formData.email,
+          formData.aadhaar,
+          formData.nationality,
+          formData.religion || null,
+          formData.category,
+          formData.seat_reservation_quota,
+          formData.caste,
+          formData.mother_tongue,
+          formData.nativity,
+          formData.blood_group || null,
+          formData.father_name,
+          formData.father_mobile,
+          formData.father_education,
+          formData.father_occupation,
+          formData.mother_name,
+          formData.mother_mobile,
+          formData.mother_education,
+          formData.mother_occupation,
+          formData.annual_family_income,
+          formData.parent_mobile || null,
+          formData.parent_email || null,
+          formData.address || null,
+          formData.communication_address,
+          formData.communication_city,
+          formData.communication_state,
+          formData.communication_district,
+          formData.communication_pincode,
+          formData.communication_country,
+          formData.permanent_address,
+          formData.permanent_city,
+          formData.permanent_state,
+          formData.permanent_district,
+          formData.permanent_pincode,
+          formData.permanent_country,
+          formData.city || null,
+          formData.state || null,
+          formData.pincode || null,
+          formData.is_disabled || 'no',
+          formData.disability_type || null,
+          formData.disability_percentage || null,
+          formData.dependent_of || 'none',
+          formData.seeking_admission_under_quota || 'no',
+          formData.scholarship_or_fee_concession || 'no',
+          formData.hostel_accommodation_required || 'no',
+          formData.emergency_contact_name,
+          formData.emergency_contact_relation,
+          formData.emergency_contact_mobile,
+          formData.previous_gap || null,
+          formData.extracurricular || null,
+          formData.achievements || null,
+          academicYear.start,
+          formData.form_status || 'draft'
+        ]
+      );
       admissionFormId = (insertResult as any).insertId;
     }
 
@@ -313,6 +300,7 @@ async function saveFormMySQL(email: string, formData: any) {
     await connection.end();
   }
 }
+
 
 async function saveFormSupabase(email: string, formData: any) {
   try {
@@ -468,8 +456,13 @@ async function getFormMySQL(email: string) {
   const connection = await mysql.createConnection(mysqlConfig);
 
   try {
+    // Use DATE_FORMAT to return date as string YYYY-MM-DD
     const [rows] = await connection.execute(
-      'SELECT * FROM admission_form WHERE user_email = ?',
+      `SELECT 
+        *,
+        DATE_FORMAT(dob, '%Y-%m-%d') as dob
+      FROM admission_form 
+      WHERE user_email = ?`,
       [email]
     );
 

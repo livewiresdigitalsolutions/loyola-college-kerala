@@ -1,6 +1,7 @@
 import React from "react";
 import { GraduationCap, BookOpen, FlaskConical } from "lucide-react";
 import { Programme } from "../../data/types";
+import { Fragment } from 'react';
 
 interface ProgrammesSectionProps {
   programmes: {

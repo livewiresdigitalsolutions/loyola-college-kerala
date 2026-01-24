@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Twitter, Instagram, Send, Megaphone } from "lucide-react";
+import { Facebook, Twitter, Instagram, Send, Megaphone, YoutubeIcon } from "lucide-react";
 import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -85,11 +85,11 @@ export default function Footer() {
           <FooterCol
             title="About Us"
             links={[
-              { label: "Our History", href: "/about/history" },
-              { label: "Our Mission and Vision", href: "/about/mission" },
-              { label: "Teachers", href: "/about/teachers" },
-              { label: "Events", href: "/events" },
-              { label: "Who is Who", href: "/about/who-is-who" },
+              { label: "Our History", href: "https://loyolacollegekerala.edu.in/about-us/history/" },
+              { label: "Our Mission and Vision", href: "https://loyolacollegekerala.edu.in/about-us/vision-mission/" },
+              { label: "Faculty", href: "https://loyolacollegekerala.edu.in/our-professors/" },
+              // { label: "Events", href: "/events" },
+              { label: "Who is Who", href: "https://loyolacollegekerala.edu.in/about-us/who-is-who/" },
             ]}
           />
 
@@ -97,11 +97,11 @@ export default function Footer() {
           <FooterCol
             title="Academics"
             links={[
-              { label: "Departments", href: "/academics/departments" },
-              { label: "Programs Offered", href: "/academics/programs" },
-              { label: "Certified Courses", href: "/academics/courses" },
-              { label: "Research", href: "/academics/research" },
-              { label: "Faculty", href: "/academics/faculty" },
+              { label: "Departments", href: "https://loyolacollegekerala.edu.in/departments/" },
+              { label: "Programmes Offered", href: "https://loyolacollegekerala.edu.in/course/" },
+              { label: "Certified Courses", href: "https://loyolacollegekerala.edu.in/certificate-courses/" },
+              { label: "Research", href: "https://loyolacollegekerala.edu.in/research-home/" },
+              // { label: "Schools", href: "/academics/faculty" },
             ]}
           />
 
@@ -109,10 +109,10 @@ export default function Footer() {
           <FooterCol
             title="Infrastructure"
             links={[
-              { label: "LES", href: "/infrastructure/les" },
-              { label: "Journal", href: "/infrastructure/journal" },
-              { label: "Gymnasium", href: "/infrastructure/gymnasium" },
-              { label: "Library", href: "/infrastructure/library" },
+              { label: "LES", href: "https://loyolacollegekerala.edu.in/les/" },
+              { label: "Journals", href: "https://loyolacollegekerala.edu.in/loyolajournals/" },
+              { label: "Gymnasium", href: "https://loyolacollegekerala.edu.in/facilities/gymnasium/" },
+              { label: "Library", href: "https://library.loyolacollegekerala.edu.in/" },
             ]}
           />
         </div>
@@ -121,7 +121,7 @@ export default function Footer() {
         <div className="mt-14 border-t border-gray-600/40 pt-6 flex flex-col md:flex-row items-center justify-between gap-6">
           {/* LEFT */}
           <p className="text-sm text-gray-400">
-            © 2025 Loyola College Kerala. All Rights Reserved
+            © 2025 Loyola College of Social Sciences, Trivandrum, Kerala. All Rights Reserved
             {academicYear && (
               <span className="ml-2 text-gray-500">
                 | Academic Year {academicYear.start}-
@@ -147,20 +147,20 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <SocialIcon
               icon={<Facebook className="w-4 h-4" />}
-              href="https://facebook.com/loyolacollege"
+              href="https://www.facebook.com/loyolacollegeofsocialsciences/"
             />
             <SocialIcon
-              icon={<Twitter className="w-4 h-4" />}
-              href="https://twitter.com/loyolacollege"
+              icon={<YoutubeIcon className="w-4 h-4" />}
+              href="https://www.youtube.com/@loyolacollegeofsocialsciences"
             />
             <SocialIcon
               icon={<Instagram className="w-4 h-4" />}
-              href="https://instagram.com/loyolacollege"
+              href="https://www.instagram.com/loyolatrivandrum/"
             />
-            <SocialIcon
+            {/* <SocialIcon
               icon={<Send className="w-4 h-4" />}
               href="https://t.me/loyolacollege"
-            />
+            /> */}
           </div>
         </div>
       </div>

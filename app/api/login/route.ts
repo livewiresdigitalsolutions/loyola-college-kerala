@@ -115,7 +115,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 
 const isDevelopment = process.env.DB_TYPE === 'supabase';
@@ -206,7 +206,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create JWT token with user information
     const token = await new SignJWT({ 
       email: result.email,
       id: result.id,
@@ -214,23 +213,23 @@ export async function POST(request: NextRequest) {
     })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime('8h') // Token expires in 8 hours
+      .setExpirationTime('8h')
       .sign(JWT_SECRET);
 
-    // Create response with success message
     const response = NextResponse.json({
       success: true,
       message: 'Login successful!',
       email: result.email,
     });
 
-    // Set HTTP-only cookie with the JWT token
+    // Updated cookie configuration
     response.cookies.set('auth_token', token, {
-      httpOnly: true, // Cannot be accessed by JavaScript
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'strict', // CSRF protection
-      maxAge: 60 * 60 * 8, // 8 hours in seconds
-      path: '/', // Cookie available for all routes
+      httpOnly: true,
+      secure: false,
+      // secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax', // Changed from 'strict' - this is the key fix
+      maxAge: 60 * 60 * 8,
+      path: '/',
     });
 
     return response;

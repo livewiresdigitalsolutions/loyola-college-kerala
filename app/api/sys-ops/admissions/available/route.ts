@@ -55,6 +55,8 @@ async function getAvailableAdmissionsMySQL(
   try {
     const offset = (page - 1) * perPage;
     let whereClause = 'bi.payment_status = ? AND ht.id IS NULL';
+    const safePerPage = Math.max(1, Number(perPage));
+    const safeOffset = Math.max(0, Number(offset));
     const params: any[] = ['completed'];
 
     // Academic year filter
@@ -124,8 +126,8 @@ async function getAvailableAdmissionsMySQL(
        LEFT JOIN hall_ticket ht ON bi.id = ht.admission_id
        WHERE ${whereClause}
        ORDER BY bi.created_at DESC
-       LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+       LIMIT ${safePerPage} OFFSET ${safeOffset}`,
+      params
     );
 
     const pages = Math.ceil(total / perPage);

@@ -48,6 +48,8 @@ export interface BasicInfo {
   degree_id: string;
   course_id: string;
   second_preference_course_id?: string;
+  second_preference_degree_id?:string;
+  third_preference_degree_id?:string;
   third_preference_course_id?: string;
   exam_center_id: string;
   academic_year?: string;

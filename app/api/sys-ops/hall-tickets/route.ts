@@ -61,6 +61,8 @@ async function getHallTicketsMySQL(
   try {
     const offset = (page - 1) * perPage;
     let whereClause = '1=1';
+    const safePerPage = Math.max(1, Number(perPage));
+    const safeOffset = Math.max(0, Number(offset));
     const params: any[] = [];
 
     if (status && status !== 'all') {
@@ -137,8 +139,8 @@ async function getHallTicketsMySQL(
        LEFT JOIN admission_family_info fi ON bi.id = fi.admission_id
        WHERE ${whereClause} 
        ORDER BY ht.created_at DESC 
-       LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+       LIMIT ${safePerPage} OFFSET ${safeOffset}`,
+      params
     );
 
     const pages = Math.ceil(total / perPage);
