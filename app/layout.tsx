@@ -32,7 +32,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={`${manrope.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <Navbar /> */}
+        {/* <Navbar />  */}
         <Back/>
         {/* <Sidebar/> */}
         {children}
