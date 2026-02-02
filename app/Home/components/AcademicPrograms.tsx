@@ -195,45 +195,45 @@ import { ArrowRight } from "lucide-react";
 
 const programmes = [
   {
-    title: "Undergraduate",
+    title: "FYUG Programmes",
     description:
-      "Build a strong foundation in social sciences through our comprehensive UG programmes.",
+      "Build a strong foundation in arts, science and humanities through our comprehensive UG programmes.",
     programs: [
-      "BA in Sociology",
-      "BA in Psychology",
-      "BA in Social Work",
-      "BA in Economics",
-      "BA in Political Science",
+      "B.Sc. Data Science",
+      "B.Sc. Psychology",
+      "Bachelor of Social Work(BSW)",
+      "B.Com Finance and Accounts with CA Pathway",
+      "B.Com Finance and Accounts with ACCA Pathway",
+      "B.Com Logistics & Supply Chain Management",
+      "B.Com Fintech & Al",
     ],
     link: "/programmes/undergraduate",
     linkText: "View All UG Programmes",
     image: "/assets/UG.png",
   },
   {
-    title: "Postgraduate",
+    title: "PG Programmes",
     description:
       "Deepen your expertise with advanced studies in specialized areas of social sciences.",
     programs: [
-      "MA in Sociology",
-      "MA in Psychology",
-      "MA in Social Work",
-      "MSW in Community Development",
-      "MA in Development Studies",
+      "M.A. Sociology",
+      "M.Sc. Counselling Psychology",
+      "M.S.W Social Work",
+      "M.S.W Disaster Management",
+      "M.A Human Resource",
     ],
     link: "/programmes/postgraduate",
     linkText: "View All PG Programmes",
     image: "/assets/PG.png",
   },
   {
-    title: "Doctoral",
+    title: "Ph.D",
     description:
       "Contribute to cutting-edge research and advance the field of social sciences.",
     programs: [
-      "PhD in Sociology",
-      "PhD in Psychology",
-      "PhD in Social Work",
-      "PhD in Development Studies",
-      "PhD in Economics",
+      "Ph.D. in Sociology",
+      "Ph.D. in Social Work",
+      "Ph.D. in Management Studies",
     ],
     link: "/programmes/doctoral",
     linkText: "View Doctoral Programmes",
@@ -244,7 +244,7 @@ const programmes = [
 
 export default function AcademicProgrammes() {
   return (
-    <section className="w-full bg-white py-20">
+    <section className="w-full bg-[#F6F6EE] py-20">
       <div className="max-w-7xl mx-auto px-6">
         {/* HEADER */}
         <div className="mb-12">
@@ -282,7 +282,7 @@ export default function AcademicProgrammes() {
 
 
                 {/* CONTENT SECTION */}
-                <div className="bg-[#F5F1E8] group-hover:bg-primary text-gray-900 group-hover:text-white p-8 flex-1 flex flex-col transition-colors duration-300">
+                <div className="bg-white group-hover:bg-primary text-gray-900 group-hover:text-white p-8 flex-1 flex flex-col transition-colors duration-300">
                   <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
 
 
@@ -305,14 +305,14 @@ export default function AcademicProgrammes() {
                   </ul>
 
 
-                  {/* LINK */}
+                  {/* LINK
                   <Link
                     href={item.link}
                     className="inline-flex items-center gap-2 font-semibold group-hover:gap-3 transition-all duration-300 text-gray-900 group-hover:text-white"
                   >
                     {item.linkText}
                     <ArrowRight className="w-5 h-5" />
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             );

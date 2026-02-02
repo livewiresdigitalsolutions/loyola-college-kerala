@@ -71,7 +71,7 @@ export default function PtaAccordions() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
             {section.content.map((member, index) => (
-              <div key={index} className="bg-[#F6F6EE] p-4 rounded">
+              <div key={index} className="bg-[#F6F6EE] p-4 rounded text">
                 <h4 className="font-semibold text-primary mb-1">
                   {member.name}
                 </h4>
@@ -91,7 +91,7 @@ export default function PtaAccordions() {
       return (
         <>
           {paragraphs.map((paragraph, index) => (
-            <p key={index} className={`text-gray-700 leading-relaxed ${index < paragraphs.length - 1 ? 'mb-4' : ''}`}>
+            <p key={index} className={`text-gray-700 leading-relaxed text-justify ${index < paragraphs.length - 1 ? 'mb-4' : ''}`}>
               {paragraph}
             </p>
           ))}

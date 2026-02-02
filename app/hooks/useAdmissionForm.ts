@@ -16,7 +16,6 @@
 //         body: JSON.stringify({ email: userEmail, data }),
 //       });
 
-//       // Check if response is ok before parsing
 //       if (!response.ok) {
 //         const errorText = await response.text();
 //         console.error('Basic info save error:', errorText);
@@ -49,7 +48,14 @@
 //       if (!response.ok) {
 //         const errorText = await response.text();
 //         console.error('Personal info save error:', errorText);
-//         return { success: false, error: `HTTP ${response.status}` };
+        
+//         // Try to parse error for better message
+//         try {
+//           const errorJson = JSON.parse(errorText);
+//           return { success: false, error: errorJson.error || `HTTP ${response.status}` };
+//         } catch {
+//           return { success: false, error: errorText || `HTTP ${response.status}` };
+//         }
 //       }
 
 //       const text = await response.text();
@@ -77,7 +83,13 @@
 //       if (!response.ok) {
 //         const errorText = await response.text();
 //         console.error('Family info save error:', errorText);
-//         return { success: false, error: `HTTP ${response.status}` };
+        
+//         try {
+//           const errorJson = JSON.parse(errorText);
+//           return { success: false, error: errorJson.error || `HTTP ${response.status}` };
+//         } catch {
+//           return { success: false, error: errorText || `HTTP ${response.status}` };
+//         }
 //       }
 
 //       const text = await response.text();
@@ -105,7 +117,13 @@
 //       if (!response.ok) {
 //         const errorText = await response.text();
 //         console.error('Address info save error:', errorText);
-//         return { success: false, error: `HTTP ${response.status}` };
+        
+//         try {
+//           const errorJson = JSON.parse(errorText);
+//           return { success: false, error: errorJson.error || `HTTP ${response.status}` };
+//         } catch {
+//           return { success: false, error: errorText || `HTTP ${response.status}` };
+//         }
 //       }
 
 //       const text = await response.text();
@@ -133,7 +151,13 @@
 //       if (!response.ok) {
 //         const errorText = await response.text();
 //         console.error('Academic marks save error:', errorText);
-//         return { success: false, error: `HTTP ${response.status}` };
+        
+//         try {
+//           const errorJson = JSON.parse(errorText);
+//           return { success: false, error: errorJson.error || `HTTP ${response.status}` };
+//         } catch {
+//           return { success: false, error: errorText || `HTTP ${response.status}` };
+//         }
 //       }
 
 //       const text = await response.text();
@@ -150,55 +174,53 @@
 //   }, []);
 
 //   // Load complete form data
-//   // Load complete form data
-// const loadCompleteForm = useCallback(async (): Promise<CompleteFormData | null> => {
-//   if (!userEmail) return null;
+//   const loadCompleteForm = useCallback(async (): Promise<CompleteFormData | null> => {
+//     if (!userEmail) return null;
 
-//   setIsLoading(true);
-//   try {
-//     console.log('Loading form data for:', userEmail);
-    
-//     const response = await fetch(`/api/admission-form/complete?email=${encodeURIComponent(userEmail)}`);
-    
-//     console.log('Load response status:', response.status);
-    
-//     // Handle 404 gracefully (no existing form)
-//     if (response.status === 404) {
-//       console.log('No existing form found - starting fresh');
+//     setIsLoading(true);
+//     try {
+//       console.log('Loading form data for:', userEmail);
+      
+//       const response = await fetch(`/api/admission-form/complete?email=${encodeURIComponent(userEmail)}`);
+      
+//       console.log('Load response status:', response.status);
+      
+//       // Handle 404 gracefully (no existing form)
+//       if (response.status === 404) {
+//         console.log('No existing form found - starting fresh');
+//         return null;
+//       }
+
+//       if (!response.ok) {
+//         const errorText = await response.text();
+//         console.error('Load form error response:', errorText);
+//         return null;
+//       }
+
+//       const text = await response.text();
+//       console.log('Load response text length:', text.length);
+      
+//       if (!text) {
+//         console.error('Empty response when loading form');
+//         return null;
+//       }
+
+//       const result = JSON.parse(text);
+//       console.log('Parsed result:', { hasData: !!result.data, keys: result.data ? Object.keys(result.data).length : 0 });
+      
+//       if (result.data) {
+//         return result.data;
+//       }
+      
+//       console.log('Result has no data property');
 //       return null;
-//     }
-
-//     if (!response.ok) {
-//       const errorText = await response.text();
-//       console.error('Load form error response:', errorText);
+//     } catch (error: any) {
+//       console.error('Load form error:', error);
 //       return null;
+//     } finally {
+//       setIsLoading(false);
 //     }
-
-//     const text = await response.text();
-//     console.log('Load response text length:', text.length);
-    
-//     if (!text) {
-//       console.error('Empty response when loading form');
-//       return null;
-//     }
-
-//     const result = JSON.parse(text);
-//     console.log('Parsed result:', { hasData: !!result.data, keys: result.data ? Object.keys(result.data).length : 0 });
-    
-//     if (result.data) {
-//       return result.data;
-//     }
-    
-//     console.log('Result has no data property');
-//     return null;
-//   } catch (error: any) {
-//     console.error('Load form error:', error);
-//     return null;
-//   } finally {
-//     setIsLoading(false);
-//   }
-// }, [userEmail]);
-
+//   }, [userEmail]);
 
 //   // Save complete form (all sections)
 //   const saveCompleteForm = useCallback(async (
@@ -227,15 +249,21 @@
 //         throw new Error(basicResult.error || 'Failed to save basic info');
 //       }
 
-//       const currentAdmissionId = admissionId || basicResult.data?.id;
-//       console.log('Current admission ID:', currentAdmissionId);
+//       // FIX: Always prioritize the ID from basic result
+//       let currentAdmissionId = basicResult.data?.id || admissionId;
+      
+//       console.log('Admission IDs:', {
+//         fromBasicResult: basicResult.data?.id,
+//         passedAdmissionId: admissionId,
+//         usingId: currentAdmissionId
+//       });
 
 //       if (!currentAdmissionId) {
-//         throw new Error('No admission ID available');
+//         throw new Error('No admission ID available after saving basic info');
 //       }
 
 //       // Step 2: Save personal info
-//       console.log('Saving personal info...');
+//       console.log('Saving personal info for admission ID:', currentAdmissionId);
 //       const personalResult = await savePersonalInfo(currentAdmissionId, {
 //         full_name: formData.full_name,
 //         gender: formData.gender,
@@ -256,7 +284,7 @@
 //       console.log('Personal info result:', personalResult);
 
 //       if (!personalResult.success) {
-//         throw new Error('Failed to save personal info');
+//         throw new Error(personalResult.error || 'Failed to save personal info');
 //       }
 
 //       // Step 3: Save family info
@@ -286,7 +314,7 @@
 //       console.log('Family info result:', familyResult);
 
 //       if (!familyResult.success) {
-//         throw new Error('Failed to save family info');
+//         throw new Error(familyResult.error || 'Failed to save family info');
 //       }
 
 //       // Step 4: Save address info
@@ -309,7 +337,7 @@
 //       console.log('Address info result:', addressResult);
 
 //       if (!addressResult.success) {
-//         throw new Error('Failed to save address info');
+//         throw new Error(addressResult.error || 'Failed to save address info');
 //       }
 
 //       // Step 5: Save academic marks
@@ -319,7 +347,7 @@
 //         console.log('Academic marks result:', academicResult);
         
 //         if (!academicResult.success) {
-//           throw new Error('Failed to save academic marks');
+//           throw new Error(academicResult.error || 'Failed to save academic marks');
 //         }
 //       }
 
@@ -332,7 +360,7 @@
 //     } finally {
 //       setIsLoading(false);
 //     }
-//   }, [saveBasicInfo, savePersonalInfo, saveFamilyInfo, saveAddressInfo, saveAcademicMarks]);
+//   }, [saveBasicInfo, savePersonalInfo, saveFamilyInfo, saveAddressInfo, saveAcademicMarks, userEmail]);
 
 //   return {
 //     isLoading,
@@ -345,6 +373,8 @@
 //     saveAcademicMarks,
 //   };
 // };
+
+
 
 
 
@@ -408,7 +438,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
         const errorText = await response.text();
         console.error('Personal info save error:', errorText);
         
-        // Try to parse error for better message
         try {
           const errorJson = JSON.parse(errorText);
           return { success: false, error: errorJson.error || `HTTP ${response.status}` };
@@ -544,7 +573,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
       
       console.log('Load response status:', response.status);
       
-      // Handle 404 gracefully (no existing form)
       if (response.status === 404) {
         console.log('No existing form found - starting fresh');
         return null;
@@ -596,7 +624,9 @@ export const useAdmissionForm = (userEmail: string | null) => {
         program_level_id: formData.program_level_id,
         degree_id: formData.degree_id,
         course_id: formData.course_id,
+        second_preference_degree_id: formData.second_preference_degree_id || formData.degree_id,  // NEW
         second_preference_course_id: formData.second_preference_course_id,
+        third_preference_degree_id: formData.third_preference_degree_id || formData.degree_id,    // NEW
         third_preference_course_id: formData.third_preference_course_id,
         exam_center_id: formData.exam_center_id,
         form_status: formData.form_status,
@@ -608,7 +638,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
         throw new Error(basicResult.error || 'Failed to save basic info');
       }
 
-      // FIX: Always prioritize the ID from basic result
       let currentAdmissionId = basicResult.data?.id || admissionId;
       
       console.log('Admission IDs:', {

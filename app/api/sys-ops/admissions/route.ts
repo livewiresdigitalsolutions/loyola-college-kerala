@@ -54,6 +54,8 @@ async function getAdmissionsMySQL(
   try {
     const offset = (page - 1) * perPage;
     let whereClause = '1=1';
+    const safePerPage = Math.max(1, Number(perPage));
+    const safeOffset = Math.max(0, Number(offset));
     const params: any[] = [];
 
     // Status filter
@@ -117,8 +119,8 @@ async function getAdmissionsMySQL(
        LEFT JOIN exam_centers ec ON bi.exam_center_id = ec.id
        WHERE ${whereClause}
        ORDER BY bi.updated_at DESC
-       LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+       LIMIT ${safePerPage} OFFSET ${safeOffset}`,
+      params
     );
 
     const pages = Math.ceil(total / perPage);

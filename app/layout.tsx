@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Sidebar from './components/Sidebar';
+import Back from './components/BacktoHome';
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -31,8 +32,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={`${manrope.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        <Sidebar/>
+        {/* <Navbar />  */}
+        <Back/>
+        {/* <Sidebar/> */}
         {children}
         <Footer/>
       </body>

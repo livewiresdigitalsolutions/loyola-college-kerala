@@ -175,9 +175,9 @@ function ApplicationDownloadContent() {
     courseId: number,
     dbId: number
   ): string => {
-    const paddedId = String(dbId).padStart(2, "0");
+    const paddedId = String(dbId).padStart(3, "0");
     const paddedCourseId = String(courseId).padStart(2, "0");
-    return `LC${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
+    return `LCSS${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
   };
 
   const handleViewApplication = () => {

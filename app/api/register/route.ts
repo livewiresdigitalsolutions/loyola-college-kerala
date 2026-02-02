@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const useSupabase = process.env.DB_TYPE === 'supabase';
 const SALT_ROUNDS = 10;

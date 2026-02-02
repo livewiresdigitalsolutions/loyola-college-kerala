@@ -7,6 +7,7 @@ import DepartmentGoals from "./components/DepartmentGoals";
 import FacultySection from "./components/FacultySection";
 import ProgrammesSection from "./components/ProgrammesSection";
 import SyllabusSection from "./components/SyllabusSection";
+import EligibilitySection from "./components/EligibilitySection";
 
 interface DepartmentPageProps {
   params: Promise<{
@@ -55,9 +56,11 @@ export default async function DepartmentPage({ params }: DepartmentPageProps) {
       {/* Department Content */}
       <DepartmentIntro introduction={department.introduction} />
       <DepartmentGoals goals={department.goals} />
-      <FacultySection faculty={department.faculty} />
+      {/* <FacultySection faculty={department.faculty} /> */}
+      <EligibilitySection eligibility={department.eligibility} />
       <ProgrammesSection programmes={department.programmes} />
-      <SyllabusSection syllabus={department.syllabus} />
+      
+      {/* <SyllabusSection syllabus={department.syllabus} /> */}
     </div>
   );
 }
