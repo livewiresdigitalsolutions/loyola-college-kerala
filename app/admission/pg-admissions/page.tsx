@@ -4,6 +4,7 @@ import LoyolaAtAGlance from "@/app/Home/components/Glance";
 import AcademicProgrammes from "@/app/Home/components/AcademicPrograms";
 import StartApplication from "../components/StartApplication";
 import PGProgrammesList from "./components/PgProgrammeslist";
+import AdmissionProcess from "./components/AdmissionProcess";
 
 
 export default function PgAdmissions() {
@@ -13,8 +14,9 @@ export default function PgAdmissions() {
            <AnnouncementMarquee/>
            <LoyolaAtAGlance/>
            <AcademicProgrammes/>
+           <AdmissionProcess/>
            <PGProgrammesList/>
-           <StartApplication/>
+           {/* <StartApplication/> */}
         </>
     );
 }

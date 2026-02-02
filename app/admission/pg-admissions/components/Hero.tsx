@@ -5,7 +5,7 @@ import { ArrowRight, Award, CheckCircle2 } from "lucide-react";
 
 export default function PgAdmissionsHero() {
   const handleDownloadBrochureClick = () => {
-    window.open("/files/brochure.pdf", "_blank");
+    window.open("/files/pgbrochure.pdf", "_blank");
   };
 
   const handleDownloadProspectusClick = () => {
@@ -13,7 +13,7 @@ export default function PgAdmissionsHero() {
   };
 
   const handleApplyNowClick = () => {
-    window.location.href = "/apply";
+    window.location.href = "https://lcss.linways.com/v4/adm-applicant/login";
   };
 
   return (
@@ -90,13 +90,13 @@ export default function PgAdmissionsHero() {
                   Download Brochure
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
-                <button
+                {/* <button
                   onClick={handleDownloadProspectusClick}
                   className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
                 >
                   Download Prospectus
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+                </button> */}
                 <button
                   onClick={handleApplyNowClick}
                   className="bg-white text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-white hover:border-2 hover:border-white transition-all duration-300 inline-flex items-center justify-center gap-2 group shadow-lg"

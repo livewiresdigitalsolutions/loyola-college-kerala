@@ -437,6 +437,8 @@ export default function DepartmentsList() {
               <button
                 onClick={() => setSelectedDept(null)}
                 className="p-2 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
+                title="Close"
+                aria-label="Close modal"
               >
                 <X className="w-6 h-6" />
               </button>

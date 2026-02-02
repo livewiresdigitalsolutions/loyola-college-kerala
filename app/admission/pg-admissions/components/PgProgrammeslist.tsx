@@ -137,14 +137,14 @@ export default function PGProgrammesList() {
               </div>
 
               {/* CONTENT */}
-              <div className="p-6 flex flex-col flex-grow">
+              <div className="p-6 py-10 flex flex-col flex-grow ">
                 {/* PROGRAMME NAME */}
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors duration-300">
                   {programme.name}
                 </h3>
 
                 {/* DESCRIPTION - TRUNCATED */}
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-4 flex-grow">
+                <p className="text-gray-600 text-sm leading-relaxed line-clamp-12 flex-grow text-justify">
                   {programme.description}
                 </p>
 
@@ -188,6 +188,8 @@ export default function PGProgrammesList() {
               <button
                 onClick={() => setSelectedProgramme(null)}
                 className="p-2 hover:bg-white/20 rounded-lg transition-colors flex-shrink-0"
+                title="Close modal"
+                aria-label="Close modal"
               >
                 <X className="w-6 h-6" />
               </button>

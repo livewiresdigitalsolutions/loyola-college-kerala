@@ -1275,7 +1275,10 @@ export default function AdmissionsHero() {
 
 
                         <div className="flex gap-2">
-                          <select className="rounded border p-2 w-20 text-sm text-black">
+                          <select
+                            className="rounded border p-2 w-20 text-sm text-black"
+                            aria-label="Country code"
+                          >
                             <option>+91</option>
                           </select>
                           <input
@@ -1345,6 +1348,7 @@ export default function AdmissionsHero() {
                             value={selectedDegree}
                             onChange={(e) => setSelectedDegree(e.target.value)}
                             required
+                            aria-label="Select Degree"
                           >
                             <option value="">Select Degree *</option>
                             {degrees.map((degree) => (
