@@ -12,10 +12,11 @@ export default function PgAdmissions() {
         <>
            <PgAdmissionsHero/>
            <AnnouncementMarquee/>
-           <LoyolaAtAGlance/>
-           <AcademicProgrammes/>
-           <AdmissionProcess/>
            <PGProgrammesList/>
+           {/* <LoyolaAtAGlance/> */}
+           {/* <AcademicProgrammes/> */}
+           <AdmissionProcess/>
+           
            {/* <StartApplication/> */}
         </>
     );
