@@ -12,7 +12,7 @@ interface SyllabusSectionProps {
 export default function SyllabusSection({ syllabus }: SyllabusSectionProps) {
   const renderSyllabus = (syllabi: Syllabus[], title: string) => {
     if (syllabi.length === 0) return null;
-    
+
     return (
       <div className="mb-12">
         <h3 className="text-2xl font-bold text-gray-900 mb-6">{title}</h3>
@@ -54,14 +54,14 @@ export default function SyllabusSection({ syllabus }: SyllabusSectionProps) {
       </div>
     );
   };
-  
+
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
           Course Syllabus
         </h2>
-        
+
         {renderSyllabus(syllabus.ug, "Undergraduate Syllabus")}
         {renderSyllabus(syllabus.pg, "Postgraduate Syllabus")}
       </div>

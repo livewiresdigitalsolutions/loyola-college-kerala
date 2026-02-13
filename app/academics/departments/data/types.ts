@@ -229,3 +229,15 @@ export interface Department {
     pg: Syllabus[];
   };
 }
+export interface SyllabusLink {
+  label: string;    // e.g. "MSW Syllabus - Latest"
+  url: string;      // link to the PDF
+}
+
+export interface PublicationCategory {
+  title: string;       // "Scholars" or "Students"
+  image: string;       // circular avatar image path
+  items: string[];     // list of publication names
+  viewAllLink?: string;
+}
+

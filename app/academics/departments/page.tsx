@@ -1,12 +1,17 @@
 import React from "react";
 import DepartmentsHero from "./components/departmentsHero";
+import ExcellenceSection from "./components/ExcellenceSection";
 import DepartmentsList from "./components/departmentsList";
+
+
 
 export default function DepartmentsPage() {
   return (
     <>
       <DepartmentsHero />
+      <ExcellenceSection />
       <DepartmentsList />
+      
     </>
   );
 }
