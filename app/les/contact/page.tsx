@@ -1,13 +1,20 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Hero from '../_components/Hero'
 import { Mail, Phone, MapPin, Clock, Send, User } from 'lucide-react'
-import { coordinators, contactInfo } from '../_data'
-import { submitContactForm } from '../_services/api'
-import { ContactFormData } from '../_data/types'
+import { coordinators as fallbackCoordinators, contactInfo as fallbackContactInfo } from '../_data'
+import { submitContactForm, getCoordinators, getContactInfo } from '../_services/api'
+import { ContactFormData, ContactPerson, ContactInfo as ContactInfoType } from '../_data/types'
 
 export default function ContactPage() {
+  const [coordinatorsList, setCoordinatorsList] = useState<ContactPerson[]>(fallbackCoordinators)
+  const [info, setInfo] = useState<ContactInfoType>(fallbackContactInfo)
+
+  useEffect(() => {
+    getCoordinators().then(setCoordinatorsList)
+    getContactInfo().then(setInfo)
+  }, [])
   const [formData, setFormData] = useState<ContactFormData>({
     firstName: '',
     lastName: '',
@@ -68,7 +75,7 @@ export default function ContactPage() {
           <div className="mb-12">
             <h2 className="text-3xl font-bold text-[#1a5632] text-center mb-8">Our Team</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {coordinators.map((person) => (
+              {coordinatorsList.map((person) => (
                 <div key={person.id} className="bg-white p-6 rounded-lg shadow-sm text-center hover:shadow-md transition-shadow">
                   <div className="w-16 h-16 bg-[#1a5632]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <User className="w-8 h-8 text-[#1a5632]" />
@@ -95,7 +102,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
-                  {contactInfo.phone.map((phone, index) => (
+                  {info.phone.map((phone, index) => (
                     <p key={index} className="text-gray-600">{phone}</p>
                   ))}
                 </div>
@@ -108,7 +115,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
-                  {contactInfo.email.map((email, index) => (
+                  {info.email.map((email, index) => (
                     <p key={index} className="text-gray-600">{email}</p>
                   ))}
                 </div>
@@ -121,7 +128,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Address</h3>
-                  <p className="text-gray-600 whitespace-pre-line">{contactInfo.address}</p>
+                  <p className="text-gray-600 whitespace-pre-line">{info.address}</p>
                 </div>
               </div>
 
@@ -132,9 +139,9 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Office Hours</h3>
-                  <p className="text-gray-600">{contactInfo.officeHours.weekdays}</p>
-                  <p className="text-gray-600">{contactInfo.officeHours.saturday}</p>
-                  <p className="text-gray-600">{contactInfo.officeHours.sunday}</p>
+                  <p className="text-gray-600">{info.officeHours.weekdays}</p>
+                  <p className="text-gray-600">{info.officeHours.saturday}</p>
+                  <p className="text-gray-600">{info.officeHours.sunday}</p>
                 </div>
               </div>
             </div>

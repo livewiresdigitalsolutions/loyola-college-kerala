@@ -1,8 +1,18 @@
-import React from 'react'
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { newsItems } from '../_data'
+import { newsItems as fallbackNews } from '../_data'
+import { getNewsItems } from '../_services/api'
+import { NewsItem } from '../_data/types'
 
 export default function News() {
+  const [items, setItems] = useState<NewsItem[]>(fallbackNews)
+
+  useEffect(() => {
+    getNewsItems().then(setItems)
+  }, [])
+
   return (
     <div className="space-y-6">
       {/* News Section */}
@@ -10,7 +20,7 @@ export default function News() {
         <h2 className="text-2xl font-bold text-primary mb-6">NEWS</h2>
         
         <div className="divide-y divide-gray-200">
-          {newsItems.map((item) => (
+          {items.map((item) => (
             <article key={item.id} className="py-4 first:pt-0 last:pb-0 group cursor-pointer">
               <h3 className="text-gray-800 font-medium leading-snug group-hover:text-primary transition-colors">
                 {item.title}

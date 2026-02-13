@@ -1,10 +1,20 @@
-import React from 'react'
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { teamMembers } from '../../_data'
+import { teamMembers as fallbackTeam } from '../../_data'
+import { getTeamMembers } from '../../_services/api'
+import { TeamMember } from '../../_data/types'
 
 export default function OurTeam() {
+  const [members, setMembers] = useState<TeamMember[]>(fallbackTeam)
+
+  useEffect(() => {
+    getTeamMembers().then(setMembers)
+  }, [])
+
   return (
     <section className="bg-transparent border border-gray-400 p-6 md:p-8">
       <h2 className="text-2xl md:text-3xl font-bold text-primary text-center mb-10 uppercase tracking-wide">
@@ -13,7 +23,7 @@ export default function OurTeam() {
 
       {/* Team Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teamMembers.map((member) => (
+        {members.map((member) => (
           <div key={member.id} className="group">
             {/* Member Image */}
             <div className="mb-4 overflow-hidden">

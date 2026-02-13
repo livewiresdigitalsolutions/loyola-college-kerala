@@ -1,11 +1,20 @@
 'use client'
 
-import React, { useState } from 'react'
-import { counselors, counselingSlots, genderOptions } from '../../_data'
-import { submitAppointment } from '../../_services/api'
-import { AppointmentFormData } from '../../_data/types'
+import React, { useState, useEffect } from 'react'
+import { counselors as fallbackCounselors, counselingSlots as fallbackSlots, genderOptions } from '../../_data'
+import { submitAppointment, getCounselors } from '../../_services/api'
+import { AppointmentFormData, Counselor } from '../../_data/types'
 
 export default function AppointmentForm() {
+  const [counselorsList, setCounselorsList] = useState<Counselor[]>(fallbackCounselors)
+  const [slotsList, setSlotsList] = useState(fallbackSlots)
+
+  useEffect(() => {
+    getCounselors().then((data) => {
+      setCounselorsList(data.counselors)
+      setSlotsList(data.slots)
+    })
+  }, [])
   const [formData, setFormData] = useState<AppointmentFormData>({
     name: '',
     gender: '',
@@ -195,7 +204,7 @@ export default function AppointmentForm() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-white"
           >
             <option value="">Select Staff</option>
-            {counselors.map((counselor) => (
+            {counselorsList.map((counselor) => (
               <option key={counselor.id} value={counselor.id}>{counselor.name}</option>
             ))}
           </select>
@@ -213,7 +222,7 @@ export default function AppointmentForm() {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all bg-white"
           >
             <option value="">Select Slot</option>
-            {counselingSlots.map((slot) => (
+            {slotsList.map((slot) => (
               <option key={slot.id} value={slot.value}>{slot.label}</option>
             ))}
           </select>

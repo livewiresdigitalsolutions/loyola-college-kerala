@@ -8,7 +8,8 @@ import {
   MapPin,
   School,
   ImageIcon,
-  CalendarCog ,
+  CalendarCog,
+  HeartHandshake,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -74,6 +75,15 @@ const masterDataCards: MasterDataCard[] = [
     description: "Manage academic year",
     icon: <CalendarCog className="w-8 h-8" />,
     href: "/sys-ops/master-data/configuration",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "les",
+    title: "LES",
+    description: "Manage Loyola Extension Service data",
+    icon: <HeartHandshake className="w-8 h-8" />,
+    href: "/sys-ops/master-data/les",
     color: "text-white",
     bgColor: "bg-primary",
   },
