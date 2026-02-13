@@ -5,20 +5,4 @@
 
 import { AssistanceContact } from './types'
 
-export const assistanceContacts: AssistanceContact[] = [
-    {
-        id: '1',
-        name: 'Office',
-        phone: '0471 2656590'
-    },
-    {
-        id: '2',
-        name: 'Mary Ann',
-        phone: '9496817132'
-    },
-    {
-        id: '3',
-        name: 'Pushpa Bhai',
-        phone: '9495124586'
-    }
-]
+export const assistanceContacts: AssistanceContact[] = []

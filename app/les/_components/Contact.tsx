@@ -52,30 +52,34 @@ export default function Contact() {
           {/* Email and Phone */}
           <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
             {/* Email */}
-            <div className="text-center">
-              <h3 className="text-white/80 text-sm mb-3">Email</h3>
-              <div className="flex items-center gap-2 text-white">
-                <Mail className="w-5 h-5" />
-                <a href={`mailto:${info.email[0]}`} className="hover:underline">
-                  {info.email[0]}
-                </a>
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div className="text-center">
-              <h3 className="text-white/80 text-sm mb-3">Phone Number</h3>
-              <div className="flex items-center gap-2 text-white">
-                <Phone className="w-5 h-5" />
-                <div className="flex flex-col">
-                  {info.phone.map((phone, index) => (
-                    <a key={index} href={`tel:${phone.replace(/\s/g, '')}`} className="hover:underline">
-                      {phone}
-                    </a>
-                  ))}
+            {info?.email?.length > 0 && (
+              <div className="text-center">
+                <h3 className="text-white/80 text-sm mb-3">Email</h3>
+                <div className="flex items-center gap-2 text-white">
+                  <Mail className="w-5 h-5" />
+                  <a href={`mailto:${info.email[0]}`} className="hover:underline">
+                    {info.email[0]}
+                  </a>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Phone */}
+            {info?.phone?.length > 0 && (
+              <div className="text-center">
+                <h3 className="text-white/80 text-sm mb-3">Phone Number</h3>
+                <div className="flex items-center gap-2 text-white">
+                  <Phone className="w-5 h-5" />
+                  <div className="flex flex-col">
+                    {info.phone.map((phone, index) => (
+                      <a key={index} href={`tel:${phone.replace(/\s/g, '')}`} className="hover:underline">
+                        {phone}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

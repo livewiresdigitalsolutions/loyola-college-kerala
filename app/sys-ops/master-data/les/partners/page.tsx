@@ -1,9 +1,9 @@
 // app/sys-ops/master-data/les/partners/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { ArrowLeft, Plus, Edit2, Trash2, Save, X } from "lucide-react";
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Partner {
@@ -20,6 +20,8 @@ export default function LesPartnersPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", location: "", logo: "" });
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { fetchItems(); }, []);
 
@@ -29,6 +31,25 @@ export default function LesPartnersPage() {
       if (res.ok) setItems(await res.json());
     } catch { toast.error("Failed to load partners"); }
     finally { setLoading(false); }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/les/upload", { method: "POST", body });
+      const data = await res.json();
+      if (res.ok) {
+        setFormData(prev => ({ ...prev, logo: data.url }));
+        toast.success("Logo uploaded");
+      } else {
+        toast.error(data.error || "Upload failed");
+      }
+    } catch { toast.error("Error uploading logo"); }
+    finally { setUploading(false); }
   };
 
   const handleAdd = async () => {
@@ -64,7 +85,18 @@ export default function LesPartnersPage() {
     <div className="flex flex-col gap-3">
       <input type="text" placeholder="Organization name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
       <input type="text" placeholder="Location" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
-      <input type="text" placeholder="Logo URL (optional)" value={formData.logo} onChange={(e) => setFormData({ ...formData, logo: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      {/* Logo Upload */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-50">
+            <Upload className="w-4 h-4" />{uploading ? "Uploading..." : "Upload Logo"}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+          {formData.logo && <img src={formData.logo} alt="Preview" className="w-10 h-10 rounded object-contain border bg-white p-1" />}
+        </div>
+        <input type="text" placeholder="Or paste logo URL" value={formData.logo} onChange={(e) => setFormData({ ...formData, logo: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none w-full text-sm" />
+      </div>
       <div className="flex gap-3">
         <button onClick={onSave} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"><Save className="w-4 h-4" />Save</button>
         <button onClick={cancelEdit} className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"><X className="w-4 h-4" />Cancel</button>
@@ -90,7 +122,10 @@ export default function LesPartnersPage() {
           : (<div className="space-y-3">{items.map((item) => (
             <div key={item.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
               {editingId === item.id ? (<div className="flex-1">{renderForm(() => handleUpdate(item.id))}</div>) : (<>
-                <div><p className="font-semibold text-gray-900">{item.name}</p><p className="text-sm text-gray-500">{item.location}</p></div>
+                <div className="flex items-center gap-4">
+                  {item.logo && <img src={item.logo} alt={item.name} className="w-10 h-10 rounded object-contain border bg-white p-1" />}
+                  <div><p className="font-semibold text-gray-900">{item.name}</p><p className="text-sm text-gray-500">{item.location}</p></div>
+                </div>
                 <div className="flex gap-2">
                   <button onClick={() => startEdit(item)} className="flex items-center gap-1 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"><Edit2 className="w-4 h-4" />Edit</button>
                   <button onClick={() => handleDelete(item.id)} className="flex items-center gap-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"><Trash2 className="w-4 h-4" />Delete</button>

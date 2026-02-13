@@ -78,14 +78,22 @@ export async function getCoordinators(): Promise<ContactPerson[]> {
     }
 }
 
+const emptyContactInfo: ContactInfo = {
+    email: [],
+    phone: [],
+    address: '',
+    officeHours: { weekdays: '', saturday: '', sunday: '' }
+}
+
 export async function getContactInfo(): Promise<ContactInfo> {
     try {
         const response = await fetch('/api/les/contact-info')
         if (!response.ok) throw new Error('Failed to fetch')
-        return await response.json()
+        const data = await response.json()
+        return data || emptyContactInfo
     } catch (error) {
         console.error('Error fetching contact info, using fallback:', error)
-        return fallbackContactInfo
+        return fallbackContactInfo || emptyContactInfo
     }
 }
 

@@ -102,7 +102,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
-                  {info.phone.map((phone, index) => (
+                  {info?.phone?.map((phone, index) => (
                     <p key={index} className="text-gray-600">{phone}</p>
                   ))}
                 </div>
@@ -115,7 +115,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
-                  {info.email.map((email, index) => (
+                  {info?.email?.map((email, index) => (
                     <p key={index} className="text-gray-600">{email}</p>
                   ))}
                 </div>
@@ -139,9 +139,9 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Office Hours</h3>
-                  <p className="text-gray-600">{info.officeHours.weekdays}</p>
-                  <p className="text-gray-600">{info.officeHours.saturday}</p>
-                  <p className="text-gray-600">{info.officeHours.sunday}</p>
+                  <p className="text-gray-600">{info?.officeHours?.weekdays}</p>
+                  <p className="text-gray-600">{info?.officeHours?.saturday}</p>
+                  <p className="text-gray-600">{info?.officeHours?.sunday}</p>
                 </div>
               </div>
             </div>

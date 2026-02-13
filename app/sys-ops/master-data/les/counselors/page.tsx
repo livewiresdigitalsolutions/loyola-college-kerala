@@ -1,9 +1,9 @@
 // app/sys-ops/master-data/les/counselors/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { ArrowLeft, Plus, Edit2, Trash2, Save, X } from "lucide-react";
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Counselor {
@@ -20,6 +20,8 @@ export default function LesCounselorsPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", specialization: "", image: "" });
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { fetchItems(); }, []);
 
@@ -32,6 +34,25 @@ export default function LesCounselorsPage() {
       }
     } catch { toast.error("Failed to load counselors"); }
     finally { setLoading(false); }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/les/upload", { method: "POST", body });
+      const data = await res.json();
+      if (res.ok) {
+        setFormData(prev => ({ ...prev, image: data.url }));
+        toast.success("Image uploaded");
+      } else {
+        toast.error(data.error || "Upload failed");
+      }
+    } catch { toast.error("Error uploading image"); }
+    finally { setUploading(false); }
   };
 
   const handleAdd = async () => {
@@ -67,7 +88,18 @@ export default function LesCounselorsPage() {
     <div className="flex flex-col gap-3">
       <input type="text" placeholder="Counselor name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
       <input type="text" placeholder="Specialization" value={formData.specialization} onChange={(e) => setFormData({ ...formData, specialization: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
-      <input type="text" placeholder="Image URL (optional)" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      {/* Image Upload */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors disabled:opacity-50">
+            <Upload className="w-4 h-4" />{uploading ? "Uploading..." : "Upload Image"}
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+          {formData.image && <img src={formData.image} alt="Preview" className="w-10 h-10 rounded-full object-cover border" />}
+        </div>
+        <input type="text" placeholder="Or paste image URL" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none w-full text-sm" />
+      </div>
       <div className="flex gap-3">
         <button onClick={onSave} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"><Save className="w-4 h-4" />Save</button>
         <button onClick={cancelEdit} className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"><X className="w-4 h-4" />Cancel</button>
