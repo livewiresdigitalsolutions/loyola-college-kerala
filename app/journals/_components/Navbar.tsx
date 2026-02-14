@@ -78,7 +78,7 @@ export default function LesNavbar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-gray-600 hover:text-primary font-medium text-sm transition-colors border-b-2 border-transparent hover:border-primary pb-1"
+                className="text-muted-foreground hover:text-primary font-medium text-sm transition-colors border-b-2 border-transparent hover:border-primary pb-1"
               >
                 {item.label}
               </Link>
@@ -87,13 +87,13 @@ export default function LesNavbar() {
 
           {/* Search Icon & Mobile Menu Toggle */}
           <div className="flex items-center gap-4">
-            <button className="hidden lg:flex items-center justify-center w-8 h-8 rounded-full bg-green-50 text-primary hover:bg-primary hover:text-white transition-all duration-300">
+            <button className="hidden lg:flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300">
               <Search size={18} />
             </button>
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 text-gray-700"
+              className="lg:hidden p-2 text-foreground"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -110,25 +110,31 @@ export default function LesNavbar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-gray-700 hover:text-primary font-medium p-2 rounded-md hover:bg-gray-50"
+                className="text-foreground hover:text-primary font-medium p-2 rounded-md hover:bg-muted"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
-            <div className="h-px bg-gray-100 my-2"></div>
+            <div className="h-px bg-border my-2"></div>
             <Link
               href="/"
-              className="flex items-center gap-2 text-gray-600 p-2"
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground p-2 transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
               <ArrowLeft size={16} />
               Back to Main Site
             </Link>
-            <Link href="/contact" className="p-2 text-gray-600">
+            <Link
+              href="/contact"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
               Contact Us
             </Link>
-            <Link href="/login" className="p-2 text-gray-600">
+            <Link
+              href="/login"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
               Login
             </Link>
           </div>

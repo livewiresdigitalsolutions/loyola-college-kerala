@@ -1,9 +1,10 @@
-import React from 'react'
+import React from "react";
+import Hero from "./_components/home/Hero";
 
 export default function page() {
   return (
-    <div>
-
-    </div>
-  )
+    <main className="min-h-screen bg-background">
+      <Hero />
+    </main>
+  );
 }
