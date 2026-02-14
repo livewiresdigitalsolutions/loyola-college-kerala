@@ -1,9 +1,39 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Download } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ContactSubmission() {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [sending, setSending] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) {
+      toast.error("Please fill in name, email, and message");
+      return;
+    }
+    setSending(true);
+    try {
+      const res = await fetch("/api/journals/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error();
+      toast.success("Message sent successfully!");
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch {
+      toast.error("Failed to send message");
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <section className="w-full bg-primary py-16 px-4 md:px-8">
+      <Toaster position="top-right" />
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
         {/* Left Column: Get in Touch Form */}
         <div className="flex flex-col gap-6 text-white">
@@ -15,10 +45,12 @@ export default function ContactSubmission() {
             </p>
           </div>
 
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Your Name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/50 transition-colors"
             />
 
@@ -26,11 +58,15 @@ export default function ContactSubmission() {
               <input
                 type="email"
                 placeholder="Email Address"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/50 transition-colors"
               />
               <input
                 type="tel"
                 placeholder="Phone Number"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/50 transition-colors"
               />
             </div>
@@ -38,21 +74,25 @@ export default function ContactSubmission() {
             <textarea
               rows={5}
               placeholder="Message"
+              value={form.message}
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
               className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/50 transition-colors resize-none"
             ></textarea>
 
             <div className="flex justify-end items-center gap-4 mt-2">
               <button
                 type="button"
+                onClick={() => setForm({ name: "", email: "", phone: "", message: "" })}
                 className="px-6 py-2 text-sm font-medium text-white/80 hover:text-white transition-colors border border-white/20 hover:border-white/50 rounded-md"
               >
                 Clear
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 text-sm font-bold text-primary bg-secondary hover:bg-secondary/90 transition-colors rounded-md shadow-lg"
+                disabled={sending}
+                className="px-6 py-2 text-sm font-bold text-primary bg-secondary hover:bg-secondary/90 transition-colors rounded-md shadow-lg disabled:opacity-50"
               >
-                Send Message
+                {sending ? "Sending..." : "Send Message"}
               </button>
             </div>
           </form>

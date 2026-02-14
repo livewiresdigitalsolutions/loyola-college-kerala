@@ -22,6 +22,8 @@ const VALID_TABLES: Record<string, string> = {
     'faculty': 'academic_faculty',
     'academic-calendar': 'academic_calendar',
     'departments': 'academic_departments',
+    'journal-board-members': 'journal_board_members',
+    'journal-issues': 'journal_issues',
 };
 
 // POST: Batch update sort_order for items
