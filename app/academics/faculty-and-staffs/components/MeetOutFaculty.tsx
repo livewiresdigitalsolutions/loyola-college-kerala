@@ -1,189 +1,278 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Mail, Phone, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Search, Filter, Mail, Phone } from "lucide-react";
 
-// Dummy Data
-const DEPARTMENTS = [
-  "All Departments",
-  "Sociology",
-  "Social Work",
-  "Psychology",
-  "Counselling Psychology",
-  "Human Resource Management",
-  "Disaster Management",
-  "Finance & Accounts",
-  "Fintech & AI",
-  "Data Science",
-  "Computer Science",
-  "English",
-  "Language Academy",
-  "Physical Education",
-];
+interface FacultyMember {
+  id: number;
+  name: string;
+  designation: string;
+  qualification: string | null;
+  specialization: string | null;
+  email: string | null;
+  phone: string | null;
+  image: string | null;
+  department: string | null;
+  category: string | null;
+  sort_order: number;
+}
 
-const FACULTY_DATA = [
-  {
-    id: 1,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-  {
-    id: 2,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-  {
-    id: 3,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-  {
-    id: 4,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-  {
-    id: 5,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-  {
-    id: 6,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-    {
-    id: 7,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-    {
-    id: 8,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-    {
-    id: 9,
-    name: "Dr. Mritha Jolly Nelson",
-    designation: "Assistant Professor & HOD",
-    department: "Department of Sociology",
-    image: "/assets/defaultprofile.png",
-  },
-];
+const ITEMS_PER_PAGE = 12;
 
 export default function MeetOutFaculty() {
-  const [activeDepartment, setActiveDepartment] = useState("All Departments");
+  const [faculty, setFaculty] = useState<FacultyMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    async function fetchFaculty() {
+      try {
+        const res = await fetch("/api/academics/faculty");
+        if (res.ok) setFaculty(await res.json());
+      } catch (err) {
+        console.error("Error fetching faculty:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchFaculty();
+  }, []);
+
+  // Get unique departments and categories
+  const departments = [
+    "All",
+    ...Array.from(new Set(faculty.map((f) => f.department).filter(Boolean))),
+  ] as string[];
+  const categories = [
+    "All",
+    ...Array.from(new Set(faculty.map((f) => f.category).filter(Boolean))),
+  ] as string[];
+
+  // Filter faculty
+  const filtered = faculty.filter((f) => {
+    const matchesSearch =
+      search === "" ||
+      f.name.toLowerCase().includes(search.toLowerCase()) ||
+      f.designation.toLowerCase().includes(search.toLowerCase()) ||
+      (f.specialization &&
+        f.specialization.toLowerCase().includes(search.toLowerCase()));
+    const matchesDept =
+      selectedDepartment === "All" || f.department === selectedDepartment;
+    const matchesCat =
+      selectedCategory === "All" || f.category === selectedCategory;
+    return matchesSearch && matchesDept && matchesCat;
+  });
+
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedFaculty = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedDepartment, selectedCategory]);
+
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="py-20 bg-white">
+    <section className="py-16 md:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
-        {/* HEADER */}
+        {/* Section header */}
         <div className="text-center mb-12">
           <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Meet Our Faculty
           </h2>
-          <p className="text-gray-500">
-            Browse our faculty members by department or view all.
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Our distinguished team of educators and researchers driving academic excellence
           </p>
         </div>
 
-        {/* FILTERS */}
-        <div className="flex justify-center gap-3 mb-16 overflow-x-auto pb-4 scrollbar-hide no-scrollbar">
-            <div className="flex flex-wrap justify-center gap-3 w-full">
-          {DEPARTMENTS.map((dept) => (
-            <button
-              key={dept}
-              onClick={() => setActiveDepartment(dept)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap border border-gray-100 ${
-                activeDepartment === dept
-                  ? "bg-primary text-white shadow-md transform scale-105 border-primary"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:border-gray-200"
-              }`}
-            >
-              {dept}
-            </button>
-          ))}
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row gap-4 mb-10">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search faculty by name, designation, or specialization..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-colors"
+            />
           </div>
-        </div>
 
-        {/* FACULTY GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {FACULTY_DATA.map((faculty) => (
-            <div
-              key={faculty.id}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group"
-            >
-              {/* IMAGE CONTAINER */}
-              <div className="relative h-80 overflow-hidden bg-gray-100">
-                <Image
-                  src={faculty.image}
-                  alt={faculty.name}
-                  fill
-                  className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-
-              {/* CONTENT */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  {faculty.name}
-                </h3>
-                <p className="text-sm font-semibold text-gray-500 mb-1">
-                  {faculty.designation}
-                </p>
-                <p className="text-xs text-gray-400 mb-6 uppercase tracking-wider">
-                  {faculty.department}
-                </p>
-
-                <button className="flex items-center gap-2 text-yellow-500 text-sm font-bold tracking-wide hover:gap-3 transition-all uppercase">
-                  <Mail className="w-4 h-4" />
-                  Contact
-                </button>
-              </div>
+          {/* Department filter */}
+          {departments.length > 2 && (
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <select
+                value={selectedDepartment}
+                onChange={(e) => setSelectedDepartment(e.target.value)}
+                className="pl-9 pr-8 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none appearance-none bg-white cursor-pointer min-w-[180px]"
+              >
+                {departments.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
             </div>
-          ))}
+          )}
+
+          {/* Category filter */}
+          {categories.length > 2 && (
+            <div className="flex gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    selectedCategory === cat
+                      ? "bg-primary text-white"
+                      : "bg-white border border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* PAGINATION */}
-        <div className="flex justify-center items-center gap-2">
-          <button className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-primary hover:bg-gray-100 transition-colors">
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          {[1, 2, 3, 4].map((page) => (
+        {/* Results count */}
+        <p className="text-sm text-gray-500 mb-6">
+          Showing {paginatedFaculty.length} of {filtered.length} faculty member
+          {filtered.length !== 1 ? "s" : ""}
+        </p>
+
+        {/* Faculty grid */}
+        {paginatedFaculty.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {paginatedFaculty.map((member) => (
+              <div
+                key={member.id}
+                className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300 group"
+              >
+                {/* Image */}
+                <div className="relative h-56 bg-gray-100 overflow-hidden">
+                  <Image
+                    src={member.image || "/assets/defaultprofile.png"}
+                    alt={member.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+
+                {/* Info */}
+                <div className="p-5">
+                  <h3 className="font-semibold text-gray-900 text-lg mb-1">
+                    {member.name}
+                  </h3>
+                  <p className="text-primary text-sm font-medium mb-1">
+                    {member.designation}
+                  </p>
+                  {member.qualification && (
+                    <p className="text-gray-500 text-xs mb-2">
+                      {member.qualification}
+                    </p>
+                  )}
+                  {member.specialization && (
+                    <p className="text-gray-500 text-xs italic mb-3">
+                      {member.specialization}
+                    </p>
+                  )}
+                  {member.department && (
+                    <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded-full mb-3">
+                      {member.department}
+                    </span>
+                  )}
+
+                  {/* Contact */}
+                  <div className="flex gap-3 pt-3 border-t border-gray-100">
+                    {member.email && (
+                      <a
+                        href={`mailto:${member.email}`}
+                        className="flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors"
+                      >
+                        <Mail className="w-3.5 h-3.5" />
+                        Email
+                      </a>
+                    )}
+                    {member.phone && (
+                      <a
+                        href={`tel:${member.phone}`}
+                        className="flex items-center gap-1 text-xs text-gray-500 hover:text-primary transition-colors"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        Call
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg">No faculty members found</p>
+            <p className="text-gray-400 text-sm mt-2">
+              Try adjusting your filters
+            </p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 mt-10">
             <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-all ${
-                currentPage === page
-                  ? "bg-primary text-white shadow-md"
-                  : "text-gray-500 hover:bg-gray-100"
-              }`}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {page}
+              Previous
             </button>
-          ))}
-          <button className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-primary hover:bg-gray-100 transition-colors">
-             <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
+                  currentPage === page
+                    ? "bg-primary text-white"
+                    : "border border-gray-200 hover:bg-gray-50"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() =>
+                setCurrentPage((p) => Math.min(totalPages, p + 1))
+              }
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-lg border border-gray-200 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

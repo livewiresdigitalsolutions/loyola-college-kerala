@@ -96,6 +96,15 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
+  {
+    id: "academics",
+    title: "Academics",
+    description: "Manage committees, faculty, calendar & departments",
+    icon: <GraduationCap className="w-8 h-8" />,
+    href: "/sys-ops/master-data/academics",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
 
 ];
 

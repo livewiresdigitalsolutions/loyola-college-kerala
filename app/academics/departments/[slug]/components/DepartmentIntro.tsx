@@ -49,6 +49,8 @@ function AccordionItem({ title, isOpen, onToggle, children }: AccordionItemProps
 }
 
 export default function DepartmentIntro({ introduction, goals }: DepartmentIntroProps) {
+  if (!introduction || !goals) return null;
+
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleItem = (index: number) => {
