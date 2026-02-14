@@ -1064,7 +1064,7 @@ const Navbar: React.FC = () => {
             { name: "Departments", href: "/academics/departments" },
             {
               name: "Programmes & Courses Offered",
-              href: "/academics/courses",
+              href: "/academics/programmes-and-course",
             },
             { name: "Certificate Courses", href: "/academics/certificates" },
             {
@@ -1076,7 +1076,7 @@ const Navbar: React.FC = () => {
         {
           title: "Teaching & Learning",
           links: [
-            { name: "Faculty", href: "/academics/faculty" },
+            { name: "Faculty", href: "/academics/faculty-and-staffs" },
             { name: "Innovation Centre", href: "/academics/innovation" },
             { name: "Resources", href: "/academics/resources" },
           ],
@@ -1084,13 +1084,13 @@ const Navbar: React.FC = () => {
         {
           title: "Academic Process",
           links: [
-            { name: "Academic Calendar", href: "/academics/calendar" },
+            { name: "Academic Calendar", href: "/academics/academic-calendar" },
             {
               name: "Outcome Based Education Framework",
               href: "/academics/obe",
             },
-            { name: "Code of Conduct", href: "/academics/conduct" },
-            { name: "Committees", href: "/academics/committees" },
+            { name: "Code of Conduct", href: "/academics/code-of-conduct" },
+            { name: "Committees", href: "/academics/college-committees" },
             { name: "Examination Details", href: "/academics/exams" },
           ],
         },

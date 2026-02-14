@@ -1,11 +1,16 @@
 'use client'
 
-import React, { useState } from 'react'
-import { programs, genderOptions } from '../_data'
-import { submitVolunteerRegistration } from '../_services/api'
-import { VolunteerFormData } from '../_data/types'
+import React, { useState, useEffect } from 'react'
+import { programs as fallbackPrograms, genderOptions } from '../_data'
+import { submitVolunteerRegistration, getPrograms } from '../_services/api'
+import { VolunteerFormData, Program } from '../_data/types'
 
 export default function RegistrationForm() {
+  const [programsList, setProgramsList] = useState<Program[]>(fallbackPrograms)
+
+  useEffect(() => {
+    getPrograms().then(setProgramsList)
+  }, [])
   const [formData, setFormData] = useState<VolunteerFormData>({
     name: '',
     gender: '',
@@ -225,7 +230,7 @@ export default function RegistrationForm() {
             required
           >
             <option value="">Select Programme</option>
-            {programs.map((program) => (
+            {programsList.map((program) => (
               <option key={program.id} value={program.value}>{program.name}</option>
             ))}
           </select>

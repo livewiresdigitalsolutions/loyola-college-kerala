@@ -1,8 +1,18 @@
-import React from 'react'
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import { Building2 } from 'lucide-react'
-import { partners } from '../../../_data'
+import { partners as fallbackPartners } from '../../../_data'
+import { getPartners } from '../../../_services/api'
+import { Partner } from '../../../_data/types'
 
 export default function PartnerOrganizations() {
+  const [partnersList, setPartnersList] = useState<Partner[]>(fallbackPartners)
+
+  useEffect(() => {
+    getPartners().then(setPartnersList)
+  }, [])
+
   return (
     <section className="bg-white rounded-lg p-6 md:p-8 shadow-sm">
       <h2 className="text-2xl md:text-3xl font-bold text-primary mb-6">
@@ -10,7 +20,7 @@ export default function PartnerOrganizations() {
       </h2>
       
       <div className="space-y-4">
-        {partners.map((partner) => (
+        {partnersList.map((partner) => (
           <div 
             key={partner.id} 
             className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg"
