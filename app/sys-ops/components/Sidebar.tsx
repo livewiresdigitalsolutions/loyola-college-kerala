@@ -39,6 +39,11 @@ const menuItems = [
     path: "/sys-ops/master-data",  
   },
   {
+    name: "LES Forms",  
+    icon: Database,          
+    path: "/sys-ops/les-forms",  
+  },
+  {
     name: "Allot Enterance Exam",  
     icon: Landmark,          
     path: "/sys-ops/hall-tickets",  

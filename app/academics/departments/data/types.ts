@@ -32,33 +32,33 @@
 // //   category: string;
 // //   image: string;
 // //   shortDescription: string;
-  
+
 // //   // Detailed page content
 // //   introduction: {
 // //     title: string;
 // //     description: string[];
 // //     highlights: string[];
 // //   };
-  
+
 // //   goals: {
 // //     vision: string;
 // //     mission: string[];
 // //     objectives: string[];
 // //   };
-  
+
 // //   faculty: Faculty[];
-  
+
 // //   programmes: {
 // //     ug: Programme[];
 // //     pg: Programme[];
 // //     research: Programme[];
 // //   };
-  
+
 // //   syllabus: {
 // //     ug: Syllabus[];
 // //     pg: Syllabus[];
 // //   };
-  
+
 // //   facilities?: string[];
 // //   achievements?: string[];
 // // }
@@ -228,4 +228,18 @@ export interface Department {
     ug: Syllabus[];
     pg: Syllabus[];
   };
+  syllabusLinks?: SyllabusLink[];
+  publications?: PublicationCategory[];
 }
+export interface SyllabusLink {
+  label: string;    // e.g. "MSW Syllabus - Latest"
+  url: string;      // link to the PDF
+}
+
+export interface PublicationCategory {
+  title: string;       // "Scholars" or "Students"
+  image: string;       // circular avatar image path
+  items: string[];     // list of publication names
+  viewAllLink?: string;
+}
+
