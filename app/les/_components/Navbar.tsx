@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronDown, Menu, X } from 'lucide-react'
@@ -34,7 +34,9 @@ const navItems: NavItem[] = [
 export default function LesNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [mobileDropdown, setMobileDropdown] = useState<string | null>(null)
   const [scrolled, setScrolled] = useState(false)
+  const dropdownTimeout = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,6 +46,20 @@ export default function LesNavbar() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleMouseEnter = (label: string) => {
+    if (dropdownTimeout.current) {
+      clearTimeout(dropdownTimeout.current)
+      dropdownTimeout.current = null
+    }
+    setActiveDropdown(label)
+  }
+
+  const handleMouseLeave = () => {
+    dropdownTimeout.current = setTimeout(() => {
+      setActiveDropdown(null)
+    }, 300)
+  }
 
   return (
     <header 
@@ -72,24 +88,41 @@ export default function LesNavbar() {
               <div 
                 key={item.label}
                 className="relative"
-                onMouseEnter={() => item.hasDropdown && setActiveDropdown(item.label)}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => item.hasDropdown && handleMouseEnter(item.label)}
+                onMouseLeave={handleMouseLeave}
               >
-                <Link 
-                  href={item.href}
-                  className={`flex items-center gap-1 text-sm font-medium transition whitespace-nowrap ${
-                    scrolled 
-                      ? 'text-gray-700 hover:text-[#1a5632]' 
-                      : 'text-white hover:text-white/80'
-                  }`}
-                >
-                  {item.label}
-                  {item.hasDropdown && <ChevronDown size={14} />}
-                </Link>
+                {item.hasDropdown ? (
+                  <button 
+                    className={`flex items-center gap-1 text-sm font-medium transition whitespace-nowrap ${
+                      scrolled 
+                        ? 'text-gray-700 hover:text-[#1a5632]' 
+                        : 'text-white hover:text-white/80'
+                    }`}
+                    onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
+                  >
+                    {item.label}
+                    <ChevronDown size={14} className={`transition-transform ${activeDropdown === item.label ? 'rotate-180' : ''}`} />
+                  </button>
+                ) : (
+                  <Link 
+                    href={item.href}
+                    className={`flex items-center gap-1 text-sm font-medium transition whitespace-nowrap ${
+                      scrolled 
+                        ? 'text-gray-700 hover:text-[#1a5632]' 
+                        : 'text-white hover:text-white/80'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )}
 
                 {/* Dropdown */}
                 {item.hasDropdown && activeDropdown === item.label && (
-                  <div className="absolute top-full left-0 mt-1 w-56 bg-white shadow-lg rounded-md border border-gray-100 py-2 z-50">
+                  <div 
+                    className="absolute top-full left-0 mt-1 w-56 bg-white shadow-lg rounded-md border border-gray-100 py-2 z-50"
+                    onMouseEnter={() => handleMouseEnter(item.label)}
+                    onMouseLeave={handleMouseLeave}
+                  >
                     {item.dropdownItems?.map((dropItem) => (
                       <Link
                         key={dropItem.label}
@@ -132,23 +165,35 @@ export default function LesNavbar() {
           <nav className="lg:hidden py-4 border-t border-gray-100 bg-white">
             {navItems.map((item) => (
               <div key={item.label}>
-                <Link 
-                  href={item.href}
-                  className="block py-2 text-sm font-medium text-gray-700 hover:text-[#1a5632] transition"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-                {item.hasDropdown && item.dropdownItems?.map((dropItem) => (
-                  <Link
-                    key={dropItem.label}
-                    href={dropItem.href}
-                    className="block py-2 pl-4 text-sm text-gray-600 hover:text-[#1a5632] transition"
+                {item.hasDropdown ? (
+                  <>
+                    <button
+                      className="flex items-center justify-between w-full py-2 text-sm font-medium text-gray-700 hover:text-[#1a5632] transition"
+                      onClick={() => setMobileDropdown(mobileDropdown === item.label ? null : item.label)}
+                    >
+                      {item.label}
+                      <ChevronDown size={14} className={`transition-transform ${mobileDropdown === item.label ? 'rotate-180' : ''}`} />
+                    </button>
+                    {mobileDropdown === item.label && item.dropdownItems?.map((dropItem) => (
+                      <Link
+                        key={dropItem.label}
+                        href={dropItem.href}
+                        className="block py-2 pl-4 text-sm text-gray-600 hover:text-[#1a5632] transition"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {dropItem.label}
+                      </Link>
+                    ))}
+                  </>
+                ) : (
+                  <Link 
+                    href={item.href}
+                    className="block py-2 text-sm font-medium text-gray-700 hover:text-[#1a5632] transition"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {dropItem.label}
+                    {item.label}
                   </Link>
-                ))}
+                )}
               </div>
             ))}
             <Link 
@@ -164,3 +209,4 @@ export default function LesNavbar() {
     </header>
   )
 }
+
