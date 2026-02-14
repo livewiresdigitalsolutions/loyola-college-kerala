@@ -20,13 +20,13 @@ export default function LesGallery() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-[#1a5632]">Gallery</h2>
-        <Link 
+        {/* <Link 
           href="#" 
           className="text-[#1a5632] text-sm font-medium flex items-center gap-1 hover:underline"
         >
           View on Main Site
           <ExternalLink className="w-3 h-3" />
-        </Link>
+        </Link> */}
       </div>
 
       {/* Gallery Grid */}

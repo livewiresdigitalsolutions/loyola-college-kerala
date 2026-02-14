@@ -13,6 +13,7 @@ import {
   CalendarCheck,
   MessageSquare,
   HandHeart,
+  Building2,
 } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -82,6 +83,13 @@ const lesCards: LesCard[] = [
     description: "Manage volunteer/internship programs",
     icon: <ClipboardList className="w-8 h-8" />,
     href: "/sys-ops/master-data/les/programs",
+  },
+  {
+    id: "partners",
+    title: "Partners",
+    description: "Manage partner organizations",
+    icon: <Building2 className="w-8 h-8" />,
+    href: "/sys-ops/master-data/les/partners",
   },
 ];
 
