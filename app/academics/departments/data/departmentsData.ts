@@ -1895,11 +1895,11 @@ export const departments: Department[] = [
     },
     syllabusLinks: [
       {
-        label: "B.Com ACCA Syllabus - Latest",
+        label: "Semester 1-2 ",
         url: "#",
       },
       {
-        label: "ACCA Study Guide",
+        label: "Semester 3-4 ",
         url: "#",
       },
     ],
@@ -1987,7 +1987,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2025,9 +2036,42 @@ export const departments: Department[] = [
             "Income Tax Law",
           ],
         },
+
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4",
+        url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "3",
@@ -2090,7 +2134,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2131,6 +2186,46 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2 ",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4 ",
+        url: "#",
+      },
+      {
+      label: "Semester 5-6 ",
+      url: "#",
+      },
+      {
+      label: "Semester 7-8 ",
+      url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "4",
@@ -2193,7 +2288,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2234,6 +2340,46 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2 ",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4 ",
+        url: "#",
+      },
+      {
+      label: "Semester 5-6 ",
+      url: "#",
+      },
+      {
+      label: "Semester 7-8 ",
+      url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "5",
@@ -2296,7 +2442,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2337,8 +2494,48 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+        {
+          label: "Semester 1-2 ",
+          url: "#",
+        },
+        {
+          label: "Semester 3-4 ",
+          url: "#",
+        },
+        {
+          label: "Semester 5-6 ",
+          url: "#",
+        },
+        {
+          label: "Semester 7-8 ",
+          url: "#",
+        },
+      ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
-  {
+{
     id: "6",
     name: "B.Sc Psychology",
     slug: "psychology",
@@ -2399,7 +2596,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2440,7 +2648,47 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
-  },
+      syllabusLinks: [
+        {
+          label: "Semester 1-2 ",
+          url: "#",
+        },
+        {
+          label: "Semester 3-4 ",
+          url: "#",
+        },
+        {
+          label: "Semester 5-6 ",
+          url: "#",
+        },
+        {
+          label: "Semester 7-8 ",
+          url: "#",
+        },
+      ],
+      publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
+    },
   {
     id: "7",
     name: "B.Sc Data Science",
@@ -2502,7 +2750,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2543,6 +2802,46 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2 ",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4 ",
+        url: "#",
+      },
+      {
+        label: "Semester 5-6 ",
+        url: "#",
+      },
+      {
+        label: "Semester 7-8 ",
+        url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
 ];
 

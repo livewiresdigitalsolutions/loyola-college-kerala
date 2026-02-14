@@ -59,7 +59,7 @@ export default function DepartmentIntro({ introduction, goals }: DepartmentIntro
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         {/* Overview Section */}
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 italic">
+        <h2 className="text-3xl font-bold text-gray-900 mb-6">
           Overview
         </h2>
 

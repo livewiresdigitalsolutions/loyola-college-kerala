@@ -26,17 +26,20 @@ export default function SyllabusSection({
     <>
       {/* ── SYLLABUS SECTION ── */}
       {hasSyllabusLinks && (
-        <section className="py-16 bg-[#f5f0e8]">
+        <section className="py-25 bg-[#f5f0e8]">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <h2
-              className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-10"
-              style={{ color: "#1a3c2a", fontFamily: "serif" }}
+              className="text-4xl font-bold text-gray-900 uppercase mb-12 text-center"
+              style={{ color: "#1a3c2a" }}
             >
               Syllabus
             </h2>
-
+            <div
+              className="w-20 h-[3px] mx-auto mb-12"
+              style={{ backgroundColor: "#f5f0e8" }}
+            />
             {/* Syllabus pill buttons */}
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap  justify-center gap-4">
               {syllabusLinks.map((link, idx) => (
                 <a
                   key={idx}
@@ -60,15 +63,15 @@ export default function SyllabusSection({
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <h2
-              className="text-2xl md:text-3xl font-bold uppercase tracking-wider mb-2"
-              style={{ color: "#1a3c2a", fontFamily: "serif" }}
+              className="text-4xl font-bold text-gray-900 uppercase mb-12 text-center"
+              style={{ color: "#1a3c2a" }}
             >
               Publications
             </h2>
             {/* Decorative underline */}
             <div
               className="w-20 h-[3px] mx-auto mb-12"
-              style={{ backgroundColor: "#1a5632" }}
+              style={{ backgroundColor: "#ffffffff" }}
             />
 
             {/* Publications grid */}

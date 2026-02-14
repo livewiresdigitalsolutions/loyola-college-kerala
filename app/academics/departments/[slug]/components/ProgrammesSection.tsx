@@ -16,7 +16,7 @@ export default function ProgrammesSection({ programmes }: ProgrammesSectionProps
     if (progs.length === 0) return null;
     
     return (
-      <div className="mb-12">
+      <div className="mb-12 ">
         <div className="flex items-center gap-3 mb-6">
           {icon}
           <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
@@ -53,8 +53,14 @@ export default function ProgrammesSection({ programmes }: ProgrammesSectionProps
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
-          Programmes Offered
+        <h2 className="text-4xl font-bold text-gray-900 uppercase mb-12 text-center"
+        style = {{color: "#1a3c2a"}}>
+          
+          Programmes
+          <div
+              className="w-20 h-[3px] mx-auto mb-12"
+              style={{ backgroundColor: "#ffffff" }}
+            />
         </h2>
         
         {renderProgrammes(
