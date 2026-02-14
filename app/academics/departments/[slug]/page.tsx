@@ -76,7 +76,11 @@ export default async function DepartmentPage({ params }: DepartmentPageProps) {
       <DepartmentIntro introduction={department.introduction} goals={department.goals} />
       <FacultySection faculty={department.faculty} />
       <ProgrammesSection programmes={department.programmes} />
-      <SyllabusSection syllabus={department.syllabus} />
+      <SyllabusSection
+        syllabus={department.syllabus}
+        syllabusLinks={department.syllabusLinks}
+        publications={department.publications}
+      />
     </div>
   );
 }

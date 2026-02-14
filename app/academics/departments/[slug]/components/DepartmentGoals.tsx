@@ -16,7 +16,7 @@ export default function DepartmentGoals({ goals }: DepartmentGoalsProps) {
         <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
           Our Vision & Mission
         </h2>
-        
+
         <div className="grid md:grid-cols-3 gap-8">
           {/* Vision */}
           <div className="bg-white p-8 rounded-2xl shadow-md">
@@ -26,7 +26,7 @@ export default function DepartmentGoals({ goals }: DepartmentGoalsProps) {
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Vision</h3>
             <p className="text-gray-700 leading-relaxed">{goals.vision}</p>
           </div>
-          
+
           {/* Mission */}
           <div className="bg-white p-8 rounded-2xl shadow-md">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
@@ -42,7 +42,7 @@ export default function DepartmentGoals({ goals }: DepartmentGoalsProps) {
               ))}
             </ul>
           </div>
-          
+
           {/* Objectives */}
           <div className="bg-white p-8 rounded-2xl shadow-md">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">

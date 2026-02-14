@@ -1893,6 +1893,38 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "B.Com ACCA Syllabus - Latest",
+        url: "#",
+      },
+      {
+        label: "ACCA Study Guide",
+        url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "2",
