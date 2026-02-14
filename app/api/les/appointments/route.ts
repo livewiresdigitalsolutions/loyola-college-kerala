@@ -17,6 +17,27 @@ const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+export async function GET() {
+    try {
+        if (isDevelopment) {
+            const { data, error } = await supabase
+                .from('les_appointments')
+                .select('*')
+                .order('id', { ascending: false });
+            if (error) throw error;
+            return NextResponse.json(data);
+        } else {
+            const connection = await mysql.createConnection(mysqlConfig);
+            const [rows] = await connection.execute('SELECT * FROM les_appointments ORDER BY id DESC');
+            await connection.end();
+            return NextResponse.json(rows);
+        }
+    } catch (error) {
+        console.error('Error fetching appointments:', error);
+        return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 });
+    }
+}
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();

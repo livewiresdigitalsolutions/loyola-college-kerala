@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import { teamMembers as fallbackTeam } from '../../_data'
 import { getTeamMembers } from '../../_services/api'
 import { TeamMember } from '../../_data/types'
@@ -25,15 +23,13 @@ export default function OurTeam() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {members.map((member) => (
           <div key={member.id} className="group">
-            {/* Member Image */}
-            <div className="mb-4 overflow-hidden">
+            {/* Member Image - Fixed height for uniform cards */}
+            <div className="mb-4 overflow-hidden h-64 relative">
               <Image
                 src={member.image}
                 alt={member.name}
-                width={200}
-                height={250}
-                className="w-full h-auto object-cover transition-transform duration-300 hover:scale-110"
-                style={{ transform: 'scale(1.05)' }}
+                fill
+                className="object-cover transition-transform duration-300 hover:scale-110"
               />
             </div>
 
@@ -44,16 +40,7 @@ export default function OurTeam() {
             <h3 className="text-lg font-semibold text-gray-800 mb-1">
               {member.name}
             </h3>
-            <p className="text-gray-500 text-sm mb-3">{member.role}</p>
-            
-            {/* View Profile Link */}
-            <Link 
-              href={member.profileUrl || `/les/team/${member.id}`}
-              className="inline-flex items-center gap-1 text-[#F0B129] hover:text-[#d9a025] text-xs font-semibold uppercase tracking-wide transition-colors"
-            >
-              View Full Profile
-              <ArrowRight className="w-3 h-3" />
-            </Link>
+            <p className="text-gray-500 text-sm">{member.role}</p>
           </div>
         ))}
       </div>
