@@ -77,6 +77,16 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
+  {
+    id: "IQAC Media",
+    title: "IQAC Media",
+    description: "Manage IQAC media content",
+    icon: <CalendarCog className="w-8 h-8" />,
+    href: "/sys-ops/master-data/iqac-media",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+
 ];
 
 export default function MasterData() {
