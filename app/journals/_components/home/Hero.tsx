@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Hero() {
   return (
-    <div className="w-full bg-background pt-24 pb-16 px-4 md:px-8">
+    <div className="w-full bg-background pt-36 pb-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
         <div className="flex flex-col items-start gap-6">
           <div className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-wide">

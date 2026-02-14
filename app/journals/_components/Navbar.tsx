@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Phone, Mail, ArrowLeft, Search, Menu, X } from "lucide-react";
 
 const navItems = [
@@ -11,11 +12,12 @@ const navItems = [
   { label: "Editorial Board", href: "/journals/editorial-board" },
   { label: "Archives", href: "/journals/archives" },
   { label: "Online Subscription", href: "/journals/subscription" },
-  { label: "Article Submission", href: "/journals/submission" },
+  { label: "Article Submission", href: "/journals/article-submission" },
 ];
 
 export default function LesNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex flex-col font-sans">
@@ -74,15 +76,22 @@ export default function LesNavbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-muted-foreground hover:text-primary font-medium text-sm transition-colors border-b-2 border-transparent hover:border-primary pb-1"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors border-b-2 pb-1 ${
+                    isActive
+                      ? "text-primary border-primary"
+                      : "text-muted-foreground border-transparent hover:text-primary hover:border-primary/50"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Search Icon & Mobile Menu Toggle */}
@@ -106,16 +115,23 @@ export default function LesNavbar() {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-t border-gray-100 shadow-xl absolute top-full left-0 right-0 max-h-[80vh] overflow-y-auto">
           <div className="flex flex-col p-4 space-y-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-foreground hover:text-primary font-medium p-2 rounded-md hover:bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`block p-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "text-primary bg-primary/10"
+                      : "text-foreground hover:text-primary hover:bg-muted"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             <div className="h-px bg-border my-2"></div>
             <Link
               href="/"
