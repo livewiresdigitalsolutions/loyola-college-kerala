@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Home } from "lucide-react";
+import GalleryGrid from "./_components/GalleryGrid";
 
 export default function GalleryPage() {
   return (
@@ -48,9 +49,9 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* Placeholder for Gallery Grid (To be implemented later) */}
+      {/* Gallery Grid Section */}
       <section className="py-16 px-4 md:px-6 max-w-7xl mx-auto">
-        {/* Gallery content will go here */}
+        <GalleryGrid />
       </section>
     </main>
   );
