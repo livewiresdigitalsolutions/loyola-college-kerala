@@ -15,19 +15,19 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const body = await request.json();
-        const { title, name, role } = body;
+        const {  name, role } = body;
         const { id } = await params;
         const idNum = parseInt(id);
         if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
         if (isDevelopment) {
-            const { data, error } = await supabase.from('les_coordinators').update({ title, name, role }).eq('id', idNum).select();
+            const { data, error } = await supabase.from('les_coordinators').update({  name, role }).eq('id', idNum).select();
             if (error) throw error;
             return NextResponse.json(data[0]);
         } else {
             const connection = await mysql.createConnection(mysqlConfig);
-            await connection.execute('UPDATE les_coordinators SET title = ?, name = ?, role = ? WHERE id = ?', [title, name, role, idNum]);
+            await connection.execute('UPDATE les_coordinators SET name = ?, role = ? WHERE id = ?', [, name, role, idNum]);
             await connection.end();
-            return NextResponse.json({ id: idNum, title, name, role });
+            return NextResponse.json({ id: idNum, name, role });
         }
     } catch (error: any) {
         return NextResponse.json({ error: 'Failed to update coordinator', details: error.message }, { status: 500 });

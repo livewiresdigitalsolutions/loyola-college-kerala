@@ -80,7 +80,6 @@ export default function ContactPage() {
                   <div className="w-16 h-16 bg-[#1a5632]/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <User className="w-8 h-8 text-[#1a5632]" />
                   </div>
-                  <p className="text-sm text-[#F0B129] font-medium mb-1">{person.title}</p>
                   <h3 className="text-lg font-semibold text-gray-800">{person.name}</h3>
                   <p className="text-gray-500 text-sm">{person.role}</p>
                 </div>

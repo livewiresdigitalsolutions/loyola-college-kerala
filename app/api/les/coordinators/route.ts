@@ -21,7 +21,7 @@ async function fetchFromMySQL() {
     const connection = await mysql.createConnection(mysqlConfig);
     try {
         const [rows] = await connection.execute(
-            'SELECT id, title, name, role, email, phone FROM les_coordinators ORDER BY id'
+            'SELECT id, name, role, email, phone FROM les_coordinators ORDER BY id'
         );
         return rows;
     } finally {
@@ -32,7 +32,7 @@ async function fetchFromMySQL() {
 async function fetchFromSupabase() {
     const { data, error } = await supabase
         .from('les_coordinators')
-        .select('id, title, name, role, email, phone')
+        .select('id, name, role, email, phone')
         .order('id');
     if (error) throw error;
     return data;
@@ -56,17 +56,17 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { title, name, role } = body;
+        const { name, role } = body;
         if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
         if (isDevelopment) {
-            const { data, error } = await supabase.from('les_coordinators').insert({ title, name, role }).select();
+            const { data, error } = await supabase.from('les_coordinators').insert({  name, role }).select();
             if (error) throw error;
             return NextResponse.json(data[0]);
         } else {
             const connection = await mysql.createConnection(mysqlConfig);
-            const [result]: any = await connection.execute('INSERT INTO les_coordinators (title, name, role) VALUES (?, ?, ?)', [title, name, role]);
+            const [result]: any = await connection.execute('INSERT INTO les_coordinators ( name, role) VALUES (?, ?)', [ name, role]);
             await connection.end();
-            return NextResponse.json({ id: result.insertId, title, name, role });
+            return NextResponse.json({ id: result.insertId,  name, role });
         }
     } catch (error: any) {
         return NextResponse.json({ error: 'Failed to create coordinator', details: error.message }, { status: 500 });
