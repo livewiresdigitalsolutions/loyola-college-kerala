@@ -12,7 +12,7 @@ const navItems = [
   { label: "Editorial Board", href: "/journals/editorial-board" },
   { label: "Archives", href: "/journals/archives" },
   { label: "Online Subscription", href: "/journals/subscription" },
-  { label: "Article Submission", href: "/journals/submission" },
+  { label: "Article Submission", href: "/journals/article-submission" },
 ];
 
 export default function LesNavbar() {
