@@ -1,150 +1,192 @@
-'use client'
+"use client";
 
-import React from 'react'
-import Image from 'next/image'
-
-// ─── TYPE DEFINITIONS ────────────────────────────────────────
-interface CommitteeMember {
-  name: string
-  role: string
-  designation?: string
-  image: string
-  isChairperson?: boolean
-}
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { Users, ChevronDown, ChevronUp } from "lucide-react";
 
 interface Committee {
-  name: string
-  members: CommitteeMember[]
+  id: number;
+  name: string;
+  description: string | null;
+  type: string | null;
+  sort_order: number;
 }
 
-// ─── COMMITTEE DATA ──────────────────────────────────────────
-const statutoryCommittees: Committee[] = [
-  {
-    name: 'Grievance Redressal Cell',
-    members: [
-      { name: 'Fr. Burns Kuruvapelli, SJ', role: 'Director & Manager', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Sabuji Thomas, SJ', role: 'Principal', image: '/assets/defaultprofile.png' },
-      { name: 'Prof. Sajil Jacob', role: 'Controller of Exams', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Prasad Pillai R', role: 'Controller of Administration', image: '/assets/defaultprofile.png', isChairperson: true },
-      { name: 'Dr. Renjit George, SJ', role: 'Dean of Arts & Science Faculty', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Simson Payyili', role: 'Asst Professor & HoD', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Saju L SJ', role: 'Faculty Member', image: '/assets/defaultprofile.png' },
-    ],
-  },
-  {
-    name: 'Anti-Ragging Committee',
-    members: [
-      { name: 'Fr. Burns Kuruvapelli, SJ', role: 'Director & Manager', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Sabuji Thomas, SJ', role: 'Principal', image: '/assets/defaultprofile.png' },
-      { name: 'Prof. Sajil Jacob', role: 'Controller of Exams', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Prasad Pillai R', role: 'Controller of Administration', image: '/assets/defaultprofile.png', isChairperson: true },
-      { name: 'Dr. Renjit George, SJ', role: 'Dean of Arts & Science Faculty', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Simson Payyili', role: 'Asst Professor & HoD', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Saju L SJ', role: 'Faculty Member', image: '/assets/defaultprofile.png' },
-    ],
-  },
-  {
-    name: 'Internal Complaints Committee',
-    members: [
-      { name: 'Fr. Burns Kuruvapelli, SJ', role: 'Director & Manager', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Sabuji Thomas, SJ', role: 'Principal', image: '/assets/defaultprofile.png' },
-      { name: 'Prof. Sajil Jacob', role: 'Controller of Exams', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Prasad Pillai R', role: 'Controller of Administration', image: '/assets/defaultprofile.png', isChairperson: true },
-      { name: 'Dr. Renjit George, SJ', role: 'Dean of Arts & Science Faculty', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Simson Payyili', role: 'Asst Professor & HoD', image: '/assets/defaultprofile.png' },
-    ],
-  },
-  {
-    name: 'SC/ST Committee',
-    members: [
-      { name: 'Fr. Burns Kuruvapelli, SJ', role: 'Director & Manager', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Sabuji Thomas, SJ', role: 'Principal', image: '/assets/defaultprofile.png' },
-      { name: 'Prof. Sajil Jacob', role: 'Controller of Exams', image: '/assets/defaultprofile.png' },
-      { name: 'Dr. Prasad Pillai R', role: 'Controller of Administration', image: '/assets/defaultprofile.png', isChairperson: true },
-    ],
-  },
-]
-
-// ─── MEMBER CARD COMPONENT ───────────────────────────────────
-function MemberCard({ member }: { member: CommitteeMember }) {
-  return (
-    <div className="flex flex-col group cursor-pointer">
-      {/* Photo with hover overlay */}
-      <div className="relative w-full aspect-3/4 overflow-hidden mb-4">
-        <Image
-          src={member.image}
-          alt={member.name}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        {/* Green hover overlay */}
-        <div className="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-4">
-          {member.isChairperson && (
-            <>
-              <p className="text-lg font-bold">Chairperson</p>
-              <p className="text-sm text-white/80 mt-1">+91 9876543210</p>
-            </>
-          )}
-          {!member.isChairperson && (
-            <p className="text-sm text-white/90 text-center">{member.role}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Green decorative line */}
-      <div className="w-10 h-[3px] bg-primary mb-3"></div>
-
-      {/* Name & Role */}
-      <h4 className="font-bold text-gray-900 text-sm md:text-base">{member.name}</h4>
-      <p className="text-xs md:text-sm text-gray-500 mt-0.5">{member.role}</p>
-    </div>
-  )
+interface CommitteeMember {
+  id: number;
+  committee_id: number;
+  name: string;
+  designation: string | null;
+  image: string | null;
+  sort_order: number;
 }
 
-// ─── COMMITTEE SECTION COMPONENT ────────────────────────────
-function CommitteeSection({ committee }: { committee: Committee }) {
-  return (
-    <div className="py-12">
-      {/* Decorative divider */}
-      <div className="flex justify-center mb-6">
-        <div className="w-24 h-[3px] bg-primary"></div>
-      </div>
-
-      {/* Committee name */}
-      <h3 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-10">
-        {committee.name}
-      </h3>
-
-      {/* Members grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8">
-        {committee.members.map((member, index) => (
-          <MemberCard key={index} member={member} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// ─── MAIN COMPONENT ─────────────────────────────────────────
 export default function Committees() {
+  const [committees, setCommittees] = useState<Committee[]>([]);
+  const [members, setMembers] = useState<CommitteeMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [committeesRes, membersRes] = await Promise.all([
+          fetch("/api/academics/committees"),
+          fetch("/api/academics/committee-members"),
+        ]);
+        if (committeesRes.ok) {
+          const data = await committeesRes.json();
+          setCommittees(data);
+          if (data.length > 0) setExpandedId(data[0].id);
+        }
+        if (membersRes.ok) setMembers(await membersRes.json());
+      } catch (err) {
+        console.error("Error fetching committees:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const getMembersForCommittee = (committeeId: number) =>
+    members.filter((m) => m.committee_id === committeeId);
+
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (committees.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500 text-lg">No committees found</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 md:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Section Title */}
-        <div className="text-center mb-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Statutory Committees
+        {/* Section header */}
+        <div className="text-center mb-16">
+          <div className="w-16 h-1 bg-primary mx-auto mb-6"></div>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Our Committees
           </h2>
-          <p className="text-sm text-[#F0B129] font-medium mt-2 tracking-wide uppercase">
-            Members 2024–25
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            Dedicated committees working together to ensure academic excellence,
+            student welfare, and institutional governance.
           </p>
         </div>
 
-        {/* Committee Sections */}
-        {statutoryCommittees.map((committee, index) => (
-          <CommitteeSection key={index} committee={committee} />
-        ))}
+        {/* Committees accordion */}
+        <div className="space-y-4">
+          {committees.map((committee) => {
+            const committeeMembers = getMembersForCommittee(committee.id);
+            const isExpanded = expandedId === committee.id;
+
+            return (
+              <div
+                key={committee.id}
+                className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300"
+              >
+                {/* Committee header */}
+                <button
+                  onClick={() =>
+                    setExpandedId(isExpanded ? null : committee.id)
+                  }
+                  className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {committee.name}
+                      </h3>
+                      {committee.type && (
+                        <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                          {committee.type}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-500">
+                      {committeeMembers.length} member
+                      {committeeMembers.length !== 1 ? "s" : ""}
+                    </span>
+                    {isExpanded ? (
+                      <ChevronUp className="w-5 h-5 text-gray-400" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-gray-400" />
+                    )}
+                  </div>
+                </button>
+
+                {/* Expanded content */}
+                {isExpanded && (
+                  <div className="border-t border-gray-100 p-6">
+                    {committee.description && (
+                      <p className="text-gray-600 mb-6">
+                        {committee.description}
+                      </p>
+                    )}
+
+                    {committeeMembers.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {committeeMembers.map((member) => (
+                          <div
+                            key={member.id}
+                            className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                          >
+                            <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                              <Image
+                                src={
+                                  member.image || "/assets/defaultprofile.png"
+                                }
+                                alt={member.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-medium text-gray-900 text-sm truncate">
+                                {member.name}
+                              </p>
+                              {member.designation && (
+                                <p className="text-xs text-gray-500 truncate">
+                                  {member.designation}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 text-sm italic">
+                        No members added yet
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,14 +1,31 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import JournalCard from "./JournalCard";
 
-const archivesData = [
-  { volume: "17", issue: "1", year: "2025" },
-  { volume: "16", issue: "2", year: "2025" },
-  { volume: "16", issue: "1", year: "2024" },
-  { volume: "15", issue: "2", year: "2024" },
-];
+interface JournalIssue {
+  id: number;
+  volume: string;
+  issue: string;
+  year: string;
+  pdf_url?: string;
+  cover_image?: string;
+}
 
 export default function Archives() {
+  const [issues, setIssues] = useState<JournalIssue[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/journals/issues")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setIssues(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   return (
     <section className="w-full bg-background py-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto flex flex-col gap-8">
@@ -20,24 +37,29 @@ export default function Archives() {
           </h2>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mt-4">
-          {archivesData.map((archive, index) => (
-            <JournalCard
-              key={`${archive.volume}-${archive.issue}`}
-              volume={archive.volume}
-              issue={archive.issue}
-              year={archive.year}
-            />
-          ))}
-        </div>
-
-        {/* View All Button */}
-        <div className="flex justify-center mt-8">
-          <button className="px-6 py-2 border border-primary text-primary text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors rounded-sm">
-            View All Archives
-          </button>
-        </div>
+        {loading ? (
+          <div className="text-center py-8 text-muted-foreground">Loading...</div>
+        ) : issues.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            No journal issues available yet.
+          </div>
+        ) : (
+          <>
+            {/* Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mt-4">
+              {issues.map((issue) => (
+                <JournalCard
+                  key={issue.id}
+                  volume={issue.volume}
+                  issue={issue.issue}
+                  year={issue.year}
+                  pdfUrl={issue.pdf_url}
+                  coverImage={issue.cover_image}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

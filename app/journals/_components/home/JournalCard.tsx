@@ -1,12 +1,16 @@
 import React from "react";
+import Link from "next/link";
+import { Download } from "lucide-react";
 
 interface JournalCardProps {
   volume: string;
   issue: string;
   year: string;
+  pdfUrl?: string;
+  coverImage?: string;
 }
 
-export default function JournalCard({ volume, issue, year }: JournalCardProps) {
+export default function JournalCard({ volume, issue, year, pdfUrl, coverImage }: JournalCardProps) {
   return (
     <div className="flex flex-col gap-4 group cursor-pointer">
       {/* Cover Card */}
@@ -30,6 +34,19 @@ export default function JournalCard({ volume, issue, year }: JournalCardProps) {
 
         {/* Bottom Gradient */}
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-black/60 to-transparent pointer-events-none"></div>
+
+        {/* PDF Download Icon */}
+        {pdfUrl && (
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-2 right-2 z-20 bg-white/90 backdrop-blur-sm p-1.5 rounded-full hover:bg-white transition-colors"
+            title="Download PDF"
+          >
+            <Download size={14} className="text-primary" />
+          </a>
+        )}
       </div>
 
       {/* Details */}

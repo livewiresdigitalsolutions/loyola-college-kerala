@@ -12,6 +12,8 @@ interface ProgrammesSectionProps {
 }
 
 export default function ProgrammesSection({ programmes }: ProgrammesSectionProps) {
+  if (!programmes) return null;
+
   const renderProgrammes = (progs: Programme[], icon: React.ReactNode, title: string) => {
     if (progs.length === 0) return null;
     

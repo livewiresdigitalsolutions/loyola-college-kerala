@@ -7,7 +7,7 @@ interface FacultySectionProps {
 }
 
 export default function FacultySection({ faculty }: FacultySectionProps) {
-  if (faculty.length === 0) return null;
+  if (!faculty || faculty.length === 0) return null;
 
   return (
     <section className="py-16 bg-[#f5f0e8]">

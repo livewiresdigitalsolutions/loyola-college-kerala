@@ -2,7 +2,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getDepartmentBySlug, getAllDepartmentSlugs } from "../data/departmentsData";
+import { getDepartmentBySlug } from "../data/departmentsData";
 import DepartmentIntro from "./components/DepartmentIntro";
 import FacultySection from "./components/FacultySection";
 import ProgrammesSection from "./components/ProgrammesSection";
@@ -15,9 +15,37 @@ interface DepartmentPageProps {
   }>;
 }
 
+async function fetchDepartment(slug: string) {
+  // Try API first, fallback to static data
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const res = await fetch(`${baseUrl}/api/academics/departments?slug=${slug}`, {
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const dept = data[0];
+        return {
+          ...dept,
+          shortDescription: dept.short_description || dept.shortDescription,
+          syllabusLinks: dept.syllabus_links || dept.syllabusLinks,
+          faculty: dept.faculty_list || dept.faculty || [],
+        };
+      }
+    }
+  } catch (error) {
+    console.error('API fetch failed, falling back to static data:', error);
+  }
+
+  // Fallback to static data
+  return getDepartmentBySlug(slug);
+}
+
 export default async function DepartmentPage({ params }: DepartmentPageProps) {
   const { slug } = await params;
-  const department = getDepartmentBySlug(slug);
+  const department = await fetchDepartment(slug);
 
   if (!department) {
     notFound();
@@ -65,7 +93,7 @@ export default async function DepartmentPage({ params }: DepartmentPageProps) {
 
               {/* Short Description */}
               <p className="text-lg md:text-xl text-white/90 mt-4 max-w-2xl">
-                {department.shortDescription}
+                {department.shortDescription || department.short_description}
               </p>
             </div>
           </div>
@@ -74,30 +102,21 @@ export default async function DepartmentPage({ params }: DepartmentPageProps) {
 
       {/* Department Content */}
       <DepartmentIntro introduction={department.introduction} goals={department.goals} />
-      <FacultySection faculty={department.faculty} />
+      <FacultySection faculty={department.faculty || department.faculty_list || []} />
       <ProgrammesSection programmes={department.programmes} />
       <SyllabusSection
         syllabus={department.syllabus}
-        syllabusLinks={department.syllabusLinks}
+        syllabusLinks={department.syllabusLinks || department.syllabus_links}
         publications={department.publications}
       />
     </div>
   );
 }
 
-// Generate static params for all departments at build time
-export async function generateStaticParams() {
-  const slugs = getAllDepartmentSlugs();
-
-  return slugs.map((slug) => ({
-    slug: slug,
-  }));
-}
-
 // Generate metadata for SEO
 export async function generateMetadata({ params }: DepartmentPageProps) {
   const { slug } = await params;
-  const department = getDepartmentBySlug(slug);
+  const department = await fetchDepartment(slug);
 
   if (!department) {
     return {
@@ -107,6 +126,6 @@ export async function generateMetadata({ params }: DepartmentPageProps) {
 
   return {
     title: `${department.name} | Loyola College`,
-    description: department.shortDescription,
+    description: department.shortDescription || department.short_description,
   };
 }
