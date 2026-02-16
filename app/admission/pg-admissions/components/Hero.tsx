@@ -8,8 +8,8 @@ export default function PgAdmissionsHero() {
     window.open("/files/pgbrochure.pdf", "_blank");
   };
 
-  const handleDownloadProspectusClick = () => {
-    window.open("/files/prospectus.pdf", "_blank");
+  const handleDownloadPgProspectusClick = () => {
+    window.open("/files/pg-prospectus.pdf", "_blank");
   };
 
   const handleApplyNowClick = () => {
@@ -21,7 +21,7 @@ export default function PgAdmissionsHero() {
       {/* BACKGROUND IMAGE */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/loyola-building.png"
+          src="/assets/pgBg.jpeg"
           alt="Campus"
           fill
           className="object-cover"
@@ -83,27 +83,32 @@ export default function PgAdmissionsHero() {
             {/* RIGHT SIDE - BUTTONS IN COLUMN */}
             <div className="flex justify-end">
               <div className="flex flex-col gap-4 max-w-md w-full">
-                <button
-                  onClick={handleDownloadBrochureClick}
-                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
-                >
-                  Download Brochure
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-                {/* <button
-                  onClick={handleDownloadProspectusClick}
-                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
-                >
-                  Download Prospectus
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button> */}
+                {/* CTA 1 - Apply Now - Primary, full width */}
                 <button
                   onClick={handleApplyNowClick}
-                  className="bg-white text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-white hover:border-2 hover:border-white transition-all duration-300 inline-flex items-center justify-center gap-2 group shadow-lg"
+                  className="w-full bg-white text-primary px-8 py-4 rounded-lg font-bold text-xl hover:bg-primary hover:text-white hover:border-2 hover:border-white transition-all duration-300 shadow-xl inline-flex items-center justify-center gap-2 group transform hover:scale-[1.02]"
                 >
                   Apply Now
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                 </button>
+
+                {/* CTA 2 & CTA 3 - Secondary, side by side */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={handleDownloadBrochureClick}
+                    className="flex-1 border-2 border-white text-white px-4 py-3 rounded-lg font-semibold text-sm hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
+                  >
+                    Download Brochure
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <button
+                    onClick={handleDownloadPgProspectusClick}
+                    className="flex-1 border-2 border-white text-white px-4 py-3 rounded-lg font-semibold text-sm hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
+                  >
+                    PG Prospectus
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

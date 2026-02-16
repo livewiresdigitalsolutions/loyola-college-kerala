@@ -17,7 +17,7 @@ export default function Demopage() {
             <LoyolaAtAGlance/>
             <AdmissionProcess/>
             <AcademicProgrammes/>
-            <DepartmentsList/>
+            {/* <DepartmentsList/> */}
             <StartApplication/>
         </>
     );

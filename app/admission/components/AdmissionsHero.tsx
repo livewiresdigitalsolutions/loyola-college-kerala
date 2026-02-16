@@ -1057,9 +1057,6 @@ export default function AdmissionsHero() {
     window.open("/files/ug-prospectus.pdf", "_blank");
   };
 
-  const handleDownloadPgProspectusClick = () => {
-    window.open("/files/pg-prospectus.pdf", "_blank");
-  };
 
   const handleDownloadModelQuestionPaper = () => {
     window.open(
@@ -1174,7 +1171,7 @@ export default function AdmissionsHero() {
 
                 {/* CTA BUTTONS */}
                 <div className="flex flex-col gap-3 max-w-2xl">
-                  {/* Download Brochure - White button, full width */}
+                  {/* CTA 1 - Download Brochure - White button, full width */}
                   <button
                     onClick={handleDownloadBrochureClick}
                     className="w-full bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all duration-300 shadow-lg inline-flex items-center justify-center gap-2 group"
@@ -1183,30 +1180,21 @@ export default function AdmissionsHero() {
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
 
-                  {/* Download Model Question Paper - full width */}
-                  <button
-                    onClick={handleDownloadModelQuestionPaper}
-                    className="w-full border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
-                  >
-                    Download Model Question Paper
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-
-                  {/* UG & PG Prospectus - side by side, equal size */}
+                  {/* CTA 2 & CTA 3 - side by side */}
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
-                      onClick={handleDownloadUgProspectusClick}
-                      className="basis-1/2 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
+                      onClick={handleDownloadModelQuestionPaper}
+                      className="flex-1 border-2 border-white text-white px-6 py-3 rounded-lg font-semibold text-base hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
                     >
-                      Download UG Prospectus
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      Model Question Paper
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                     <button
-                      onClick={handleDownloadPgProspectusClick}
-                      className="basis-1/2 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
+                      onClick={handleDownloadUgProspectusClick}
+                      className="flex-1 border-2 border-white text-white px-6 py-3 rounded-lg font-semibold text-base hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
                     >
-                      Download PG Prospectus
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      UG Prospectus
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
                 </div>
