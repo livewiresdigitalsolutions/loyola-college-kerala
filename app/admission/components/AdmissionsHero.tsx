@@ -1053,8 +1053,12 @@ export default function AdmissionsHero() {
     window.open("/files/brochure.pdf", "_blank");
   };
 
-  const handleDownloadProspectusClick = () => {
-    window.open("/files/prospectus.pdf", "_blank");
+  const handleDownloadUgProspectusClick = () => {
+    window.open("/files/ug-prospectus.pdf", "_blank");
+  };
+
+  const handleDownloadPgProspectusClick = () => {
+    window.open("/files/pg-prospectus.pdf", "_blank");
   };
 
   const handleDownloadModelQuestionPaper = () => {
@@ -1168,49 +1172,43 @@ export default function AdmissionsHero() {
                   </div>
                 </div>
 
-                {/* CTA BUTTON */}
-                {/* <div className="flex flex-col sm:flex-row gap-4">
-                  <button
-                    onClick={handleDownloadBrochureClick}
-                    className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
-                  >
-                    Download Brochure
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                  <button
-                    onClick={handleDownloadProspectusClick}
-                    className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
-                  >
-                    Download Prospectus
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </div> */}
-
                 {/* CTA BUTTONS */}
-                <div className="flex flex-wrap gap-4 max-w-2xl">
+                <div className="flex flex-col gap-3 max-w-2xl">
+                  {/* Download Brochure - White button, full width */}
                   <button
                     onClick={handleDownloadBrochureClick}
-                    className="flex-1 border-2 border-white text-white px-12 py-3 min-w-[260px] rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group text-center leading-tight"
+                    className="w-full bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all duration-300 shadow-lg inline-flex items-center justify-center gap-2 group"
                   >
                     Download Brochure
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
 
-                  <button
-                    onClick={handleDownloadProspectusClick}
-                    className="flex-1 border-2 border-white text-white px-12 py-3 min-w-[260px] rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group text-center leading-tight"
-                  >
-                    Download Prospectus
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-
+                  {/* Download Model Question Paper - full width */}
                   <button
                     onClick={handleDownloadModelQuestionPaper}
-                    className="flex-1 border-2 border-white text-white px-12 py-3 min-w-[260px] rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group text-center leading-tight"
+                    className="w-full border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
                   >
                     Download Model Question Paper
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
+
+                  {/* UG & PG Prospectus - side by side, equal size */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      onClick={handleDownloadUgProspectusClick}
+                      className="basis-1/2 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
+                    >
+                      Download UG Prospectus
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                    <button
+                      onClick={handleDownloadPgProspectusClick}
+                      className="basis-1/2 border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
+                    >
+                      Download PG Prospectus
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
