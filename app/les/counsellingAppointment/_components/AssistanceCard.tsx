@@ -1,8 +1,18 @@
-import React from 'react'
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import { Phone } from 'lucide-react'
-import { assistanceContacts } from '../../_data'
+import { assistanceContacts as fallbackAssistance } from '../../_data'
+import { getAssistanceContacts } from '../../_services/api'
+import { AssistanceContact } from '../../_data/types'
 
 export default function AssistanceCard() {
+  const [contacts, setContacts] = useState<AssistanceContact[]>(fallbackAssistance)
+
+  useEffect(() => {
+    getAssistanceContacts().then(setContacts)
+  }, [])
+
   return (
     <section className="max-w-3xl mx-auto">
       <h3 className="text-xl font-semibold text-gray-800 text-center mb-6">
@@ -10,7 +20,7 @@ export default function AssistanceCard() {
       </h3>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {assistanceContacts.map((contact) => (
+        {contacts.map((contact) => (
           <div 
             key={contact.id} 
             className="bg-white rounded-lg p-6 shadow-sm text-center"

@@ -9,7 +9,7 @@
 // //     category: "Technology",
 // //     image: "/departmentsCoverImage/ComputerScience.png",
 // //     shortDescription: "Build expertise in programming, software development, and computational theory.",
-    
+
 // //     introduction: {
 // //       title: "Welcome to Computer Science",
 // //       description: [
@@ -23,7 +23,7 @@
 // //         "100% placement record in top IT firms",
 // //       ],
 // //     },
-    
+
 // //     goals: {
 // //       vision: "To be a leading center of excellence in computer science education, fostering innovation, research, and ethical technology development.",
 // //       mission: [
@@ -40,7 +40,7 @@
 // //         "Facilitate internships and industry exposure",
 // //       ],
 // //     },
-    
+
 // //     faculty: [
 // //       {
 // //         id: "f1",
@@ -71,7 +71,7 @@
 // //         email: "arjun.menon@loyola.edu",
 // //       },
 // //     ],
-    
+
 // //     programmes: {
 // //       ug: [
 // //         {
@@ -119,7 +119,7 @@
 // //         },
 // //       ],
 // //     },
-    
+
 // //     syllabus: {
 // //       ug: [
 // //         {
@@ -181,7 +181,7 @@
 // //         },
 // //       ],
 // //     },
-    
+
 // //     facilities: [
 // //       "6 Computer Labs with 300+ systems",
 // //       "High-speed Internet (1 Gbps)",
@@ -189,14 +189,14 @@
 // //       "Project Development Center",
 // //       "Research Lab with GPU servers",
 // //     ],
-    
+
 // //     achievements: [
 // //       "Winner of Smart India Hackathon 2025",
 // //       "Published 50+ research papers in 2025",
 // //       "Awarded Best Department by University",
 // //     ],
 // //   },
-  
+
 // //   // Sociology Department
 // //   {
 // //     id: "2",
@@ -206,7 +206,7 @@
 // //     category: "Social Sciences",
 // //     image: "/departmentsCoverImage/Sociology.png",
 // //     shortDescription: "Explore society, culture, and human relationships through critical analysis and research.",
-    
+
 // //     introduction: {
 // //       title: "Welcome to Sociology",
 // //       description: [
@@ -220,7 +220,7 @@
 // //         "Active student research clubs and publications",
 // //       ],
 // //     },
-    
+
 // //     goals: {
 // //       vision: "To cultivate sociological imagination and create socially responsible individuals who contribute to building an equitable society.",
 // //       mission: [
@@ -236,7 +236,7 @@
 // //         "Prepare students for careers in social development and policy",
 // //       ],
 // //     },
-    
+
 // //     faculty: [
 // //       {
 // //         id: "f1",
@@ -258,7 +258,7 @@
 // //         email: "suresh.pillai@loyola.edu",
 // //       },
 // //     ],
-    
+
 // //     programmes: {
 // //       ug: [
 // //         {
@@ -290,7 +290,7 @@
 // //         },
 // //       ],
 // //     },
-    
+
 // //     syllabus: {
 // //       ug: [
 // //         {
@@ -328,7 +328,7 @@
 // //       ],
 // //     },
 // //   },
-  
+
 // //   // Data Science Department
 // //   {
 // //     id: "3",
@@ -338,7 +338,7 @@
 // //     category: "Technology",
 // //     image: "/departmentsCoverImage/DataScience.png",
 // //     shortDescription: "Harness big data, analytics, and machine learning for data-driven insights.",
-    
+
 // //     introduction: {
 // //       title: "Welcome to Data Science",
 // //       description: [
@@ -352,7 +352,7 @@
 // //         "Advanced analytics and AI projects",
 // //       ],
 // //     },
-    
+
 // //     goals: {
 // //       vision: "To be a premier institution for data science education, producing skilled professionals who drive innovation through data analytics.",
 // //       mission: [
@@ -368,7 +368,7 @@
 // //         "Understand big data technologies and cloud platforms",
 // //       ],
 // //     },
-    
+
 // //     faculty: [
 // //       {
 // //         id: "f1",
@@ -390,7 +390,7 @@
 // //         email: "divya.reddy@loyola.edu",
 // //       },
 // //     ],
-    
+
 // //     programmes: {
 // //       ug: [
 // //         {
@@ -422,7 +422,7 @@
 // //         },
 // //       ],
 // //     },
-    
+
 // //     syllabus: {
 // //       ug: [
 // //         {
@@ -460,7 +460,7 @@
 // //       ],
 // //     },
 // //   },
-  
+
 // //   // Psychology Department
 // //   {
 // //     id: "4",
@@ -470,7 +470,7 @@
 // //     category: "Behavioral Sciences",
 // //     image: "/departmentsCoverImage/Psychology.png",
 // //     shortDescription: "Understand human behavior, mental processes, and therapeutic interventions.",
-    
+
 // //     introduction: {
 // //       title: "Welcome to Psychology",
 // //       description: [
@@ -484,7 +484,7 @@
 // //         "Active psychology students' association",
 // //       ],
 // //     },
-    
+
 // //     goals: {
 // //       vision: "To develop competent and compassionate psychologists who contribute to mental health and well-being in society.",
 // //       mission: [
@@ -500,7 +500,7 @@
 // //         "Conduct empirical research in psychology",
 // //       ],
 // //     },
-    
+
 // //     faculty: [
 // //       {
 // //         id: "f1",
@@ -522,7 +522,7 @@
 // //         email: "arun.kumar@loyola.edu",
 // //       },
 // //     ],
-    
+
 // //     programmes: {
 // //       ug: [
 // //         {
@@ -562,7 +562,7 @@
 // //         },
 // //       ],
 // //     },
-    
+
 // //     syllabus: {
 // //       ug: [
 // //         {
@@ -600,7 +600,7 @@
 // //     category: "Humanities",
 // //     image: "/departmentsCoverImage/English.png",
 // //     shortDescription: "Study literature, language, and communication in a global context.",
-    
+
 // //     introduction: {
 // //       title: "Welcome to English",
 // //       description: [
@@ -614,7 +614,7 @@
 // //         "Guest lectures by renowned authors and poets",
 // //       ],
 // //     },
-    
+
 // //     goals: {
 // //       vision: "To nurture literary excellence and effective communication skills while fostering a deep appreciation for language and culture.",
 // //       mission: [
@@ -630,7 +630,7 @@
 // //         "Enhance research capabilities in literary studies",
 // //       ],
 // //     },
-    
+
 // //     faculty: [
 // //       {
 // //         id: "f1",
@@ -643,7 +643,7 @@
 // //         phone: "+91 9876543214",
 // //       },
 // //     ],
-    
+
 // //     programmes: {
 // //       ug: [
 // //         {
@@ -675,7 +675,7 @@
 // //         },
 // //       ],
 // //     },
-    
+
 // //     syllabus: {
 // //       ug: [
 // //         {
@@ -1841,7 +1841,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -1882,6 +1893,38 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2 ",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4 ",
+        url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "2",
@@ -1944,7 +1987,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -1982,9 +2036,42 @@ export const departments: Department[] = [
             "Income Tax Law",
           ],
         },
+
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4",
+        url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "3",
@@ -2047,7 +2134,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2088,6 +2186,46 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2 ",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4 ",
+        url: "#",
+      },
+      {
+      label: "Semester 5-6 ",
+      url: "#",
+      },
+      {
+      label: "Semester 7-8 ",
+      url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "4",
@@ -2150,7 +2288,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2191,6 +2340,46 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2 ",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4 ",
+        url: "#",
+      },
+      {
+      label: "Semester 5-6 ",
+      url: "#",
+      },
+      {
+      label: "Semester 7-8 ",
+      url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
   {
     id: "5",
@@ -2253,7 +2442,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2294,8 +2494,48 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+        {
+          label: "Semester 1-2 ",
+          url: "#",
+        },
+        {
+          label: "Semester 3-4 ",
+          url: "#",
+        },
+        {
+          label: "Semester 5-6 ",
+          url: "#",
+        },
+        {
+          label: "Semester 7-8 ",
+          url: "#",
+        },
+      ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
-  {
+{
     id: "6",
     name: "B.Sc Psychology",
     slug: "psychology",
@@ -2356,7 +2596,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2397,7 +2648,47 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
-  },
+      syllabusLinks: [
+        {
+          label: "Semester 1-2 ",
+          url: "#",
+        },
+        {
+          label: "Semester 3-4 ",
+          url: "#",
+        },
+        {
+          label: "Semester 5-6 ",
+          url: "#",
+        },
+        {
+          label: "Semester 7-8 ",
+          url: "#",
+        },
+      ],
+      publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
+    },
   {
     id: "7",
     name: "B.Sc Data Science",
@@ -2459,7 +2750,18 @@ export const departments: Department[] = [
         rankListPublication: "April 23, 2026",
       },
     },
-    faculty: [],
+    faculty: [
+      {
+        id: 1,
+        name: "Ramla",
+        designation: "HOD",
+        qualification: "M.Com",
+        specialization: "Finance",
+        email: "[EMAIL_ADDRESS]",
+        phone: "9876543210",
+        image: "/faculty/finance-hod.jpg",
+      },
+    ],
     programmes: {
       ug: [
         {
@@ -2500,6 +2802,46 @@ export const departments: Department[] = [
       ],
       pg: [],
     },
+    syllabusLinks: [
+      {
+        label: "Semester 1-2 ",
+        url: "#",
+      },
+      {
+        label: "Semester 3-4 ",
+        url: "#",
+      },
+      {
+        label: "Semester 5-6 ",
+        url: "#",
+      },
+      {
+        label: "Semester 7-8 ",
+        url: "#",
+      },
+    ],
+    publications: [
+      {
+        title: "Scholars",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "International Journal of Social Work",
+          "Indian Journal of Social Work",
+          "Practice: Social Work in Action",
+        ],
+        viewAllLink: "#",
+      },
+      {
+        title: "Students",
+        image: "/departmentsCoverImage/FinanceAndAccounts.png",
+        items: [
+          "Field work dissertations",
+          "Case study compilations",
+          "Community assessment reports",
+        ],
+        viewAllLink: "#",
+      },
+    ],
   },
 ];
 

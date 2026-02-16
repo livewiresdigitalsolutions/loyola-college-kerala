@@ -13,7 +13,8 @@ import {
   Landmark,
   LogOut,
   UserStar,
-  ShieldUser 
+  ShieldUser,
+  HeartHandshake
 } from "lucide-react";
 
 const menuItems = [
@@ -41,6 +42,11 @@ const menuItems = [
     name: "Allot Enterance Exam",  
     icon: Landmark,          
     path: "/sys-ops/hall-tickets",  
+  },
+  {
+    name: "LES Management",  
+    icon: HeartHandshake,          
+    path: "/sys-ops/master-data/les",  
   },
   {
     name: "Settings",

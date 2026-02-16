@@ -8,7 +8,9 @@ import {
   MapPin,
   School,
   ImageIcon,
-  CalendarCog ,
+  CalendarCog,
+  HeartHandshake,
+  BookMarked,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -77,6 +79,43 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
+  {
+    id: "les",
+    title: "LES",
+    description: "Manage Loyola Extension Service data",
+    icon: <HeartHandshake className="w-8 h-8" />,
+    href: "/sys-ops/master-data/les",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "IQAC Media",
+    title: "IQAC Media",
+    description: "Manage IQAC media content",
+    icon: <CalendarCog className="w-8 h-8" />,
+    href: "/sys-ops/master-data/iqac-media",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "academics",
+    title: "Academics",
+    description: "Manage committees, faculty, calendar & departments",
+    icon: <GraduationCap className="w-8 h-8" />,
+    href: "/sys-ops/master-data/academics",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "journals",
+    title: "Journals",
+    description: "Manage journal board members, issues & contacts",
+    icon: <BookMarked className="w-8 h-8" />,
+    href: "/sys-ops/master-data/journals",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+
 ];
 
 export default function MasterData() {

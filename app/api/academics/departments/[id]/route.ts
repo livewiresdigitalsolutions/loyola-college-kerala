@@ -1,0 +1,99 @@
+import { NextResponse } from 'next/server';
+import mysql from 'mysql2/promise';
+import { createClient } from '@supabase/supabase-js';
+
+const isDevelopment = process.env.DB_TYPE === 'supabase';
+
+const mysqlConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '3306'),
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_DATABASE || 'loyola',
+};
+
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export async function PUT(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        const body = await request.json();
+        const { name, slug, short_description, category, image, introduction, goals, eligibility, programmes, syllabus, faculty_list, sort_order } = body;
+        const { id } = await params;
+        const idNum = parseInt(id);
+
+        if (!name || !slug) {
+            return NextResponse.json({ error: 'Name and slug are required' }, { status: 400 });
+        }
+
+        const record = {
+            name,
+            slug,
+            short_description,
+            category,
+            image,
+            introduction: introduction ? (typeof introduction === 'string' ? introduction : JSON.stringify(introduction)) : null,
+            goals: goals ? (typeof goals === 'string' ? goals : JSON.stringify(goals)) : null,
+            eligibility: eligibility ? (typeof eligibility === 'string' ? eligibility : JSON.stringify(eligibility)) : null,
+            programmes: programmes ? (typeof programmes === 'string' ? programmes : JSON.stringify(programmes)) : null,
+            syllabus: syllabus ? (typeof syllabus === 'string' ? syllabus : JSON.stringify(syllabus)) : null,
+            faculty_list: faculty_list ? (typeof faculty_list === 'string' ? faculty_list : JSON.stringify(faculty_list)) : null,
+            sort_order,
+        };
+
+        if (isDevelopment) {
+            const { data, error } = await supabase
+                .from('academic_departments')
+                .update(record)
+                .eq('id', idNum)
+                .select();
+            if (error) throw error;
+            return NextResponse.json(data[0]);
+        } else {
+            const connection = await mysql.createConnection(mysqlConfig);
+            await connection.execute(
+                'UPDATE academic_departments SET name = ?, slug = ?, short_description = ?, category = ?, image = ?, introduction = ?, goals = ?, eligibility = ?, programmes = ?, syllabus = ?, faculty_list = ?, sort_order = ? WHERE id = ?',
+                [record.name, record.slug, record.short_description, record.category, record.image, record.introduction, record.goals, record.eligibility, record.programmes, record.syllabus, record.faculty_list, record.sort_order, idNum]
+            );
+            await connection.end();
+            return NextResponse.json({ id: idNum, ...record });
+        }
+    } catch (error: any) {
+        console.error('Error updating department:', error);
+        return NextResponse.json(
+            { error: 'Failed to update department', details: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+export async function DELETE(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        const { id } = await params;
+        const idNum = parseInt(id);
+
+        if (isDevelopment) {
+            const { error } = await supabase.from('academic_departments').delete().eq('id', idNum);
+            if (error) throw error;
+        } else {
+            const connection = await mysql.createConnection(mysqlConfig);
+            await connection.execute('DELETE FROM academic_departments WHERE id = ?', [idNum]);
+            await connection.end();
+        }
+        return NextResponse.json({ message: 'Department deleted successfully' });
+    } catch (error: any) {
+        console.error('Error deleting department:', error);
+        return NextResponse.json(
+            { error: 'Failed to delete department', details: error.message },
+            { status: 500 }
+        );
+    }
+}
