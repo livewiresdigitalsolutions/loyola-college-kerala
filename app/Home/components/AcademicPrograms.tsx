@@ -220,7 +220,7 @@ const programmes = [
       "M.Sc. Counselling Psychology",
       "M.S.W Social Work",
       "M.S.W Disaster Management",
-      "M.A Human Resource",
+      "M.A Human Resource Management",
     ],
     link: "/programmes/postgraduate",
     linkText: "View All PG Programmes",

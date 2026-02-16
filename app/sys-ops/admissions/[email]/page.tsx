@@ -15,6 +15,9 @@ import {
   MapPin,
   Phone,
   Home,
+  Pencil,
+  Save,
+  X,
 } from "lucide-react";
 import StatusBadge from "../../components/StatusBadge";
 
@@ -161,6 +164,9 @@ export default function AdmissionDetail() {
   const email = decodeURIComponent(params.email as string);
 
   const [formData, setFormData] = useState<FormData | null>(null);
+  const [editData, setEditData] = useState<FormData | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [programDetails, setProgramDetails] = useState<ProgramDetails | null>(
     null
   );
@@ -285,6 +291,111 @@ export default function AdmissionDetail() {
     }
   };
 
+  const personalInfoFields = new Set([
+    "full_name", "gender", "dob", "mobile", "email", "aadhaar",
+    "nationality", "religion", "category", "seat_reservation_quota",
+    "caste", "mother_tongue", "nativity", "blood_group",
+    "is_disabled", "disability_type", "disability_percentage",
+    "dependent_of", "seeking_admission_under_quota",
+    "scholarship_or_fee_concession", "hostel_accommodation_required",
+    "previous_gap", "extracurricular", "achievements",
+  ]);
+
+  const familyInfoFields = new Set([
+    "father_name", "father_mobile", "father_education", "father_occupation",
+    "mother_name", "mother_mobile", "mother_education", "mother_occupation",
+    "annual_family_income", "parent_mobile", "parent_email",
+    "emergency_contact_name", "emergency_contact_relation", "emergency_contact_mobile",
+  ]);
+
+  const addressInfoFields = new Set([
+    "communication_address", "communication_city", "communication_state",
+    "communication_district", "communication_pincode", "communication_country",
+    "permanent_address", "permanent_city", "permanent_state",
+    "permanent_district", "permanent_pincode", "permanent_country",
+  ]);
+
+  const handleEdit = () => {
+    setEditData({ ...formData! });
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setEditData(null);
+    setIsEditing(false);
+  };
+
+  const handleFieldChange = (field: string, value: string | number) => {
+    if (!editData) return;
+    setEditData({ ...editData, [field]: value });
+  };
+
+  const handleSave = async () => {
+    if (!editData || !formData) return;
+    setSaving(true);
+
+    try {
+      const basicInfo: Record<string, any> = {};
+      const personalInfo: Record<string, any> = {};
+      const familyInfo: Record<string, any> = {};
+      const addressInfo: Record<string, any> = {};
+
+      for (const key of Object.keys(editData) as (keyof FormData)[]) {
+        if (key === "id" || key === "user_email" || key === "created_at" || key === "updated_at" || key === "submitted_at" || key === "academicMarks") continue;
+        if (editData[key] === formData[key]) continue;
+
+        const val = editData[key];
+        if (personalInfoFields.has(key)) {
+          personalInfo[key] = val;
+        } else if (familyInfoFields.has(key)) {
+          familyInfo[key] = val;
+        } else if (addressInfoFields.has(key)) {
+          addressInfo[key] = val;
+        } else {
+          basicInfo[key] = val;
+        }
+      }
+
+      const hasChanges =
+        Object.keys(basicInfo).length > 0 ||
+        Object.keys(personalInfo).length > 0 ||
+        Object.keys(familyInfo).length > 0 ||
+        Object.keys(addressInfo).length > 0;
+
+      if (!hasChanges) {
+        toast("No changes to save");
+        setIsEditing(false);
+        setEditData(null);
+        setSaving(false);
+        return;
+      }
+
+      const response = await fetch(
+        `/api/sys-ops/admissions/${encodeURIComponent(email)}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ basicInfo, personalInfo, familyInfo, addressInfo }),
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Changes saved successfully");
+        setFormData(editData);
+        setIsEditing(false);
+        setEditData(null);
+        fetchFormData();
+      } else {
+        const result = await response.json();
+        toast.error(result.error || "Failed to save changes");
+      }
+    } catch (error) {
+      toast.error("Error saving changes");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -300,6 +411,8 @@ export default function AdmissionDetail() {
       </div>
     );
   }
+
+  const displayData = isEditing ? editData! : formData;
 
   const applicationId = generateApplicationId(
     formData.program_level_id,
@@ -323,7 +436,7 @@ export default function AdmissionDetail() {
             </button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                {formData.full_name || "Application Details"}
+                {displayData.full_name || "Application Details"}
               </h1>
               <p className="text-gray-600 mt-1">
                 Application ID:{" "}
@@ -337,25 +450,55 @@ export default function AdmissionDetail() {
           <div className="flex items-center gap-3">
             <StatusBadge
               status={
-                formData.payment_status === "completed"
+                displayData.payment_status === "completed"
                   ? "Completed"
-                  : formData.form_status || "Draft"
+                  : displayData.form_status || "Draft"
               }
             />
-            <button
-              onClick={handleDownload}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Download
-            </button>
-            <button
-              onClick={handleDelete}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </button>
+            {isEditing ? (
+              <>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                >
+                  <Save className="w-4 h-4" />
+                  {saving ? "Saving..." : "Save"}
+                </button>
+                <button
+                  onClick={handleCancel}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleEdit}
+                  className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+                >
+                  <Pencil className="w-4 h-4" />
+                  Edit
+                </button>
+                <button
+                  onClick={handleDownload}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Download
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -376,26 +519,26 @@ export default function AdmissionDetail() {
               <p className="text-blue-100 text-sm font-medium mb-1">
                 Database ID
               </p>
-              <p className="text-xl font-semibold">#{formData.id}</p>
+              <p className="text-xl font-semibold">#{displayData.id}</p>
             </div>
             <div>
               <p className="text-blue-100 text-sm font-medium mb-1">
                 Applicant Name
               </p>
               <p className="text-xl font-semibold">
-                {formData.full_name || "Not provided"}
+                {displayData.full_name || "Not provided"}
               </p>
             </div>
             <div>
               <p className="text-blue-100 text-sm font-medium mb-1">Email</p>
               <p className="text-lg font-medium truncate">
-                {formData.user_email}
+                {displayData.user_email}
               </p>
             </div>
             <div>
               <p className="text-blue-100 text-sm font-medium mb-1">Mobile</p>
               <p className="text-lg font-medium">
-                {formData.mobile || "Not provided"}
+                {displayData.mobile || "Not provided"}
               </p>
             </div>
             <div>
@@ -403,7 +546,7 @@ export default function AdmissionDetail() {
                 Form Status
               </p>
               <p className="text-lg font-semibold capitalize">
-                {formData.form_status || "Draft"}
+                {displayData.form_status || "Draft"}
               </p>
             </div>
             <div>
@@ -411,7 +554,7 @@ export default function AdmissionDetail() {
                 Payment Status
               </p>
               <p className="text-lg font-semibold capitalize">
-                {formData.payment_status || "Pending"}
+                {displayData.payment_status || "Pending"}
               </p>
             </div>
             <div>
@@ -419,7 +562,7 @@ export default function AdmissionDetail() {
                 Academic Year
               </p>
               <p className="text-lg font-medium">
-                {formData.academic_year || "N/A"}
+                {displayData.academic_year || "N/A"}
               </p>
             </div>
           </div>
@@ -468,23 +611,24 @@ export default function AdmissionDetail() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <InfoField label="Full Name" value={formData.full_name} />
-            <InfoField label="Gender" value={formData.gender} />
-            <InfoField label="Date of Birth" value={formData.dob} />
-            <InfoField label="Mobile" value={formData.mobile} />
-            <InfoField label="Email" value={formData.email} />
-            <InfoField label="Aadhaar Number" value={formData.aadhaar} />
-            <InfoField label="Nationality" value={formData.nationality} />
-            <InfoField label="Religion" value={formData.religion} />
-            <InfoField label="Category" value={formData.category} />
-            <InfoField label="Caste" value={formData.caste} />
-            <InfoField label="Mother Tongue" value={formData.mother_tongue} />
-            <InfoField label="Nativity" value={formData.nativity} />
-            <InfoField label="Blood Group" value={formData.blood_group} />
+            <InfoField label="Full Name" value={displayData.full_name} isEditing={isEditing} field="full_name" onFieldChange={handleFieldChange} />
+            <InfoField label="Gender" value={displayData.gender} isEditing={isEditing} field="gender" onFieldChange={handleFieldChange} />
+            <InfoField label="Date of Birth" value={displayData.dob} isEditing={isEditing} field="dob" onFieldChange={handleFieldChange} />
+            <InfoField label="Mobile" value={displayData.mobile} isEditing={isEditing} field="mobile" onFieldChange={handleFieldChange} />
+            <InfoField label="Email" value={displayData.email} isEditing={isEditing} field="email" onFieldChange={handleFieldChange} />
+            <InfoField label="Aadhaar Number" value={displayData.aadhaar} isEditing={isEditing} field="aadhaar" onFieldChange={handleFieldChange} />
+            <InfoField label="Nationality" value={displayData.nationality} isEditing={isEditing} field="nationality" onFieldChange={handleFieldChange} />
+            <InfoField label="Religion" value={displayData.religion} isEditing={isEditing} field="religion" onFieldChange={handleFieldChange} />
+            <InfoField label="Category" value={displayData.category} isEditing={isEditing} field="category" onFieldChange={handleFieldChange} />
+            <InfoField label="Caste" value={displayData.caste} isEditing={isEditing} field="caste" onFieldChange={handleFieldChange} />
+            <InfoField label="Mother Tongue" value={displayData.mother_tongue} isEditing={isEditing} field="mother_tongue" onFieldChange={handleFieldChange} />
+            <InfoField label="Nativity" value={displayData.nativity} isEditing={isEditing} field="nativity" onFieldChange={handleFieldChange} />
+            <InfoField label="Blood Group" value={displayData.blood_group} isEditing={isEditing} field="blood_group" onFieldChange={handleFieldChange} />
             <InfoField
               label="Seat Reservation Quota"
-              value={formData.seat_reservation_quota}
+              value={displayData.seat_reservation_quota}
               className="md:col-span-2 lg:col-span-3"
+              isEditing={isEditing} field="seat_reservation_quota" onFieldChange={handleFieldChange}
             />
           </div>
         </div>
@@ -504,16 +648,10 @@ export default function AdmissionDetail() {
                 Father Details
               </h3>
               <div className="space-y-4">
-                <InfoField label="Name" value={formData.father_name} />
-                <InfoField label="Mobile" value={formData.father_mobile} />
-                <InfoField
-                  label="Education"
-                  value={formData.father_education}
-                />
-                <InfoField
-                  label="Occupation"
-                  value={formData.father_occupation}
-                />
+                <InfoField label="Name" value={displayData.father_name} isEditing={isEditing} field="father_name" onFieldChange={handleFieldChange} />
+                <InfoField label="Mobile" value={displayData.father_mobile} isEditing={isEditing} field="father_mobile" onFieldChange={handleFieldChange} />
+                <InfoField label="Education" value={displayData.father_education} isEditing={isEditing} field="father_education" onFieldChange={handleFieldChange} />
+                <InfoField label="Occupation" value={displayData.father_occupation} isEditing={isEditing} field="father_occupation" onFieldChange={handleFieldChange} />
               </div>
             </div>
 
@@ -522,16 +660,10 @@ export default function AdmissionDetail() {
                 Mother Details
               </h3>
               <div className="space-y-4">
-                <InfoField label="Name" value={formData.mother_name} />
-                <InfoField label="Mobile" value={formData.mother_mobile} />
-                <InfoField
-                  label="Education"
-                  value={formData.mother_education}
-                />
-                <InfoField
-                  label="Occupation"
-                  value={formData.mother_occupation}
-                />
+                <InfoField label="Name" value={displayData.mother_name} isEditing={isEditing} field="mother_name" onFieldChange={handleFieldChange} />
+                <InfoField label="Mobile" value={displayData.mother_mobile} isEditing={isEditing} field="mother_mobile" onFieldChange={handleFieldChange} />
+                <InfoField label="Education" value={displayData.mother_education} isEditing={isEditing} field="mother_education" onFieldChange={handleFieldChange} />
+                <InfoField label="Occupation" value={displayData.mother_occupation} isEditing={isEditing} field="mother_occupation" onFieldChange={handleFieldChange} />
               </div>
             </div>
           </div>
@@ -539,16 +671,15 @@ export default function AdmissionDetail() {
           <div className="grid md:grid-cols-3 gap-6 mt-6 pt-6 border-t">
             <InfoField
               label="Annual Family Income"
-              value={
-                formData.annual_family_income
-                  ? `₹${parseFloat(
-                      formData.annual_family_income.toString()
-                    ).toLocaleString()}`
+              value={isEditing ? displayData.annual_family_income : (
+                displayData.annual_family_income
+                  ? `₹${parseFloat(displayData.annual_family_income.toString()).toLocaleString()}`
                   : "N/A"
-              }
+              )}
+              isEditing={isEditing} field="annual_family_income" onFieldChange={handleFieldChange}
             />
-            <InfoField label="Parent Mobile" value={formData.parent_mobile} />
-            <InfoField label="Parent Email" value={formData.parent_email} />
+            <InfoField label="Parent Mobile" value={displayData.parent_mobile} isEditing={isEditing} field="parent_mobile" onFieldChange={handleFieldChange} />
+            <InfoField label="Parent Email" value={displayData.parent_email} isEditing={isEditing} field="parent_email" onFieldChange={handleFieldChange} />
           </div>
         </div>
 
@@ -564,36 +695,24 @@ export default function AdmissionDetail() {
               <h3 className="font-semibold text-gray-700 text-lg pb-2 border-b">
                 Communication Address
               </h3>
-              <InfoField
-                label="Address"
-                value={formData.communication_address}
-              />
-              <InfoField label="City" value={formData.communication_city} />
-              <InfoField
-                label="District"
-                value={formData.communication_district}
-              />
-              <InfoField label="State" value={formData.communication_state} />
-              <InfoField
-                label="Pincode"
-                value={formData.communication_pincode}
-              />
-              <InfoField
-                label="Country"
-                value={formData.communication_country}
-              />
+              <InfoField label="Address" value={displayData.communication_address} isEditing={isEditing} field="communication_address" onFieldChange={handleFieldChange} />
+              <InfoField label="City" value={displayData.communication_city} isEditing={isEditing} field="communication_city" onFieldChange={handleFieldChange} />
+              <InfoField label="District" value={displayData.communication_district} isEditing={isEditing} field="communication_district" onFieldChange={handleFieldChange} />
+              <InfoField label="State" value={displayData.communication_state} isEditing={isEditing} field="communication_state" onFieldChange={handleFieldChange} />
+              <InfoField label="Pincode" value={displayData.communication_pincode} isEditing={isEditing} field="communication_pincode" onFieldChange={handleFieldChange} />
+              <InfoField label="Country" value={displayData.communication_country} isEditing={isEditing} field="communication_country" onFieldChange={handleFieldChange} />
             </div>
 
             <div className="space-y-4">
               <h3 className="font-semibold text-gray-700 text-lg pb-2 border-b">
                 Permanent Address
               </h3>
-              <InfoField label="Address" value={formData.permanent_address} />
-              <InfoField label="City" value={formData.permanent_city} />
-              <InfoField label="District" value={formData.permanent_district} />
-              <InfoField label="State" value={formData.permanent_state} />
-              <InfoField label="Pincode" value={formData.permanent_pincode} />
-              <InfoField label="Country" value={formData.permanent_country} />
+              <InfoField label="Address" value={displayData.permanent_address} isEditing={isEditing} field="permanent_address" onFieldChange={handleFieldChange} />
+              <InfoField label="City" value={displayData.permanent_city} isEditing={isEditing} field="permanent_city" onFieldChange={handleFieldChange} />
+              <InfoField label="District" value={displayData.permanent_district} isEditing={isEditing} field="permanent_district" onFieldChange={handleFieldChange} />
+              <InfoField label="State" value={displayData.permanent_state} isEditing={isEditing} field="permanent_state" onFieldChange={handleFieldChange} />
+              <InfoField label="Pincode" value={displayData.permanent_pincode} isEditing={isEditing} field="permanent_pincode" onFieldChange={handleFieldChange} />
+              <InfoField label="Country" value={displayData.permanent_country} isEditing={isEditing} field="permanent_country" onFieldChange={handleFieldChange} />
             </div>
           </div>
         </div>
@@ -608,15 +727,9 @@ export default function AdmissionDetail() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <InfoField label="Name" value={formData.emergency_contact_name} />
-            <InfoField
-              label="Relation"
-              value={formData.emergency_contact_relation}
-            />
-            <InfoField
-              label="Mobile"
-              value={formData.emergency_contact_mobile}
-            />
+            <InfoField label="Name" value={displayData.emergency_contact_name} isEditing={isEditing} field="emergency_contact_name" onFieldChange={handleFieldChange} />
+            <InfoField label="Relation" value={displayData.emergency_contact_relation} isEditing={isEditing} field="emergency_contact_relation" onFieldChange={handleFieldChange} />
+            <InfoField label="Mobile" value={displayData.emergency_contact_mobile} isEditing={isEditing} field="emergency_contact_mobile" onFieldChange={handleFieldChange} />
           </div>
         </div>
 
@@ -830,73 +943,82 @@ export default function AdmissionDetail() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <InfoField
               label="Disabled"
-              value={formData.is_disabled === "yes" ? "Yes" : "No"}
+              value={isEditing ? displayData.is_disabled : (displayData.is_disabled === "yes" ? "Yes" : "No")}
+              isEditing={isEditing} field="is_disabled" onFieldChange={handleFieldChange}
             />
-            {formData.is_disabled === "yes" && (
+            {(displayData.is_disabled === "yes" || isEditing) && (
               <>
                 <InfoField
                   label="Disability Type"
-                  value={formData.disability_type}
+                  value={displayData.disability_type}
+                  isEditing={isEditing} field="disability_type" onFieldChange={handleFieldChange}
                 />
                 <InfoField
                   label="Disability Percentage"
-                  value={
-                    formData.disability_percentage
-                      ? `${formData.disability_percentage}%`
+                  value={isEditing ? displayData.disability_percentage : (
+                    displayData.disability_percentage
+                      ? `${displayData.disability_percentage}%`
                       : "N/A"
-                  }
+                  )}
+                  isEditing={isEditing} field="disability_percentage" onFieldChange={handleFieldChange}
                 />
               </>
             )}
             <InfoField
               label="Dependent Of"
-              value={
-                formData.dependent_of !== "none"
-                  ? formData.dependent_of
+              value={isEditing ? displayData.dependent_of : (
+                displayData.dependent_of !== "none"
+                  ? displayData.dependent_of
                   : "None"
-              }
+              )}
+              isEditing={isEditing} field="dependent_of" onFieldChange={handleFieldChange}
             />
             <InfoField
               label="Seeking Admission Under Quota"
-              value={
-                formData.seeking_admission_under_quota === "yes" ? "Yes" : "No"
-              }
+              value={isEditing ? displayData.seeking_admission_under_quota : (
+                displayData.seeking_admission_under_quota === "yes" ? "Yes" : "No"
+              )}
+              isEditing={isEditing} field="seeking_admission_under_quota" onFieldChange={handleFieldChange}
             />
             <InfoField
               label="Scholarship/Fee Concession"
-              value={
-                formData.scholarship_or_fee_concession === "yes" ? "Yes" : "No"
-              }
+              value={isEditing ? displayData.scholarship_or_fee_concession : (
+                displayData.scholarship_or_fee_concession === "yes" ? "Yes" : "No"
+              )}
+              isEditing={isEditing} field="scholarship_or_fee_concession" onFieldChange={handleFieldChange}
             />
             <InfoField
               label="Hostel Accommodation Required"
-              value={
-                formData.hostel_accommodation_required === "yes" ? "Yes" : "No"
-              }
+              value={isEditing ? displayData.hostel_accommodation_required : (
+                displayData.hostel_accommodation_required === "yes" ? "Yes" : "No"
+              )}
+              isEditing={isEditing} field="hostel_accommodation_required" onFieldChange={handleFieldChange}
             />
           </div>
 
-          {formData.previous_gap && (
+          {(displayData.previous_gap || isEditing) && (
             <div className="mt-6">
               <InfoField
                 label="Previous Gap in Education"
-                value={formData.previous_gap}
+                value={displayData.previous_gap}
+                isEditing={isEditing} field="previous_gap" onFieldChange={handleFieldChange}
               />
             </div>
           )}
 
-          {formData.extracurricular && (
+          {(displayData.extracurricular || isEditing) && (
             <div className="mt-6">
               <InfoField
                 label="Extracurricular Activities"
-                value={formData.extracurricular}
+                value={displayData.extracurricular}
+                isEditing={isEditing} field="extracurricular" onFieldChange={handleFieldChange}
               />
             </div>
           )}
 
-          {formData.achievements && (
+          {(displayData.achievements || isEditing) && (
             <div className="mt-6">
-              <InfoField label="Achievements" value={formData.achievements} />
+              <InfoField label="Achievements" value={displayData.achievements} isEditing={isEditing} field="achievements" onFieldChange={handleFieldChange} />
             </div>
           )}
         </div>
@@ -908,32 +1030,31 @@ export default function AdmissionDetail() {
           </h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <InfoField label="Payment ID" value={formData.payment_id} />
+            <InfoField label="Payment ID" value={displayData.payment_id} isEditing={isEditing} field="payment_id" onFieldChange={handleFieldChange} />
             <InfoField
               label="Payment Amount"
-              value={
-                formData.payment_amount
-                  ? `₹${parseFloat(formData.payment_amount.toString()).toFixed(
-                      2
-                    )}`
+              value={isEditing ? displayData.payment_amount : (
+                displayData.payment_amount
+                  ? `₹${parseFloat(displayData.payment_amount.toString()).toFixed(2)}`
                   : "N/A"
-              }
+              )}
+              isEditing={isEditing} field="payment_amount" onFieldChange={handleFieldChange}
             />
             <InfoField
               label="Submitted At"
               value={
-                formData.submitted_at
-                  ? new Date(formData.submitted_at).toLocaleString()
+                displayData.submitted_at
+                  ? new Date(displayData.submitted_at).toLocaleString()
                   : "Not Submitted"
               }
             />
             <InfoField
               label="Created At"
-              value={new Date(formData.created_at).toLocaleString()}
+              value={new Date(displayData.created_at).toLocaleString()}
             />
             <InfoField
               label="Last Updated"
-              value={new Date(formData.updated_at).toLocaleString()}
+              value={new Date(displayData.updated_at).toLocaleString()}
             />
           </div>
         </div>
@@ -947,11 +1068,33 @@ function InfoField({
   label,
   value,
   className = "",
+  isEditing = false,
+  field,
+  onFieldChange,
 }: {
   label: string;
   value: string | number | null | undefined;
   className?: string;
+  isEditing?: boolean;
+  field?: string;
+  onFieldChange?: (field: string, value: string | number) => void;
 }) {
+  if (isEditing && field && onFieldChange) {
+    return (
+      <div className={className}>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          {label}
+        </label>
+        <input
+          type="text"
+          value={value ?? ""}
+          onChange={(e) => onFieldChange(field, e.target.value)}
+          className="w-full px-4 py-3 bg-white rounded-lg border-2 border-amber-400 text-gray-900 font-medium focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={className}>
       <label className="block text-sm font-semibold text-gray-700 mb-2">

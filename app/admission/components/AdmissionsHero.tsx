@@ -742,21 +742,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
@@ -767,12 +752,10 @@ import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-
 interface Program {
   id: number;
   discipline: string;
 }
-
 
 interface Degree {
   id: number;
@@ -780,13 +763,11 @@ interface Degree {
   program_level_id: number;
 }
 
-
 interface Course {
   id: number;
   course_name: string;
   degree_id: number;
 }
-
 
 // Indian States and Union Territories List
 const INDIAN_STATES = [
@@ -825,16 +806,14 @@ const INDIAN_STATES = [
   "Jammu and Kashmir",
   "Ladakh",
   "Lakshadweep",
-  "Puducherry"
+  "Puducherry",
 ];
-
 
 export default function AdmissionsHero() {
   const router = useRouter();
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { academicYear, loading: yearLoading } = useAcademicYear();
-
 
   // Form data
   const [formData, setFormData] = useState({
@@ -847,7 +826,6 @@ export default function AdmissionsHero() {
     consent: false,
   });
 
-
   // Dropdown data
   const [programs, setPrograms] = useState<Program[]>([]);
   const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -856,13 +834,11 @@ export default function AdmissionsHero() {
   const [selectedDegree, setSelectedDegree] = useState<string>("");
   const [selectedCourse, setSelectedCourse] = useState<string>("");
 
-
   // Login data
   const [loginData, setLoginData] = useState({
     email: "",
     dob: null as Date | null,
   });
-
 
   useEffect(() => {
     fetchPrograms();
@@ -870,14 +846,12 @@ export default function AdmissionsHero() {
     fetchDegrees("1");
   }, []);
 
-
   useEffect(() => {
     if (selectedDegree) {
       fetchCourses(selectedDegree);
       setSelectedCourse("");
     }
   }, [selectedDegree]);
-
 
   const fetchPrograms = async () => {
     try {
@@ -890,7 +864,6 @@ export default function AdmissionsHero() {
     }
   };
 
-
   const fetchDegrees = async (programId: string) => {
     try {
       const response = await fetch(`/api/degrees?program_id=${programId}`);
@@ -901,7 +874,6 @@ export default function AdmissionsHero() {
       toast.error("Failed to load degrees");
     }
   };
-
 
   const fetchCourses = async (degreeId: string) => {
     try {
@@ -914,20 +886,17 @@ export default function AdmissionsHero() {
     }
   };
 
-
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-
 
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
 
   const formatDOBForPassword = (dob: Date): string => {
     const year = dob.getFullYear();
@@ -936,11 +905,9 @@ export default function AdmissionsHero() {
     return `${year}-${month}-${day}`;
   };
 
-
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
 
     if (!formData.name || !formData.email || !formData.mobileNumber) {
       toast.error("Please fill in all required fields");
@@ -948,13 +915,11 @@ export default function AdmissionsHero() {
       return;
     }
 
-
     if (!selectedDegree || !selectedCourse) {
       toast.error("Please select Degree and Course");
       setIsSubmitting(false);
       return;
     }
-
 
     if (!formData.consent) {
       toast.error("Please agree to receive information");
@@ -962,13 +927,11 @@ export default function AdmissionsHero() {
       return;
     }
 
-
     if (!/^\d{10}$/.test(formData.mobileNumber)) {
       toast.error("Please enter a valid 10-digit mobile number");
       setIsSubmitting(false);
       return;
     }
-
 
     if (!academicYear || !academicYear.isOpen) {
       toast.error("Admissions are currently closed.");
@@ -976,17 +939,14 @@ export default function AdmissionsHero() {
       return;
     }
 
-
     if (!formData.dob) {
       toast.error("Please select your Date of Birth");
       setIsSubmitting(false);
       return;
     }
 
-
     try {
       const dobPassword = formatDOBForPassword(formData.dob);
-
 
       const response = await fetch("/api/register", {
         method: "POST",
@@ -1007,17 +967,14 @@ export default function AdmissionsHero() {
         }),
       });
 
-
       const data = await response.json();
-
 
       if (response.ok) {
         toast.success(
           data.message ||
             "Registration successful! Please login with your email and date of birth.",
-          { duration: 5000 }
+          { duration: 5000 },
         );
-
 
         setFormData({
           name: "",
@@ -1030,7 +987,6 @@ export default function AdmissionsHero() {
         });
         setSelectedDegree("");
         setSelectedCourse("");
-
 
         setTimeout(() => {
           setShowLogin(true);
@@ -1046,11 +1002,9 @@ export default function AdmissionsHero() {
     }
   };
 
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
 
     if (!loginData.email || !loginData.dob) {
       toast.error("Please enter email and date of birth");
@@ -1058,10 +1012,8 @@ export default function AdmissionsHero() {
       return;
     }
 
-
     try {
       const dobPassword = formatDOBForPassword(loginData.dob);
-
 
       const response = await fetch("/api/login", {
         method: "POST",
@@ -1075,20 +1027,16 @@ export default function AdmissionsHero() {
         }),
       });
 
-
       const data = await response.json();
-
 
       if (response.ok) {
         toast.success("Login successful! Redirecting...");
 
-
         setLoginData({ email: "", dob: null });
         setShowLogin(false);
 
-
         router.push(
-          `/admission-form?email=${encodeURIComponent(loginData.email)}`
+          `/admission-form?email=${encodeURIComponent(loginData.email)}`,
         );
       } else {
         toast.error(data.error || "Login failed");
@@ -1101,7 +1049,6 @@ export default function AdmissionsHero() {
     }
   };
 
-
   const handleDownloadBrochureClick = () => {
     window.open("/files/brochure.pdf", "_blank");
   };
@@ -1110,10 +1057,14 @@ export default function AdmissionsHero() {
     window.open("/files/prospectus.pdf", "_blank");
   };
 
+  const handleDownloadModelQuestionPaper = () => {
+    window.open(
+      "/files/Entrance-Exam-FYUGP-Loyola-Model-Questions.docx", "_blank");
+  };
+
   const handlePGAdmissionsClick = () => {
     window.location.href = "https://lcss.linways.com/v4/adm-applicant/login";
   };
-
 
   const renderAcademicYearHeader = () => {
     if (yearLoading) {
@@ -1124,7 +1075,6 @@ export default function AdmissionsHero() {
         </div>
       );
     }
-
 
     if (!academicYear || !academicYear.isOpen) {
       return (
@@ -1139,7 +1089,6 @@ export default function AdmissionsHero() {
       );
     }
 
-
     return (
       <>
         <h2 className="text-xl font-bold text-center text-black">
@@ -1152,11 +1101,9 @@ export default function AdmissionsHero() {
     );
   };
 
-
   return (
     <>
       <Toaster position="top-right" />
-
 
       {/* HERO SECTION WITH IMAGE AND FORM */}
       <section className="relative w-full min-h-screen overflow-hidden">
@@ -1172,7 +1119,6 @@ export default function AdmissionsHero() {
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
-
         {/* HERO CONTENT - TWO COLUMN LAYOUT */}
         <div className="relative z-10 min-h-screen flex items-center py-12">
           <div className="max-w-7xl mx-auto px-6 w-full">
@@ -1185,13 +1131,11 @@ export default function AdmissionsHero() {
                   <span className="text-white/90">Future Today</span>
                 </h1>
 
-
                 <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed font-light">
-                  Join a legacy of excellence where academic rigor meets holistic
-                  development. Begin your journey towards becoming a leader,
-                  innovator, and changemaker.
+                  Join a legacy of excellence where academic rigor meets
+                  holistic development. Begin your journey towards becoming a
+                  leader, innovator, and changemaker.
                 </p>
-
 
                 {/* STATS ROW */}
                 <div className="flex flex-wrap gap-8 mb-10">
@@ -1224,9 +1168,8 @@ export default function AdmissionsHero() {
                   </div>
                 </div>
 
-
                 {/* CTA BUTTON */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                {/* <div className="flex flex-col sm:flex-row gap-4">
                   <button
                     onClick={handleDownloadBrochureClick}
                     className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group"
@@ -1241,6 +1184,33 @@ export default function AdmissionsHero() {
                     Download Prospectus
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
+                </div> */}
+
+                {/* CTA BUTTONS */}
+                <div className="flex flex-wrap gap-4 max-w-2xl">
+                  <button
+                    onClick={handleDownloadBrochureClick}
+                    className="flex-1 border-2 border-white text-white px-12 py-3 min-w-[260px] rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group text-center leading-tight"
+                  >
+                    Download Brochure
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+
+                  <button
+                    onClick={handleDownloadProspectusClick}
+                    className="flex-1 border-2 border-white text-white px-12 py-3 min-w-[260px] rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group text-center leading-tight"
+                  >
+                    Download Prospectus
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+
+                  <button
+                    onClick={handleDownloadModelQuestionPaper}
+                    className="flex-1 border-2 border-white text-white px-12 py-3 min-w-[260px] rounded-lg font-semibold text-lg hover:bg-white hover:text-primary transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center gap-2 group text-center leading-tight"
+                  >
+                    Download Model Question Paper
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </div>
               </div>
 
@@ -1250,7 +1220,6 @@ export default function AdmissionsHero() {
                   {!showLogin ? (
                     <>
                       {renderAcademicYearHeader()}
-
 
                       <form onSubmit={handleRegister} className="space-y-3">
                         <input
@@ -1262,7 +1231,6 @@ export default function AdmissionsHero() {
                           required
                         />
 
-
                         <input
                           className="w-full rounded border p-2 text-sm text-black"
                           placeholder="Enter Email Address *"
@@ -1272,7 +1240,6 @@ export default function AdmissionsHero() {
                           onChange={handleInputChange}
                           required
                         />
-
 
                         <div className="flex gap-2">
                           <select
@@ -1293,7 +1260,6 @@ export default function AdmissionsHero() {
                           />
                         </div>
 
-
                         <DatePicker
                           selected={formData.dob}
                           onChange={(date: Date | null) =>
@@ -1309,7 +1275,6 @@ export default function AdmissionsHero() {
                           wrapperClassName="w-full"
                           required
                         />
-
 
                         <div className="grid grid-cols-2 gap-2">
                           <select
@@ -1336,10 +1301,8 @@ export default function AdmissionsHero() {
                           />
                         </div>
 
-
                         {/* PROGRAM DROPDOWN - HIDDEN */}
                         <input type="hidden" value={selectedProgram} />
-
 
                         {/* ONLY DEGREE AND COURSE VISIBLE */}
                         <div className="grid grid-cols-2 gap-2">
@@ -1358,7 +1321,6 @@ export default function AdmissionsHero() {
                             ))}
                           </select>
 
-
                           <select
                             className="rounded border p-2 text-sm text-black"
                             value={selectedCourse}
@@ -1375,7 +1337,6 @@ export default function AdmissionsHero() {
                           </select>
                         </div>
 
-
                         <div className="flex items-start gap-2">
                           <input
                             type="checkbox"
@@ -1386,11 +1347,10 @@ export default function AdmissionsHero() {
                             required
                           />
                           <p className="text-xs text-black">
-                            I agree to receive information regarding my submitted
-                            applications
+                            I agree to receive information regarding my
+                            submitted applications
                           </p>
                         </div>
-
 
                         <button
                           type="submit"
@@ -1400,10 +1360,9 @@ export default function AdmissionsHero() {
                           {isSubmitting
                             ? "Registering..."
                             : !academicYear?.isOpen
-                            ? "Registrations Not Open"
-                            : "Register"}
+                              ? "Registrations Not Open"
+                              : "Register"}
                         </button>
-
 
                         {!academicYear?.isOpen && !yearLoading && (
                           <p className="text-xs text-center text-red-600">
@@ -1411,7 +1370,6 @@ export default function AdmissionsHero() {
                             later.
                           </p>
                         )}
-
 
                         <p className="text-xs text-center text-black">
                           EXISTING USER?{" "}
@@ -1437,7 +1395,6 @@ export default function AdmissionsHero() {
                           }`}
                       </p>
 
-
                       <form onSubmit={handleLogin} className="space-y-4">
                         <div className="relative flex items-center">
                           <svg
@@ -1460,12 +1417,14 @@ export default function AdmissionsHero() {
                             type="email"
                             value={loginData.email}
                             onChange={(e) =>
-                              setLoginData({ ...loginData, email: e.target.value })
+                              setLoginData({
+                                ...loginData,
+                                email: e.target.value,
+                              })
                             }
                             required
                           />
                         </div>
-
 
                         <div className="relative flex items-center">
                           <svg
@@ -1499,7 +1458,6 @@ export default function AdmissionsHero() {
                           />
                         </div>
 
-
                         <button
                           type="submit"
                           disabled={isSubmitting}
@@ -1507,7 +1465,6 @@ export default function AdmissionsHero() {
                         >
                           {isSubmitting ? "Logging in..." : "Login"}
                         </button>
-
 
                         <p className="text-xs text-center text-black">
                           NEW USER?{" "}

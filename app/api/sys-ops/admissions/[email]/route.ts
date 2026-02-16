@@ -416,6 +416,156 @@ export async function GET(
   }
 }
 
+async function updateAdmissionMySQL(email: string, data: any) {
+  const connection = await mysql.createConnection(mysqlConfig);
+
+  try {
+    const [rows] = await connection.execute<AdmissionDetailRow[]>(
+      "SELECT id FROM admission_basic_info WHERE user_email = ?",
+      [email]
+    );
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+      await connection.end();
+      return false;
+    }
+
+    const admissionId = rows[0].id;
+
+    if (data.basicInfo && Object.keys(data.basicInfo).length > 0) {
+      const fields = Object.keys(data.basicInfo)
+        .map((key) => `${key} = ?`)
+        .join(", ");
+      const values = Object.values(data.basicInfo);
+      await connection.execute(
+        `UPDATE admission_basic_info SET ${fields} WHERE id = ?`,
+        [...values, admissionId]
+      );
+    }
+
+    if (data.personalInfo && Object.keys(data.personalInfo).length > 0) {
+      const fields = Object.keys(data.personalInfo)
+        .map((key) => `${key} = ?`)
+        .join(", ");
+      const values = Object.values(data.personalInfo);
+      await connection.execute(
+        `UPDATE admission_personal_info SET ${fields} WHERE admission_id = ?`,
+        [...values, admissionId]
+      );
+    }
+
+    if (data.familyInfo && Object.keys(data.familyInfo).length > 0) {
+      const fields = Object.keys(data.familyInfo)
+        .map((key) => `${key} = ?`)
+        .join(", ");
+      const values = Object.values(data.familyInfo);
+      await connection.execute(
+        `UPDATE admission_family_info SET ${fields} WHERE admission_id = ?`,
+        [...values, admissionId]
+      );
+    }
+
+    if (data.addressInfo && Object.keys(data.addressInfo).length > 0) {
+      const fields = Object.keys(data.addressInfo)
+        .map((key) => `${key} = ?`)
+        .join(", ");
+      const values = Object.values(data.addressInfo);
+      await connection.execute(
+        `UPDATE admission_address_info SET ${fields} WHERE admission_id = ?`,
+        [...values, admissionId]
+      );
+    }
+
+    await connection.end();
+    return true;
+  } catch (error) {
+    console.error("MySQL Update Admission Error:", error);
+    await connection.end();
+    throw error;
+  }
+}
+
+async function updateAdmissionSupabase(email: string, data: any) {
+  try {
+    const { data: basicInfo, error: fetchError } = await supabase
+      .from("admission_basic_info")
+      .select("id")
+      .eq("user_email", email)
+      .single();
+
+    if (fetchError || !basicInfo) return false;
+
+    const admissionId = basicInfo.id;
+
+    if (data.basicInfo && Object.keys(data.basicInfo).length > 0) {
+      const { error } = await supabase
+        .from("admission_basic_info")
+        .update(data.basicInfo)
+        .eq("id", admissionId);
+      if (error) throw error;
+    }
+
+    if (data.personalInfo && Object.keys(data.personalInfo).length > 0) {
+      const { error } = await supabase
+        .from("admission_personal_info")
+        .update(data.personalInfo)
+        .eq("admission_id", admissionId);
+      if (error) throw error;
+    }
+
+    if (data.familyInfo && Object.keys(data.familyInfo).length > 0) {
+      const { error } = await supabase
+        .from("admission_family_info")
+        .update(data.familyInfo)
+        .eq("admission_id", admissionId);
+      if (error) throw error;
+    }
+
+    if (data.addressInfo && Object.keys(data.addressInfo).length > 0) {
+      const { error } = await supabase
+        .from("admission_address_info")
+        .update(data.addressInfo)
+        .eq("admission_id", admissionId);
+      if (error) throw error;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Supabase Update Admission Error:", error);
+    throw error;
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ email: string }> }
+) {
+  try {
+    const { email } = await params;
+    const decodedEmail = decodeURIComponent(email);
+    const body = await request.json();
+
+    const success = isDevelopment
+      ? await updateAdmissionSupabase(decodedEmail, body)
+      : await updateAdmissionMySQL(decodedEmail, body);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: "Admission not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ message: "Admission updated successfully" });
+  } catch (error: any) {
+    console.error("Error updating admission:", error);
+    return NextResponse.json(
+      { error: "Failed to update admission", details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ email: string }> }
