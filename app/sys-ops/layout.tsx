@@ -17,7 +17,7 @@ export default function SysOpsLayout({
 
   useEffect(() => {
     const authStatus = sessionStorage.getItem("sys_ops_auth");
-    
+
     if (pathname === "/sys-ops/login") {
       setIsLoading(false);
       return;
@@ -52,7 +52,7 @@ export default function SysOpsLayout({
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto scroll-smooth p-6">{children}</main>
       </div>
     </div>
   );

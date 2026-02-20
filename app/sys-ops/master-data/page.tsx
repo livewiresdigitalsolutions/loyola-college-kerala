@@ -11,6 +11,7 @@ import {
   CalendarCog,
   HeartHandshake,
   BookMarked,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -112,6 +113,24 @@ const masterDataCards: MasterDataCard[] = [
     description: "Manage journal board members, issues & contacts",
     icon: <BookMarked className="w-8 h-8" />,
     href: "/sys-ops/master-data/journals",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "eminent-visitors",
+    title: "Eminent Visitors",
+    description: "Manage eminent visitors images and details",
+    icon: <Users className="w-8 h-8" />,
+    href: "/sys-ops/master-data/eminent-visitors",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "institutional-governance",
+    title: "Institutional Governance",
+    description: "Manage administration, governing body & academic council",
+    icon: <GraduationCap className="w-8 h-8" />,
+    href: "/sys-ops/master-data/institutional-governance",
     color: "text-white",
     bgColor: "bg-primary",
   },
