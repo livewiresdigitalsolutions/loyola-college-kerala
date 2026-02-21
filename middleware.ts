@@ -6,15 +6,42 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-min-32-chars-change-in-production'
 );
 
+const JOURNAL_JWT_SECRET = new TextEncoder().encode(
+  process.env.JOURNAL_JWT_SECRET || process.env.JWT_SECRET || 'loyola-journal-secret-key-min-32-characters'
+);
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Protect journal dashboard routes
+  if (pathname.startsWith('/journals/dashboard')) {
+    const token = request.cookies.get('journal_auth_token')?.value;
+
+    if (!token) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/journals/article-submission';
+      url.searchParams.set('error', 'login_required');
+      return NextResponse.redirect(url);
+    }
+
+    try {
+      await jwtVerify(token, JOURNAL_JWT_SECRET);
+      return NextResponse.next();
+    } catch (error) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/journals/article-submission';
+      url.searchParams.set('error', 'session_expired');
+      const response = NextResponse.redirect(url);
+      response.cookies.delete('journal_auth_token');
+      return response;
+    }
+  }
 
   // Protect admission-form route
   if (pathname.startsWith('/admission-form')) {
     const token = request.cookies.get('auth_token')?.value;
 
     if (!token) {
-      // No authentication token found - redirect to home
       console.log('No token found, redirecting to home');
       const url = request.nextUrl.clone();
       url.pathname = '/';
@@ -23,37 +50,30 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      // Verify the JWT token
       const { payload } = await jwtVerify(token, JWT_SECRET);
-      
-      // Get email from URL query parameter
+
       const emailFromUrl = request.nextUrl.searchParams.get('email');
-      
-      // Verify that the token's email matches the URL email parameter
+
       if (payload.email !== emailFromUrl) {
         console.log('Email mismatch - Token:', payload.email, 'URL:', emailFromUrl);
         const url = request.nextUrl.clone();
         url.pathname = '/';
         url.searchParams.set('error', 'unauthorized');
-        
-        // Clear invalid cookie
+
         const response = NextResponse.redirect(url);
         response.cookies.delete('auth_token');
         return response;
       }
 
-      // Token is valid and email matches - allow access
       console.log('Authentication successful for:', payload.email);
       return NextResponse.next();
-      
+
     } catch (error) {
-      // Token verification failed (expired or invalid)
       console.error('Token verification failed:', error);
       const url = request.nextUrl.clone();
       url.pathname = '/';
       url.searchParams.set('error', 'session_expired');
-      
-      // Clear the invalid cookie
+
       const response = NextResponse.redirect(url);
       response.cookies.delete('auth_token');
       return response;
@@ -66,5 +86,5 @@ export async function middleware(request: NextRequest) {
 
 // Configure which routes to protect
 export const config = {
-  matcher: ['/admission-form/:path*'],
+  matcher: ['/admission-form/:path*', '/journals/dashboard/:path*'],
 };

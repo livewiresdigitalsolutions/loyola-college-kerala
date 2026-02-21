@@ -8,6 +8,8 @@ import {
   Users,
   BookOpen,
   Mail,
+  FileText,
+  UserCheck,
 } from "lucide-react";
 
 interface JournalCard {
@@ -43,6 +45,22 @@ const journalCards: JournalCard[] = [
     href: "/sys-ops/master-data/journals/contacts",
     icon: <Mail className="w-6 h-6" />,
     color: "bg-purple-500",
+  },
+  {
+    id: "articles",
+    title: "Article Submissions",
+    description: "Review, approve, or reject submitted articles",
+    href: "/sys-ops/master-data/journals/articles",
+    icon: <FileText className="w-6 h-6" />,
+    color: "bg-amber-500",
+  },
+  {
+    id: "users",
+    title: "Registered Users",
+    description: "View and manage journal registered users",
+    href: "/sys-ops/master-data/journals/users",
+    icon: <UserCheck className="w-6 h-6" />,
+    color: "bg-teal-500",
   },
 ];
 

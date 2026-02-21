@@ -41,16 +41,16 @@ export default function Hero() {
             <div className="absolute inset-0 bg-linear-to-tr from-black/5 to-white/20 pointer-events-none z-10"></div>
 
             <div className="absolute inset-0 p-8 flex flex-col font-sans">
-              <div className="text-[52px] md:text-[64px] leading-[0.85] tracking-tighter text-black uppercase font-bold wrap-break-word -ml-1">
-                OYOLA
+              <div className="text-[42px] md:text-[52px] leading-[0.85] tracking-tighter text-black uppercase font-bold wrap-break-word -ml-1">
+                LOYOLA
                 <br />
-                OURNAL
+                JOURNAL
                 <br />
                 OF
                 <br />
-                OCIAL
+                SOCIAL
                 <br />
-                CIENCES
+                SCIENCES
               </div>
 
               <div className="mt-auto z-20">

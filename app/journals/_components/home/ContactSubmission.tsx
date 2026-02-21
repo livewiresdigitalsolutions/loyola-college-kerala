@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Download } from "lucide-react";
+import Link from "next/link";
+import { Download, Send, FileText, MessageSquare } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { useJournalAuth } from "../AuthContext";
 
 export default function ContactSubmission() {
+  const { isAuthenticated } = useJournalAuth();
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [sending, setSending] = useState(false);
 
@@ -31,6 +34,39 @@ export default function ContactSubmission() {
     }
   };
 
+  // Logged-in users see a simplified CTA with two action buttons
+  if (isAuthenticated) {
+    return (
+      <section className="w-full bg-primary py-20 px-4 md:px-8">
+        <div className="max-w-4xl mx-auto text-center flex flex-col items-center gap-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">
+            Ready to Contribute?
+          </h2>
+          <p className="text-white/80 text-base md:text-lg max-w-2xl leading-relaxed">
+            Submit your research articles for publication or get in touch with our editorial team for any queries.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
+            <Link
+              href="/journals/article-submission"
+              className="flex items-center gap-3 bg-secondary text-primary font-bold px-8 py-4 rounded-lg hover:bg-secondary/90 transition-all duration-300 shadow-lg hover:shadow-xl text-sm md:text-base"
+            >
+              <FileText size={20} />
+              Submit an Article
+            </Link>
+            <Link
+              href="/journals/contact"
+              className="flex items-center gap-3 bg-white/10 text-white border border-white/30 font-bold px-8 py-4 rounded-lg hover:bg-white/20 transition-all duration-300 shadow-lg hover:shadow-xl text-sm md:text-base"
+            >
+              <MessageSquare size={20} />
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Guest users see the full Get in Touch form + Article Submission card
   return (
     <section className="w-full bg-primary py-16 px-4 md:px-8">
       <Toaster position="top-right" />
