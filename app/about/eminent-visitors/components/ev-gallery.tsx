@@ -39,7 +39,7 @@ export default function EvGallery() {
       <section className="w-full bg-white py-20">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-bold text-primary text-center mb-16">
-            EMINENT VISITORS
+            Eminent Visitors
           </h2>
           {/* Loading skeleton */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -62,7 +62,7 @@ export default function EvGallery() {
       <section className="w-full bg-white py-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-primary mb-8">
-            EMINENT VISITORS
+            Eminent Visitors
           </h2>
           <p className="text-gray-500 text-lg">No visitors to display yet.</p>
         </div>
@@ -75,7 +75,7 @@ export default function EvGallery() {
       <div className="max-w-7xl mx-auto px-6">
         {/* HEADING */}
         <h2 className="text-4xl md:text-5xl font-bold text-primary text-center mb-16">
-          EMINENT VISITORS
+          Eminent Visitors
         </h2>
 
         {/* GALLERY GRID */}

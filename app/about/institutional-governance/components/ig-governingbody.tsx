@@ -42,7 +42,7 @@ export default function IgGoverningBody() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-primary">
-              GOVERNING BODY
+              Governing Body
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -68,7 +68,7 @@ export default function IgGoverningBody() {
         {/* SECTION HEADING */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-primary">
-            GOVERNING BODY
+            Governing Body
           </h2>
         </div>
 
