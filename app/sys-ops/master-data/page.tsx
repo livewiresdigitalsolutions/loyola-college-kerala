@@ -116,15 +116,6 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
-  {
-    id: "associations",
-    title: "Student Associations",
-    description: "Manage student associations, teams & activities",
-    icon: <Users className="w-8 h-8" />,
-    href: "/sys-ops/master-data/associations",
-    color: "text-white",
-    bgColor: "bg-primary",
-  },
 
 ];
 
