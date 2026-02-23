@@ -2,101 +2,84 @@
 
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
-
-type Rank = "FIRST" | "SECOND" | "THIRD";
+import { useEffect, useState } from "react";
 
 interface Qualifier {
+    id: number;
     name: string;
     department: string;
-    rank: Rank;
-    image: string;
+    qualifier_type: "NET" | "JRF" | "COMPETITION";
+    rank: "FIRST" | "SECOND" | "THIRD";
+    year_range: string;
+    image_url: string;
 }
 
-const rankBadgeColors: Record<Rank, string> = {
-    FIRST: "bg-[var(--primary)] text-white",
-    SECOND: "bg-[var(--secondary)] text-white",
-    THIRD: "bg-[var(--primary)] text-white",
+const rankBadge = {
+    FIRST: { bg: "bg-yellow-400", text: "text-yellow-900" },
+    SECOND: { bg: "bg-gray-300", text: "text-gray-700" },
+    THIRD: { bg: "bg-orange-400", text: "text-orange-900" },
 };
 
-const netQualifiers: Qualifier[] = [
-    {
-        name: "Anonymous",
-        department: "Department of Sociology",
-        rank: "FIRST",
-        image: "/assets/defaultprofile.png",
-    },
+const sectionConfig = [
+    { type: "NET" as const, title: "UGC NET Qualifiers", color: "text-[var(--primary)]" },
+    { type: "JRF" as const, title: "JRF Qualifiers", color: "text-[var(--primary)]" },
+    { type: "COMPETITION" as const, title: "Competition Winners", color: "text-[var(--primary)]" },
 ];
-
-const jrfQualifiers: Qualifier[] = [];
-
-const competitionWinners: Qualifier[] = [];
 
 function QualifierCard({ qualifier }: { qualifier: Qualifier }) {
     return (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
-            {/* Image Container */}
+            {/* Image */}
             <div className="relative aspect-[4/5] overflow-hidden m-3 rounded-lg">
                 <Image
-                    src={qualifier.image}
+                    src={qualifier.image_url || "/assets/defaultprofile.png"}
                     alt={qualifier.name}
                     fill
                     className="object-cover"
                 />
                 {/* Rank Badge */}
-                <span
-                    className={`absolute top-2 right-2 text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-md shadow-sm ${rankBadgeColors[qualifier.rank]}`}
-                >
+                <span className={`absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${rankBadge[qualifier.rank].bg} ${rankBadge[qualifier.rank].text}`}>
                     {qualifier.rank}
                 </span>
             </div>
 
             {/* Info */}
-            <div className="px-3 pb-4 pt-1 text-center flex-1 flex flex-col">
-                <h3 className="text-sm md:text-[15px] font-bold text-gray-900 leading-snug">
+            <div className="px-3 pb-4 flex flex-col flex-1">
+                <h3 className="text-sm font-bold text-gray-900 leading-snug" style={{ fontFamily: "'Playfair Display', serif" }}>
                     {qualifier.name}
                 </h3>
-                <p className="text-[10px] md:text-[11px] text-gray-500 mt-1.5 uppercase tracking-wider leading-snug">
-                    {qualifier.department}
-                </p>
+                <p className="text-[10px] uppercase tracking-wide text-gray-500 mt-1">{qualifier.department}</p>
+                {qualifier.year_range && (
+                    <span className="mt-2 inline-block text-[10px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full w-fit">
+                        {qualifier.year_range}
+                    </span>
+                )}
             </div>
         </div>
     );
 }
 
-interface SubSectionProps {
-    title: string;
-    yearRange: string;
-    qualifiers: Qualifier[];
-    buttonLabel: string;
-}
+function SubSection({ title, qualifiers }: { title: string; qualifiers: Qualifier[] }) {
+    if (qualifiers.length === 0) return null;
 
-function SubSection({ title, yearRange, qualifiers, buttonLabel }: SubSectionProps) {
     return (
-        <div className="mb-20 last:mb-0">
-            {/* Sub-section heading */}
-            <div className="text-center mb-8">
-                <h3 className="text-xl md:text-2xl font-bold text-primary">
+        <div className="mb-16">
+            <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl md:text-2xl font-bold text-[var(--primary)] border-b-2 border-[var(--primary)] pb-1 w-fit">
                     {title}
                 </h3>
-                <span className="mt-3 inline-block bg-[var(--secondary)] text-white text-xs font-bold px-4 py-1.5 rounded-full">
-                    {yearRange}
-                </span>
             </div>
 
-            {/* Qualifier Cards */}
-            {qualifiers.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6 mt-8">
-                    {qualifiers.map((q, idx) => (
-                        <QualifierCard key={idx} qualifier={q} />
-                    ))}
-                </div>
-            )}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6 mt-8">
+                {qualifiers.map((q, idx) => (
+                    <QualifierCard key={idx} qualifier={q} />
+                ))}
+            </div>
 
-            {/* View More Button */}
-            <div className="text-center mt-16">
-                <button className="inline-flex items-center gap-1.5 border-2 border-[var(--primary)] text-[var(--primary)] px-10 py-4.5 rectangle-lg text-sm font-bold hover:bg-[var(--primary)] hover:text-white transition-all duration-200">
-                    {buttonLabel}
-                    <ChevronRight className="w-5 h-5" />
+            <div className="mt-8">
+                <button className="inline-flex items-center gap-2 border border-[var(--primary)] text-[var(--primary)] px-6 py-2.5 text-sm font-semibold rounded-full hover:bg-[var(--primary)] hover:text-white transition-all duration-200">
+                    View more
+                    <ChevronRight className="w-4 h-4" />
                 </button>
             </div>
         </div>
@@ -104,40 +87,53 @@ function SubSection({ title, yearRange, qualifiers, buttonLabel }: SubSectionPro
 }
 
 export default function AcademicQualifiers() {
+    const [qualifiers, setQualifiers] = useState<Qualifier[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch("/api/students/students-progression?type=qualifiers")
+            .then((r) => r.json())
+            .then((d) => { if (d.success) setQualifiers(d.data || []); })
+            .catch(console.error)
+            .finally(() => setLoading(false));
+    }, []);
+
     return (
         <section className="bg-white py-16 md:py-24">
             <div className="max-w-7xl mx-auto px-6">
-                {/* SECTION HEADING */}
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-primary">
+                {/* Section heading */}
+                <div className="text-center mb-20">
+                    <h2
+                        className="text-3xl md:text-4xl font-bold text-primary"
+                    >
                         Academic Qualifiers
                     </h2>
-                    <div className="mt-3 w-12 h-1 bg-[var(--primary)] mx-auto rounded-full" />
+                    <div className="mt-3 w-12 h-1 bg-[var(--secondary)] mx-auto rounded-full" />
                 </div>
 
-                {/* UGC NET Qualifiers */}
-                <SubSection
-                    title="UGC NET Qualifiers"
-                    yearRange="2019 - 21"
-                    qualifiers={netQualifiers}
-                    buttonLabel="View more UGC NET Qualifiers"
-                />
-
-                {/* JRF Qualifiers */}
-                <SubSection
-                    title="JRF Qualifiers"
-                    yearRange="2017 - 19"
-                    qualifiers={jrfQualifiers}
-                    buttonLabel="View more JRF Qualifiers"
-                />
-
-                {/* Winners of competition */}
-                <SubSection
-                    title="Winners of competition"
-                    yearRange="2017 - 19"
-                    qualifiers={competitionWinners}
-                    buttonLabel="View more Winners of Competition"
-                />
+                {loading ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden animate-pulse">
+                                <div className="aspect-[4/5] bg-gray-200 m-3 rounded-lg" />
+                                <div className="px-3 pb-4 space-y-2">
+                                    <div className="h-3 bg-gray-200 rounded w-3/4" />
+                                    <div className="h-2 bg-gray-100 rounded w-1/2" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : qualifiers.length === 0 ? (
+                    <p className="text-center text-gray-400 py-16">No qualifiers found.</p>
+                ) : (
+                    sectionConfig.map(({ type, title }) => (
+                        <SubSection
+                            key={type}
+                            title={title}
+                            qualifiers={qualifiers.filter((q) => q.qualifier_type === type)}
+                        />
+                    ))
+                )}
             </div>
         </section>
     );

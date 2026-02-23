@@ -116,6 +116,15 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
+  {
+    id: "students-progression",
+    title: "Student Progression",
+    description: "Manage rank holders, qualifiers, placements & initiatives",
+    icon: <GraduationCap className="w-8 h-8" />,
+    href: "/sys-ops/master-data/students-progression",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
 
 ];
 
