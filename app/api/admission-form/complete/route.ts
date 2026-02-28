@@ -87,7 +87,6 @@ async function getCompleteAdmissionMySQL(email: string) {
       academicMarks: academicMarks || []
     };
   } catch (error) {
-    console.error('MySQL Get Complete Admission Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -157,7 +156,6 @@ async function getCompleteAdmissionSupabase(email: string) {
       academicMarks: academicMarks || []
     };
   } catch (error) {
-    console.error('Supabase Get Complete Admission Error:', error);
     throw error;
   }
 }
@@ -168,7 +166,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
 
-    console.log('Complete form GET request for email:', email);
 
     if (!email) {
       return NextResponse.json(
@@ -182,17 +179,14 @@ export async function GET(request: Request) {
       : await getCompleteAdmissionMySQL(email);
 
     if (!data) {
-      console.log('No form data found for email:', email);
       return NextResponse.json(
         { data: null, message: 'No form data found' },
         { status: 404 }
       );
     }
 
-    console.log('Form data loaded successfully for:', email);
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching complete admission:', error);
     return NextResponse.json(
       { error: 'Failed to fetch admission data', details: error.message, data: null },
       { status: 500 }

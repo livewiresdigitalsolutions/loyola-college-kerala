@@ -97,7 +97,6 @@ export async function PUT(
       });
     }
   } catch (error: any) {
-    console.error('Error updating academic year:', error);
     return NextResponse.json(
       { error: 'Failed to update academic year', details: error.message },
       { status: 500 }
@@ -129,7 +128,6 @@ export async function DELETE(
       return NextResponse.json({ message: 'Academic year deleted successfully' });
     }
   } catch (error: any) {
-    console.error('Error deleting academic year:', error);
     return NextResponse.json(
       { error: 'Failed to delete academic year', details: error.message },
       { status: 500 }

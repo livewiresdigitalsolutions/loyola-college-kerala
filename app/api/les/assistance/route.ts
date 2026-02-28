@@ -45,7 +45,6 @@ export async function GET() {
             : await fetchFromMySQL();
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error fetching LES assistance contacts:', error);
         return NextResponse.json(
             { error: 'Failed to fetch assistance contacts' },
             { status: 500 }

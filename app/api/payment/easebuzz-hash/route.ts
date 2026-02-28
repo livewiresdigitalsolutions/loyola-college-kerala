@@ -169,16 +169,9 @@ export async function POST(request: Request) {
   try {
     const { txnid, amount, firstname, email, phone, productinfo } = await request.json();
 
-    console.log('=== PAYMENT REQUEST RECEIVED ===');
-    console.log('Transaction ID:', txnid);
-    console.log('Amount:', amount);
-    console.log('Customer:', firstname, email, phone);
-    console.log('Product:', productinfo);
-    console.log('================================');
 
     // Validate Easebuzz credentials
     if (!EASEBUZZ_KEY || !EASEBUZZ_SALT) {
-      console.error('ERROR: Easebuzz credentials not configured');
       return NextResponse.json(
         { success: false, error: 'Easebuzz credentials not configured' },
         { status: 500 }
@@ -187,7 +180,6 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!txnid || !amount || !firstname || !email || !phone) {
-      console.error('ERROR: Missing required fields');
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -200,7 +192,6 @@ export async function POST(request: Request) {
     
     // Validate amount
     if (isNaN(numAmount) || numAmount <= 0) {
-      console.error('ERROR: Invalid amount:', amount);
       return NextResponse.json(
         { success: false, error: 'Invalid amount. Amount must be greater than 0' },
         { status: 400 }
@@ -216,7 +207,6 @@ export async function POST(request: Request) {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(cleanEmail)) {
-      console.error('ERROR: Invalid email format:', cleanEmail);
       return NextResponse.json(
         { success: false, error: 'Invalid email format' },
         { status: 400 }
@@ -226,7 +216,6 @@ export async function POST(request: Request) {
     // Validate phone format (10 digits)
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(cleanPhone)) {
-      console.error('ERROR: Invalid phone format:', cleanPhone);
       return NextResponse.json(
         { success: false, error: 'Invalid phone number. Must be 10 digits' },
         { status: 400 }
@@ -254,27 +243,12 @@ export async function POST(request: Request) {
       .update(hashString)
       .digest('hex');
 
-    console.log('=== HASH GENERATION DEBUG ===');
-    console.log('Key:', EASEBUZZ_KEY);
-    console.log('Txnid:', cleanTxnid);
-    console.log('Amount:', cleanAmount);
-    console.log('Productinfo:', cleanProductinfo);
-    console.log('Firstname:', cleanFirstname);
-    console.log('Email:', cleanEmail);
-    console.log('Phone:', cleanPhone);
-    console.log('Hash String:', hashString);
-    console.log('Pipe count:', (hashString.match(/\|/g) || []).length);
-    console.log('Expected pipes: 16');
-    console.log('Generated Hash:', hash);
-    console.log('=== END DEBUG ===');
 
     // Prepare callback URLs
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const successUrl = `${baseUrl}/payment-success?txnid=${encodeURIComponent(cleanTxnid)}&email=${encodeURIComponent(cleanEmail)}`;
     const failureUrl = `${baseUrl}/payment-failure?txnid=${encodeURIComponent(cleanTxnid)}&email=${encodeURIComponent(cleanEmail)}`;
 
-    console.log('Success URL:', successUrl);
-    console.log('Failure URL:', failureUrl);
 
     // Prepare form data for Easebuzz API
     const formData = new URLSearchParams();
@@ -299,12 +273,8 @@ export async function POST(request: Request) {
     formData.append('udf6', udf6);
     formData.append('udf7', udf7);
 
-    console.log('=== FORM DATA BEING SENT ===');
-    console.log(Object.fromEntries(formData.entries()));
-    console.log('============================');
 
     // Call Easebuzz Initiate Payment API
-    console.log('Calling Easebuzz API:', `${EASEBUZZ_BASE_URL}/payment/initiateLink`);
     
     const response = await fetch(`${EASEBUZZ_BASE_URL}/payment/initiateLink`, {
       method: 'POST',
@@ -317,10 +287,6 @@ export async function POST(request: Request) {
 
     const result = await response.json();
 
-    console.log('=== EASEBUZZ API RESPONSE ===');
-    console.log('Status Code:', response.status);
-    console.log('Response:', JSON.stringify(result, null, 2));
-    console.log('============================');
 
     // Check if payment initiation was successful
     if (result.status === 1 && result.data) {
@@ -334,10 +300,6 @@ export async function POST(request: Request) {
         paymentUrl = `${EASEBUZZ_PAYMENT_URL}/${paymentUrl}`;
       }
 
-      console.log('✅ Payment initiated successfully!');
-      console.log('Payment URL:', paymentUrl);
-      console.log('Transaction ID:', cleanTxnid);
-      console.log('Amount: ₹', cleanAmount);
 
       return NextResponse.json({
         success: true,
@@ -348,10 +310,6 @@ export async function POST(request: Request) {
       });
     } else {
       // Payment initiation failed
-      console.error('❌ Easebuzz initiation failed');
-      console.error('Status:', result.status);
-      console.error('Error:', result.error || result.data);
-      console.error('Error Description:', result.error_desc);
       
       return NextResponse.json(
         { 
@@ -366,10 +324,6 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    console.error('=== PAYMENT INITIATION ERROR ===');
-    console.error('Error:', error);
-    console.error('Stack:', error instanceof Error ? error.stack : 'No stack trace');
-    console.error('================================');
     
     return NextResponse.json(
       { 

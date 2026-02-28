@@ -91,7 +91,6 @@ function HallTicketPreviewContent() {
         router.push("/");
       }
     } catch (error) {
-      console.error("Error fetching hall ticket:", error);
       toast.error("Failed to load hall ticket");
     } finally {
       setIsLoading(false);
@@ -138,7 +137,6 @@ function HallTicketPreviewContent() {
           : "N/A",
       });
     } catch (error) {
-      console.error("Error fetching program details:", error);
     }
   };
 
@@ -187,7 +185,6 @@ function HallTicketPreviewContent() {
 
       toast.success("Hall ticket downloaded successfully!");
     } catch (error) {
-      console.error("Error generating PDF:", error);
       toast.error("Failed to generate PDF. Please try again.");
     } finally {
       setIsDownloading(false);
@@ -207,7 +204,6 @@ function HallTicketPreviewContent() {
         }),
       });
     } catch (error) {
-      console.error("Error updating status:", error);
     }
   };
 

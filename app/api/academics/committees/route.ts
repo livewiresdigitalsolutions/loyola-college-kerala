@@ -37,7 +37,6 @@ export async function GET() {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching committees:', error);
         return NextResponse.json(
             { error: 'Failed to fetch committees', details: error.message },
             { status: 500 }
@@ -71,7 +70,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, name, description, type, sort_order });
         }
     } catch (error: any) {
-        console.error('Error creating committee:', error);
         return NextResponse.json(
             { error: 'Failed to create committee', details: error.message },
             { status: 500 }

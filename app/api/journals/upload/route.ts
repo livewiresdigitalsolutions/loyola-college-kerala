@@ -38,7 +38,6 @@ export async function POST(request: Request) {
         const url = `/assets/journals/uploads/${fileName}`;
         return NextResponse.json({ url, fileName });
     } catch (error: any) {
-        console.error('Upload error:', error);
         return NextResponse.json({ error: 'Upload failed', details: error.message }, { status: 500 });
     }
 }

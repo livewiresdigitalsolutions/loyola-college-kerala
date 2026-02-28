@@ -37,7 +37,6 @@ export function useAcademicYear() {
           setError('Configuration values not found');
         }
       } catch (err) {
-        console.error('Error fetching academic year:', err);
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);

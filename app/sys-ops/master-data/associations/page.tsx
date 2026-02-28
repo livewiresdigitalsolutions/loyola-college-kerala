@@ -240,7 +240,6 @@ export default function AssociationsAdminPage() {
       setModalType(null);
     } catch (err) {
       alert("Error saving item");
-      console.error(err);
     } finally {
       setSaving(false);
     }
@@ -268,7 +267,6 @@ export default function AssociationsAdminPage() {
       }
     } catch (err) {
       alert("Error deleting item");
-      console.error(err);
     }
   };
 

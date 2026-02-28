@@ -104,7 +104,6 @@ export async function GET(
             activities: activities || [],
         });
     } catch (error: any) {
-        console.error('Error fetching association detail:', error);
         return NextResponse.json(
             { error: 'Failed to fetch association', details: error.message },
             { status: 500 }

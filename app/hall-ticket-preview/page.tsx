@@ -97,7 +97,6 @@ function HallTicketPreviewContent() {
         setTimeout(() => window.close(), 2000);
       }
     } catch (error) {
-      console.error("Error fetching hall ticket:", error);
       toast.error("Failed to load hall ticket");
       setTimeout(() => window.close(), 2000);
     } finally {
@@ -145,7 +144,6 @@ function HallTicketPreviewContent() {
           : "N/A",
       });
     } catch (error) {
-      console.error("Error fetching program details:", error);
     }
   };
 
@@ -201,7 +199,6 @@ function HallTicketPreviewContent() {
         }, 2000); // Close after 2 seconds
       }
     } catch (error) {
-      console.error("Error generating PDF:", error);
       toast.error("Failed to generate PDF. Please try again.");
     } finally {
       setIsDownloading(false);
@@ -221,7 +218,6 @@ function HallTicketPreviewContent() {
         }),
       });
     } catch (error) {
-      console.error("Error updating status:", error);
     }
   };
 

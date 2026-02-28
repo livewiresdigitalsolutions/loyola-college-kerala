@@ -45,7 +45,6 @@ export async function GET(request: Request) {
       }
     }
   } catch (error: any) {
-    console.error("Error fetching hero media:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch hero media" },
       { status: 500 }
@@ -95,7 +94,6 @@ export async function PUT(request: Request) {
       }
     }
   } catch (error: any) {
-    console.error("Error updating hero media:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update hero media" },
       { status: 500 }
@@ -159,7 +157,6 @@ export async function DELETE(request: Request) {
           try {
             await fs.unlink(filePath);
           } catch (error) {
-            console.error("Error deleting file:", error);
           }
         }
 
@@ -175,7 +172,6 @@ export async function DELETE(request: Request) {
       }
     }
   } catch (error: any) {
-    console.error("Error deleting hero media:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete hero media" },
       { status: 500 }

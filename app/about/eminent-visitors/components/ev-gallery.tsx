@@ -25,7 +25,6 @@ export default function EvGallery() {
           setVisitors(data.data || []);
         }
       } catch (error) {
-        console.error("Error fetching eminent visitors:", error);
       } finally {
         setIsLoading(false);
       }

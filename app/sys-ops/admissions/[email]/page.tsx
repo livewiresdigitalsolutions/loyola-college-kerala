@@ -203,7 +203,6 @@ export default function AdmissionDetail() {
         setTimeout(() => router.push("/sys-ops/admissions"), 2000);
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
       toast.error("Error loading application");
       setTimeout(() => router.push("/sys-ops/admissions"), 2000);
     } finally {
@@ -259,7 +258,6 @@ export default function AdmissionDetail() {
         examCenter: examCenterDisplay,
       });
     } catch (error) {
-      console.error("Error fetching program details:", error);
     }
   };
 

@@ -53,7 +53,6 @@ export async function PUT(
       return NextResponse.json({ id: idNum, discipline });
     }
   } catch (error: any) {
-    console.error('Error updating program:', error);
     return NextResponse.json(
       { error: 'Failed to update program', details: error.message },
       { status: 500 }
@@ -84,7 +83,6 @@ export async function DELETE(
       return NextResponse.json({ message: 'Program deleted successfully' });
     }
   } catch (error: any) {
-    console.error('Error deleting program:', error);
     return NextResponse.json(
       { error: 'Failed to delete program', details: error.message },
       { status: 500 }

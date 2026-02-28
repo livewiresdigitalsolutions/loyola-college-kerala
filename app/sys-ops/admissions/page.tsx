@@ -162,7 +162,6 @@ export default function Admissions() {
         setYearFilter(defaultYear);
       }
     } catch (error) {
-      console.error("Error fetching years:", error);
     }
   };
 
@@ -172,7 +171,6 @@ export default function Admissions() {
       const data = await response.json();
       setPrograms(data);
     } catch (error) {
-      console.error("Error fetching programs:", error);
     }
   };
 
@@ -183,7 +181,6 @@ export default function Admissions() {
       setDegrees(data);
       setFilteredDegrees(data);
     } catch (error) {
-      console.error("Error fetching degrees:", error);
     }
   };
 
@@ -194,7 +191,6 @@ export default function Admissions() {
       setCourses(data);
       setFilteredCourses(data);
     } catch (error) {
-      console.error("Error fetching courses:", error);
     }
   };
 
@@ -204,7 +200,6 @@ export default function Admissions() {
       const data = await response.json();
       setExamCenters(data);
     } catch (error) {
-      console.error("Error fetching exam centers:", error);
     }
   };
 

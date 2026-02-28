@@ -50,7 +50,6 @@ export default function CoursesPage() {
         setPrograms(data);
       }
     } catch (error) {
-      console.error("Error fetching programs:", error);
     }
   };
 
@@ -62,7 +61,6 @@ export default function CoursesPage() {
         setDegrees(data);
       }
     } catch (error) {
-      console.error("Error fetching degrees:", error);
     }
   };
 

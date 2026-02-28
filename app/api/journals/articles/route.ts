@@ -28,7 +28,6 @@ export async function GET(request: NextRequest) {
         const articles = await getArticlesByUser(user.id as number);
         return NextResponse.json(articles);
     } catch (error: any) {
-        console.error('Get articles error:', error);
         return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
     }
 }
@@ -66,7 +65,6 @@ export async function POST(request: NextRequest) {
             article,
         });
     } catch (error: any) {
-        console.error('Create article error:', error);
         return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
     }
 }

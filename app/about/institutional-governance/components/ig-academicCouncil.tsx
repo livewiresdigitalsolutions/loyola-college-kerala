@@ -27,7 +27,6 @@ export default function IgAcademicCouncil() {
           setMembers(data.data || []);
         }
       } catch (error) {
-        console.error("Error fetching academic council members:", error);
       } finally {
         setIsLoading(false);
       }

@@ -137,7 +137,6 @@ export async function GET() {
       return NextResponse.json(rows);
     }
   } catch (error: any) {
-    console.error('Error fetching timeline data:', error);
     return NextResponse.json(
       { error: 'Failed to fetch timeline data', details: error.message },
       { status: 500 }

@@ -307,7 +307,6 @@ function AdmissionFormContent() {
         setIsLoggingOut(false);
       }
     } catch (error) {
-      console.error("Logout error:", error);
       toast.error("An error occurred during logout");
       setIsLoggingOut(false);
     }
@@ -434,13 +433,11 @@ function AdmissionFormContent() {
       );
       const data = await response.json();
 
-      console.log("Hall Ticket Check Response:", data);
 
       setHasHallTicket(data.hasHallTicket || false);
       setHallTicketStatus(data.status || "");
       setIsAllocated(data.isAllocated || false);
     } catch (error) {
-      console.error("Error fetching hall ticket status:", error);
       setHasHallTicket(false);
       setHallTicketStatus("");
       setIsAllocated(false);
@@ -451,7 +448,6 @@ function AdmissionFormContent() {
   useEffect(() => {
     // Check hall ticket status when payment is completed
     if (paymentStatus === "completed" && userEmail && dataLoaded) {
-      console.log("Fetching hall ticket status...");
       fetchHallTicketStatus();
 
       // Optional: Poll every 30 seconds for updates
@@ -468,7 +464,6 @@ function AdmissionFormContent() {
     if (!userEmail) return;
 
     try {
-      console.log("Starting to load form data...");
       const data = await loadCompleteForm();
 
       if (data) {
@@ -551,10 +546,8 @@ function AdmissionFormContent() {
         }
 
         checkCompletedTabs(sanitizedData);
-        console.log("Form data loaded successfully");
       }
     } catch (error) {
-      console.error("Error loading form:", error);
     } finally {
       setIsLoading(false);
       setDataLoaded(true);
@@ -1006,7 +999,6 @@ function AdmissionFormContent() {
       }
       return false;
     } catch (error) {
-      console.error("Save error:", error);
       toast.error("Failed to save form");
       return false;
     }
@@ -1045,7 +1037,6 @@ function AdmissionFormContent() {
         toast.success("Form saved successfully!");
       }
     } catch (error) {
-      console.error("Navigation error:", error);
       toast.error("An error occurred while saving");
     } finally {
       setIsSubmitting(false);

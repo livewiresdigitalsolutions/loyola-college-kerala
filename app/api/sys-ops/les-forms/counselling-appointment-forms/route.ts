@@ -106,7 +106,6 @@ async function getAppointmentsMySQL(
       perPage,
     };
   } catch (error) {
-    console.error('MySQL Get Appointments Error:', error);
     await connection.end();
     throw error;
   }
@@ -160,7 +159,6 @@ async function getAppointmentsSupabase(
       perPage,
     };
   } catch (error) {
-    console.error('Supabase Get Appointments Error:', error);
     throw error;
   }
 }
@@ -180,7 +178,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching appointments:', error);
     return NextResponse.json(
       { error: 'Failed to fetch appointments', details: error.message },
       { status: 500 }

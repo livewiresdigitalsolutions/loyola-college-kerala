@@ -71,7 +71,6 @@ export default function VolunteerDetail() {
       const data = await response.json();
       setProgramOptions(data);
     } catch (error) {
-      console.error("Error fetching programs:", error);
     }
   };
 
@@ -94,7 +93,6 @@ export default function VolunteerDetail() {
         setTimeout(() => router.push("/sys-ops/volunteers"), 2000);
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
       toast.error("Error loading volunteer application");
       setTimeout(() => router.push("/sys-ops/volunteers"), 2000);
     } finally {

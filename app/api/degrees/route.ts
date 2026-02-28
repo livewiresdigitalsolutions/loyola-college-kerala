@@ -59,7 +59,6 @@ export async function GET(request: Request) {
     
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching degrees:', error);
     return NextResponse.json(
       { error: 'Failed to fetch degrees' },
       { status: 500 }
@@ -101,7 +100,6 @@ export async function POST(request: Request) {
       });
     }
   } catch (error: any) {
-    console.error('Error creating degree:', error);
     return NextResponse.json(
       { error: 'Failed to create degree', details: error.message },
       { status: 500 }

@@ -295,7 +295,6 @@ export default function EasebuzzCheckout({
       localStorage.setItem("easebuzz_pending_email", email);
       localStorage.setItem("easebuzz_pending_amount", numAmount.toString());
 
-      console.log("Initiating payment with:", {
         txnid: transactionId,
         amount: numAmount.toFixed(2),
         firstname: firstname.trim(),
@@ -329,8 +328,6 @@ export default function EasebuzzCheckout({
         throw new Error(data.error || "Failed to get payment URL");
       }
 
-      console.log("Payment URL received:", data.paymentUrl);
-      console.log("Stored txnid for callback:", transactionId);
 
       // Show success toast before redirect
       toast.success("Redirecting to payment gateway...");
@@ -341,7 +338,6 @@ export default function EasebuzzCheckout({
         window.location.href = data.paymentUrl;
       }, 1000);
     } catch (error) {
-      console.error("Payment initiation error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to initiate payment";
       setError(errorMessage);

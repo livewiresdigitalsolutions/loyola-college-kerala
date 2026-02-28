@@ -88,7 +88,6 @@ export default function Dashboard() {
         toast.error("Failed to load available years");
       }
     } catch (error) {
-      console.error("Error fetching years:", error);
       toast.error("Failed to load available years");
     }
   };
@@ -100,7 +99,6 @@ export default function Dashboard() {
       
       if (response.ok) {
         const result = await response.json();
-        console.log("=== FULL API RESPONSE ===", result);
         
         const normalizedData: DashboardData = {
           overview: result.overview || {
@@ -127,11 +125,9 @@ export default function Dashboard() {
         setData(normalizedData);
       } else {
         const errorText = await response.text();
-        console.error("API Error:", errorText);
         toast.error("Failed to load dashboard data");
       }
     } catch (error) {
-      console.error("Dashboard fetch error:", error);
       toast.error("Failed to load dashboard statistics");
     } finally {
       setLoading(false);

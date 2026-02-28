@@ -54,7 +54,6 @@ export default function InstitutionalGovernancePage() {
                 setMembers(data.data || []);
             }
         } catch (error) {
-            console.error("Error fetching members:", error);
             toast.error("Failed to load members");
         } finally {
             setIsLoading(false);
@@ -119,7 +118,6 @@ export default function InstitutionalGovernancePage() {
                 toast.error(data.error || "Failed to add member");
             }
         } catch (error) {
-            console.error("Error adding member:", error);
             toast.error("Failed to add member");
         } finally {
             setUploading(false);
@@ -144,7 +142,6 @@ export default function InstitutionalGovernancePage() {
                 toast.error(data.error || "Failed to delete member");
             }
         } catch (error) {
-            console.error("Error deleting member:", error);
             toast.error("Failed to delete member");
         }
     };
@@ -166,7 +163,6 @@ export default function InstitutionalGovernancePage() {
                 toast.error(data.error || "Failed to update status");
             }
         } catch (error) {
-            console.error("Error updating status:", error);
             toast.error("Failed to update status");
         }
     };
@@ -200,7 +196,6 @@ export default function InstitutionalGovernancePage() {
                 toast.error(data.error || "Failed to update member");
             }
         } catch (error) {
-            console.error("Error updating member:", error);
             toast.error("Failed to update member");
         }
     };

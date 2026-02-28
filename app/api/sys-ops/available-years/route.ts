@@ -63,7 +63,6 @@ export async function GET() {
     // Return as an array, not an object with years property
     return NextResponse.json(yearList);
   } catch (error: any) {
-    console.error('Error fetching available years:', error);
     // Return empty array on error
     return NextResponse.json([], { status: 500 });
   }

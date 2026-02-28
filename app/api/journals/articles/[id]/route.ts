@@ -43,7 +43,6 @@ export async function GET(
 
         return NextResponse.json(article);
     } catch (error: any) {
-        console.error('Get article error:', error);
         return NextResponse.json({ error: 'Failed to fetch article' }, { status: 500 });
     }
 }
@@ -94,7 +93,6 @@ export async function PUT(
             article: updated,
         });
     } catch (error: any) {
-        console.error('Update article error:', error);
         return NextResponse.json({ error: 'Failed to update article' }, { status: 500 });
     }
 }
@@ -135,7 +133,6 @@ export async function DELETE(
             message: 'Article deleted.',
         });
     } catch (error: any) {
-        console.error('Delete article error:', error);
         return NextResponse.json({ error: 'Failed to delete article' }, { status: 500 });
     }
 }

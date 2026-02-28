@@ -33,7 +33,6 @@ export async function GET() {
             return NextResponse.json(rows);
         }
     } catch (error) {
-        console.error('Error fetching contact submissions:', error);
         return NextResponse.json({ error: 'Failed to fetch contact submissions' }, { status: 500 });
     }
 }
@@ -77,7 +76,6 @@ export async function POST(request: Request) {
             message: 'Message sent successfully! We will get back to you soon.'
         });
     } catch (error: any) {
-        console.error('Error submitting contact form:', error);
         return NextResponse.json(
             { success: false, message: 'Failed to send message. Please try again.' },
             { status: 500 }

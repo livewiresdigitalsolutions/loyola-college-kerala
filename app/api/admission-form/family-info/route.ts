@@ -99,7 +99,6 @@ async function saveFamilyInfoMySQL(email: string, data: any) {
     return { success: true };
   } catch (error) {
     await connection.rollback();
-    console.error('MySQL Save Family Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -119,7 +118,6 @@ async function getFamilyInfoMySQL(email: string) {
 
     return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
   } catch (error) {
-    console.error('MySQL Get Family Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -181,7 +179,6 @@ async function saveFamilyInfoSupabase(email: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Save Family Info Error:', error);
     throw error;
   }
 }
@@ -205,7 +202,6 @@ async function getFamilyInfoSupabase(email: string) {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   } catch (error) {
-    console.error('Supabase Get Family Info Error:', error);
     return null;
   }
 }
@@ -226,7 +222,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error saving family info:', error);
     return NextResponse.json(
       { error: 'Failed to save family info', details: error.message },
       { status: 500 }
@@ -249,7 +244,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching family info:', error);
     return NextResponse.json(
       { error: 'Failed to fetch family info', details: error.message },
       { status: 500 }

@@ -40,7 +40,6 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching team, using fallback:', error)
         return fallbackTeam
     }
 }
@@ -51,7 +50,6 @@ export async function getGalleryImages(): Promise<GalleryImage[]> {
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching gallery, using fallback:', error)
         return fallbackGallery
     }
 }
@@ -62,7 +60,6 @@ export async function getNewsItems(): Promise<NewsItem[]> {
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching news, using fallback:', error)
         return fallbackNews
     }
 }
@@ -73,7 +70,6 @@ export async function getCoordinators(): Promise<ContactPerson[]> {
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching coordinators, using fallback:', error)
         return fallbackCoordinators
     }
 }
@@ -92,7 +88,6 @@ export async function getContactInfo(): Promise<ContactInfo> {
         const data = await response.json()
         return data || emptyContactInfo
     } catch (error) {
-        console.error('Error fetching contact info, using fallback:', error)
         return fallbackContactInfo || emptyContactInfo
     }
 }
@@ -103,7 +98,6 @@ export async function getPartners(): Promise<Partner[]> {
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching partners, using fallback:', error)
         return fallbackPartners
     }
 }
@@ -114,7 +108,6 @@ export async function getAssistanceContacts(): Promise<AssistanceContact[]> {
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching assistance contacts, using fallback:', error)
         return fallbackAssistance
     }
 }
@@ -125,7 +118,6 @@ export async function getCounselors(): Promise<{ counselors: Counselor[], slots:
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching counselors, using fallback:', error)
         return { counselors: fallbackCounselors, slots: fallbackSlots }
     }
 }
@@ -136,7 +128,6 @@ export async function getPrograms(): Promise<Program[]> {
         if (!response.ok) throw new Error('Failed to fetch')
         return await response.json()
     } catch (error) {
-        console.error('Error fetching programs, using fallback:', error)
         return fallbackPrograms
     }
 }
@@ -155,7 +146,6 @@ export async function submitAppointment(data: AppointmentFormData): Promise<{ su
         })
         return await response.json()
     } catch (error) {
-        console.error('Error submitting appointment:', error)
         return {
             success: false,
             message: 'Failed to book appointment. Please try again.'
@@ -172,7 +162,6 @@ export async function submitVolunteerRegistration(data: VolunteerFormData): Prom
         })
         return await response.json()
     } catch (error) {
-        console.error('Error submitting registration:', error)
         return {
             success: false,
             message: 'Failed to submit registration. Please try again.'
@@ -189,7 +178,6 @@ export async function submitContactForm(data: ContactFormData): Promise<{ succes
         })
         return await response.json()
     } catch (error) {
-        console.error('Error submitting contact form:', error)
         return {
             success: false,
             message: 'Failed to send message. Please try again.'

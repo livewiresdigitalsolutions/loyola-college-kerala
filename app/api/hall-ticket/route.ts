@@ -184,7 +184,6 @@ async function getHallTicketByEmailMySQL(email: string) {
       passport_photo_url: null, // Student will paste manually
     };
   } catch (error) {
-    console.error('MySQL Get Hall Ticket By Email Error:', error);
     await connection.end();
     throw error;
   }
@@ -213,7 +212,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching hall ticket:', error);
     return NextResponse.json(
       { error: 'Failed to fetch hall ticket', details: error.message },
       { status: 500 }

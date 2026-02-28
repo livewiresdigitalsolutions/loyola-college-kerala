@@ -57,7 +57,6 @@ export async function POST(request: NextRequest) {
         try {
             await sendOTPEmail(normalizedEmail, otp);
         } catch (emailError) {
-            console.error('Failed to send OTP email:', emailError);
             return NextResponse.json(
                 { error: 'Failed to send OTP email. Please try again later.' },
                 { status: 500 }
@@ -69,7 +68,6 @@ export async function POST(request: NextRequest) {
             message: 'OTP sent to your email address.',
         });
     } catch (error: any) {
-        console.error('Forgot password error:', error);
         return NextResponse.json(
             { error: 'Something went wrong. Please try again.' },
             { status: 500 }

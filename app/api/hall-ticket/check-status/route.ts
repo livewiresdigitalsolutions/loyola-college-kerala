@@ -75,7 +75,6 @@ async function checkHallTicketStatusMySQL(email: string) {
         : 'Hall ticket status: ' + hallTicket.status
     };
   } catch (error) {
-    console.error('MySQL Check Hall Ticket Status Error:', error);
     await connection.end();
     throw error;
   }
@@ -93,15 +92,12 @@ export async function GET(request: Request) {
       );
     }
 
-    console.log('Checking hall ticket status for:', email);
 
     const statusData = await checkHallTicketStatusMySQL(email);
 
-    console.log('Hall ticket status result:', statusData);
 
     return NextResponse.json(statusData, { status: 200 });
   } catch (error: any) {
-    console.error('Error checking hall ticket status:', error);
     return NextResponse.json(
       { 
         error: 'Failed to check hall ticket status', 

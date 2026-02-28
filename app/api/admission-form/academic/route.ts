@@ -78,7 +78,6 @@ async function saveAcademicMarksMySQL(admissionFormId: number, marks: any[]) {
     return { success: true };
   } catch (error) {
     await connection.rollback();
-    console.error('MySQL Academic Marks Save Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -134,7 +133,6 @@ async function saveAcademicMarksSupabase(admissionFormId: number, marks: any[]) 
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Academic Marks Save Error:', error);
     throw error;
   }
 }
@@ -163,7 +161,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Academic Marks API Error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

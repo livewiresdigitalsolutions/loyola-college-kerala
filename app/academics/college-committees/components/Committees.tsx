@@ -41,7 +41,6 @@ export default function Committees() {
         }
         if (membersRes.ok) setMembers(await membersRes.json());
       } catch (err) {
-        console.error("Error fetching committees:", err);
       } finally {
         setLoading(false);
       }

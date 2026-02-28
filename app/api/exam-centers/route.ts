@@ -48,7 +48,6 @@ export async function GET() {
     
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching exam centers:', error);
     return NextResponse.json(
       { error: 'Failed to fetch exam centers' },
       { status: 500 }
@@ -99,7 +98,6 @@ export async function POST(request: Request) {
       }
     }
   } catch (error: any) {
-    console.error('Error creating exam center:', error);
     return NextResponse.json(
       { error: 'Failed to create exam center', details: error.message },
       { status: 500 }

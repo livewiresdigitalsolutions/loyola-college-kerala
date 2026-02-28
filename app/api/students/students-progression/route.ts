@@ -66,7 +66,6 @@ export async function GET(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error fetching student progression data:", error);
         return NextResponse.json(
             { success: false, error: "Failed to fetch data" },
             { status: 500 }
@@ -119,7 +118,6 @@ export async function POST(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error creating record:", error);
         return NextResponse.json(
             { success: false, error: "Failed to create record" },
             { status: 500 }
@@ -175,7 +173,6 @@ export async function PUT(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error updating record:", error);
         return NextResponse.json({ success: false, error: "Failed to update record" }, { status: 500 });
     }
 }
@@ -232,7 +229,6 @@ export async function DELETE(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error deleting record:", error);
         return NextResponse.json({ success: false, error: "Failed to delete record" }, { status: 500 });
     }
 }

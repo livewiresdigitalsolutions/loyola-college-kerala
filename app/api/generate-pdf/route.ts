@@ -31,7 +31,6 @@ async function getApplicationMySQL(email: string) {
     );
     return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
   } catch (error) {
-    console.error("MySQL Get Error:", error);
     throw error;
   } finally {
     await connection.end();
@@ -84,7 +83,6 @@ async function getProgramDetailsMySQL(
       examCenter: examCenter?.centre_name || "N/A",
     };
   } catch (error) {
-    console.error("MySQL Program Details Error:", error);
     throw error;
   } finally {
     await connection.end();
@@ -103,7 +101,6 @@ async function getApplicationSupabase(email: string) {
     if (error && error.code !== "PGRST116") throw error;
     return data;
   } catch (error) {
-    console.error("Supabase Get Error:", error);
     return null;
   }
 }
@@ -161,10 +158,8 @@ export async function POST(req: NextRequest) {
   let browser = null;
 
   try {
-    console.log("=== PDF Generation Started ===");
 
     const { email } = await req.json();
-    console.log("Email received:", email);
 
     if (!email) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
@@ -220,7 +215,6 @@ export async function POST(req: NextRequest) {
       : "N/A";
 
     // Load and compile template
-    console.log("Loading template...");
     const templatePath = path.resolve(
       process.cwd(),
       "public",
@@ -280,7 +274,6 @@ export async function POST(req: NextRequest) {
     const html = template(data);
 
     // Launch browser
-    console.log("Launching Puppeteer...");
     browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -291,7 +284,6 @@ export async function POST(req: NextRequest) {
 
     // Generate PDF
     // Generate PDF
-console.log("Generating PDF...");
 const pdfBuffer = await page.pdf({
   format: "A4",
   printBackground: true,
@@ -305,7 +297,6 @@ const pdfBuffer = await page.pdf({
 
 await browser.close();
 
-console.log("=== PDF Generation Completed Successfully ===");
 
 // FIX: Return directly without conversion
 return new NextResponse(pdfBuffer as BodyInit, {
@@ -317,8 +308,6 @@ return new NextResponse(pdfBuffer as BodyInit, {
 
 
   } catch (error) {
-    console.error("=== PDF Generation Error ===");
-    console.error("Error details:", error);
 
     if (browser) {
       await browser.close();

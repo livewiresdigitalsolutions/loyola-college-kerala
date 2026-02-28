@@ -33,7 +33,6 @@ export async function GET() {
             return NextResponse.json(rows);
         }
     } catch (error) {
-        console.error('Error fetching volunteers:', error);
         return NextResponse.json({ error: 'Failed to fetch volunteers' }, { status: 500 });
     }
 }
@@ -81,7 +80,6 @@ export async function POST(request: Request) {
             message: 'Registration submitted successfully! We will review your application.'
         });
     } catch (error: any) {
-        console.error('Error submitting volunteer registration:', error);
         return NextResponse.json(
             { success: false, message: 'Failed to submit registration. Please try again.' },
             { status: 500 }

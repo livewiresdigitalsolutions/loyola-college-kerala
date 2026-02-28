@@ -75,7 +75,6 @@ export async function GET() {
 
         return NextResponse.json(mapped);
     } catch (error) {
-        console.error('Error fetching LES news:', error);
         return NextResponse.json(
             { error: 'Failed to fetch news items' },
             { status: 500 }

@@ -49,7 +49,6 @@ export async function GET() {
             : await fetchCounselorsMySQL();
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error fetching LES counselors:', error);
         return NextResponse.json(
             { error: 'Failed to fetch counselors' },
             { status: 500 }

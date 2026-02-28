@@ -46,7 +46,6 @@ export async function GET() {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching associations (admin):', error);
         return NextResponse.json({ error: 'Failed to fetch associations', details: error.message }, { status: 500 });
     }
 }
@@ -95,7 +94,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, slug, ...body });
         }
     } catch (error: any) {
-        console.error('Error creating association:', error);
         return NextResponse.json({ error: 'Failed to create association', details: error.message }, { status: 500 });
     }
 }

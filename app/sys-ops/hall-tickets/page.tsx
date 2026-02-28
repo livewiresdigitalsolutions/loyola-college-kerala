@@ -1179,7 +1179,6 @@ export default function HallTicketsPage() {
         setAvailableYears(years);
       }
     } catch (error) {
-      console.error("Error fetching years:", error);
     }
   };
 
@@ -1189,7 +1188,6 @@ export default function HallTicketsPage() {
       const data = await response.json();
       setPrograms(data);
     } catch (error) {
-      console.error("Error fetching programs:", error);
     }
   };
 
@@ -1200,7 +1198,6 @@ export default function HallTicketsPage() {
       setDegrees(data);
       setFilteredDegrees(data);
     } catch (error) {
-      console.error("Error fetching degrees:", error);
     }
   };
 
@@ -1211,7 +1208,6 @@ export default function HallTicketsPage() {
       setCourses(data);
       setFilteredCourses(data);
     } catch (error) {
-      console.error("Error fetching courses:", error);
     }
   };
 
@@ -1221,7 +1217,6 @@ export default function HallTicketsPage() {
       const data = await response.json();
       setExamCenters(data);
     } catch (error) {
-      console.error("Error fetching exam centers:", error);
     }
   };
 
@@ -1270,7 +1265,6 @@ export default function HallTicketsPage() {
         toast.error("Failed to load admissions");
       }
     } catch (error) {
-      console.error("Error loading admissions:", error);
       toast.error("Error loading admissions");
     } finally {
       setLoadingAdmissions(false);
@@ -1286,7 +1280,6 @@ export default function HallTicketsPage() {
         setAllocatedTickets(data.data || []);
       }
     } catch (error) {
-      console.error("Error fetching allocated tickets:", error);
     } finally {
       setLoadingAllocated(false);
     }
@@ -1344,11 +1337,9 @@ export default function HallTicketsPage() {
         fetchAvailableAdmissions();
         fetchAllocatedTickets();
       } else {
-        console.error('Allocation failed:', result);
         toast.error(result.error || result.details || "Failed to allocate hall tickets");
       }
     } catch (error) {
-      console.error("Error allocating hall tickets:", error);
       toast.error("Error allocating hall tickets");
     } finally {
       setIsAllocating(false);
@@ -1430,7 +1421,6 @@ export default function HallTicketsPage() {
         toast.error("Export failed");
       }
     } catch (error) {
-      console.error("Export error:", error);
       toast.error("Export failed");
     }
   };

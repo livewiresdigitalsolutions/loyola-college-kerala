@@ -95,7 +95,6 @@ async function saveAddressInfoMySQL(email: string, data: any) {
     return { success: true };
   } catch (error) {
     await connection.rollback();
-    console.error('MySQL Save Address Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -115,7 +114,6 @@ async function getAddressInfoMySQL(email: string) {
 
     return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
   } catch (error) {
-    console.error('MySQL Get Address Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -175,7 +173,6 @@ async function saveAddressInfoSupabase(email: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Save Address Info Error:', error);
     throw error;
   }
 }
@@ -199,7 +196,6 @@ async function getAddressInfoSupabase(email: string) {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   } catch (error) {
-    console.error('Supabase Get Address Info Error:', error);
     return null;
   }
 }
@@ -220,7 +216,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error saving address info:', error);
     return NextResponse.json(
       { error: 'Failed to save address info', details: error.message },
       { status: 500 }
@@ -243,7 +238,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching address info:', error);
     return NextResponse.json(
       { error: 'Failed to fetch address info', details: error.message },
       { status: 500 }

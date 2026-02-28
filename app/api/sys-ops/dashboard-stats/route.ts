@@ -188,7 +188,6 @@ async function getDashboardStatsMySQL(year?: string) {
       recentApplications: recentApplications || [],
     };
   } catch (error) {
-    console.error('MySQL Dashboard Stats Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -370,7 +369,6 @@ async function getDashboardStatsSupabase(year?: string) {
       recentApplications,
     };
   } catch (error) {
-    console.error('Supabase Dashboard Stats Error:', error);
     throw error;
   }
 }
@@ -386,7 +384,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(stats);
   } catch (error: any) {
-    console.error('Error fetching dashboard stats:', error);
     return NextResponse.json(
       { error: 'Failed to fetch dashboard statistics', details: error.message },
       { status: 500 }

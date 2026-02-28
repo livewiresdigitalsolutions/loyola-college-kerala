@@ -37,7 +37,6 @@ export async function GET() {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching journal issues:', error);
         return NextResponse.json({ error: 'Failed to fetch issues', details: error.message }, { status: 500 });
     }
 }
@@ -68,7 +67,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, ...body });
         }
     } catch (error: any) {
-        console.error('Error creating journal issue:', error);
         return NextResponse.json({ error: 'Failed to create issue', details: error.message }, { status: 500 });
     }
 }

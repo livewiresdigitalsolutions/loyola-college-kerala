@@ -40,7 +40,6 @@ export async function GET() {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching associations:', error);
         return NextResponse.json(
             { error: 'Failed to fetch associations', details: error.message },
             { status: 500 }

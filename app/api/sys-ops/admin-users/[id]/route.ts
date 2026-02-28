@@ -46,7 +46,6 @@ async function updateAdminMySQL(id: string, updates: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('MySQL Update Admin Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -77,7 +76,6 @@ async function updateAdminSupabase(id: string, updates: any) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Supabase Update Admin Error:', error);
     throw error;
   }
 }
@@ -90,7 +88,6 @@ async function deleteAdminMySQL(id: string) {
     await connection.execute('DELETE FROM admin_users WHERE id = ?', [id]);
     return { success: true };
   } catch (error) {
-    console.error('MySQL Delete Admin Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -107,7 +104,6 @@ async function deleteAdminSupabase(id: string) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Supabase Delete Admin Error:', error);
     throw error;
   }
 }
@@ -130,7 +126,6 @@ export async function PUT(
       message: 'Admin updated successfully',
     });
   } catch (error: any) {
-    console.error('Error updating admin:', error);
     return NextResponse.json(
       { error: 'Failed to update admin', details: error.message },
       { status: 500 }
@@ -155,7 +150,6 @@ export async function DELETE(
       message: 'Admin deleted successfully',
     });
   } catch (error: any) {
-    console.error('Error deleting admin:', error);
     return NextResponse.json(
       { error: 'Failed to delete admin', details: error.message },
       { status: 500 }

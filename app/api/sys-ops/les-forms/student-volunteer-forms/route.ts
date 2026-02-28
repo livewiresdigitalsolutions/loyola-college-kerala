@@ -107,7 +107,6 @@ async function getVolunteersMySQL(
       perPage,
     };
   } catch (error) {
-    console.error('MySQL Get Volunteers Error:', error);
     await connection.end();
     throw error;
   }
@@ -161,7 +160,6 @@ async function getVolunteersSupabase(
       perPage,
     };
   } catch (error) {
-    console.error('Supabase Get Volunteers Error:', error);
     throw error;
   }
 }
@@ -181,7 +179,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching volunteers:', error);
     return NextResponse.json(
       { error: 'Failed to fetch volunteers', details: error.message },
       { status: 500 }

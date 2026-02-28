@@ -741,7 +741,6 @@ function ApplicationPreviewContent() {
       const response = await fetch(`/api/admission-form/complete?email=${encodeURIComponent(userEmail!)}`);
       const result = await response.json();
 
-      console.log('Application data:', result);
 
       if (result.data) {
         // Check payment status
@@ -801,7 +800,6 @@ function ApplicationPreviewContent() {
         router.push("/");
       }
     } catch (error) {
-      console.error("Error fetching application:", error);
       toast.error("Failed to load application");
     } finally {
       setIsLoading(false);
@@ -843,7 +841,6 @@ function ApplicationPreviewContent() {
         examCenter: examCenter?.centre_name || "N/A",
       });
     } catch (error) {
-      console.error("Error fetching program details:", error);
     }
   };
 
@@ -898,7 +895,6 @@ function ApplicationPreviewContent() {
       pdf.save(`Application-${applicationId}.pdf`);
       toast.success("PDF downloaded successfully!");
     } catch (error) {
-      console.error("Error generating PDF:", error);
       toast.error("Failed to generate PDF. Please try again.");
     } finally {
       setIsDownloading(false);

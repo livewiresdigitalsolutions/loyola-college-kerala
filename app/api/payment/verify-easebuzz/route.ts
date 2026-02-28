@@ -518,13 +518,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Transaction ID is required' }, { status: 400 });
     }
 
-    console.log('Verifying payment for txnid:', txnid);
 
     // Step 1: Generate hash for Transaction API
     const hashString = `${EASEBUZZ_KEY}|${txnid}|${EASEBUZZ_SALT}`;
     const hash = crypto.createHash('sha512').update(hashString).digest('hex');
 
-    console.log('Generated verification hash');
 
     // Step 2: Call Easebuzz Transaction API to verify payment
     const formData = new URLSearchParams({
@@ -543,7 +541,6 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      console.error('Easebuzz API request failed:', response.status);
       return NextResponse.json(
         { error: 'Failed to verify payment with Easebuzz' },
         { status: 500 }
@@ -552,11 +549,9 @@ export async function POST(request: Request) {
 
     const result = await response.json();
 
-    console.log('Easebuzz API Response Status:', result.status);
 
     // Step 3: Validate response
     if (!result.status || (result.status !== 1 && result.status !== true)) {
-      console.error('Payment verification failed - invalid status:', result);
       return NextResponse.json(
         { error: 'Payment verification failed', details: result },
         { status: 400 }
@@ -567,14 +562,12 @@ export async function POST(request: Request) {
     const transactionData = result.msg?.[0];
 
     if (!transactionData) {
-      console.error('No transaction data found in response');
       return NextResponse.json(
         { error: 'Transaction data not found' },
         { status: 404 }
       );
     }
 
-    console.log('Transaction Details:', {
       txnid: transactionData.txnid,
       status: transactionData.status,
       amount: transactionData.amount,
@@ -584,7 +577,6 @@ export async function POST(request: Request) {
 
     // Step 5: Check if payment was successful
     if (transactionData.status !== 'success') {
-      console.error('Payment status is not success:', transactionData.status);
       return NextResponse.json(
         { 
           error: 'Payment was not successful',
@@ -606,7 +598,6 @@ export async function POST(request: Request) {
     }
 
     if (isDevelopment) {
-      console.log('Updating Supabase for email:', emailToUpdate);
 
       const { error: dbError } = await supabase
         .from('admission_basic_info')
@@ -623,17 +614,13 @@ export async function POST(request: Request) {
         .eq('user_email', emailToUpdate);
 
       if (dbError) {
-        console.error('Supabase update error:', dbError);
         return NextResponse.json(
           { error: 'Database update failed', details: dbError.message },
           { status: 500 }
         );
       }
 
-      console.log('Supabase update successful');
     } else {
-      console.log('Updating MySQL for email:', emailToUpdate);
-      console.log('MySQL Config:', {
         host: mysqlConfig.host,
         port: mysqlConfig.port,
         database: mysqlConfig.database,
@@ -644,20 +631,17 @@ export async function POST(request: Request) {
       
       try {
         connection = await mysql.createConnection(mysqlConfig);
-        console.log('MySQL connection established');
 
         // Test the connection and table
         const [tables] = await connection.query(
           "SHOW TABLES LIKE 'admission_basic_info'"
         );
-        console.log('Table exists:', tables);
 
         // Check if record exists
         const [existingRecords] = await connection.execute(
           'SELECT id, user_email, payment_status FROM admission_basic_info WHERE user_email = ?',
           [emailToUpdate]
         );
-        console.log('Existing record:', existingRecords);
 
         // Perform the update
         const [updateResult] = await connection.execute(
@@ -684,23 +668,19 @@ export async function POST(request: Request) {
 
         const mysqlResult = updateResult as mysql.ResultSetHeader;
         
-        console.log('Update result:', {
           affectedRows: mysqlResult.affectedRows,
           changedRows: mysqlResult.changedRows,
         });
 
         if (mysqlResult.affectedRows === 0) {
-          console.error('No admission form found for email:', emailToUpdate);
           return NextResponse.json(
             { error: 'Admission form not found for this email' },
             { status: 404 }
           );
         }
 
-        console.log('MySQL update successful, rows affected:', mysqlResult.affectedRows);
 
       } catch (dbError) {
-        console.error('MySQL error details:', {
           error: dbError,
           message: dbError instanceof Error ? dbError.message : 'Unknown',
           code: (dbError as any).code,
@@ -719,7 +699,6 @@ export async function POST(request: Request) {
       } finally {
         if (connection) {
           await connection.end();
-          console.log('MySQL connection closed');
         }
       }
     }
@@ -741,7 +720,6 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Payment verification error:', error);
     return NextResponse.json(
       {
         error: 'Payment verification failed',

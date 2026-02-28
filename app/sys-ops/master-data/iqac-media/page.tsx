@@ -43,7 +43,6 @@ export default function IQACMediaPage() {
         setMediaList(data.data || []);
       }
     } catch (error) {
-      console.error("Error fetching IQAC media:", error);
       toast.error("Failed to load documents");
     } finally {
       setIsLoading(false);
@@ -109,7 +108,6 @@ export default function IQACMediaPage() {
         toast.error(data.error || "Failed to upload PDF");
       }
     } catch (error) {
-      console.error("Error uploading PDF:", error);
       toast.error("Failed to upload PDF");
     } finally {
       setUploading(false);
@@ -133,7 +131,6 @@ export default function IQACMediaPage() {
         toast.error(data.error || "Failed to delete document");
       }
     } catch (error) {
-      console.error("Error deleting document:", error);
       toast.error("Failed to delete document");
     }
   };
@@ -155,7 +152,6 @@ export default function IQACMediaPage() {
         toast.error(data.error || "Failed to update status");
       }
     } catch (error) {
-      console.error("Error updating status:", error);
       toast.error("Failed to update status");
     }
   };

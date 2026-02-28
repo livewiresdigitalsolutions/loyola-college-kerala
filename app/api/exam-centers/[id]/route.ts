@@ -65,7 +65,6 @@ export async function PUT(
       }
     }
   } catch (error: any) {
-    console.error('Error updating exam center:', error);
     return NextResponse.json(
       { error: 'Failed to update exam center', details: error.message },
       { status: 500 }
@@ -101,7 +100,6 @@ export async function DELETE(
       }
     }
   } catch (error: any) {
-    console.error('Error deleting exam center:', error);
     return NextResponse.json(
       { error: 'Failed to delete exam center', details: error.message },
       { status: 500 }

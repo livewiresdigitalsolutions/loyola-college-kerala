@@ -46,7 +46,6 @@ export async function POST(
             message: 'Article submitted for review. You will be notified once it is reviewed.',
         });
     } catch (error: any) {
-        console.error('Submit article error:', error);
         return NextResponse.json({ error: 'Failed to submit article' }, { status: 500 });
     }
 }

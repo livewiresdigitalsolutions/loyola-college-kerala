@@ -18,7 +18,7 @@ export default function Placements() {
         fetch("/api/students/students-progression?type=placements")
             .then((r) => r.json())
             .then((d) => { if (d.success) setPlacements(d.data || []); })
-            .catch(console.error)
+            .catch(() => {})
             .finally(() => setLoading(false));
     }, []);
 

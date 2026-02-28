@@ -27,7 +27,6 @@ export default function IgAdministration() {
           setMembers(data.data || []);
         }
       } catch (error) {
-        console.error("Error fetching administration members:", error);
       } finally {
         setIsLoading(false);
       }

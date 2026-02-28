@@ -14,16 +14,13 @@ async function createAdmin() {
   const password = process.argv[3] || 'Loyola@Admin2025';
   const role = process.argv[4] || 'super_admin';
 
-  console.log('\n🔐 Creating Admin User...\n');
 
   try {
     // Hash password
     const hash = await bcrypt.hash(password, 10);
-    console.log('✅ Password hashed successfully');
 
     // Connect to database
     const connection = await mysql.createConnection(mysqlConfig);
-    console.log('✅ Connected to database');
 
     // Create table if not exists
     await connection.execute(`
@@ -38,24 +35,17 @@ async function createAdmin() {
         is_active BOOLEAN DEFAULT TRUE
       )
     `);
-    console.log('✅ Table verified/created');
 
     // Insert admin
     await connection.execute(
       'INSERT INTO admin_users (username, password_hash, role) VALUES (?, ?, ?)',
       [username, hash, role]
     );
-    console.log('✅ Admin user created successfully\n');
 
-    console.log('📋 Login Credentials:');
-    console.log(`   Username: ${username}`);
-    console.log(`   Password: ${password}`);
-    console.log(`   Role: ${role}\n`);
 
     await connection.end();
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error:', error.message);
     process.exit(1);
   }
 }

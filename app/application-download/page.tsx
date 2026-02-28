@@ -68,7 +68,6 @@ function ApplicationDownloadContent() {
       const response = await fetch(`/api/admission-form/complete?email=${encodeURIComponent(userEmail!)}`);
       const result = await response.json();
 
-      console.log('Application download data:', result);
 
       if (result.data) {
         // Check payment status
@@ -123,7 +122,6 @@ function ApplicationDownloadContent() {
         router.push("/");
       }
     } catch (error) {
-      console.error("Error fetching application:", error);
       toast.error("Failed to load application");
     } finally {
       setIsLoading(false);
@@ -165,7 +163,6 @@ function ApplicationDownloadContent() {
         examCenter: examCenter?.centre_name || "N/A",
       });
     } catch (error) {
-      console.error("Error fetching program details:", error);
     }
   };
 

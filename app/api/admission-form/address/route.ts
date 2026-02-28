@@ -62,7 +62,6 @@ async function saveAddressInfoMySQL(admissionId: number, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('MySQL Address Info Save Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -111,7 +110,6 @@ async function saveAddressInfoSupabase(admissionId: number, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Address Info Save Error:', error);
     throw error;
   }
 }
@@ -133,7 +131,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Address Info API Error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
         const { password_hash, ...safeUser } = user;
         return NextResponse.json({ success: true, user: safeUser });
     } catch (error: any) {
-        console.error('Auth check error:', error);
         return NextResponse.json({ error: 'Session expired or invalid' }, { status: 401 });
     }
 }
@@ -69,7 +68,6 @@ export async function PUT(request: NextRequest) {
 
         return NextResponse.json({ success: true, message: 'Profile updated successfully' });
     } catch (error: any) {
-        console.error('Profile update error:', error);
         return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
     }
 }

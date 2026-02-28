@@ -97,7 +97,6 @@ async function getLESFormsMySQL(
       perPage,
     };
   } catch (error) {
-    console.error('MySQL Get LES Forms Error:', error);
     await connection.end();
     throw error;
   }
@@ -151,7 +150,6 @@ async function getLESFormsSupabase(
       perPage,
     };
   } catch (error) {
-    console.error('Supabase Get LES Forms Error:', error);
     throw error;
   }
 }
@@ -171,7 +169,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching LES forms:', error);
     return NextResponse.json(
       { error: 'Failed to fetch LES forms', details: error.message },
       { status: 500 }

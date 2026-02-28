@@ -63,7 +63,6 @@ async function savePersonalInfoMySQL(admissionId: number, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('MySQL Personal Info Save Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -114,7 +113,6 @@ async function savePersonalInfoSupabase(admissionId: number, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Personal Info Save Error:', error);
     throw error;
   }
 }
@@ -136,7 +134,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Personal Info API Error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

@@ -57,7 +57,6 @@ async function fetchConfigValue(key: string): Promise<string | null> {
       return result.length > 0 ? result[0].value : null;
     }
   } catch (error) {
-    console.error(`Error fetching config ${key}:`, error);
     return null;
   }
 }
@@ -307,7 +306,6 @@ export async function POST(request: Request) {
         : `Registration successful for ${academicYearLabel}! You can login with your existing credentials.`,
     });
   } catch (error: any) {
-    console.error('Registration error:', error);
 
     if (error?.message === 'Already registered for this academic year') {
       return NextResponse.json(

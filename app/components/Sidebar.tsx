@@ -668,7 +668,6 @@ const Sidebar: React.FC = () => {
       const data = await response.json();
       setPrograms(data);
     } catch (error) {
-      console.error("Error fetching programs:", error);
       toast.error("Failed to load programs");
     }
   };
@@ -679,7 +678,6 @@ const Sidebar: React.FC = () => {
       const data = await response.json();
       setDegrees(data);
     } catch (error) {
-      console.error("Error fetching degrees:", error);
       toast.error("Failed to load degrees");
     }
   };
@@ -690,7 +688,6 @@ const Sidebar: React.FC = () => {
       const data = await response.json();
       setCourses(data);
     } catch (error) {
-      console.error("Error fetching courses:", error);
       toast.error("Failed to load courses");
     }
   };
@@ -806,7 +803,6 @@ const Sidebar: React.FC = () => {
         toast.error(data.error || "Registration failed");
       }
     } catch (error) {
-      console.error("Registration error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -872,7 +868,6 @@ const Sidebar: React.FC = () => {
         toast.error(data.error || "Login failed");
       }
     } catch (error) {
-      console.error("Login error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

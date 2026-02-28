@@ -65,7 +65,6 @@ export async function POST(request: Request) {
                 });
 
             if (uploadError) {
-                console.error("Supabase upload error:", uploadError);
                 return NextResponse.json(
                     { success: false, error: "Failed to upload file to storage" },
                     { status: 500 }
@@ -93,7 +92,6 @@ export async function POST(request: Request) {
                 .select();
 
             if (error) {
-                console.error("Supabase DB error:", error);
                 return NextResponse.json(
                     { success: false, error: "Failed to save to database" },
                     { status: 500 }
@@ -138,7 +136,6 @@ export async function POST(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error uploading member:", error);
         return NextResponse.json(
             {
                 success: false,

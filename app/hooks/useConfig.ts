@@ -27,7 +27,6 @@ export function useConfig(configKey?: string) {
         setConfig(data);
       }
     } catch (error) {
-      console.error('Error fetching config:', error);
     } finally {
       setLoading(false);
     }

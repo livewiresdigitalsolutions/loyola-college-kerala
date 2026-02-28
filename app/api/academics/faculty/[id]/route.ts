@@ -51,7 +51,6 @@ export async function PUT(
             return NextResponse.json({ id: idNum, ...record });
         }
     } catch (error: any) {
-        console.error('Error updating faculty:', error);
         return NextResponse.json(
             { error: 'Failed to update faculty member', details: error.message },
             { status: 500 }
@@ -77,7 +76,6 @@ export async function DELETE(
         }
         return NextResponse.json({ message: 'Faculty member deleted successfully' });
     } catch (error: any) {
-        console.error('Error deleting faculty:', error);
         return NextResponse.json(
             { error: 'Failed to delete faculty member', details: error.message },
             { status: 500 }

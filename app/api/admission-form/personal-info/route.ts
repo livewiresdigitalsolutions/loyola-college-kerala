@@ -128,7 +128,6 @@ async function savePersonalInfoMySQL(email: string, data: any) {
     return { success: true };
   } catch (error) {
     await connection.rollback();
-    console.error('MySQL Save Personal Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -148,7 +147,6 @@ async function getPersonalInfoMySQL(email: string) {
 
     return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
   } catch (error) {
-    console.error('MySQL Get Personal Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -220,7 +218,6 @@ async function savePersonalInfoSupabase(email: string, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Save Personal Info Error:', error);
     throw error;
   }
 }
@@ -244,7 +241,6 @@ async function getPersonalInfoSupabase(email: string) {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   } catch (error) {
-    console.error('Supabase Get Personal Info Error:', error);
     return null;
   }
 }
@@ -265,7 +261,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error saving personal info:', error);
     return NextResponse.json(
       { error: 'Failed to save personal info', details: error.message },
       { status: 500 }
@@ -288,7 +283,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching personal info:', error);
     return NextResponse.json(
       { error: 'Failed to fetch personal info', details: error.message },
       { status: 500 }

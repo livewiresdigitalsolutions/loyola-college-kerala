@@ -101,7 +101,6 @@ export default function Volunteers() {
         setYearFilter(defaultYear);
       }
     } catch (error) {
-      console.error("Error fetching years:", error);
     }
   };
 
@@ -111,7 +110,6 @@ export default function Volunteers() {
       const data = await response.json();
       setProgramOptions(data);
     } catch (error) {
-      console.error("Error fetching programs:", error);
     }
   };
 

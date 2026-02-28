@@ -82,7 +82,6 @@ async function saveBasicInfoMySQL(email: string, data: any) {
     return { success: true, admissionId };
   } catch (error) {
     await connection.rollback();
-    console.error('MySQL Save Basic Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -100,7 +99,6 @@ async function getBasicInfoMySQL(email: string) {
 
     return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
   } catch (error) {
-    console.error('MySQL Get Basic Info Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -154,7 +152,6 @@ async function saveBasicInfoSupabase(email: string, data: any) {
 
     return { success: true, admissionId };
   } catch (error) {
-    console.error('Supabase Save Basic Info Error:', error);
     throw error;
   }
 }
@@ -170,7 +167,6 @@ async function getBasicInfoSupabase(email: string) {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   } catch (error) {
-    console.error('Supabase Get Basic Info Error:', error);
     return null;
   }
 }
@@ -199,7 +195,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error saving basic info:', error);
     return NextResponse.json(
       { error: 'Failed to save basic info', details: error.message },
       { status: 500 }
@@ -222,7 +217,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching basic info:', error);
     return NextResponse.json(
       { error: 'Failed to fetch basic info', details: error.message },
       { status: 500 }
