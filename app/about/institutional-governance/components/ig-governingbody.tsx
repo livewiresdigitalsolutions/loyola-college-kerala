@@ -27,7 +27,6 @@ export default function IgGoverningBody() {
           setMembers(data.data || []);
         }
       } catch (error) {
-        console.error("Error fetching governing body members:", error);
       } finally {
         setIsLoading(false);
       }

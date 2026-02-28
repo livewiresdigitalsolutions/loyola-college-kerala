@@ -258,7 +258,6 @@ async function getAdmissionMySQL(email: string) {
 
     const formData = rows[0];
     
-    console.log('🔍 FormData ID:', formData.id); // DEBUG
 
     // Fetch academic marks
     const [academicMarks] = await connection.execute<AdmissionDetailRow[]>(
@@ -268,8 +267,6 @@ async function getAdmissionMySQL(email: string) {
       [formData.id]
     );
 
-    console.log('📚 Academic Marks Found:', academicMarks.length); // DEBUG
-    console.log('📚 Academic Marks Data:', academicMarks); // DEBUG
 
     // Fetch subject-wise marks
     for (const mark of academicMarks as any[]) {
@@ -279,7 +276,6 @@ async function getAdmissionMySQL(email: string) {
          ORDER BY subject_order`,
         [mark.id]
       );
-      console.log(`📝 Subjects for academic_marks.id ${mark.id}:`, subjects.length); // DEBUG
       mark.subjects = subjects;
     }
 
@@ -288,7 +284,6 @@ async function getAdmissionMySQL(email: string) {
     await connection.end();
     return formData;
   } catch (error) {
-    console.error("MySQL Get Admission Error:", error);
     await connection.end();
     throw error;
   }
@@ -336,7 +331,6 @@ async function getAdmissionSupabase(email: string) {
 
     return flatData;
   } catch (error) {
-    console.error("Supabase Get Admission Error:", error);
     throw error;
   }
 }
@@ -363,7 +357,6 @@ async function deleteAdmissionMySQL(email: string) {
 
     return result.affectedRows > 0;
   } catch (error) {
-    console.error("MySQL Delete Admission Error:", error);
     throw error;
   } finally {
     await connection.end();
@@ -382,7 +375,6 @@ async function deleteAdmissionSupabase(email: string) {
 
     return true;
   } catch (error) {
-    console.error("Supabase Delete Admission Error:", error);
     throw error;
   }
 }
@@ -408,7 +400,6 @@ export async function GET(
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error("Error fetching admission:", error);
     return NextResponse.json(
       { error: "Failed to fetch admission", details: error.message },
       { status: 500 }
@@ -479,7 +470,6 @@ async function updateAdmissionMySQL(email: string, data: any) {
     await connection.end();
     return true;
   } catch (error) {
-    console.error("MySQL Update Admission Error:", error);
     await connection.end();
     throw error;
   }
@@ -531,7 +521,6 @@ async function updateAdmissionSupabase(email: string, data: any) {
 
     return true;
   } catch (error) {
-    console.error("Supabase Update Admission Error:", error);
     throw error;
   }
 }
@@ -558,7 +547,6 @@ export async function PUT(
 
     return NextResponse.json({ message: "Admission updated successfully" });
   } catch (error: any) {
-    console.error("Error updating admission:", error);
     return NextResponse.json(
       { error: "Failed to update admission", details: error.message },
       { status: 500 }
@@ -587,7 +575,6 @@ export async function DELETE(
 
     return NextResponse.json({ message: "Admission deleted successfully" });
   } catch (error: any) {
-    console.error("Error deleting admission:", error);
     return NextResponse.json(
       { error: "Failed to delete admission", details: error.message },
       { status: 500 }

@@ -27,7 +27,6 @@ export default function DepartmentsList() {
         const res = await fetch("/api/academics/departments");
         if (res.ok) setDepartments(await res.json());
       } catch (err) {
-        console.error("Error fetching departments:", err);
       } finally {
         setLoading(false);
       }

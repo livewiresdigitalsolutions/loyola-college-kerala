@@ -407,20 +407,17 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Basic info save error:', errorText);
         return { success: false, error: `HTTP ${response.status}: ${errorText}` };
       }
 
       const text = await response.text();
       if (!text) {
-        console.error('Empty response from basic info API');
         return { success: false, error: 'Empty response from server' };
       }
 
       const result = JSON.parse(text);
       return { success: true, data: result.data, error: result.error };
     } catch (error: any) {
-      console.error('Save basic info error:', error);
       return { success: false, error: error.message || 'Network error' };
     }
   }, [userEmail]);
@@ -436,7 +433,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Personal info save error:', errorText);
         
         try {
           const errorJson = JSON.parse(errorText);
@@ -454,7 +450,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
       const result = JSON.parse(text);
       return { success: true, error: result.error };
     } catch (error: any) {
-      console.error('Save personal info error:', error);
       return { success: false, error: error.message || 'Network error' };
     }
   }, []);
@@ -470,7 +465,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Family info save error:', errorText);
         
         try {
           const errorJson = JSON.parse(errorText);
@@ -488,7 +482,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
       const result = JSON.parse(text);
       return { success: true, error: result.error };
     } catch (error: any) {
-      console.error('Save family info error:', error);
       return { success: false, error: error.message || 'Network error' };
     }
   }, []);
@@ -504,7 +497,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Address info save error:', errorText);
         
         try {
           const errorJson = JSON.parse(errorText);
@@ -522,7 +514,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
       const result = JSON.parse(text);
       return { success: true, error: result.error };
     } catch (error: any) {
-      console.error('Save address info error:', error);
       return { success: false, error: error.message || 'Network error' };
     }
   }, []);
@@ -538,7 +529,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Academic marks save error:', errorText);
         
         try {
           const errorJson = JSON.parse(errorText);
@@ -556,7 +546,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
       const result = JSON.parse(text);
       return { success: true, error: result.error };
     } catch (error: any) {
-      console.error('Save academic marks error:', error);
       return { success: false, error: error.message || 'Network error' };
     }
   }, []);
@@ -567,42 +556,33 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
     setIsLoading(true);
     try {
-      console.log('Loading form data for:', userEmail);
       
       const response = await fetch(`/api/admission-form/complete?email=${encodeURIComponent(userEmail)}`);
       
-      console.log('Load response status:', response.status);
       
       if (response.status === 404) {
-        console.log('No existing form found - starting fresh');
         return null;
       }
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Load form error response:', errorText);
         return null;
       }
 
       const text = await response.text();
-      console.log('Load response text length:', text.length);
       
       if (!text) {
-        console.error('Empty response when loading form');
         return null;
       }
 
       const result = JSON.parse(text);
-      console.log('Parsed result:', { hasData: !!result.data, keys: result.data ? Object.keys(result.data).length : 0 });
       
       if (result.data) {
         return result.data;
       }
       
-      console.log('Result has no data property');
       return null;
     } catch (error: any) {
-      console.error('Load form error:', error);
       return null;
     } finally {
       setIsLoading(false);
@@ -617,7 +597,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
     setIsLoading(true);
     
     try {
-      console.log('Starting save with data:', { admissionId, hasEmail: !!userEmail });
 
       // Step 1: Save basic info
       const basicResult = await saveBasicInfo({
@@ -632,7 +611,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
         form_status: formData.form_status,
       });
 
-      console.log('Basic info result:', basicResult);
 
       if (!basicResult.success) {
         throw new Error(basicResult.error || 'Failed to save basic info');
@@ -640,7 +618,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
       let currentAdmissionId = basicResult.data?.id || admissionId;
       
-      console.log('Admission IDs:', {
         fromBasicResult: basicResult.data?.id,
         passedAdmissionId: admissionId,
         usingId: currentAdmissionId
@@ -651,7 +628,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
       }
 
       // Step 2: Save personal info
-      console.log('Saving personal info for admission ID:', currentAdmissionId);
       const personalResult = await savePersonalInfo(currentAdmissionId, {
         full_name: formData.full_name,
         gender: formData.gender,
@@ -669,14 +645,12 @@ export const useAdmissionForm = (userEmail: string | null) => {
         blood_group: formData.blood_group,
       });
 
-      console.log('Personal info result:', personalResult);
 
       if (!personalResult.success) {
         throw new Error(personalResult.error || 'Failed to save personal info');
       }
 
       // Step 3: Save family info
-      console.log('Saving family info...');
       const familyResult = await saveFamilyInfo(currentAdmissionId, {
         father_name: formData.father_name,
         father_mobile: formData.father_mobile,
@@ -699,14 +673,12 @@ export const useAdmissionForm = (userEmail: string | null) => {
         emergency_contact_mobile: formData.emergency_contact_mobile,
       });
 
-      console.log('Family info result:', familyResult);
 
       if (!familyResult.success) {
         throw new Error(familyResult.error || 'Failed to save family info');
       }
 
       // Step 4: Save address info
-      console.log('Saving address info...');
       const addressResult = await saveAddressInfo(currentAdmissionId, {
         communication_address: formData.communication_address,
         communication_city: formData.communication_city,
@@ -722,7 +694,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
         permanent_country: formData.permanent_country,
       });
 
-      console.log('Address info result:', addressResult);
 
       if (!addressResult.success) {
         throw new Error(addressResult.error || 'Failed to save address info');
@@ -730,19 +701,15 @@ export const useAdmissionForm = (userEmail: string | null) => {
 
       // Step 5: Save academic marks
       if (formData.academicMarks && formData.academicMarks.length > 0) {
-        console.log('Saving academic marks...');
         const academicResult = await saveAcademicMarks(currentAdmissionId, formData.academicMarks);
-        console.log('Academic marks result:', academicResult);
         
         if (!academicResult.success) {
           throw new Error(academicResult.error || 'Failed to save academic marks');
         }
       }
 
-      console.log('All data saved successfully!');
       return { success: true, admissionId: currentAdmissionId };
     } catch (error: any) {
-      console.error('Complete save error:', error);
       toast.error(error.message || 'Failed to save form');
       return { success: false, error: error.message };
     } finally {

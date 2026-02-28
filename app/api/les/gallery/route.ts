@@ -45,7 +45,6 @@ export async function GET() {
             : await fetchFromMySQL();
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error fetching LES gallery:', error);
         return NextResponse.json(
             { error: 'Failed to fetch gallery images' },
             { status: 500 }

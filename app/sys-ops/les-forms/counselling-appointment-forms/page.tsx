@@ -96,7 +96,6 @@ export default function Appointments() {
         setYearFilter(defaultYear);
       }
     } catch (error) {
-      console.error("Error fetching years:", error);
     }
   };
 
@@ -106,7 +105,6 @@ export default function Appointments() {
       const data = await response.json();
       setStaffMembers(data);
     } catch (error) {
-      console.error("Error fetching staff:", error);
     }
   };
 

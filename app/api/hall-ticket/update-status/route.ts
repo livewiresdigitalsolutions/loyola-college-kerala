@@ -27,7 +27,6 @@ async function updateStatusMySQL(email: string, status: string) {
     );
     return { success: true };
   } catch (error) {
-    console.error('MySQL Update Status Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -47,7 +46,6 @@ async function updateStatusSupabase(email: string, status: string) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Supabase Update Status Error:', error);
     throw error;
   }
 }
@@ -73,7 +71,6 @@ export async function POST(request: Request) {
       message: 'Status updated successfully',
     });
   } catch (error: any) {
-    console.error('Error updating status:', error);
     return NextResponse.json(
       { error: 'Failed to update status', details: error.message },
       { status: 500 }

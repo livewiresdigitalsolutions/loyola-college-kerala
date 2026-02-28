@@ -54,7 +54,6 @@ export async function POST(
             message: `Article ${action === 'approve' ? 'approved and published' : 'rejected'} successfully.`,
         });
     } catch (error: any) {
-        console.error('Review article error:', error);
         return NextResponse.json({ error: 'Failed to review article' }, { status: 500 });
     }
 }

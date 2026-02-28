@@ -40,7 +40,6 @@ export default function HeroMediaPage() {
         setMediaList(data.data || []);
       }
     } catch (error) {
-      console.error("Error fetching media:", error);
       toast.error("Failed to load media");
     } finally {
       setIsLoading(false);
@@ -107,7 +106,6 @@ export default function HeroMediaPage() {
         toast.error(data.error || "Failed to upload media");
       }
     } catch (error) {
-      console.error("Error uploading media:", error);
       toast.error("Failed to upload media");
     } finally {
       setUploading(false);
@@ -131,7 +129,6 @@ export default function HeroMediaPage() {
         toast.error(data.error || "Failed to delete media");
       }
     } catch (error) {
-      console.error("Error deleting media:", error);
       toast.error("Failed to delete media");
     }
   };
@@ -153,7 +150,6 @@ export default function HeroMediaPage() {
         toast.error(data.error || "Failed to update status");
       }
     } catch (error) {
-      console.error("Error updating status:", error);
       toast.error("Failed to update status");
     }
   };

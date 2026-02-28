@@ -23,7 +23,6 @@ export default function CalendarList() {
         const res = await fetch("/api/academics/academic-calendar");
         if (res.ok) setItems(await res.json());
       } catch (err) {
-        console.error("Error fetching academic calendar:", err);
       } finally {
         setLoading(false);
       }

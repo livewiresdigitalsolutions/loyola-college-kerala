@@ -79,7 +79,6 @@ export async function POST(request: NextRequest) {
             resetToken,
         });
     } catch (error: any) {
-        console.error('Verify OTP error:', error);
         return NextResponse.json(
             { error: 'Verification failed. Please try again.' },
             { status: 500 }

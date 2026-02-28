@@ -234,7 +234,6 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Login error:', error);
     return NextResponse.json(
       { error: 'Login failed. Please try again.' },
       { status: 500 }

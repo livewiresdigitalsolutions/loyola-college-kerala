@@ -72,7 +72,6 @@ async function saveFamilyInfoMySQL(admissionId: number, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('MySQL Family Info Save Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -128,7 +127,6 @@ async function saveFamilyInfoSupabase(admissionId: number, data: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Family Info Save Error:', error);
     throw error;
   }
 }
@@ -150,7 +148,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('Family Info API Error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

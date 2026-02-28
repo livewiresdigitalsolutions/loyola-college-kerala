@@ -42,7 +42,6 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get('auth_token')?.value;
 
     if (!token) {
-      console.log('No token found, redirecting to home');
       const url = request.nextUrl.clone();
       url.pathname = '/';
       url.searchParams.set('error', 'login_required');
@@ -55,7 +54,6 @@ export async function middleware(request: NextRequest) {
       const emailFromUrl = request.nextUrl.searchParams.get('email');
 
       if (payload.email !== emailFromUrl) {
-        console.log('Email mismatch - Token:', payload.email, 'URL:', emailFromUrl);
         const url = request.nextUrl.clone();
         url.pathname = '/';
         url.searchParams.set('error', 'unauthorized');
@@ -65,11 +63,9 @@ export async function middleware(request: NextRequest) {
         return response;
       }
 
-      console.log('Authentication successful for:', payload.email);
       return NextResponse.next();
 
     } catch (error) {
-      console.error('Token verification failed:', error);
       const url = request.nextUrl.clone();
       url.pathname = '/';
       url.searchParams.set('error', 'session_expired');

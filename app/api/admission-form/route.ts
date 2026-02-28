@@ -294,7 +294,6 @@ async function saveFormMySQL(email: string, formData: any) {
     return { success: true };
   } catch (error) {
     await connection.rollback();
-    console.error('MySQL Save Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -447,7 +446,6 @@ async function saveFormSupabase(email: string, formData: any) {
 
     return { success: true };
   } catch (error) {
-    console.error('Supabase Save Error:', error);
     throw error;
   }
 }
@@ -490,7 +488,6 @@ async function getFormMySQL(email: string) {
 
     return null;
   } catch (error) {
-    console.error('MySQL Get Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -521,7 +518,6 @@ async function getFormSupabase(email: string) {
 
     return data;
   } catch (error) {
-    console.error('Supabase Get Error:', error);
     return null;
   }
 }
@@ -532,7 +528,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, formData } = body;
 
-    console.log('POST Request received:', { email, hasFormData: !!formData });
 
     if (!email) {
       return NextResponse.json(
@@ -567,7 +562,6 @@ export async function POST(request: Request) {
       academicYear: academicYear.start
     });
   } catch (error: any) {
-    console.error('Error saving form:', error);
     return NextResponse.json(
       { 
         success: false,
@@ -598,7 +592,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching form:', error);
     return NextResponse.json(
       { 
         error: 'Failed to fetch form',

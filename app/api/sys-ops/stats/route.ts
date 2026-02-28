@@ -515,7 +515,6 @@ async function getDashboardStatsSupabase() {
       })) || [],
     };
   } catch (error) {
-    console.error('Supabase Dashboard Stats Error:', error);
     throw error;
   }
 }
@@ -528,7 +527,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(stats);
   } catch (error: any) {
-    console.error('Error fetching dashboard stats:', error);
     return NextResponse.json(
       { error: 'Failed to fetch dashboard statistics', details: error.message },
       { status: 500 }

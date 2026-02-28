@@ -39,7 +39,6 @@ export default function AcademicYearsPage() {
         setYears(data);
       }
     } catch (error) {
-      console.error('Error fetching academic years:', error);
     } finally {
       setLoading(false);
     }
@@ -81,7 +80,6 @@ export default function AcademicYearsPage() {
         toast.error(result.error || "Failed to add academic year");
       }
     } catch (error) {
-      console.error('Error adding academic year:', error);
       toast.error("Failed to add academic year");
     }
   };
@@ -122,7 +120,6 @@ export default function AcademicYearsPage() {
         toast.error(result.error || "Failed to update academic year");
       }
     } catch (error) {
-      console.error('Error updating academic year:', error);
       toast.error("Failed to update academic year");
     }
   };
@@ -143,7 +140,6 @@ export default function AcademicYearsPage() {
         toast.error(result.error || "Failed to delete academic year");
       }
     } catch (error) {
-      console.error('Error deleting academic year:', error);
       toast.error("Failed to delete academic year");
     }
   };
@@ -187,7 +183,6 @@ export default function AcademicYearsPage() {
         toast.error("Failed to update academic year");
       }
     } catch (error) {
-      console.error('Error toggling current year:', error);
       toast.error("Failed to update academic year");
     }
   };

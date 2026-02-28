@@ -42,7 +42,6 @@ export default function DegreesPage() {
         setPrograms(data);
       }
     } catch (error) {
-      console.error("Error fetching programs:", error);
     }
   };
 

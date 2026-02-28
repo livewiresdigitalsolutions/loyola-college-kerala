@@ -33,7 +33,6 @@ export async function GET() {
             return NextResponse.json(rows);
         }
     } catch (error) {
-        console.error('Error fetching appointments:', error);
         return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 });
     }
 }
@@ -81,7 +80,6 @@ export async function POST(request: Request) {
             message: 'Appointment booked successfully! We will contact you soon.'
         });
     } catch (error: any) {
-        console.error('Error submitting appointment:', error);
         return NextResponse.json(
             { success: false, message: 'Failed to book appointment. Please try again.' },
             { status: 500 }

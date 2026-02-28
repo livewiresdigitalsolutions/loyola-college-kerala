@@ -38,7 +38,6 @@ async function getAdminCredentialsMySQL(username: string) {
 
     return rows.length > 0 ? rows[0] : null;
   } catch (error) {
-    console.error('MySQL Get Admin Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -56,7 +55,6 @@ async function getAdminCredentialsSupabase(username: string) {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   } catch (error) {
-    console.error('Supabase Get Admin Error:', error);
     return null;
   }
 }
@@ -155,7 +153,6 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
-    console.error('Login error:', error);
     return NextResponse.json(
       { success: false, error: 'Authentication failed', details: error.message },
       { status: 500 }

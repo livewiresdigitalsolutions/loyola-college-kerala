@@ -24,12 +24,10 @@ function PaymentSuccessContent() {
       // If not in URL, try localStorage (fallback)
       if (!txnid) {
         txnid = localStorage.getItem('easebuzz_pending_txnid');
-        console.log('Retrieved txnid from localStorage:', txnid);
       }
 
       if (!email) {
         email = localStorage.getItem('easebuzz_pending_email');
-        console.log('Retrieved email from localStorage:', email);
       }
 
       if (!txnid) {
@@ -38,7 +36,6 @@ function PaymentSuccessContent() {
         return;
       }
 
-      console.log('Verifying payment for txnid:', txnid);
 
       // Call your backend to verify with Easebuzz Transaction API
       const response = await fetch("/api/payment/verify-easebuzz", {
@@ -60,10 +57,8 @@ function PaymentSuccessContent() {
       } else {
         toast.error(result.error || 'Payment verification failed');
         setVerified(false);
-        console.error('Verification failed:', result);
       }
     } catch (error) {
-      console.error("Verification error:", error);
       toast.error('An error occurred during verification');
       setVerified(false);
     } finally {

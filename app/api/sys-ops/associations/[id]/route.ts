@@ -72,7 +72,6 @@ export async function PUT(
             return NextResponse.json({ id: idNum, slug, ...body });
         }
     } catch (error: any) {
-        console.error('Error updating association:', error);
         return NextResponse.json({ error: 'Failed to update association', details: error.message }, { status: 500 });
     }
 }
@@ -96,7 +95,6 @@ export async function DELETE(
         }
         return NextResponse.json({ message: 'Association deleted successfully' });
     } catch (error: any) {
-        console.error('Error deleting association:', error);
         return NextResponse.json({ error: 'Failed to delete association', details: error.message }, { status: 500 });
     }
 }

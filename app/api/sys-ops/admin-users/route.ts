@@ -38,7 +38,6 @@ async function getAdminUsersMySQL() {
 
     return rows;
   } catch (error) {
-    console.error('MySQL Get Admin Users Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -55,7 +54,6 @@ async function getAdminUsersSupabase() {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Supabase Get Admin Users Error:', error);
     throw error;
   }
 }
@@ -71,7 +69,6 @@ export async function GET(request: Request) {
       admins,
     });
   } catch (error: any) {
-    console.error('Error fetching admin users:', error);
     return NextResponse.json(
       { error: 'Failed to fetch admin users', details: error.message },
       { status: 500 }

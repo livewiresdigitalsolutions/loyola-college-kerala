@@ -71,7 +71,6 @@ export async function GET(request: Request) {
       }
     }
   } catch (error: any) {
-    console.error("Error fetching IQAC media:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch IQAC media" },
       { status: 500 }
@@ -156,7 +155,6 @@ export async function PUT(request: Request) {
       }
     }
   } catch (error: any) {
-    console.error("Error updating IQAC media:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update IQAC media" },
       { status: 500 }
@@ -220,7 +218,6 @@ export async function DELETE(request: Request) {
           try {
             await fs.unlink(filePath);
           } catch (error) {
-            console.error("Error deleting file:", error);
           }
         }
 
@@ -236,7 +233,6 @@ export async function DELETE(request: Request) {
       }
     }
   } catch (error: any) {
-    console.error("Error deleting IQAC media:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete IQAC media" },
       { status: 500 }

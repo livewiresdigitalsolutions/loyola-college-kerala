@@ -49,7 +49,6 @@ export async function PUT(
             return NextResponse.json({ id: idNum, name, role, image, profile_url });
         }
     } catch (error: any) {
-        console.error('Error updating team member:', error);
         return NextResponse.json(
             { error: 'Failed to update team member', details: error.message },
             { status: 500 }
@@ -75,7 +74,6 @@ export async function DELETE(
         }
         return NextResponse.json({ message: 'Team member deleted successfully' });
     } catch (error: any) {
-        console.error('Error deleting team member:', error);
         return NextResponse.json(
             { error: 'Failed to delete team member', details: error.message },
             { status: 500 }

@@ -17,7 +17,7 @@ export default function Initiatives() {
         fetch("/api/students/students-progression?type=initiatives")
             .then((r) => r.json())
             .then((d) => { if (d.success) setInitiatives(d.data || []); })
-            .catch(console.error)
+            .catch(() => {})
             .finally(() => setLoading(false));
     }, []);
 

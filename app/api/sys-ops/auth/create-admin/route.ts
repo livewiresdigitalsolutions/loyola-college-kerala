@@ -104,7 +104,6 @@ export async function POST(request: Request) {
       message: 'Admin user created successfully',
     });
   } catch (error: any) {
-    console.error('Create admin error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to create admin user' },
       { status: 500 }

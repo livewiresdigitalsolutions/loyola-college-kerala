@@ -277,7 +277,6 @@ async function saveBasicInfoMySQL(email: string, data: any) {
       return { id: (result as any).insertId };
     }
   } catch (error) {
-    console.error('MySQL Basic Info Save Error:', error);
     throw error;
   } finally {
     await connection.end();
@@ -328,7 +327,6 @@ async function saveBasicInfoSupabase(email: string, data: any) {
       return { id: insertData.id };
     }
   } catch (error) {
-    console.error('Supabase Basic Info Save Error:', error);
     throw error;
   }
 }
@@ -338,7 +336,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, data } = body;
 
-    console.log('Basic Info POST:', { email, hasData: !!data });
 
     if (!email) {
       return NextResponse.json(
@@ -363,7 +360,6 @@ export async function POST(request: Request) {
       data: result
     });
   } catch (error: any) {
-    console.error('Basic Info API Error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to save basic info' },
       { status: 500 }

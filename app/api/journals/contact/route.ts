@@ -38,7 +38,6 @@ export async function GET() {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching contacts:', error);
         return NextResponse.json({ error: 'Failed to fetch contacts', details: error.message }, { status: 500 });
     }
 }
@@ -70,7 +69,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, name, email, phone, message });
         }
     } catch (error: any) {
-        console.error('Error saving contact:', error);
         return NextResponse.json({ error: 'Failed to save message', details: error.message }, { status: 500 });
     }
 }

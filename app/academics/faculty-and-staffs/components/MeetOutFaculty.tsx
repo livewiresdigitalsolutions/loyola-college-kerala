@@ -34,7 +34,6 @@ export default function MeetOutFaculty() {
         const res = await fetch("/api/academics/faculty");
         if (res.ok) setFaculty(await res.json());
       } catch (err) {
-        console.error("Error fetching faculty:", err);
       } finally {
         setLoading(false);
       }

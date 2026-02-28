@@ -51,7 +51,6 @@ export async function GET(request: Request) {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching team members:', error);
         return NextResponse.json({ error: 'Failed to fetch team members', details: error.message }, { status: 500 });
     }
 }
@@ -88,7 +87,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, ...body });
         }
     } catch (error: any) {
-        console.error('Error creating team member:', error);
         return NextResponse.json({ error: 'Failed to create team member', details: error.message }, { status: 500 });
     }
 }

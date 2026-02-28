@@ -36,7 +36,6 @@ async function fetchDepartment(slug: string) {
       }
     }
   } catch (error) {
-    console.error('API fetch failed, falling back to static data:', error);
   }
 
   // Fallback to static data

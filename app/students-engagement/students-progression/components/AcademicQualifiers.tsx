@@ -94,7 +94,7 @@ export default function AcademicQualifiers() {
         fetch("/api/students/students-progression?type=qualifiers")
             .then((r) => r.json())
             .then((d) => { if (d.success) setQualifiers(d.data || []); })
-            .catch(console.error)
+            .catch(() => {})
             .finally(() => setLoading(false));
     }, []);
 

@@ -76,7 +76,6 @@ async function getHallTicketMySQL(id: string) {
     await connection.end();
     return rows.length > 0 ? rows[0] : null;
   } catch (error) {
-    console.error('MySQL Get Hall Ticket Error:', error);
     await connection.end();
     throw error;
   }
@@ -112,7 +111,6 @@ async function getHallTicketSupabase(id: string) {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   } catch (error) {
-    console.error('Supabase Get Hall Ticket Error:', error);
     throw error;
   }
 }
@@ -126,7 +124,6 @@ async function deleteHallTicketMySQL(id: string) {
     await connection.end();
     return { success: true };
   } catch (error) {
-    console.error('MySQL Delete Hall Ticket Error:', error);
     await connection.end();
     throw error;
   }
@@ -142,7 +139,6 @@ async function deleteHallTicketSupabase(id: string) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Supabase Delete Hall Ticket Error:', error);
     throw error;
   }
 }
@@ -165,7 +161,6 @@ async function updateHallTicketMySQL(id: string, data: any) {
     await connection.end();
     return { success: true };
   } catch (error) {
-    console.error('MySQL Update Hall Ticket Error:', error);
     await connection.end();
     throw error;
   }
@@ -186,7 +181,6 @@ async function updateHallTicketSupabase(id: string, data: any) {
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Supabase Update Hall Ticket Error:', error);
     throw error;
   }
 }
@@ -212,7 +206,6 @@ export async function GET(
 
     return NextResponse.json({ data });
   } catch (error: any) {
-    console.error('Error fetching hall ticket:', error);
     return NextResponse.json(
       { error: 'Failed to fetch hall ticket', details: error.message },
       { status: 500 }
@@ -245,7 +238,6 @@ export async function PUT(
       message: 'Hall ticket updated successfully',
     });
   } catch (error: any) {
-    console.error('Error updating hall ticket:', error);
     return NextResponse.json(
       { error: 'Failed to update hall ticket', details: error.message },
       { status: 500 }
@@ -270,7 +262,6 @@ export async function DELETE(
       message: 'Hall ticket deleted successfully',
     });
   } catch (error: any) {
-    console.error('Error deleting hall ticket:', error);
     return NextResponse.json(
       { error: 'Failed to delete hall ticket', details: error.message },
       { status: 500 }

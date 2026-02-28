@@ -5,15 +5,6 @@ import { createClient } from '@supabase/supabase-js';
 
 const isDevelopment = process.env.DB_TYPE === 'supabase';
 
-console.log('[DB ENV]', {
-  DB_TYPE: process.env.DB_TYPE,
-  DB_HOST: process.env.DB_HOST,
-  DB_PORT: process.env.DB_PORT,
-  DB_USER: process.env.DB_USER,
-  DB_DATABASE: process.env.DB_DATABASE,
-  DB_PASSWORD: process.env.DB_PASSWORD ? '***loaded***' : 'missing',
-});
-
 
 
 const mysqlConfig = {
@@ -59,30 +50,25 @@ export async function GET(request: Request) {
     } else {
       let connection;
 
-try {
-  console.log(mysqlConfig);
-  connection = await mysql.createConnection(mysqlConfig);
-  console.log('MySQL connected successfully');
-} catch (err) {
-  console.error('MySQL connection failed', err);
-  throw err;
-}
+      try {
+        connection = await mysql.createConnection(mysqlConfig);
+      } catch (err) {
+        throw err;
+      }
 
-      
+
       const query = key
         ? 'SELECT id, `key`, `value`, description, data_type, updated_at FROM configuration_values WHERE `key` = ?'
         : 'SELECT id, `key`, `value`, description, data_type, updated_at FROM configuration_values ORDER BY `key`';
-      
+
       const params = key ? [key] : [];
-      console.log('[MYSQL QUERY]', query, params);
       const [rows] = await connection.execute(query, params);
       await connection.end();
-      
+
       const result = key ? (rows as any[])[0] : rows;
       return NextResponse.json(result);
     }
   } catch (error: any) {
-    console.error('Error fetching configuration:', error);
     return NextResponse.json(
       { error: 'Failed to fetch configuration', details: error.message },
       { status: 500 }
@@ -106,11 +92,11 @@ export async function POST(request: Request) {
     if (isDevelopment) {
       const { data, error } = await supabase
         .from('configuration_values')
-        .insert([{ 
-          key, 
-          value, 
-          description: description || null, 
-          data_type: data_type || 'string' 
+        .insert([{
+          key,
+          value,
+          description: description || null,
+          data_type: data_type || 'string'
         }])
         .select();
 
@@ -123,7 +109,7 @@ export async function POST(request: Request) {
         [key, value, description || null, data_type || 'string']
       );
       await connection.end();
-      
+
       return NextResponse.json({
         id: (result as any).insertId,
         key,
@@ -133,8 +119,7 @@ export async function POST(request: Request) {
       });
     }
   } catch (error: any) {
-    console.error('Error creating configuration:', error);
-    
+
     // Check for duplicate key error
     if (error.code === '23505' || error.message?.includes('duplicate key')) {
       return NextResponse.json(
@@ -142,7 +127,7 @@ export async function POST(request: Request) {
         { status: 409 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Failed to create configuration', details: error.message },
       { status: 500 }
@@ -184,56 +169,55 @@ export async function PUT(request: Request) {
         .select();
 
       if (error) throw error;
-      
+
       if (!data || data.length === 0) {
         return NextResponse.json(
           { error: 'Configuration key not found' },
           { status: 404 }
         );
       }
-      
+
       return NextResponse.json(data[0]);
     } else {
       const connection = await mysql.createConnection(mysqlConfig);
-      
+
       const updates: string[] = ['`value` = ?'];
       const params: any[] = [value];
-      
+
       if (description !== undefined) {
         updates.push('description = ?');
         params.push(description);
       }
-      
+
       if (data_type !== undefined) {
         updates.push('data_type = ?');
         params.push(data_type);
       }
-      
+
       params.push(key);
-      
+
       const [result] = await connection.execute(
         `UPDATE configuration_values SET ${updates.join(', ')} WHERE \`key\` = ?`,
         params
       );
-      
+
       await connection.end();
-      
+
       if ((result as any).affectedRows === 0) {
         return NextResponse.json(
           { error: 'Configuration key not found' },
           { status: 404 }
         );
       }
-      
-      return NextResponse.json({ 
-        key, 
-        value, 
-        description, 
-        data_type 
+
+      return NextResponse.json({
+        key,
+        value,
+        description,
+        data_type
       });
     }
   } catch (error: any) {
-    console.error('Error updating configuration:', error);
     return NextResponse.json(
       { error: 'Failed to update configuration', details: error.message },
       { status: 500 }
@@ -262,15 +246,15 @@ export async function DELETE(request: Request) {
         .select();
 
       if (error) throw error;
-      
+
       if (!data || data.length === 0) {
         return NextResponse.json(
           { error: 'Configuration key not found' },
           { status: 404 }
         );
       }
-      
-      return NextResponse.json({ 
+
+      return NextResponse.json({
         message: 'Configuration deleted successfully',
         deleted: data[0]
       });
@@ -281,20 +265,19 @@ export async function DELETE(request: Request) {
         [key]
       );
       await connection.end();
-      
+
       if ((result as any).affectedRows === 0) {
         return NextResponse.json(
           { error: 'Configuration key not found' },
           { status: 404 }
         );
       }
-      
-      return NextResponse.json({ 
-        message: 'Configuration deleted successfully' 
+
+      return NextResponse.json({
+        message: 'Configuration deleted successfully'
       });
     }
   } catch (error: any) {
-    console.error('Error deleting configuration:', error);
     return NextResponse.json(
       { error: 'Failed to delete configuration', details: error.message },
       { status: 500 }

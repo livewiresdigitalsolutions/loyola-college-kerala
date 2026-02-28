@@ -69,7 +69,6 @@ export async function GET(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error fetching IG members:", error);
         return NextResponse.json(
             { success: false, error: "Failed to fetch members" },
             { status: 500 }
@@ -142,7 +141,6 @@ export async function PUT(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error updating IG member:", error);
         return NextResponse.json(
             { success: false, error: "Failed to update member" },
             { status: 500 }
@@ -208,7 +206,6 @@ export async function DELETE(request: Request) {
                     try {
                         await fs.unlink(filePath);
                     } catch (error) {
-                        console.error("Error deleting file:", error);
                     }
                 }
 
@@ -223,7 +220,6 @@ export async function DELETE(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error deleting IG member:", error);
         return NextResponse.json(
             { success: false, error: "Failed to delete member" },
             { status: 500 }

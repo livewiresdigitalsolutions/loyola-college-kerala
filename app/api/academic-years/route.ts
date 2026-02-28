@@ -48,7 +48,6 @@ export async function GET(request: Request) {
       return NextResponse.json(rows);
     }
   } catch (error: any) {
-    console.error('Error fetching academic years:', error);
     return NextResponse.json(
       { error: 'Failed to fetch academic years', details: error.message },
       { status: 500 }
@@ -128,7 +127,6 @@ export async function POST(request: Request) {
       });
     }
   } catch (error: any) {
-    console.error('Error creating academic year:', error);
     return NextResponse.json(
       { error: 'Failed to create academic year', details: error.message },
       { status: 500 }

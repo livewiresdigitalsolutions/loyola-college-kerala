@@ -49,7 +49,6 @@ export async function PUT(
             return NextResponse.json({ id: idNum, name, description, type, sort_order });
         }
     } catch (error: any) {
-        console.error('Error updating committee:', error);
         return NextResponse.json(
             { error: 'Failed to update committee', details: error.message },
             { status: 500 }
@@ -75,7 +74,6 @@ export async function DELETE(
         }
         return NextResponse.json({ message: 'Committee deleted successfully' });
     } catch (error: any) {
-        console.error('Error deleting committee:', error);
         return NextResponse.json(
             { error: 'Failed to delete committee', details: error.message },
             { status: 500 }

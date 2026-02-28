@@ -27,7 +27,7 @@ export default function RankHolders() {
         fetch("/api/students/students-progression?type=rank-holders")
             .then((r) => r.json())
             .then((d) => { if (d.success) setRankHolders(d.data || []); })
-            .catch(console.error)
+            .catch(() => {})
             .finally(() => setLoading(false));
     }, []);
 

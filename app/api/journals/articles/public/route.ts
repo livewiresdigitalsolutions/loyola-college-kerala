@@ -11,7 +11,6 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json(articles);
     } catch (error: any) {
-        console.error('Get public articles error:', error);
         return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
     }
 }

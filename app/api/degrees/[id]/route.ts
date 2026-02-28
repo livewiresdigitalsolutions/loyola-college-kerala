@@ -53,7 +53,6 @@ export async function PUT(
       return NextResponse.json({ id: idNum, degree_name, program_level_id });
     }
   } catch (error: any) {
-    console.error('Error updating degree:', error);
     return NextResponse.json(
       { error: 'Failed to update degree', details: error.message },
       { status: 500 }
@@ -84,7 +83,6 @@ export async function DELETE(
       return NextResponse.json({ message: 'Degree deleted successfully' });
     }
   } catch (error: any) {
-    console.error('Error deleting degree:', error);
     return NextResponse.json(
       { error: 'Failed to delete degree', details: error.message },
       { status: 500 }

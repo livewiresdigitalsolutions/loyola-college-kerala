@@ -51,7 +51,6 @@ export async function PUT(
             return NextResponse.json({ id: idNum, ...body });
         }
     } catch (error: any) {
-        console.error('Error updating activity:', error);
         return NextResponse.json({ error: 'Failed to update activity', details: error.message }, { status: 500 });
     }
 }
@@ -75,7 +74,6 @@ export async function DELETE(
         }
         return NextResponse.json({ message: 'Activity deleted successfully' });
     } catch (error: any) {
-        console.error('Error deleting activity:', error);
         return NextResponse.json({ error: 'Failed to delete activity', details: error.message }, { status: 500 });
     }
 }

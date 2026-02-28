@@ -45,7 +45,6 @@ export async function GET() {
             : await fetchFromMySQL();
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error fetching LES programs:', error);
         return NextResponse.json(
             { error: 'Failed to fetch programs' },
             { status: 500 }

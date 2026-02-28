@@ -859,7 +859,6 @@ export default function AdmissionsHero() {
       const data = await response.json();
       setPrograms(data);
     } catch (error) {
-      console.error("Error fetching programs:", error);
       toast.error("Failed to load programs");
     }
   };
@@ -870,7 +869,6 @@ export default function AdmissionsHero() {
       const data = await response.json();
       setDegrees(data);
     } catch (error) {
-      console.error("Error fetching degrees:", error);
       toast.error("Failed to load degrees");
     }
   };
@@ -881,7 +879,6 @@ export default function AdmissionsHero() {
       const data = await response.json();
       setCourses(data);
     } catch (error) {
-      console.error("Error fetching courses:", error);
       toast.error("Failed to load courses");
     }
   };
@@ -995,7 +992,6 @@ export default function AdmissionsHero() {
         toast.error(data.error || "Registration failed");
       }
     } catch (error) {
-      console.error("Registration error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -1042,7 +1038,6 @@ export default function AdmissionsHero() {
         toast.error(data.error || "Login failed");
       }
     } catch (error) {
-      console.error("Login error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

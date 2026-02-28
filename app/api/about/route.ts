@@ -56,7 +56,6 @@ export async function GET(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error fetching eminent visitors:", error);
         return NextResponse.json(
             { success: false, error: "Failed to fetch eminent visitors" },
             { status: 500 }
@@ -130,7 +129,6 @@ export async function PUT(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error updating eminent visitor:", error);
         return NextResponse.json(
             { success: false, error: "Failed to update eminent visitor" },
             { status: 500 }
@@ -202,7 +200,6 @@ export async function DELETE(request: Request) {
                     try {
                         await fs.unlink(filePath);
                     } catch (error) {
-                        console.error("Error deleting file:", error);
                     }
                 }
 
@@ -221,7 +218,6 @@ export async function DELETE(request: Request) {
             }
         }
     } catch (error: any) {
-        console.error("Error deleting eminent visitor:", error);
         return NextResponse.json(
             { success: false, error: "Failed to delete eminent visitor" },
             { status: 500 }

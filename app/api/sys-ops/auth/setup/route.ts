@@ -169,7 +169,6 @@ CREATE INDEX idx_username ON admin_users(username);
     }, { status: 400 });
 
   } catch (error: any) {
-    console.error('Setup error:', error);
     return NextResponse.json({
       success: false,
       error: error.message

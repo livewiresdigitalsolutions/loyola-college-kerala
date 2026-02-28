@@ -41,7 +41,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             return NextResponse.json({ id, ...body });
         }
     } catch (error: any) {
-        console.error('Error updating board member:', error);
         return NextResponse.json({ error: 'Failed to update', details: error.message }, { status: 500 });
     }
 }
@@ -59,7 +58,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         }
         return NextResponse.json({ success: true });
     } catch (error: any) {
-        console.error('Error deleting board member:', error);
         return NextResponse.json({ error: 'Failed to delete', details: error.message }, { status: 500 });
     }
 }

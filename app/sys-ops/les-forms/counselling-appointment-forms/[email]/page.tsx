@@ -76,7 +76,6 @@ export default function AppointmentDetail() {
         setTimeout(() => router.push("/sys-ops/appointments"), 2000);
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
       toast.error("Error loading appointment");
       setTimeout(() => router.push("/sys-ops/appointments"), 2000);
     } finally {

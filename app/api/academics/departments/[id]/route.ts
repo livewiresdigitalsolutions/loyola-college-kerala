@@ -64,7 +64,6 @@ export async function PUT(
             return NextResponse.json({ id: idNum, ...record });
         }
     } catch (error: any) {
-        console.error('Error updating department:', error);
         return NextResponse.json(
             { error: 'Failed to update department', details: error.message },
             { status: 500 }
@@ -90,7 +89,6 @@ export async function DELETE(
         }
         return NextResponse.json({ message: 'Department deleted successfully' });
     } catch (error: any) {
-        console.error('Error deleting department:', error);
         return NextResponse.json(
             { error: 'Failed to delete department', details: error.message },
             { status: 500 }

@@ -59,7 +59,6 @@ async function getAdmissionsByIdsMySQL(ids: number[]) {
     await connection.end();
     return rows;
   } catch (error) {
-    console.error('MySQL Error:', error);
     await connection.end();
     throw error;
   }
@@ -80,7 +79,6 @@ async function getAdmissionsByIdsSupabase(ids: number[]) {
     if (error) throw error;
     return data || [];
   } catch (error) {
-    console.error('Supabase Error:', error);
     throw error;
   }
 }
@@ -99,7 +97,6 @@ export async function POST(request: Request) {
     
     return NextResponse.json(data);
   } catch (error: any) {
-    console.error('Error fetching admissions by IDs:', error);
     return NextResponse.json(
       { error: 'Failed to fetch admissions', details: error.message },
       { status: 500 }

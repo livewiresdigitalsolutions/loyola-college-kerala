@@ -155,7 +155,6 @@ async function getHallTicketsMySQL(
       perPage,
     };
   } catch (error) {
-    console.error('MySQL Get Hall Tickets Error:', error);
     await connection.end();
     throw error;
   }
@@ -244,7 +243,6 @@ async function getHallTicketsSupabase(
       perPage,
     };
   } catch (error) {
-    console.error('Supabase Get Hall Tickets Error:', error);
     throw error;
   }
 }
@@ -254,7 +252,6 @@ async function createHallTicketsMySQL(tickets: any[]) {
   const connection = await mysql.createConnection(mysqlConfig);
 
   try {
-    console.log('Starting transaction...');
     await connection.beginTransaction();
 
     const insertQuery = `
@@ -264,7 +261,6 @@ async function createHallTicketsMySQL(tickets: any[]) {
     `;
 
     for (const ticket of tickets) {
-      console.log('Inserting ticket:', ticket);
       
       try {
         await connection.execute(insertQuery, [
@@ -273,27 +269,17 @@ async function createHallTicketsMySQL(tickets: any[]) {
           ticket.exam_time,
           'allocated',
         ]);
-        console.log('✅ Successfully inserted ticket for admission_id:', ticket.admission_id);
       } catch (insertError: any) {
-        console.error('❌ Failed to insert ticket:', insertError);
-        console.error('Error code:', insertError.code);
-        console.error('Error errno:', insertError.errno);
-        console.error('Error message:', insertError.message);
         throw insertError; // Re-throw to trigger rollback
       }
     }
 
-    console.log('Committing transaction...');
     await connection.commit();
     await connection.end();
-    console.log('✅ Transaction committed successfully');
     return { success: true, count: tickets.length };
   } catch (error: any) {
-    console.error('❌ Transaction failed, rolling back...');
     await connection.rollback();
     await connection.end();
-    console.error('MySQL Create Hall Tickets Error:', error);
-    console.error('Error details:', {
       code: error.code,
       errno: error.errno,
       message: error.message,
@@ -321,7 +307,6 @@ async function createHallTicketsSupabase(tickets: any[]) {
 
     return { success: true, count: tickets.length };
   } catch (error) {
-    console.error('Supabase Create Hall Tickets Error:', error);
     throw error;
   }
 }
@@ -345,7 +330,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching hall tickets:', error);
     return NextResponse.json(
       { error: 'Failed to fetch hall tickets', details: error.message, data: [], total: 0, pages: 0, page: 1, perPage: 10 },
       { status: 500 }
@@ -358,10 +342,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { tickets } = body;
 
-    console.log('📥 Received POST request with tickets:', tickets);
 
     if (!tickets || !Array.isArray(tickets) || tickets.length === 0) {
-      console.error('Invalid request: tickets is not an array');
       return NextResponse.json(
         { error: 'Invalid tickets data - expected array of tickets' },
         { status: 400 }
@@ -376,7 +358,6 @@ export async function POST(request: Request) {
     );
 
     if (invalidTickets.length > 0) {
-      console.error('Invalid tickets found:', invalidTickets);
       return NextResponse.json(
         { 
           error: 'Some tickets have missing required fields',
@@ -387,23 +368,17 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('✅ All tickets validated, proceeding to create...');
 
     const result = isDevelopment
       ? await createHallTicketsSupabase(tickets)
       : await createHallTicketsMySQL(tickets);
 
-    console.log('✅ Hall tickets created successfully:', result);
 
     return NextResponse.json({
       success: true,
       message: `${result.count} hall ticket(s) allocated successfully`,
     }, { status: 200 }); // Explicitly set 200 status
   } catch (error: any) {
-    console.error('❌ Error in POST handler:', error);
-    console.error('Error type:', typeof error);
-    console.error('Error keys:', Object.keys(error));
-    console.error('Error stack:', error.stack);
     
     // Check for duplicate entry error
     if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {

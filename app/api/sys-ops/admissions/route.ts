@@ -135,7 +135,6 @@ async function getAdmissionsMySQL(
       perPage,
     };
   } catch (error) {
-    console.error('MySQL Get Admissions Error:', error);
     await connection.end();
     throw error;
   }
@@ -226,7 +225,6 @@ async function getAdmissionsSupabase(
       perPage,
     };
   } catch (error) {
-    console.error('Supabase Get Admissions Error:', error);
     throw error;
   }
 }
@@ -248,7 +246,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching admissions:', error);
     return NextResponse.json(
       { error: 'Failed to fetch admissions', details: error.message },
       { status: 500 }

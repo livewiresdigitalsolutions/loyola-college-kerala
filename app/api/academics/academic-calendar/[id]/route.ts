@@ -51,7 +51,6 @@ export async function PUT(
             return NextResponse.json({ id: idNum, ...record });
         }
     } catch (error: any) {
-        console.error('Error updating academic calendar item:', error);
         return NextResponse.json(
             { error: 'Failed to update academic calendar item', details: error.message },
             { status: 500 }
@@ -77,7 +76,6 @@ export async function DELETE(
         }
         return NextResponse.json({ message: 'Academic calendar item deleted successfully' });
     } catch (error: any) {
-        console.error('Error deleting academic calendar item:', error);
         return NextResponse.json(
             { error: 'Failed to delete academic calendar item', details: error.message },
             { status: 500 }

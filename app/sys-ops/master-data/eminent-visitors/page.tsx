@@ -42,7 +42,6 @@ export default function EminentVisitorsPage() {
                 setVisitors(data.data || []);
             }
         } catch (error) {
-            console.error("Error fetching visitors:", error);
             toast.error("Failed to load visitors");
         } finally {
             setIsLoading(false);
@@ -105,7 +104,6 @@ export default function EminentVisitorsPage() {
                 toast.error(data.error || "Failed to add visitor");
             }
         } catch (error) {
-            console.error("Error adding visitor:", error);
             toast.error("Failed to add visitor");
         } finally {
             setUploading(false);
@@ -129,7 +127,6 @@ export default function EminentVisitorsPage() {
                 toast.error(data.error || "Failed to delete visitor");
             }
         } catch (error) {
-            console.error("Error deleting visitor:", error);
             toast.error("Failed to delete visitor");
         }
     };
@@ -151,7 +148,6 @@ export default function EminentVisitorsPage() {
                 toast.error(data.error || "Failed to update status");
             }
         } catch (error) {
-            console.error("Error updating status:", error);
             toast.error("Failed to update status");
         }
     };
@@ -184,7 +180,6 @@ export default function EminentVisitorsPage() {
                 toast.error(data.error || "Failed to update visitor");
             }
         } catch (error) {
-            console.error("Error updating visitor:", error);
             toast.error("Failed to update visitor");
         }
     };

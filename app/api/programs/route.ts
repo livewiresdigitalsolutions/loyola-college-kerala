@@ -48,7 +48,6 @@ export async function GET() {
     
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching programs:', error);
     return NextResponse.json(
       { error: 'Failed to fetch programs' },
       { status: 500 }
@@ -86,7 +85,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ id: (result as any).insertId, discipline });
     }
   } catch (error: any) {
-    console.error('Error creating program:', error);
     return NextResponse.json(
       { error: 'Failed to create program', details: error.message },
       { status: 500 }

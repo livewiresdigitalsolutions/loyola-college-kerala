@@ -52,7 +52,6 @@ export async function GET(request: Request) {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching committee members:', error);
         return NextResponse.json(
             { error: 'Failed to fetch committee members', details: error.message },
             { status: 500 }
@@ -92,7 +91,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, committee_id, name, designation, image, sort_order });
         }
     } catch (error: any) {
-        console.error('Error creating committee member:', error);
         return NextResponse.json(
             { error: 'Failed to create committee member', details: error.message },
             { status: 500 }

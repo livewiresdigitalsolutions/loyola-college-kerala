@@ -45,7 +45,6 @@ export async function GET() {
             : await fetchFromMySQL();
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error fetching LES team:', error);
         return NextResponse.json(
             { error: 'Failed to fetch team members' },
             { status: 500 }
@@ -79,7 +78,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, name, role, image, profile_url });
         }
     } catch (error: any) {
-        console.error('Error creating team member:', error);
         return NextResponse.json(
             { error: 'Failed to create team member', details: error.message },
             { status: 500 }

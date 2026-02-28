@@ -142,7 +142,6 @@ async function getAvailableAdmissionsMySQL(
       perPage,
     };
   } catch (error) {
-    console.error('MySQL Error:', error);
     await connection.end();
     throw error;
   }
@@ -252,7 +251,6 @@ async function getAvailableAdmissionsSupabase(
       perPage,
     };
   } catch (error) {
-    console.error('Supabase Error:', error);
     throw error;
   }
 }
@@ -274,7 +272,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Error fetching available admissions:', error);
     return NextResponse.json(
       { error: 'Failed to fetch available admissions', details: error.message },
       { status: 500 }

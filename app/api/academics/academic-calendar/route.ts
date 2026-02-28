@@ -37,7 +37,6 @@ export async function GET() {
         }
         return NextResponse.json(data);
     } catch (error: any) {
-        console.error('Error fetching academic calendar:', error);
         return NextResponse.json(
             { error: 'Failed to fetch academic calendar', details: error.message },
             { status: 500 }
@@ -79,7 +78,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ id: result.insertId, ...record });
         }
     } catch (error: any) {
-        console.error('Error creating academic calendar item:', error);
         return NextResponse.json(
             { error: 'Failed to create academic calendar item', details: error.message },
             { status: 500 }
