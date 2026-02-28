@@ -1,0 +1,66 @@
+// app/api/iqac/naac/peer-visits/upload/route.ts
+import { NextResponse } from "next/server";
+import mysql from "mysql2/promise";
+import fs from "fs/promises";
+import path from "path";
+
+const mysqlConfig = {
+    host: process.env.DB_HOST || "localhost",
+    port: parseInt(process.env.DB_PORT || "3303"),
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_DATABASE || "loyola",
+};
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+export async function POST(request: Request) {
+    try {
+        const formData = await request.formData();
+        const file = formData.get("file") as File;
+        const title = formData.get("title") as string;
+        const visit_year = parseInt(formData.get("visit_year") as string) || new Date().getFullYear();
+        const photo_count = parseInt(formData.get("photo_count") as string) || 0;
+        const display_order = parseInt(formData.get("display_order") as string) || 0;
+        const is_active = formData.get("is_active") !== "false";
+
+        if (!file || !title) {
+            return NextResponse.json({ success: false, error: "File and title are required" }, { status: 400 });
+        }
+        if (!file.type.startsWith("image/")) {
+            return NextResponse.json({ success: false, error: "Only image files are allowed" }, { status: 400 });
+        }
+        if (file.size > MAX_FILE_SIZE) {
+            return NextResponse.json({ success: false, error: "File size must be less than 5MB" }, { status: 400 });
+        }
+
+        const sanitized = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+        const fileName = `${Date.now()}-${sanitized}`;
+        const uploadDir = path.join(process.cwd(), "public", "iqac", "peer-visits");
+        try { await fs.access(uploadDir); } catch { await fs.mkdir(uploadDir, { recursive: true }); }
+
+        const filePath = path.join(uploadDir, fileName);
+        const buffer = Buffer.from(await file.arrayBuffer());
+        await fs.writeFile(filePath, buffer);
+
+        const imageUrl = `/iqac/peer-visits/${fileName}`;
+
+        const connection = await mysql.createConnection(mysqlConfig);
+        try {
+            const [result] = await connection.execute(
+                `INSERT INTO naac_peer_visits (title, visit_year, photo_count, cover_image_url, file_name, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [title, visit_year, photo_count, imageUrl, file.name, display_order, is_active ? 1 : 0]
+            );
+            return NextResponse.json({
+                success: true,
+                message: "Peer visit added successfully",
+                data: { id: (result as any).insertId, cover_image_url: imageUrl },
+            });
+        } finally {
+            await connection.end();
+        }
+    } catch (error: any) {
+        console.error("Error uploading peer visit:", error);
+        return NextResponse.json({ success: false, error: "Failed to upload peer visit", details: error.message }, { status: 500 });
+    }
+}

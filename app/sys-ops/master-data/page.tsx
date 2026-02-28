@@ -12,6 +12,7 @@ import {
   HeartHandshake,
   BookMarked,
   Users,
+  Award,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -126,6 +127,16 @@ const masterDataCards: MasterDataCard[] = [
     bgColor: "bg-primary",
   },
 
+  {
+    id: "iqac-naac",
+    title: "IQAC",
+    description: "Manage accreditation history, certificates, peer visits & clippings",
+    icon: <Award className="w-8 h-8" />,
+    href: "/sys-ops/master-data/iqac",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  
 ];
 
 export default function MasterData() {

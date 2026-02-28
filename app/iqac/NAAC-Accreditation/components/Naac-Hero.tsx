@@ -1,10 +1,9 @@
-import React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
-
-export default function EvHero() {
+export default function NaacHero() {
   return (
     <>
       {/* HERO SECTION WITH IMAGE AND GREEN OVERLAY */}
@@ -38,17 +37,17 @@ export default function EvHero() {
                   Home
                 </Link>
                 <ChevronRight className="w-4 h-4" />
-                <Link href="/about" className="hover:text-white transition-colors">
-                  About
+                <Link href="/iqac/Home" className="hover:text-white transition-colors">
+                  IQAC
                 </Link>
                 <ChevronRight className="w-4 h-4" />
-                <span className="text-[#F0B129] font-medium">Eminent Visitors</span>
+                <span className="text-[#F0B129] font-medium">NAAC Accreditation</span>
               </nav>
 
 
               {/* MAIN HEADING */}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                Eminent Visitors
+                NAAC Accreditation
               </h1>
             </div>
           </div>
