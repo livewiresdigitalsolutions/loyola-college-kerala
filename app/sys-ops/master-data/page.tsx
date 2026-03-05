@@ -13,7 +13,10 @@ import {
   BookMarked,
   Users,
   Award,
+  UserCheck,
+  Heart,
 } from "lucide-react";
+
 import Link from "next/link";
 
 interface MasterDataCard {
@@ -136,7 +139,24 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
-  
+  {
+    id: "students-engagements",
+    title: "Students Engagements",
+    description: "Manage LITCOF organizing team, activities, achievements, events & gallery",
+    icon: <UserCheck className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "loyola-mentoring-programme",
+    title: "Mentoring Programme",
+    description: "Manage LMP organizing team and mentoring session records",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-mentoring-programme",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
 ];
 
 export default function MasterData() {

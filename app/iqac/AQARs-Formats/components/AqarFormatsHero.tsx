@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import IqacSubNavbar from "../../components/IqacSubNavbar";
 
 export default function AqarFormatsHero() {
     return (
@@ -48,6 +49,7 @@ export default function AqarFormatsHero() {
                     </div>
                 </div>
             </section>
+            <IqacSubNavbar />
         </>
     );
 }

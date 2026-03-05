@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import IqacSubNavbar from "../../components/IqacSubNavbar";
 
 export default function SsrHero() {
     return (
@@ -47,15 +48,16 @@ export default function SsrHero() {
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                                 Self Study Report (SSR)
                             </h1>
-                            <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
+                            {/* <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
                                 Comprehensive reports submitted to NAAC documenting the quality initiatives,
                                 academic achievements, and institutional developments of Loyola College of
                                 Social Sciences, Kerala.
-                            </p>
+                            </p> */}
                         </div>
                     </div>
                 </div>
             </section>
+            <IqacSubNavbar />
         </>
     );
 }

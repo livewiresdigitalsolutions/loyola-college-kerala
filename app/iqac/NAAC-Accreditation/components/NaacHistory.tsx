@@ -25,9 +25,10 @@ export default function NaacHistory() {
 
     return (
         <section className="bg-white py-10 md:py-14">
+            <div className="mb-8"></div>
             <div className="max-w-7xl mx-auto px-4 md:px-6">
-                <div className="mb-6">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-wide">
+                <div className="my-8">
+                    <h2 className="text-xl md:text-2xl font-bold text-primary tracking-wide">
                         NAAC Accreditation History
                     </h2>
                     <div className="mt-2 w-12 h-0.5 bg-primary" />
@@ -37,10 +38,10 @@ export default function NaacHistory() {
                     <table className="w-full border-collapse text-sm">
                         <thead>
                             <tr style={{ background: "#0d4a33" }}>
-                                {["Cycle", "Period", "NAAC Score", "Principal", "Director/Rector", "NAAC Coordinator", "Core Team"].map((h) => (
+                                {["Cycle", "Period", "NAAC Score", "Principal", "\Coordinator", "Asst. Coordinator", "Core Team"].map((h) => (
                                     <th
                                         key={h}
-                                        className="px-4 py-3 text-left text-white font-semibold text-xs uppercase tracking-wide whitespace-nowrap border-r border-green-800 last:border-r-0"
+                                        className="px-4 py-3 text-left text-white font-semibold text-xs  tracking-wide whitespace-nowrap border-r border-green-800 last:border-r-0"
                                     >
                                         {h}
                                     </th>

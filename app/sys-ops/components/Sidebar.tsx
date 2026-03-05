@@ -29,30 +29,30 @@ const menuItems = [
     path: "/sys-ops/admissions",
   },
   {
-    name: "Admin Users",  
-    icon: ShieldUser ,          
-    path: "/sys-ops/admin-users",  
+    name: "Admin Users",
+    icon: ShieldUser,
+    path: "/sys-ops/admin-users",
   },
   {
-    name: "Master Data",  
-    icon: Database,          
-    path: "/sys-ops/master-data",  
+    name: "Master Data",
+    icon: Database,
+    path: "/sys-ops/master-data",
   },
   {
-    name: "Allot Enterance Exam",  
-    icon: Landmark,          
-    path: "/sys-ops/hall-tickets",  
+    name: "Allot Enterance Exam",
+    icon: Landmark,
+    path: "/sys-ops/hall-tickets",
   },
   {
-    name: "LES Management",  
-    icon: HeartHandshake,          
-    path: "/sys-ops/master-data/les",  
+    name: "LES Management",
+    icon: HeartHandshake,
+    path: "/sys-ops/master-data/les",
   },
   {
     name: "Settings",
     icon: Settings,
     path: "/sys-ops/settings",
-    disabled : true,
+    disabled: true,
   },
 ];
 
@@ -93,10 +93,9 @@ export default function Sidebar() {
               disabled={item.disabled}
               className={`
                 w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200
-                ${
-                  isActive
-                    ? "bg-white text-primary shadow-lg"
-                    : item.disabled
+                ${isActive
+                  ? "bg-white text-primary shadow-lg"
+                  : item.disabled
                     ? "text-white/40 cursor-not-allowed"
                     : "text-white hover:bg-white/10"
                 }
