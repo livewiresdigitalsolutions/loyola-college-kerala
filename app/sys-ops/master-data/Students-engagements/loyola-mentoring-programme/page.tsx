@@ -5,6 +5,21 @@ import { useState, useEffect } from "react";
 import { Trash2, Plus, Upload, Pencil, X, Check, Users, BookOpen } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 
+const LG = "#13432C";
+const LG_DARK = "#0f3324";
+
+function GreenBtn({ onClick, disabled, children, className = "" }: { onClick?: () => void; disabled?: boolean; children: React.ReactNode; className?: string }) {
+    return (
+        <button onClick={onClick} disabled={disabled}
+            className={`flex items-center gap-2 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${className}`}
+            style={{ backgroundColor: LG }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = LG_DARK)}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = LG)}>
+            {children}
+        </button>
+    );
+}
+
 type Tab = "organizing-team" | "sessions";
 
 interface TeamMember {
@@ -34,7 +49,8 @@ export default function LmpAdmin() {
             <div className="flex gap-1 border-b border-gray-200">
                 {tabs.map(t => (
                     <button key={t.id} onClick={() => setActiveTab(t.id)}
-                        className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-colors border-b-2 -mb-px ${activeTab === t.id ? "border-[#13432C] text-[#13432C]" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
+                        className="flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-colors border-b-2 -mb-px"
+                        style={activeTab === t.id ? { borderBottomColor: LG, color: LG } : { borderBottomColor: "transparent", color: "#6b7280" }}>
                         {t.icon} {t.label}
                     </button>
                 ))}
@@ -49,7 +65,7 @@ export default function LmpAdmin() {
 function UploadBox({ id, preview, file, onChange }: { id: string; preview: string; file: File | null; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
     return (
         <div>
-            <label htmlFor={id} className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-[#13432C] transition-colors">
+            <label htmlFor={id} className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-gray-400 transition-colors">
                 {preview
                     ? <img src={preview} alt="" className="w-28 h-28 rounded-full object-cover mb-2 shadow" />
                     : <><Upload className="w-10 h-10 text-gray-400 mb-2" />
@@ -124,9 +140,7 @@ function OrganizingTeamTab() {
     return (
         <div className="space-y-4">
             <div className="flex justify-end">
-                <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 bg-[#13432C] text-white px-4 py-2 rounded-lg hover:bg-[#0f3323] transition-colors">
-                    <Plus className="w-4 h-4" /> Add Member
-                </button>
+                <GreenBtn onClick={() => setShowAdd(true)}><Plus className="w-4 h-4" /> Add Member</GreenBtn>
             </div>
 
             {showAdd && (
@@ -152,7 +166,7 @@ function OrganizingTeamTab() {
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <button onClick={handleAdd} disabled={uploading} className="bg-[#13432C] text-white px-5 py-2 rounded-lg text-sm hover:bg-[#0f3323] disabled:opacity-50">{uploading ? "Saving..." : "Save"}</button>
+                        <GreenBtn onClick={handleAdd} disabled={uploading}>{uploading ? "Saving..." : "Save"}</GreenBtn>
                         <button onClick={() => { setShowAdd(false); setFile(null); setPreview(""); }} className="bg-gray-100 text-gray-700 px-5 py-2 rounded-lg text-sm">Cancel</button>
                     </div>
                 </div>
@@ -178,7 +192,7 @@ function OrganizingTeamTab() {
                                 </div>
                             ) : (
                                 <>
-                                    <p className="font-semibold text-sm text-[#13432C] text-center">{item.name}</p>
+                                    <p className="font-semibold text-sm text-center" style={{ color: LG }}>{item.name}</p>
                                     <p className="text-[10.5px] text-gray-400 uppercase tracking-wide text-center mt-0.5">{item.role}</p>
                                     <div className="flex items-center justify-between mt-3">
                                         <button onClick={() => handleToggle(item)} className={`text-xs px-2 py-0.5 rounded-full ${item.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>{item.is_active ? "Active" : "Inactive"}</button>
@@ -246,9 +260,7 @@ function SessionsTab() {
     return (
         <div className="space-y-4">
             <div className="flex justify-end">
-                <button onClick={() => setShowAdd(true)} className="flex items-center gap-2 bg-[#13432C] text-white px-4 py-2 rounded-lg hover:bg-[#0f3323] transition-colors">
-                    <Plus className="w-4 h-4" /> Add Session
-                </button>
+                <GreenBtn onClick={() => setShowAdd(true)}><Plus className="w-4 h-4" /> Add Session</GreenBtn>
             </div>
 
             {showAdd && (
@@ -281,7 +293,7 @@ function SessionsTab() {
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <button onClick={handleAdd} className="bg-[#13432C] text-white px-5 py-2 rounded-lg text-sm hover:bg-[#0f3323]">Save</button>
+                        <GreenBtn onClick={handleAdd}>Save</GreenBtn>
                         <button onClick={() => setShowAdd(false)} className="bg-gray-100 text-gray-700 px-5 py-2 rounded-lg text-sm">Cancel</button>
                     </div>
                 </div>
@@ -319,8 +331,8 @@ function SessionsTab() {
                             <div>
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex gap-3 flex-wrap mb-3">
-                                        <span className="inline-flex items-center gap-1.5 bg-[#13432C] text-white text-xs font-medium px-3 py-1 rounded-full">{item.date}</span>
-                                        <span className="inline-flex items-center gap-1.5 bg-[#F9FAEE] border border-[#DCE092] text-[#13432C] text-xs font-semibold px-3 py-1 rounded-full">{item.batch}</span>
+                                        <span className="inline-flex items-center gap-1.5 text-white text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: LG }}>{item.date}</span>
+                                        <span className="inline-flex items-center gap-1.5 bg-[#F9FAEE] border border-[#DCE092] text-xs font-semibold px-3 py-1 rounded-full" style={{ color: LG }}>{item.batch}</span>
                                     </div>
                                     <div className="flex items-center gap-2 shrink-0">
                                         <button onClick={() => handleToggle(item)} className={`text-xs px-2 py-0.5 rounded-full ${item.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>{item.is_active ? "Active" : "Inactive"}</button>
@@ -330,7 +342,7 @@ function SessionsTab() {
                                 </div>
                                 <p className="text-sm text-gray-600 leading-relaxed">{item.description}</p>
                                 {item.report_link && item.report_link !== "#" && (
-                                    <a href={item.report_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[#13432C] text-xs font-semibold mt-3 hover:underline">
+                                    <a href={item.report_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-semibold mt-3 hover:underline" style={{ color: LG }}>
                                         🔗 Submit Report
                                     </a>
                                 )}

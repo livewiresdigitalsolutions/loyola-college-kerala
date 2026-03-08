@@ -157,6 +157,33 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
+  {
+    id: "loyola-ethnic-theatre",
+    title: "Loyola Ethnic Theatre",
+    description: "Manage Loyola Ethnic Theatre organizing team and activities",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-ethnic-theatre",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "loyola-academy-for-career-enhancement",
+    title: "Loyola Academy for Career Enhancement",
+    description: "Manage LACE organizing team and activities",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-academy-for-career-enhancement",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "loyola-initiative-for-language-advancement",
+    title: "Loyola Initiative for Language Advancement",
+    description: "Manage LILA organizing team and activities",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-initiative-for-language-advancement",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
 ];
 
 export default function MasterData() {
