@@ -26,7 +26,7 @@ export default function NaacNewspaperClippings() {
         <section className="bg-gray-50 py-10 md:py-14 border-t border-gray-100">
             <div className="max-w-7xl mx-auto px-4 md:px-6">
                 <div className="mb-6">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-wide">
+                    <h2 className="text-xl md:text-2xl font-bold text-primary tracking-wide">
                         Newspaper Clippings
                     </h2>
                     <div className="mt-2 w-12 h-0.5 bg-primary" />

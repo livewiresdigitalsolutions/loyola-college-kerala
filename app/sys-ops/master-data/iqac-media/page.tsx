@@ -2,7 +2,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Trash2, Plus, Upload } from "lucide-react";
+import Image from "next/image";
+import { FileText, Trash2, Plus, Upload, Image as ImageIcon } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 
 interface IQACMedia {
@@ -26,10 +27,13 @@ export default function IQACMediaPage() {
   const [newMedia, setNewMedia] = useState({
     title: "",
     description: "",
-    category: "general",
+    category: "coordinator",
     display_order: 0,
     is_active: true,
   });
+
+  const IMAGE_CATEGORIES = ["coordinator"];
+  const isImageMode = IMAGE_CATEGORIES.includes(newMedia.category);
 
   useEffect(() => {
     fetchMediaList();
@@ -53,13 +57,16 @@ export default function IQACMediaPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate PDF only
-    if (file.type !== "application/pdf") {
-      toast.error("Please select a PDF file only");
+    const isImg = IMAGE_CATEGORIES.includes(newMedia.category);
+    const allowedTypes = isImg
+      ? ["image/jpeg", "image/png", "image/webp", "image/gif"]
+      : ["application/pdf"];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error(isImg ? "Please select an image file (JPG, PNG, WebP)" : "Please select a PDF file only");
       return;
     }
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       toast.error("File size must be less than 10MB");
       return;
@@ -70,7 +77,7 @@ export default function IQACMediaPage() {
 
   const handleUploadMedia = async () => {
     if (!selectedFile || !newMedia.title) {
-      toast.error("Please select a PDF file and provide a title");
+      toast.error("Please select a file and provide a title");
       return;
     }
 
@@ -93,13 +100,13 @@ export default function IQACMediaPage() {
       const data = await response.json();
 
       if (data.success) {
-        toast.success("PDF uploaded successfully");
+        toast.success(isImageMode ? "Image uploaded successfully" : "PDF uploaded successfully");
         setShowAddForm(false);
         setSelectedFile(null);
         setNewMedia({
           title: "",
           description: "",
-          category: "general",
+          category: "coordinator",
           display_order: 0,
           is_active: true,
         });
@@ -190,54 +197,69 @@ export default function IQACMediaPage() {
           className="flex items-center gap-2 bg-[#342D87] text-white px-6 py-2 rounded-lg hover:bg-[#2a2470] transition-colors"
         >
           <Plus className="w-5 h-5" />
-          Upload PDF
+          Upload File
         </button>
       </div>
 
       {/* Upload Form */}
       {showAddForm && (
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-          <h2 className="text-xl font-bold mb-6">Upload New PDF Document</h2>
+          <h2 className="text-xl font-bold mb-6">
+            {isImageMode ? "Upload Coordinator Photo" : "Upload New PDF Document"}
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* File Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                PDF File *
+                {isImageMode ? "Photo *" : "PDF File *"}
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#342D87] transition-colors">
                 <input
                   type="file"
-                  accept="application/pdf"
+                  accept={isImageMode ? "image/jpeg,image/png,image/webp,image/gif" : "application/pdf"}
                   onChange={handleFileSelect}
                   className="hidden"
-                  id="pdf-upload"
+                  id="file-upload"
                 />
                 <label
-                  htmlFor="pdf-upload"
+                  htmlFor="file-upload"
                   className="cursor-pointer flex flex-col items-center"
                 >
-                  <Upload className="w-12 h-12 text-gray-400 mb-3" />
+                  {isImageMode
+                    ? <ImageIcon className="w-12 h-12 text-gray-400 mb-3" />
+                    : <Upload className="w-12 h-12 text-gray-400 mb-3" />
+                  }
                   <span className="text-sm text-gray-600 mb-1">
-                    Click to upload PDF
+                    {isImageMode ? "Click to upload photo" : "Click to upload PDF"}
                   </span>
                   <span className="text-xs text-gray-400">
-                    Max 10MB - PDF only
+                    {isImageMode ? "Max 10MB - JPG, PNG, WebP" : "Max 10MB - PDF only"}
                   </span>
                 </label>
               </div>
               {selectedFile && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-green-600" />
+                    {isImageMode
+                      ? <ImageIcon className="w-5 h-5 text-green-600" />
+                      : <FileText className="w-5 h-5 text-green-600" />
+                    }
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {selectedFile.name}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {formatFileSize(selectedFile.size)}
-                      </p>
+                      <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
+                      <p className="text-xs text-gray-600">{formatFileSize(selectedFile.size)}</p>
                     </div>
                   </div>
+                  {/* Image preview for coordinator */}
+                  {isImageMode && (
+                    <div className="mt-3 relative w-24 h-32 mx-auto overflow-hidden rounded shadow">
+                      <Image
+                        src={URL.createObjectURL(selectedFile)}
+                        alt="Preview"
+                        fill
+                        className="object-cover object-top"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -266,15 +288,17 @@ export default function IQACMediaPage() {
                 <select
                   className="w-full rounded-lg border border-gray-300 p-3 focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
                   value={newMedia.category}
-                  onChange={(e) =>
-                    setNewMedia({ ...newMedia, category: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setNewMedia({ ...newMedia, category: e.target.value });
+                    setSelectedFile(null); // reset file when category changes
+                  }}
                 >
-                  <option value="general">General</option>
-                  <option value="reports">Reports</option>
-                  <option value="policies">Policies</option>
-                  <option value="minutes">Meeting Minutes</option>
-                  <option value="guidelines">Guidelines</option>
+                  <option value="coordinator">Coordinator (Photo)</option>
+                  <option value="general">General (PDF)</option>
+                  <option value="reports">Reports (PDF)</option>
+                  <option value="policies">Policies (PDF)</option>
+                  <option value="minutes">Meeting Minutes (PDF)</option>
+                  <option value="guidelines">Guidelines (PDF)</option>
                 </select>
               </div>
 
@@ -343,7 +367,7 @@ export default function IQACMediaPage() {
               ) : (
                 <>
                   <Upload className="w-4 h-4" />
-                  Upload PDF
+                  {isImageMode ? "Upload Photo" : "Upload PDF"}
                 </>
               )}
             </button>
@@ -386,7 +410,7 @@ export default function IQACMediaPage() {
 
               <div className="p-6">
                 <h3 className="font-bold text-lg mb-3 truncate">{media.title}</h3>
-                
+
                 {media.description && (
                   <p className="text-sm text-gray-600 mb-4 truncate">{media.description}</p>
                 )}
@@ -422,11 +446,10 @@ export default function IQACMediaPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleToggleActive(media.id, media.is_active)}
-                      className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
-                        media.is_active
+                      className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${media.is_active
                           ? "bg-green-100 text-green-800 hover:bg-green-200"
                           : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      }`}
+                        }`}
                     >
                       {media.is_active ? "Active" : "Inactive"}
                     </button>

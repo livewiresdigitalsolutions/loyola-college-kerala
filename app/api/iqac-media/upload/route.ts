@@ -20,9 +20,11 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// PDF file validation
+// File validation
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_MIME_TYPES = ['application/pdf'];
+const PDF_MIME_TYPES = ['application/pdf'];
+const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const IMAGE_CATEGORIES = ['coordinator'];
 
 export async function POST(request: Request) {
   try {
@@ -42,10 +44,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate file type
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+    // Validate file type based on category
+    const isImageCategory = IMAGE_CATEGORIES.includes(category);
+    const allowedTypes = isImageCategory ? IMAGE_MIME_TYPES : PDF_MIME_TYPES;
+    if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { success: false, error: "Only PDF files are allowed" },
+        { success: false, error: isImageCategory ? "Only image files (JPG, PNG, WebP) are allowed" : "Only PDF files are allowed" },
         { status: 400 }
       );
     }
@@ -123,7 +127,7 @@ export async function POST(request: Request) {
       const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
       const fileName = `${Date.now()}-${sanitizedFileName}`;
       const uploadDir = path.join(process.cwd(), "public", "iqac");
-      
+
       // Ensure directory exists
       try {
         await fs.access(uploadDir);
@@ -137,6 +141,7 @@ export async function POST(request: Request) {
       await fs.writeFile(filePath, buffer);
 
       fileUrl = `/iqac/${fileName}`;
+
 
       // Save to MySQL database
       const connection = await mysql.createConnection(mysqlConfig);
@@ -163,10 +168,10 @@ export async function POST(request: Request) {
     }
   } catch (error: any) {
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: "Failed to upload PDF",
-        details: error.message 
+        details: error.message
       },
       { status: 500 }
     );

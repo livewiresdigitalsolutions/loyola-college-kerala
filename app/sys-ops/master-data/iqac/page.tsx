@@ -4,6 +4,13 @@ import { BookOpen, FileText } from "lucide-react";
 
 const sections = [
     {
+        href: "/sys-ops/master-data/iqac/About",
+        icon: BookOpen,
+        title: "Coordinator Images & Members Details",
+        description: "Manage IQAC Coordinator Images & Members Details.",
+        color: "indigo",
+    },
+    {
         href: "/sys-ops/master-data/iqac/NAAC-Accreditation",
         icon: BookOpen,
         title: "NAAC Accreditation",

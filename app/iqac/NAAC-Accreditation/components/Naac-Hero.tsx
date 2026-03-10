@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import IqacSubNavbar from "../../components/IqacSubNavbar";
 
 export default function NaacHero() {
   return (
@@ -49,10 +50,14 @@ export default function NaacHero() {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                 NAAC Accreditation
               </h1>
+
             </div>
           </div>
         </div>
+
       </section>
+      <IqacSubNavbar />
+
     </>
   )
 }

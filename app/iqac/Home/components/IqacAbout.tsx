@@ -3,26 +3,27 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
-interface IqacMedia {
+interface IqacCoordinator {
     id: number;
-    title: string;
-    description: string;
-    category: string;
-    url: string;
+    name: string;
+    role: string;
+    image_url: string;
     display_order: number;
+    is_active: boolean;
 }
 
 export default function IqacAbout() {
-    const [coordinators, setCoordinators] = useState<IqacMedia[]>([]);
+    const [coordinators, setCoordinators] = useState<IqacCoordinator[]>([]);
 
     useEffect(() => {
-        fetch("/api/iqac-media?category=coordinator")
+        fetch("/api/iqac/About?type=coordinators")
             .then((r) => r.json())
             .then((d) => {
                 if (d.success) setCoordinators(d.data || []);
             })
             .catch(console.error);
     }, []);
+
 
     return (
         <section className="bg-white py-12 md:py-16">
@@ -81,18 +82,18 @@ export default function IqacAbout() {
                                 <div key={coord.id} className="text-center">
                                     <div className="relative w-32 h-40 md:w-40 md:h-48 overflow-hidden shadow-md mx-auto">
                                         <Image
-                                            src="/assets/les/defaultprofile.png"
-                                            alt="IQAC Coordinator"
+                                            src={coord.image_url}
+                                            alt={coord.name || "IQAC Coordinator"}
                                             fill
                                             className="object-cover object-top"
                                         />
                                     </div>
                                     <div className="mt-2 px-1">
                                         <p className="text-sm font-semibold text-primary leading-tight">
-                                            {coord.title}
+                                            {coord.name}
                                         </p>
-                                        {coord.description && (
-                                            <p className="text-xs text-gray-500 mt-0.5">{coord.description}</p>
+                                        {coord.role && (
+                                            <p className="text-xs text-gray-500 mt-0.5">{coord.role}</p>
                                         )}
                                     </div>
                                 </div>

@@ -1,3 +1,5 @@
+const LG = "#13432C";
+
 export default function About() {
   return (
     <section className="max-w-7xl mx-auto px-6 py-16 md:py-20">
@@ -7,7 +9,7 @@ export default function About() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
             About LACE
           </h2>
-          <div className="w-14 h-1 bg-[#13432C] rounded-full mt-4"></div>
+          <div className="w-14 h-1 rounded-full mt-4" style={{ backgroundColor: LG }}></div>
         </div>
 
         {/* Right – Content */}
@@ -26,11 +28,12 @@ export default function About() {
           </p>
 
           {/* Exam Tags */}
-          <div className="flex flex-wrap gap-3 mb-6">
+          <div className="flex flex-wrap gap-3 mb-6" >
             {["UGC-NET/JRF", "SET", "UPSC", "KPSC", "SSC"].map((exam) => (
               <span
                 key={exam}
-                className="px-4 py-1.5 border border-[#13432C] text-[#13432C] rounded-full text-sm font-medium"
+                className="px-4 py-1.5 rounded-full text-sm font-medium"
+                style={{ border: `1px solid ${LG}`, color: LG }}
               >
                 {exam}
               </span>

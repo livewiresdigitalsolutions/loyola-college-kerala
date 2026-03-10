@@ -15,15 +15,6 @@ export default function NaacAccreditationPage() {
     return (
         <div>
             <NaacHero />
-            {/* Breadcrumb */}
-            <div className="bg-gray-100 border-b border-gray-200 py-2">
-                <div className="max-w-7xl mx-auto px-6 text-xs text-gray-500">
-                    <span>Home</span>
-                    <span className="mx-1.5">›</span>
-                    <span>NAAC Accreditation</span>
-                </div>
-            </div>
-
             <NaacHistory />
             <NaacCertificates />
             <NaacPeerVisits />

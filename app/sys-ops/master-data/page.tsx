@@ -13,7 +13,10 @@ import {
   BookMarked,
   Users,
   Award,
+  UserCheck,
+  Heart,
 } from "lucide-react";
+
 import Link from "next/link";
 
 interface MasterDataCard {
@@ -133,6 +136,51 @@ const masterDataCards: MasterDataCard[] = [
     description: "Manage accreditation history, certificates, peer visits & clippings",
     icon: <Award className="w-8 h-8" />,
     href: "/sys-ops/master-data/iqac",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "students-engagements",
+    title: "Students Engagements",
+    description: "Manage LITCOF organizing team, activities, achievements, events & gallery",
+    icon: <UserCheck className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "loyola-mentoring-programme",
+    title: "Mentoring Programme",
+    description: "Manage LMP organizing team and mentoring session records",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-mentoring-programme",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "loyola-ethnic-theatre",
+    title: "Loyola Ethnic Theatre",
+    description: "Manage Loyola Ethnic Theatre organizing team and activities",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-ethnic-theatre",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "loyola-academy-for-career-enhancement",
+    title: "Loyola Academy for Career Enhancement",
+    description: "Manage LACE organizing team and activities",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-academy-for-career-enhancement",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "loyola-initiative-for-language-advancement",
+    title: "Loyola Initiative for Language Advancement",
+    description: "Manage LILA organizing team and activities",
+    icon: <Heart className="w-8 h-8" />,
+    href: "/sys-ops/master-data/Students-engagements/loyola-initiative-for-language-advancement",
     color: "text-white",
     bgColor: "bg-primary",
   },
