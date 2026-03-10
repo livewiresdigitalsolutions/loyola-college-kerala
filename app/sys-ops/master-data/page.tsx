@@ -184,6 +184,24 @@ const masterDataCards: MasterDataCard[] = [
     color: "text-white",
     bgColor: "bg-primary",
   },
+  {
+    id: "Careers",
+    title: "Careers",
+    description: "Manage Careers related Announcements",
+    icon: <UserCheck className="w-8 h-8" />,
+    href: "/sys-ops/master-data/careers",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
+    id: "Campus-Life",
+    title: "Campus Life",
+    description: "Manage Campus Life related Announcements",
+    icon: <UserCheck className="w-8 h-8" />,
+    href: "/sys-ops/master-data/campus-life",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
 ];
 
 export default function MasterData() {
