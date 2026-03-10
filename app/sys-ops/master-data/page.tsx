@@ -185,6 +185,15 @@ const masterDataCards: MasterDataCard[] = [
     bgColor: "bg-primary",
   },
   {
+    id: "alumni",
+    title: "Alumni",
+    description: "Manage alumni users, gallery, events, awards & office bearers",
+    icon: <Users className="w-8 h-8" />,
+    href: "/sys-ops/master-data/alumni",
+    color: "text-white",
+    bgColor: "bg-primary",
+  },
+  {
     id: "Careers",
     title: "Careers",
     description: "Manage Careers related Announcements",
@@ -203,6 +212,7 @@ const masterDataCards: MasterDataCard[] = [
     bgColor: "bg-primary",
   },
 ];
+
 
 export default function MasterData() {
   return (

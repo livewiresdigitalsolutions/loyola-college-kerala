@@ -1,0 +1,525 @@
+'use client'
+
+import React, { useState } from 'react'
+import { Smartphone, Building2, ShieldCheck, ChevronDown, Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
+
+const PRESET_AMOUNTS = [500, 1000, 2500, 5000]
+
+const FUND_OPTIONS = [
+  { value: 'general', label: 'General Fund', description: 'Support our overall mission and daily operations.' },
+  { value: 'education', label: 'Education Fund', description: 'Support educational programs for underprivileged students.' },
+  { value: 'counselling', label: 'Counselling Services', description: 'Fund mental health and counselling initiatives.' },
+  { value: 'community', label: 'Community Development', description: 'Support community upliftment projects.' },
+]
+
+// Declare Razorpay type for the checkout modal
+declare global {
+  interface Window {
+    Razorpay: any
+  }
+}
+
+export default function DonateForm() {
+  const [donationType, setDonationType] = useState<'one-time' | 'recurring'>('one-time')
+  const [selectedFund, setSelectedFund] = useState('general')
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(500)
+  const [customAmount, setCustomAmount] = useState('')
+  const [isFundOpen, setIsFundOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  // Donor info
+  const [donorName, setDonorName] = useState('')
+  const [donorEmail, setDonorEmail] = useState('')
+  const [donorPhone, setDonorPhone] = useState('')
+
+  const currentFund = FUND_OPTIONS.find((f) => f.value === selectedFund)
+
+  const getFinalAmount = (): number => {
+    if (customAmount) return parseFloat(customAmount)
+    return selectedAmount || 0
+  }
+
+  const handleAmountSelect = (amount: number) => {
+    setSelectedAmount(amount)
+    setCustomAmount('')
+  }
+
+  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomAmount(e.target.value)
+    setSelectedAmount(null)
+  }
+
+  const validateForm = (): boolean => {
+    const amount = getFinalAmount()
+    if (!amount || amount <= 0) {
+      toast.error('Please select or enter a donation amount')
+      return false
+    }
+    if (!donorName.trim()) {
+      toast.error('Please enter your name')
+      return false
+    }
+    if (!donorEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
+      toast.error('Please enter a valid email address')
+      return false
+    }
+    if (!donorPhone.trim() || !/^\d{10}$/.test(donorPhone)) {
+      toast.error('Please enter a valid 10-digit phone number')
+      return false
+    }
+    return true
+  }
+
+  // ─── Razorpay Payment ───
+  const handleRazorpayPayment = async () => {
+    if (!validateForm()) return
+
+    const amount = getFinalAmount()
+    setIsProcessing(true)
+
+    try {
+      // Step 1: Create order
+      const orderRes = await fetch('/api/les/donate/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          fund: selectedFund,
+          donationType,
+          donorName: donorName.trim(),
+          donorEmail: donorEmail.trim(),
+          donorPhone: donorPhone.trim(),
+        }),
+      })
+
+      const orderData = await orderRes.json()
+
+      if (!orderRes.ok || !orderData.success) {
+        toast.error(orderData.error || 'Failed to create order')
+        setIsProcessing(false)
+        return
+      }
+
+      // Step 2: Load Razorpay script if not loaded
+      if (!window.Razorpay) {
+        await new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+          script.onload = () => resolve()
+          script.onerror = () => reject(new Error('Failed to load Razorpay'))
+          document.head.appendChild(script)
+        })
+      }
+
+      // Step 3: Open Razorpay checkout
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'Loyola Extension Services',
+        description: `Donation - ${currentFund?.label || 'General Fund'}`,
+        order_id: orderData.orderId,
+        prefill: {
+          name: donorName.trim(),
+          email: donorEmail.trim(),
+          contact: donorPhone.trim(),
+        },
+        theme: { color: '#0d4a33' },
+        handler: async (response: any) => {
+          // Step 4: Verify payment
+          try {
+            const verifyRes = await fetch('/api/les/donate/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                donorName: donorName.trim(),
+                donorEmail: donorEmail.trim(),
+                donorPhone: donorPhone.trim(),
+                amount,
+                fund: selectedFund,
+                donationType,
+              }),
+            })
+
+            const verifyData = await verifyRes.json()
+
+            if (verifyRes.ok && verifyData.success) {
+              toast.success('Donation successful! Thank you for your support.')
+              // Reset form
+              setDonorName('')
+              setDonorEmail('')
+              setDonorPhone('')
+              setSelectedAmount(500)
+              setCustomAmount('')
+            } else {
+              toast.error(verifyData.error || 'Payment verification failed')
+            }
+          } catch {
+            toast.error('Payment verification failed. Please contact support.')
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setIsProcessing(false)
+          },
+        },
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.open()
+    } catch (error) {
+      toast.error('Something went wrong. Please try again.')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  // ─── Easebuzz Payment ───
+  const handleEasebuzzPayment = async () => {
+    if (!validateForm()) return
+
+    const amount = getFinalAmount()
+    setIsProcessing(true)
+
+    try {
+      // Store pending info for callback
+      localStorage.setItem('les_donate_pending_email', donorEmail.trim())
+
+      const res = await fetch('/api/les/donate/easebuzz-hash', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          fund: selectedFund,
+          donationType,
+          donorName: donorName.trim(),
+          donorEmail: donorEmail.trim(),
+          donorPhone: donorPhone.trim(),
+        }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok && data.success && data.paymentUrl) {
+        // Store txnid for verification after redirect
+        localStorage.setItem('les_donate_pending_txnid', data.txnid)
+        window.location.href = data.paymentUrl
+      } else {
+        toast.error(data.error || data.message || 'Failed to initiate payment')
+        setIsProcessing(false)
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+      setIsProcessing(false)
+    }
+  }
+
+  return (
+    <section className="bg-[#F6F6EE]">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* LEFT — Donation Form Card */}
+          <div className="lg:col-span-3 bg-white rounded-2xl p-6 md:p-8 shadow-sm">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#0d4a33] mb-8">
+              Make a Donation
+            </h2>
+
+            {/* Donation Type Toggle */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Donation Type
+              </label>
+              <div className="flex bg-gray-100 rounded-full p-1 max-w-md">
+                <button
+                  onClick={() => setDonationType('one-time')}
+                  className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
+                    donationType === 'one-time'
+                      ? 'bg-[#0d4a33] text-white shadow-md'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  One-Time
+                </button>
+                <button
+                  onClick={() => setDonationType('recurring')}
+                  className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
+                    donationType === 'recurring'
+                      ? 'bg-[#0d4a33] text-white shadow-md'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  Monthly Recurring
+                </button>
+              </div>
+            </div>
+
+            {/* Fund Selector */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                I want to support
+              </label>
+              <div className="relative">
+                <button
+                  onClick={() => setIsFundOpen(!isFundOpen)}
+                  className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-3 text-left hover:border-[#0d4a33]/40 transition-colors cursor-pointer"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{currentFund?.label}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{currentFund?.description}</p>
+                  </div>
+                  <ChevronDown
+                    className={`w-5 h-5 text-gray-400 shrink-0 ml-2 transition-transform duration-200 ${
+                      isFundOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown */}
+                {isFundOpen && (
+                  <div className="absolute z-20 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                    {FUND_OPTIONS.map((fund) => (
+                      <button
+                        key={fund.value}
+                        onClick={() => {
+                          setSelectedFund(fund.value)
+                          setIsFundOpen(false)
+                        }}
+                        className={`w-full px-4 py-3 text-left hover:bg-[#0d4a33]/5 transition-colors cursor-pointer ${
+                          selectedFund === fund.value ? 'bg-[#0d4a33]/10' : ''
+                        }`}
+                      >
+                        <p className="text-sm font-medium text-gray-800">{fund.label}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{fund.description}</p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Amount Selection */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Select Amount (INR)
+              </label>
+              <div className="grid grid-cols-4 gap-3 mb-3">
+                {PRESET_AMOUNTS.map((amount) => (
+                  <button
+                    key={amount}
+                    onClick={() => handleAmountSelect(amount)}
+                    className={`py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                      selectedAmount === amount
+                        ? 'bg-[#0d4a33] text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    ₹{amount.toLocaleString()}
+                  </button>
+                ))}
+              </div>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
+                <input
+                  type="number"
+                  value={customAmount}
+                  onChange={handleCustomAmountChange}
+                  placeholder="Enter custom amount"
+                  className="w-full pl-8 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Donor Information */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Your Information
+              </label>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={donorName}
+                  onChange={(e) => setDonorName(e.target.value)}
+                  placeholder="Full Name *"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
+                />
+                <input
+                  type="email"
+                  value={donorEmail}
+                  onChange={(e) => setDonorEmail(e.target.value)}
+                  placeholder="Email Address *"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
+                />
+                <input
+                  type="tel"
+                  value={donorPhone}
+                  onChange={(e) => setDonorPhone(e.target.value)}
+                  placeholder="Phone Number (10 digits) *"
+                  maxLength={10}
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Payment Method */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Select Payment Method
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  onClick={handleRazorpayPayment}
+                  disabled={isProcessing}
+                  className="flex flex-col items-center justify-center py-4 px-4 bg-[#0d4a33] text-white rounded-xl hover:bg-[#0b3d2b] transition-colors shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isProcessing ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <span className="font-semibold text-sm">Pay with Razorpay</span>
+                      <span className="text-xs text-white/70 mt-1">Cards, UPI, NetBanking</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={handleEasebuzzPayment}
+                  disabled={isProcessing}
+                  className="flex flex-col items-center justify-center py-4 px-4 bg-white border-2 border-[#0d4a33]/20 text-[#0d4a33] rounded-xl hover:border-[#0d4a33]/40 hover:bg-[#0d4a33]/5 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isProcessing ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <span className="font-semibold text-sm">Pay with Easebuzz</span>
+                      <span className="text-xs text-gray-500 mt-1">Cards, UPI, NetBanking</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — Bank Details & QR Card */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* QR Code Card */}
+            <div className="bg-[#0d4a33] rounded-2xl p-6 text-white">
+              <div className="flex items-center gap-2 mb-4">
+                <Smartphone className="w-5 h-5" />
+                <h3 className="text-lg font-bold">Scan to Donate</h3>
+              </div>
+
+              {/* QR Code Placeholder */}
+              <div className="bg-white rounded-xl p-4 mx-auto w-fit mb-4">
+                <svg width="160" height="160" viewBox="0 0 160 160" className="block">
+                  <rect width="160" height="160" fill="white" />
+                  <rect x="10" y="10" width="40" height="40" rx="4" fill="#0d4a33" />
+                  <rect x="16" y="16" width="28" height="28" rx="2" fill="white" />
+                  <rect x="22" y="22" width="16" height="16" rx="1" fill="#0d4a33" />
+                  <rect x="110" y="10" width="40" height="40" rx="4" fill="#0d4a33" />
+                  <rect x="116" y="16" width="28" height="28" rx="2" fill="white" />
+                  <rect x="122" y="22" width="16" height="16" rx="1" fill="#0d4a33" />
+                  <rect x="10" y="110" width="40" height="40" rx="4" fill="#0d4a33" />
+                  <rect x="16" y="116" width="28" height="28" rx="2" fill="white" />
+                  <rect x="22" y="122" width="16" height="16" rx="1" fill="#0d4a33" />
+                  <rect x="60" y="10" width="8" height="8" fill="#0d4a33" />
+                  <rect x="76" y="10" width="8" height="8" fill="#0d4a33" />
+                  <rect x="92" y="10" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="26" width="8" height="8" fill="#0d4a33" />
+                  <rect x="84" y="26" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="42" width="8" height="8" fill="#0d4a33" />
+                  <rect x="76" y="42" width="8" height="8" fill="#0d4a33" />
+                  <rect x="92" y="42" width="8" height="8" fill="#0d4a33" />
+                  <rect x="10" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="26" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="42" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="76" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="92" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="110" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="126" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="142" y="60" width="8" height="8" fill="#0d4a33" />
+                  <rect x="10" y="76" width="8" height="8" fill="#0d4a33" />
+                  <rect x="42" y="76" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="76" width="8" height="8" fill="#0d4a33" />
+                  <rect x="84" y="76" width="8" height="8" fill="#0d4a33" />
+                  <rect x="110" y="76" width="8" height="8" fill="#0d4a33" />
+                  <rect x="142" y="76" width="8" height="8" fill="#0d4a33" />
+                  <rect x="10" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="26" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="42" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="76" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="92" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="110" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="126" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="142" y="92" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="110" width="8" height="8" fill="#0d4a33" />
+                  <rect x="76" y="110" width="8" height="8" fill="#0d4a33" />
+                  <rect x="110" y="110" width="8" height="8" fill="#0d4a33" />
+                  <rect x="142" y="110" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="126" width="8" height="8" fill="#0d4a33" />
+                  <rect x="92" y="126" width="8" height="8" fill="#0d4a33" />
+                  <rect x="110" y="126" width="8" height="8" fill="#0d4a33" />
+                  <rect x="126" y="126" width="8" height="8" fill="#0d4a33" />
+                  <rect x="60" y="142" width="8" height="8" fill="#0d4a33" />
+                  <rect x="76" y="142" width="8" height="8" fill="#0d4a33" />
+                  <rect x="92" y="142" width="8" height="8" fill="#0d4a33" />
+                  <rect x="110" y="142" width="8" height="8" fill="#0d4a33" />
+                  <rect x="142" y="142" width="8" height="8" fill="#0d4a33" />
+                </svg>
+              </div>
+
+              <p className="text-sm text-white/70 text-center">
+                Scan with GPay, PhonePe, Paytm or any UPI app
+              </p>
+            </div>
+
+            {/* Bank Transfer Details */}
+            <div className="bg-[#0d4a33] rounded-2xl p-6 text-white">
+              <div className="flex items-center gap-2 mb-5">
+                <Building2 className="w-5 h-5" />
+                <h3 className="text-lg font-bold">Bank Transfer Details</h3>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { label: 'Account Name', value: 'Loyola Extension Services' },
+                  { label: 'Account Number', value: '1234 5678 9012 3456' },
+                  { label: 'IFSC Code', value: 'SBIN0010043' },
+                  { label: 'Bank Name', value: 'State Bank of India' },
+                  { label: 'Branch', value: 'Sreekaryam' },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex justify-between items-start py-2 border-b border-white/10 last:border-0"
+                  >
+                    <span className="text-sm text-white/60">{item.label}</span>
+                    <span className="text-sm font-medium text-right">{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tax Exemption */}
+            <div className="bg-[#e8f5ec] rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <ShieldCheck className="w-5 h-5 text-[#0d4a33]" />
+                <h3 className="text-lg font-bold text-[#0d4a33]">Tax Exemption</h3>
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed mb-2">
+                All donations to Loyola Extension Services are eligible for tax exemption under
+                Section 80G of the Income Tax Act.
+              </p>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                You will receive an 80G compliant receipt via email within 5-7 working days.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
