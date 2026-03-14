@@ -974,17 +974,19 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const hideNavbarRoutes = ["/sys-ops"];
-  const shouldHideNavbar = hideNavbarRoutes.some((route) =>
-    pathname?.startsWith(route)
-  );
+  const hideNavbarExactRoutes = ["/", "/admission/pg-admissions"];
+  const hideNavbarPrefixRoutes = ["/sys-ops"];
+
+  const shouldHideNavbar = 
+    hideNavbarExactRoutes.includes(pathname) ||
+    hideNavbarPrefixRoutes.some((route) => pathname?.startsWith(route));
 
   if (shouldHideNavbar) {
     return null;
   }
 
-  // Determine if navbar should be transparent (only on homepage when not scrolled)
-  const isTransparent = isHomePage && !scrolled;
+  // Determine if navbar should be transparent (no longer homepage specific)
+  const isTransparent = !scrolled;
 
   const menuData: Record<string, MenuData> = {
     about: {
@@ -1009,44 +1011,20 @@ const Navbar: React.FC = () => {
               href: "/about/vision-mission",
             },
             {
-              name: "Administration",
-              subtitle:
-                "Academic and administrative leadership steering the institution.",
-              href: "/about/administration",
-            },
-            {
-              name: "Governing Body",
+              name: "Institutional Governance",
               subtitle: "Strategic oversight and institutional governance.",
-              href: "/about/governing-body",
+              href: "/about/institutional-governance",
+            },
+            { 
+              name: "PTA", 
+              subtitle: "Parent Teacher Association",
+              href: "/about/pta" 
             },
             {
-              name: "Academic Council",
-              subtitle: "Curriculum leadership and academic policy framework.",
-              href: "/about/academic-council",
+              name: "Eminent Visitors",
+              subtitle: "Notable personalities who visited our campus.",
+              href: "/about/eminent-visitors",
             },
-          ],
-        },
-        {
-          title: "Association & Identity",
-          links: [
-            { name: "PTA", href: "/about/pta" },
-            { name: "RTI Declaration", href: "/about/rti-declaration" },
-            {
-              name: "Institutional Distinctiveness",
-              href: "/about/distinctiveness",
-            },
-          ],
-        },
-        {
-          title: "Highlights",
-          links: [
-            {
-              name: "Milestones & Galaxy of Eminence",
-              href: "/about/milestones",
-            },
-            { name: "Eminent Visitors", href: "/about/visitors" },
-            { name: "Programme Outcomes (POs)", href: "/about/outcomes" },
-            { name: "Who is Who", href: "/about/who-is-who" },
           ],
         },
       ],
@@ -1066,19 +1044,13 @@ const Navbar: React.FC = () => {
               name: "Programmes & Courses Offered",
               href: "/academics/programmes-and-course",
             },
-            { name: "Certificate Courses", href: "/academics/certificates" },
-            {
-              name: "ECE – Engaged Competence Enhancement",
-              href: "/academics/ece",
-            },
           ],
         },
         {
           title: "Teaching & Learning",
           links: [
-            { name: "Faculty", href: "/academics/faculty-and-staffs" },
-            { name: "Innovation Centre", href: "/academics/innovation" },
-            { name: "Resources", href: "/academics/resources" },
+            { name: "Faculty & Staffs", href: "/academics/faculty-and-staffs" },
+            { name: "Innovation Centre", href: "/academics/innovation-center" },
           ],
         },
         {
@@ -1086,56 +1058,11 @@ const Navbar: React.FC = () => {
           links: [
             { name: "Academic Calendar", href: "/academics/academic-calendar" },
             {
-              name: "Outcome Based Education Framework",
+              name: "Outcome Based Education",
               href: "/academics/obe",
             },
             { name: "Code of Conduct", href: "/academics/code-of-conduct" },
-            { name: "Committees", href: "/academics/college-committees" },
-            { name: "Examination Details", href: "/academics/exams" },
-          ],
-        },
-      ],
-    },
-    campusLife: {
-      title: "Campus Life",
-      description:
-        "Experience vibrant campus facilities, modern infrastructure, and holistic student living.",
-      ctaText: "Explore Campus",
-      ctaLink: "/campus",
-      sections: [
-        {
-          title: "Learning Spaces",
-          links: [
-            { name: "Library", href: "/campus/library" },
-            { name: "Loyola Computer Centre", href: "/campus/computer-centre" },
-            { name: "Journals", href: "/campus/journals" },
-          ],
-        },
-        {
-          title: "Student Living",
-          links: [
-            { name: "Hostels", href: "/campus/hostels" },
-            { name: "Cafeteria", href: "/campus/cafeteria" },
-            { name: "Transportation", href: "/campus/transportation" },
-          ],
-        },
-        {
-          title: "Sports & Activities",
-          links: [{ name: "Gymnasium", href: "/campus/gymnasium" }],
-        },
-        {
-          title: "Halls & Venues",
-          links: [
-            { name: "Audio-Visual Hall", href: "/campus/av-hall" },
-            { name: "Dr. Jose Murikkan's Hall", href: "/campus/murikkan-hall" },
-            { name: "LES Hall", href: "/campus/les-hall" },
-          ],
-        },
-        {
-          title: "Services",
-          links: [
-            { name: "Loyola Extension Services (LES)", href: "/campus/les" },
-            { name: "Other Facilities", href: "/campus/facilities" },
+            { name: "College Committees", href: "/academics/college-committees" },
           ],
         },
       ],
@@ -1145,67 +1072,50 @@ const Navbar: React.FC = () => {
       description:
         "Quality assurance initiatives and accreditation frameworks ensuring academic excellence.",
       ctaText: "Learn More",
-      ctaLink: "/iqac",
+      ctaLink: "/iqac/Home",
       sections: [
         {
           title: "Quality Assurance",
           links: [
-            { name: "Autonomy", href: "/iqac/autonomy" },
-            { name: "NAAC", href: "/iqac/naac" },
-            { name: "NIRF", href: "/iqac/nirf" },
+            { name: "Home", href: "/iqac/Home" },
+            { name: "Autonomy", href: "/iqac/Autonomy" },
+            { name: "NAAC Accreditation", href: "/iqac/NAAC-Accreditation" },
+            { name: "SSR", href: "/iqac/SSR" },
           ],
         },
         {
-          title: "Documentation",
+          title: "Documentation & Reports",
           links: [
-            { name: "AISHE", href: "/iqac/aishe" },
-            { name: "SAAC", href: "/iqac/saac" },
-            { name: "Others", href: "/iqac/others" },
+            { name: "Activities", href: "/iqac/Activities" },
+            { name: "AQARs", href: "/iqac/AQARs" },
+            { name: "AQARs Formats", href: "/iqac/AQARs-Formats" },
+            { name: "Documents", href: "/iqac/Documents" },
+          ],
+        },
+        {
+          title: "Stakeholder Input",
+          links: [
+            { name: "Feedback", href: "/iqac/Feedback" },
+            { name: "Contact Us", href: "/iqac/Contact-us" },
           ],
         },
       ],
     },
-    placements: {
-      title: "Placements",
+    journals: {
+      title: "Loyola Journals",
       description:
-        "Career development, placement assistance, and industry partnerships for student success.",
-      ctaText: "View Opportunities",
-      ctaLink: "/placements",
+        "Scholarly publications promoting research and academic dialogue in social sciences.",
+      ctaText: "View Journals",
+      ctaLink: "/journals",
       sections: [
         {
-          title: "Placement Services",
+          title: "Publishing",
           links: [
-            { name: "Placement Cell", href: "/placements/cell" },
-            { name: "Placement Activities", href: "/placements/activities" },
-            {
-              name: "Training & Skill Development",
-              href: "/placements/training",
-            },
-          ],
-        },
-        {
-          title: "Opportunities",
-          links: [
-            {
-              name: "Internship Opportunities",
-              href: "/placements/internships",
-            },
-            {
-              name: "Recruiters / Partner Companies",
-              href: "/placements/recruiters",
-            },
-            { name: "Placement Statistics", href: "/placements/statistics" },
-          ],
-        },
-        {
-          title: "Career Guidance",
-          links: [
-            { name: "Alumni Success Stories", href: "/placements/alumni" },
-            {
-              name: "Higher Studies Guidance",
-              href: "/placements/higher-studies",
-            },
-            { name: "Contact Placement Officer", href: "/placements/contact" },
+            { name: "About Journals", href: "/journals/about" },
+            { name: "Editorial Board", href: "/journals/editorial-board" },
+            { name: "Article Submission", href: "/journals/article-submission" },
+            { name: "Subscription", href: "/journals/subscription" },
+            { name: "Contact", href: "/journals/contact" },
           ],
         },
       ],
@@ -1356,16 +1266,6 @@ const Navbar: React.FC = () => {
 
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown("campusLife")}
-                onMouseLeave={() => setActiveDropdown(null)}
-              >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition whitespace-nowrap">
-                  Campus Life <ChevronDown size={16} />
-                </div>
-              </div>
-
-              <div
-                className="relative"
                 onMouseEnter={() => setActiveDropdown("iqac")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
@@ -1376,11 +1276,11 @@ const Navbar: React.FC = () => {
 
               <div
                 className="relative"
-                onMouseEnter={() => setActiveDropdown("placements")}
+                onMouseEnter={() => setActiveDropdown("journals")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
-                  Placements <ChevronDown size={16} />
+                  Journals <ChevronDown size={16} />
                 </div>
               </div>
 
@@ -1400,8 +1300,8 @@ const Navbar: React.FC = () => {
       {/* Mega Menu Dropdowns - With Left Blue Sidebar */}
       {activeDropdown === "about" && (
         <div
-          className="fixed left-0 right-0 z-50"
-          style={{ top: "117px" }}
+          className="fixed left-0 right-0 z-50 pt-3"
+          style={{ top: "96px" }}
           onMouseEnter={() => setActiveDropdown("about")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
@@ -1475,8 +1375,8 @@ const Navbar: React.FC = () => {
       {/* Rest of the dropdowns remain the same - academics, campusLife, iqac, placements */}
       {activeDropdown === "academics" && (
         <div
-          className="fixed left-0 right-0 z-50"
-          style={{ top: "117px" }}
+          className="fixed left-0 right-0 z-50 pt-3"
+          style={{ top: "96px" }}
           onMouseEnter={() => setActiveDropdown("academics")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
@@ -1541,11 +1441,11 @@ const Navbar: React.FC = () => {
         </div>
       )}
 
-      {activeDropdown === "campusLife" && (
+      {activeDropdown === "journals" && (
         <div
-          className="fixed left-0 right-0 z-50"
-          style={{ top: "117px" }}
-          onMouseEnter={() => setActiveDropdown("campusLife")}
+          className="fixed left-0 right-0 z-50 pt-3"
+          style={{ top: "96px" }}
+          onMouseEnter={() => setActiveDropdown("journals")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
           <div className="max-w-7xl ml-auto mr-30 px-4 md:px-8 lg:px-20 py-4">
@@ -1563,23 +1463,23 @@ const Navbar: React.FC = () => {
 
                 <div className="relative z-10">
                   <h2 className="text-2xl font-bold mb-4">
-                    {menuData.campusLife.title}
+                    {menuData.journals.title}
                   </h2>
                   <p className="text-white/90 text-sm leading-relaxed mb-6">
-                    {menuData.campusLife.description}
+                    {menuData.journals.description}
                   </p>
                 </div>
                 <Link
-                  href={menuData.campusLife.ctaLink}
+                  href={menuData.journals.ctaLink}
                   className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10"
                 >
-                  {menuData.campusLife.ctaText} <ArrowRight size={18} />
+                  {menuData.journals.ctaText} <ArrowRight size={18} />
                 </Link>
               </div>
 
               <div className="flex-1 bg-white p-8 border-l border-gray-100">
-                <div className="grid grid-cols-5 gap-6">
-                  {menuData.campusLife.sections.map((section, idx) => (
+                <div className="grid grid-cols-1 gap-6">
+                  {menuData.journals.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
                       <h3 className="text-primary font-bold text-sm pb-2 border-b-2 border-gray-200">
                         {section.title}
@@ -1611,8 +1511,8 @@ const Navbar: React.FC = () => {
 
       {activeDropdown === "iqac" && (
         <div
-          className="fixed left-0 right-0 z-50"
-          style={{ top: "117px" }}
+          className="fixed left-0 right-0 z-50 pt-3"
+          style={{ top: "96px" }}
           onMouseEnter={() => setActiveDropdown("iqac")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
@@ -1676,73 +1576,7 @@ const Navbar: React.FC = () => {
         </div>
       )}
 
-      {activeDropdown === "placements" && (
-        <div
-          className="fixed left-0 right-0 z-50"
-          style={{ top: "117px" }}
-          onMouseEnter={() => setActiveDropdown("placements")}
-          onMouseLeave={() => setActiveDropdown(null)}
-        >
-          <div className="max-w-6xl ml-auto mr-2 px-4 md:px-8 lg:px-20 py-4">
-            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
-              <div
-                className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
-                style={{
-                  backgroundImage: "url(/assets/loyola-building.png)",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/90 to-primary/90 z-0" />
 
-                <div className="relative z-10">
-                  <h2 className="text-2xl font-bold mb-4">
-                    {menuData.placements.title}
-                  </h2>
-                  <p className="text-white/90 text-sm leading-relaxed mb-6">
-                    {menuData.placements.description}
-                  </p>
-                </div>
-                <Link
-                  href={menuData.placements.ctaLink}
-                  className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10"
-                >
-                  {menuData.placements.ctaText} <ArrowRight size={18} />
-                </Link>
-              </div>
-
-              <div className="flex-1 bg-white p-8 border-l border-gray-100">
-                <div className="grid grid-cols-3 gap-8">
-                  {menuData.placements.sections.map((section, idx) => (
-                    <div key={idx} className="space-y-4">
-                      <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
-                        {section.title}
-                      </h3>
-                      <ul className="space-y-3">
-                        {section.links.map((link, linkIdx) => (
-                          <li key={linkIdx}>
-                            <Link
-                              href={link.href}
-                              className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group"
-                            >
-                              <ChevronDown
-                                size={16}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
-                              />
-                              {link.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Mobile Menu */}
       <div
@@ -1786,22 +1620,16 @@ const Navbar: React.FC = () => {
               Research
             </Link>
             <Link
-              href="/campus"
-              className="block font-medium text-gray-900 hover:text-primary"
-            >
-              Campus Life
-            </Link>
-            <Link
-              href="/iqac"
+              href="/iqac/Home"
               className="block font-medium text-gray-900 hover:text-primary"
             >
               IQAC
             </Link>
             <Link
-              href="/placements"
+              href="/journals"
               className="block font-medium text-gray-900 hover:text-primary"
             >
-              Placements
+              Journals
             </Link>
             <Link
               href="/gallery"

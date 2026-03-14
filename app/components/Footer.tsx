@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Twitter, Instagram, Send, Megaphone, YoutubeIcon } from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
 import { useAcademicYear } from "@/app/hooks/useAcademicYears";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,6 @@ export default function Footer() {
   const [showForm, setShowForm] = useState(false);
 
   const handleAdmissionsClick = () => {
-    // Navigate to the home page with the form visible
     router.push("/#admissions");
   };
 
@@ -23,9 +22,9 @@ export default function Footer() {
 
       <div className="relative max-w-7xl mx-auto px-6 py-16">
         {/* TOP GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           {/* BRAND */}
-          <div className="md:col-span-2 space-y-5">
+          <div className="md:col-span-4 space-y-6">
             <div className="flex items-center gap-3">
               <Image
                 src="/assets/loyolalogo.png"
@@ -36,131 +35,105 @@ export default function Footer() {
               />
             </div>
 
-            <p className="text-sm text-gray-300 max-w-sm">
-              Education grounded in social responsibility, research, and
-              community impact—shaping leaders for tomorrow.
+            <p className="text-sm text-gray-300 leading-relaxed max-w-sm">
+              A premier institution for social sciences in Kerala, affiliated to the University of Kerala. Nurturing minds, shaping communities, and committed to academic excellence since 1963.
             </p>
 
-            <div className="grid grid-cols-2">
-              {yearLoading ? (
-                <button
-                  disabled
-                  className="mt-4 px-6 py-3 bg-gray-400 text-gray-600 font-black rounded-xl cursor-not-allowed"
-                >
-                  Loading...
-                </button>
-              ) : academicYear && academicYear.isOpen ? (
-                <button
-                  onClick={handleAdmissionsClick}
-                  className="mt-4 px-6 py-3 bg-white text-black font-black rounded-xl hover:bg-yellow-500 transition-transform duration-300 hover:scale-105"
-                >
-                  Admissions {academicYear.start} →
-                </button>
-              ) : (
-                <button
-                  disabled
-                  className="mt-4 px-6 py-3 bg-gray-400 text-gray-600 font-black rounded-xl cursor-not-allowed"
-                >
-                  Admissions Closed for {academicYear?.start}
-                </button>
-              )}
+            <div className="flex items-center gap-3 pt-2">
+              <SocialIcon icon={<Facebook className="w-4 h-4" />} href="#" />
+              <SocialIcon icon={<Twitter className="w-4 h-4" />} href="#" />
+              <SocialIcon icon={<Instagram className="w-4 h-4" />} href="#" />
+              <SocialIcon icon={<Linkedin className="w-4 h-4" />} href="#" />
             </div>
-
-            {/* Optional: Display current academic year info */}
-            {academicYear && academicYear.isOpen && !yearLoading && (
-              <div className="mt-3 p-3 bg-primary rounded-lg max-w-58 animate-breathe border border-white">
-                <p className="text-xs text-gray-200">
-                  Now accepting applications for
-                </p>
-                <p className="text-sm font-semibold text-white flex items-center gap-2">
-                  <Megaphone size={16} className="animate-pulse" />
-                  Academic Year {academicYear.start}-
-                  {parseInt(academicYear.start) + 1}
-                </p>
-              </div>
-            )}
           </div>
 
-          {/* PRODUCT */}
-          <FooterCol
-            title="About Us"
-            links={[
-              { label: "Our History", href: "https://loyolacollegekerala.edu.in/about-us/history/" },
-              { label: "Our Mission and Vision", href: "https://loyolacollegekerala.edu.in/about-us/vision-mission/" },
-              { label: "Faculty", href: "https://loyolacollegekerala.edu.in/our-professors/" },
-              // { label: "Events", href: "/events" },
-              { label: "Who is Who", href: "https://loyolacollegekerala.edu.in/about-us/who-is-who/" },
-            ]}
-          />
+          {/* EXPLORE */}
+          <div className="md:col-span-2">
+            <FooterCol
+              title="Explore"
+              links={[
+                { label: "About Us", href: "/about-us" },
+                { label: "Academics", href: "/academics" },
+                { label: "Admissions", href: "/admissions" },
+                { label: "Research", href: "/research" },
+                { label: "Campus Life", href: "/campus-life" },
+                { label: "Alumni Network", href: "/alumni" },
+              ]}
+            />
+          </div>
 
-          {/* RESOURCES */}
-          <FooterCol
-            title="Academics"
-            links={[
-              { label: "Departments", href: "https://loyolacollegekerala.edu.in/departments/" },
-              { label: "Programmes Offered", href: "https://loyolacollegekerala.edu.in/course/" },
-              { label: "Certified Courses", href: "https://loyolacollegekerala.edu.in/certificate-courses/" },
-              { label: "Research", href: "https://loyolacollegekerala.edu.in/research-home/" },
-              // { label: "Schools", href: "/academics/faculty" },
-            ]}
-          />
+          {/* IMPORTANT LINKS */}
+          <div className="md:col-span-3">
+            <FooterCol
+              title="Important Links"
+              links={[
+                { label: "IQAC / NAAC", href: "/iqac" },
+                { label: "Extension Services (LES)", href: "/les" },
+                { label: "Code of Conduct", href: "/code-of-conduct" },
+                { label: "Academic Calendar", href: "/academic-calendar" },
+                { label: "Student Associations", href: "/associations" },
+              ]}
+            />
+            <Link 
+              href="/careers" 
+              className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#122e22] text-gray-200 border border-[#1b4332] rounded-md text-sm hover:bg-[#1b4332] transition"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              We're Hiring!
+            </Link>
+          </div>
 
-          {/* COMPANY */}
-          <FooterCol
-            title="Infrastructure"
-            links={[
-              { label: "LES", href: "https://loyolacollegekerala.edu.in/les/" },
-              { label: "Journals", href: "https://loyolacollegekerala.edu.in/loyolajournals/" },
-              { label: "Gymnasium", href: "https://loyolacollegekerala.edu.in/facilities/gymnasium/" },
-              { label: "Library", href: "https://library.loyolacollegekerala.edu.in/" },
-            ]}
-          />
+          {/* CONTACT US */}
+          <div className="md:col-span-3 space-y-4">
+            <h4 className="font-semibold text-lg mb-6">Contact Us</h4>
+            
+            <div className="flex items-start gap-4 text-sm text-gray-300">
+              <div className="w-8 h-8 rounded-full bg-[#122e22] flex items-center justify-center shrink-0 mt-0.5">
+                <MapPin className="w-4 h-4 text-emerald-500" />
+              </div>
+              <p className="leading-relaxed">
+                Loyola College of Social Sciences<br />
+                Sreekariyam P.O.,<br />
+                Thiruvananthapuram - 695017<br />
+                Kerala, India
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-4 text-sm text-gray-300 py-2">
+              <div className="w-8 h-8 rounded-full bg-[#122e22] flex items-center justify-center shrink-0">
+                <Phone className="w-4 h-4 text-emerald-500" />
+              </div>
+              <p>+91 471 2591018</p>
+            </div>
+            
+            <div className="flex items-center gap-4 text-sm text-gray-300">
+              <div className="w-8 h-8 rounded-full bg-[#122e22] flex items-center justify-center shrink-0">
+                <Mail className="w-4 h-4 text-emerald-500" />
+              </div>
+              <p>loyolacollege.tvm@gmail.com</p>
+            </div>
+          </div>
         </div>
 
-        {/* DIVIDER */}
-        <div className="mt-14 border-t border-gray-600/40 pt-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* LEFT */}
+        {/* DIVIDER & BOTTOM BAR */}
+        <div className="mt-16 border-t border-gray-700/50 pt-8 flex flex-col lg:flex-row items-center justify-between gap-6">
           <p className="text-sm text-gray-400">
-            © 2025 Loyola College of Social Sciences, Trivandrum, Kerala. All Rights Reserved
-            {academicYear && (
-              <span className="ml-2 text-gray-500">
-                | Academic Year {academicYear.start}-
-                {parseInt(academicYear.start) + 1}
-              </span>
-            )}
+            © 2026 Loyola College of Social Sciences. All rights reserved.
           </p>
 
-          {/* LINKS */}
-          <div className="flex flex-wrap gap-6 text-sm text-gray-400">
-            <Link href="/privacy" className="hover:text-white transition">
-              Privacy Policy
+          <div className="flex flex-wrap items-center gap-6 lg:gap-8 text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <Link href="/mandatory-disclosures" className="hover:text-white transition">
+              MANDATORY DISCLOSURES
             </Link>
-            <Link href="/terms" className="hover:text-white transition">
-              Terms of Use
+            <Link href="/anti-ragging" className="hover:text-white transition">
+              ANTI-RAGGING
             </Link>
-            <Link href="/sitemap" className="hover:text-white transition">
-              Site Map
+            <Link href="/privacy-policy" className="hover:text-white transition">
+              PRIVACY POLICY
             </Link>
-          </div>
-
-          {/* SOCIALS */}
-          <div className="flex items-center gap-4">
-            <SocialIcon
-              icon={<Facebook className="w-4 h-4" />}
-              href="https://www.facebook.com/loyolacollegeofsocialsciences/"
-            />
-            <SocialIcon
-              icon={<YoutubeIcon className="w-4 h-4" />}
-              href="https://www.youtube.com/@loyolacollegeofsocialsciences"
-            />
-            <SocialIcon
-              icon={<Instagram className="w-4 h-4" />}
-              href="https://www.instagram.com/loyolatrivandrum/"
-            />
-            {/* <SocialIcon
-              icon={<Send className="w-4 h-4" />}
-              href="https://t.me/loyolacollege"
-            /> */}
+            <Link href="/terms-of-use" className="hover:text-white transition">
+              TERMS OF USE
+            </Link>
           </div>
         </div>
       </div>
