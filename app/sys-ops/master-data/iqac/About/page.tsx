@@ -194,14 +194,20 @@ function CoordinatorsTab() {
 
 // ─── Members Tab ──────────────────────────────────────────────────────────────
 const MEMBER_CATEGORIES = [
-    { value: "general", label: "Management / Key Roles" },
-    { value: "arts", label: "Member of the Dept. of Arts" },
-    { value: "science", label: "Member of the Dept. of Science" },
-    { value: "admin", label: "Administrative Expert" },
-    { value: "alumni", label: "Alumni" },
-    { value: "student", label: "Student Representative" },
-    { value: "local", label: "Local Society Representative" },
-    { value: "industry", label: "Industry / Employer" },
+    { value: "Chairperson", label: "Chairperson" },
+    { value: "admin", label: "IQAC Coordinator" },
+    { value: "admin", label: "Asst. Coordinator" },
+    { value: "admin", label: "Librarian" },
+    { value: "admin", label: "Head of the Departments" },
+    { value: "admin", label: "Academic Expert" },
+    { value: "admin", label: "Autonomy Director" },
+    { value: "admin", label: "Controller of Examination" },
+    { value: "admin", label: "Bursar" },
+    { value: "admin", label: "Non Teaching Staff Representatives" },
+    { value: "admin", label: "Local Society Representative" },
+    { value: "admin", label: "Alumni Representative" },
+    { value: "admin", label: "Student Representative" },
+    { value: "admin", label: "Employer Representative" },
 ];
 
 function MembersTab() {

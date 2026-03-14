@@ -33,13 +33,13 @@ export default function IqacAbout() {
                     <h2 className="text-xl md:text-2xl font-bold text-primary uppercase tracking-wide">
                         About IQAC
                     </h2>
-                    <div className="mt-2 w-16 h-0.5 bg-[var(--primary)]" />
+                    <div className="mt-2 w-36 h-1 bg-[var(--primary)]" />
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+                <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 font-size-18">
                     {/* LEFT: Text Content */}
-                    <div className="flex-1">
-                        <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-6">
+                    <div className="text-xl flex-1 text-justify ">
+                        <p className="text-gray-700 md:text-lg leading-relaxed mb-6">
                             The Internal Quality Assurance Cell (IQAC) is a quality management
                             system for and communicates internalization and institutionalization of
                             quality. So that the institution excels in standards and among its
@@ -53,10 +53,10 @@ export default function IqacAbout() {
                         <div className="border border-gray-200 p-5 bg-[#F6F6EE] ">
                             <h3 className="text-xl md:text-2xl font-bold text-primary mb-6 tracking-wide">
                                 Key Objectives
-                                <div className="mt-2 w-16 h-0.5 bg-[var(--primary)]" />
+                                {/* <div className="mt-2 w-16 h-0.5 bg-[var(--primary)]" /> */}
                             </h3>
 
-                            <ul className="space-y-2.5 text-sm  text-gray-700">
+                            <ul className="space-y-2.5 md:text-lg text-gray-700">
                                 <li className="flex items-start gap-3">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[var(--secondary)] mt-2 flex-shrink-0" />
                                     <span>

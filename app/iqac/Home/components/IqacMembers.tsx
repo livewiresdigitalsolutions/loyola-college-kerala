@@ -12,7 +12,7 @@ interface IqacMember {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-    general: "Management / Key Roles",
+    Chairperson: "Chairperson",
     arts: "Member of the Department of Arts",
     science: "Member of the Department of Science",
     admin: "Administrative Expert",
