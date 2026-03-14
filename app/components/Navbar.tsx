@@ -1284,6 +1284,10 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
 
+              <Link href="/careers" className="hover:text-primary transition">
+                Careers
+              </Link>
+
               <Link href="/gallery" className="hover:text-primary transition">
                 Gallery
               </Link>
@@ -1630,6 +1634,12 @@ const Navbar: React.FC = () => {
               className="block font-medium text-gray-900 hover:text-primary"
             >
               Journals
+            </Link>
+            <Link
+              href="/careers"
+              className="block font-medium text-gray-900 hover:text-primary"
+            >
+              Careers
             </Link>
             <Link
               href="/gallery"
