@@ -12,7 +12,7 @@ export default function AccreditationSection() {
     <section className="bg-white py-16 md:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <div className="w-20 h-1 bg-[var(--secondary)] mx-auto mb-6"></div>
+          <div className="w-20 h-1 bg-[var(--primary)] mx-auto mb-6"></div>
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary)] tracking-wider uppercase">
             Accreditation & Recognition
           </h2>

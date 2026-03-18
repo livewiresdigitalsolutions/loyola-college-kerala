@@ -1034,7 +1034,7 @@ const Navbar: React.FC = () => {
       description:
         "Comprehensive academic programs fostering excellence in teaching, learning, and research.",
       ctaText: "Explore Programs",
-      ctaLink: "/academics",
+      ctaLink: "/academics/programmes-and-course",
       sections: [
         {
           title: "Programs",
@@ -1207,25 +1207,26 @@ const Navbar: React.FC = () => {
       ],
     },
     student: {
-      title: "Student Services",
-      description: "Resources, support, and services designed for every Loyola student.",
-      ctaText: "Student Portal",
-      ctaLink: "/student",
+      title: "Student Engagement",
+      description: "Discover clubs, associations, support, and active student life at Loyola.",
+      ctaText: "College Union",
+      ctaLink: "/students-engagement/college-union",
       sections: [
         {
           title: "Student Life",
           links: [
-            { name: "Student Clubs", subtitle: "Join clubs, associations, and student groups.", href: "/student/clubs" },
-            { name: "Sports & Activities", subtitle: "Athletics, tournaments, and recreation.", href: "/student/sports" },
-            { name: "Hostels", subtitle: "On-campus accommodation for students.", href: "/student/hostels" },
+            { name: "College Union", subtitle: "Student governance and leadership.", href: "/students-engagement/college-union" },
+            { name: "Students Associations", subtitle: "Join clubs and student groups.", href: "/students-engagement/students-associations" },
+            { name: "NSS Unit", subtitle: "National Service Scheme activities.", href: "/students-engagement/loyola-nss-unit" },
+            { name: "Women's Cell", subtitle: "Empowerment and grievance redressal.", href: "/students-engagement/womens-cell" },
           ],
         },
         {
-          title: "Support",
+          title: "Support & Growth",
           links: [
-            { name: "Counselling Services", subtitle: "Professional mental health and guidance support.", href: "/student/counselling" },
-            { name: "Scholarships", subtitle: "Financial aid, grants, and scholarship programmes.", href: "/student/scholarships" },
-            { name: "Grievance Redressal", subtitle: "Submit and track grievances formally.", href: "/student/grievance" },
+            { name: "Mentoring Programme", subtitle: "Guidance and counselling support.", href: "/students-engagement/loyola-mentoring-programme" },
+            { name: "LACE", subtitle: "Loyola Academy for Career Enhancement.", href: "/students-engagement/loyola-academy-for-career-enhancement" },
+            { name: "LILA", subtitle: "Language advancement initiatives.", href: "/students-engagement/loyola-initiative-for-language-advancement" },
           ],
         },
       ],
@@ -1233,21 +1234,21 @@ const Navbar: React.FC = () => {
     newsEvents: {
       title: "News & Events",
       description: "Stay informed with the latest happenings, announcements, and events at Loyola.",
-      ctaText: "View All",
-      ctaLink: "/news",
+      ctaText: "View Current News",
+      ctaLink: "/news-and-events/news-and-upcoming-events",
       sections: [
         {
           title: "Latest",
           links: [
-            { name: "News", subtitle: "Latest institutional news and announcements.", href: "/news" },
-            { name: "Upcoming Events", subtitle: "Events, seminars, and workshops happening soon.", href: "/events" },
+            { name: "News & Announcements", subtitle: "Latest institutional news and updates.", href: "/news-and-events/news-and-upcoming-events" },
+            { name: "Upcoming Events", subtitle: "Events, seminars, and workshops happening soon.", href: "/news-and-events/news-and-upcoming-events" },
           ],
         },
         {
           title: "Media",
           links: [
             { name: "Gallery", subtitle: "Photos and video highlights from campus.", href: "/gallery" },
-            { name: "Event Reports", subtitle: "Detailed reports of past events and activities.", href: "/event-reports" },
+            { name: "Event Reports", subtitle: "Detailed reports of past events and activities.", href: "/news-and-events/event-reports" },
           ],
         },
       ],
@@ -1724,12 +1725,12 @@ const Navbar: React.FC = () => {
       {/* Student dropdown */}
       {activeDropdown === "student" && (
         <div
-          className="fixed left-0 right-0 z-50 pt-3"
-          style={{ top: "96px" }}
+          className="fixed left-0 right-0 lg:left-auto lg:right-0 z-50 pt-2 lg:pt-3"
+          style={{ top: "40px" }}
           onMouseEnter={() => setActiveDropdown("student")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-4xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+          <div className="max-w-4xl mx-auto lg:mx-0 lg:ml-auto px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
               <div className="w-72 bg-linear-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden" style={{ backgroundImage: "url(/assets/loyola-building.png)", backgroundSize: "cover", backgroundPosition: "center" }}>
                 <div className="absolute inset-0 bg-linear-to-br from-primary/90 to-primary/90 z-0" />
@@ -1771,12 +1772,12 @@ const Navbar: React.FC = () => {
       {/* News & Events dropdown */}
       {activeDropdown === "newsEvents" && (
         <div
-          className="fixed left-0 right-0 z-50 pt-3"
-          style={{ top: "96px" }}
+          className="fixed left-0 right-0 lg:left-auto lg:right-0 z-50 pt-2 lg:pt-3"
+          style={{ top: "40px" }}
           onMouseEnter={() => setActiveDropdown("newsEvents")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-4xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+          <div className="max-w-4xl mx-auto lg:mx-0 lg:ml-auto px-4 md:px-8 lg:px-20 py-4">
             <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
               <div className="w-72 bg-linear-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden" style={{ backgroundImage: "url(/assets/loyola-building.png)", backgroundSize: "cover", backgroundPosition: "center" }}>
                 <div className="absolute inset-0 bg-linear-to-br from-primary/90 to-primary/90 z-0" />

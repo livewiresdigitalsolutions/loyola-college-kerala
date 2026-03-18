@@ -38,31 +38,66 @@
 
 
 import { ChevronRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-[var(--primary)] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Breadcrumb */}
-        <nav className="flex items-center text-[var(--primary-foreground)]/80 text-sm mb-6">
-          <span className="hover:text-[var(--primary-foreground)] cursor-pointer">Home</span>
-          <ChevronRight className="w-4 h-4 mx-2" />
-          <span className="hover:text-[var(--primary-foreground)] cursor-pointer">About</span>
-          <ChevronRight className="w-4 h-4 mx-2" />
-          <span className="text-[var(--primary-foreground)]">Overview</span>
-        </nav>
-        
-        <div className="max-w-3xl">
-          <p className="text-[var(--secondary)] font-semibold text-sm tracking-wider uppercase mb-2">Overview</p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--primary-foreground)] leading-tight">
-            About Loyola College of<br />Social Sciences
-          </h1>
-          <p className="mt-6 text-lg text-[var(--primary-foreground)]/90 max-w-2xl leading-relaxed">
-            A Jesuit institution committed to academic excellence, social responsibility, 
-            and transformative education for over six decades.
-          </p>
+    <>
+      {/* HERO SECTION WITH IMAGE AND GREEN OVERLAY */}
+      <section className="relative w-full h-[500px] md:h-[600px] lg:h-[700px]">
+        {/* BACKGROUND IMAGE */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/assets/loyola-building.png"
+            alt="Loyola College Campus"
+            fill
+            className="object-cover"
+            priority
+          />
+          {/* GREEN GRADIENT OVERLAY */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/70"></div>
+          {/* ADDITIONAL DARK OVERLAY FOR TEXT READABILITY */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
-      </div>
-    </section>
+
+        {/* HERO CONTENT */}
+        <div className="relative z-10 h-full flex items-center">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <div className="max-w-3xl">
+              {/* BREADCRUMB NAVIGATION */}
+              <nav className="flex items-center gap-2 text-white/90 mb-8 text-sm">
+                <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                  </svg>
+                  Home
+                </Link>
+                <ChevronRight className="w-4 h-4" />
+                <span className="text-white hover:text-white cursor-pointer">About</span>
+                <ChevronRight className="w-4 h-4" />
+                <span className="text-[#F0B129] font-medium">Overview</span>
+              </nav>
+
+              {/* OVERVIEW LABEL */}
+              <p className="text-white font-semibold text-sm tracking-wider uppercase mb-2">
+                Overview
+              </p>
+
+              {/* MAIN HEADING */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                About Loyola College of<br />Social Sciences
+              </h1>
+
+              {/* Subtext */}
+              <p className="mt-6 text-xl md:text-lg text-white/90 leading-relaxed max-w-2xl">
+                A Jesuit institution committed to academic excellence, social responsibility, 
+                and transformative education for over six decades.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

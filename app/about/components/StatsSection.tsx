@@ -14,7 +14,7 @@ export default function StatsSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
-              <stat.icon className="w-10 h-10 text-[var(--secondary)] mx-auto mb-4" />
+              <stat.icon className="w-10 h-10 text-white mx-auto mb-4" />
               <p className="text-4xl font-bold text-[var(--primary-foreground)] mb-1">{stat.value}</p>
               <p className="text-[var(--primary-foreground)]/80 text-sm">{stat.label}</p>
             </div>
