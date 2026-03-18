@@ -459,3 +459,62 @@ export async function getAllAlumniMessages() {
     return rows as any[]
   } finally { await conn.end() }
 }
+
+/* ─────────────────────── Alumni World Stats ─────────────────────── */
+
+export async function getAlumniWorldStats() {
+  if (isDevelopment) {
+    const { data } = await supabase.from('alumni_world_stats').select('*').order('sort_order', { ascending: true })
+    return data || []
+  }
+  const conn = await getConn()
+  try {
+    const [rows] = await conn.execute('SELECT * FROM alumni_world_stats ORDER BY sort_order ASC')
+    return rows as any[]
+  } finally { await conn.end() }
+}
+
+export async function createAlumniWorldStat(data: { region: string; count: number; sort_order?: number }) {
+  if (isDevelopment) {
+    const { data: d, error } = await supabase.from('alumni_world_stats').insert(data).select().single()
+    if (error) throw error
+    return d
+  }
+  const conn = await getConn()
+  try {
+    const fields = Object.keys(data)
+    const [result] = await conn.execute(
+      `INSERT INTO alumni_world_stats (${fields.join(',')}) VALUES (${fields.map(() => '?').join(',')})`,
+      Object.values(data)
+    )
+    return { id: (result as any).insertId, ...data }
+  } finally { await conn.end() }
+}
+
+export async function updateAlumniWorldStat(id: number, data: Record<string, any>) {
+  if (isDevelopment) {
+    await supabase.from('alumni_world_stats').update(data).eq('id', id)
+    return { id, ...data }
+  }
+  const conn = await getConn()
+  try {
+    const fields = Object.keys(data)
+    await conn.execute(
+      `UPDATE alumni_world_stats SET ${fields.map(f => `${f}=?`).join(',')} WHERE id = ?`,
+      [...Object.values(data), id]
+    )
+    return { id, ...data }
+  } finally { await conn.end() }
+}
+
+export async function deleteAlumniWorldStat(id: number) {
+  if (isDevelopment) {
+    await supabase.from('alumni_world_stats').delete().eq('id', id)
+    return
+  }
+  const conn = await getConn()
+  try {
+    await conn.execute('DELETE FROM alumni_world_stats WHERE id = ?', [id])
+  } finally { await conn.end() }
+}
+

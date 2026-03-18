@@ -975,7 +975,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   const hideNavbarExactRoutes = ["/", "/admission/pg-admissions"];
-  const hideNavbarPrefixRoutes = ["/sys-ops"];
+  const hideNavbarPrefixRoutes = ["/sys-ops", "/alumni", "/journals", "/les"];
 
   const shouldHideNavbar = 
     hideNavbarExactRoutes.includes(pathname) ||
@@ -1017,7 +1017,7 @@ const Navbar: React.FC = () => {
             },
             { 
               name: "PTA", 
-              subtitle: "Parent Teacher Association",
+              subtitle: "Parent Teacher Association activities and updates.",
               href: "/about/pta" 
             },
             {
@@ -1039,9 +1039,14 @@ const Navbar: React.FC = () => {
         {
           title: "Programs",
           links: [
-            { name: "Departments", href: "/academics/departments" },
+            { 
+              name: "Departments", 
+              subtitle: "Explore our diverse academic departments.",
+              href: "/academics/departments" 
+            },
             {
               name: "Programmes & Courses Offered",
+              subtitle: "UG, PG and research programmes available.",
               href: "/academics/programmes-and-course",
             },
           ],
@@ -1049,20 +1054,41 @@ const Navbar: React.FC = () => {
         {
           title: "Teaching & Learning",
           links: [
-            { name: "Faculty & Staffs", href: "/academics/faculty-and-staffs" },
-            { name: "Innovation Centre", href: "/academics/innovation-center" },
+            { 
+              name: "Faculty & Staffs", 
+              subtitle: "Meet our qualified and dedicated teaching staff.",
+              href: "/academics/faculty-and-staffs" 
+            },
+            { 
+              name: "Innovation Centre", 
+              subtitle: "Fostering creativity, research, and entrepreneurship.",
+              href: "/academics/innovation-center" 
+            },
           ],
         },
         {
           title: "Academic Process",
           links: [
-            { name: "Academic Calendar", href: "/academics/academic-calendar" },
+            { 
+              name: "Academic Calendar", 
+              subtitle: "Schedules, events, and important academic dates.",
+              href: "/academics/academic-calendar" 
+            },
             {
               name: "Outcome Based Education",
+              subtitle: "Student learning outcomes and assessment framework.",
               href: "/academics/obe",
             },
-            { name: "Code of Conduct", href: "/academics/code-of-conduct" },
-            { name: "College Committees", href: "/academics/college-committees" },
+            { 
+              name: "Code of Conduct", 
+              subtitle: "Rules, values, and expected behavioural standards.",
+              href: "/academics/code-of-conduct" 
+            },
+            { 
+              name: "College Committees", 
+              subtitle: "Committees overseeing academic and student affairs.",
+              href: "/academics/college-committees" 
+            },
           ],
         },
       ],
@@ -1077,26 +1103,66 @@ const Navbar: React.FC = () => {
         {
           title: "Quality Assurance",
           links: [
-            { name: "Home", href: "/iqac/Home" },
-            { name: "Autonomy", href: "/iqac/Autonomy" },
-            { name: "NAAC Accreditation", href: "/iqac/NAAC-Accreditation" },
-            { name: "SSR", href: "/iqac/SSR" },
+            { 
+              name: "Home", 
+              subtitle: "Overview of IQAC goals and activities.",
+              href: "/iqac/Home" 
+            },
+            { 
+              name: "Autonomy", 
+              subtitle: "Details on the college's autonomous status.",
+              href: "/iqac/Autonomy" 
+            },
+            { 
+              name: "NAAC Accreditation", 
+              subtitle: "National accreditation status and grading.",
+              href: "/iqac/NAAC-Accreditation" 
+            },
+            { 
+              name: "SSR", 
+              subtitle: "Self-Study Report documents and submissions.",
+              href: "/iqac/SSR" 
+            },
           ],
         },
         {
           title: "Documentation & Reports",
           links: [
-            { name: "Activities", href: "/iqac/Activities" },
-            { name: "AQARs", href: "/iqac/AQARs" },
-            { name: "AQARs Formats", href: "/iqac/AQARs-Formats" },
-            { name: "Documents", href: "/iqac/Documents" },
+            { 
+              name: "Activities", 
+              subtitle: "IQAC activities, workshops, and seminars.",
+              href: "/iqac/Activities" 
+            },
+            { 
+              name: "AQARs", 
+              subtitle: "Annual Quality Assurance Reports.",
+              href: "/iqac/AQARs" 
+            },
+            { 
+              name: "AQARs Formats", 
+              subtitle: "Downloadable templates for AQAR submissions.",
+              href: "/iqac/AQARs-Formats" 
+            },
+            { 
+              name: "Documents", 
+              subtitle: "Key institutional documents and publications.",
+              href: "/iqac/Documents" 
+            },
           ],
         },
         {
           title: "Stakeholder Input",
           links: [
-            { name: "Feedback", href: "/iqac/Feedback" },
-            { name: "Contact Us", href: "/iqac/Contact-us" },
+            { 
+              name: "Feedback", 
+              subtitle: "Student, parent, and alumni feedback portal.",
+              href: "/iqac/Feedback" 
+            },
+            { 
+              name: "Contact Us", 
+              subtitle: "Reach out to the IQAC team directly.",
+              href: "/iqac/Contact-us" 
+            },
           ],
         },
       ],
@@ -1111,11 +1177,77 @@ const Navbar: React.FC = () => {
         {
           title: "Publishing",
           links: [
-            { name: "About Journals", href: "/journals/about" },
-            { name: "Editorial Board", href: "/journals/editorial-board" },
-            { name: "Article Submission", href: "/journals/article-submission" },
-            { name: "Subscription", href: "/journals/subscription" },
-            { name: "Contact", href: "/journals/contact" },
+            { 
+              name: "About Journals", 
+              subtitle: "Our peer-reviewed academic journal publications.",
+              href: "/journals/about" 
+            },
+            { 
+              name: "Editorial Board", 
+              subtitle: "Distinguished academics guiding our publications.",
+              href: "/journals/editorial-board" 
+            },
+            { 
+              name: "Article Submission", 
+              subtitle: "Submit your research for peer review.",
+              href: "/journals/article-submission" 
+            },
+            { 
+              name: "Subscription", 
+              subtitle: "Access and subscribe to journal content.",
+              href: "/journals/subscription" 
+            },
+            { 
+              name: "Contact", 
+              subtitle: "Get in touch with the journal editorial team.",
+              href: "/journals/contact" 
+            },
+          ],
+        },
+      ],
+    },
+    student: {
+      title: "Student Services",
+      description: "Resources, support, and services designed for every Loyola student.",
+      ctaText: "Student Portal",
+      ctaLink: "/student",
+      sections: [
+        {
+          title: "Student Life",
+          links: [
+            { name: "Student Clubs", subtitle: "Join clubs, associations, and student groups.", href: "/student/clubs" },
+            { name: "Sports & Activities", subtitle: "Athletics, tournaments, and recreation.", href: "/student/sports" },
+            { name: "Hostels", subtitle: "On-campus accommodation for students.", href: "/student/hostels" },
+          ],
+        },
+        {
+          title: "Support",
+          links: [
+            { name: "Counselling Services", subtitle: "Professional mental health and guidance support.", href: "/student/counselling" },
+            { name: "Scholarships", subtitle: "Financial aid, grants, and scholarship programmes.", href: "/student/scholarships" },
+            { name: "Grievance Redressal", subtitle: "Submit and track grievances formally.", href: "/student/grievance" },
+          ],
+        },
+      ],
+    },
+    newsEvents: {
+      title: "News & Events",
+      description: "Stay informed with the latest happenings, announcements, and events at Loyola.",
+      ctaText: "View All",
+      ctaLink: "/news",
+      sections: [
+        {
+          title: "Latest",
+          links: [
+            { name: "News", subtitle: "Latest institutional news and announcements.", href: "/news" },
+            { name: "Upcoming Events", subtitle: "Events, seminars, and workshops happening soon.", href: "/events" },
+          ],
+        },
+        {
+          title: "Media",
+          links: [
+            { name: "Gallery", subtitle: "Photos and video highlights from campus.", href: "/gallery" },
+            { name: "Event Reports", subtitle: "Detailed reports of past events and activities.", href: "/event-reports" },
           ],
         },
       ],
@@ -1171,13 +1303,21 @@ const Navbar: React.FC = () => {
               <Link href="/admission" className="hover:opacity-80 transition">
                 Admissions
               </Link>
-              <div className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
+              <div
+                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition"
+                onMouseEnter={() => setActiveDropdown("student")}
+                onMouseLeave={() => setActiveDropdown(null)}
+              >
                 Student <ChevronDown size={14} />
               </div>
               <Link href="/alumni" className="hover:opacity-80 transition">
                 Alumni
               </Link>
-              <div className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition">
+              <div
+                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition"
+                onMouseEnter={() => setActiveDropdown("newsEvents")}
+                onMouseLeave={() => setActiveDropdown(null)}
+              >
                 News & Events <ChevronDown size={14} />
               </div>
               <Link href="/contact" className="hover:opacity-80 transition">
@@ -1283,6 +1423,10 @@ const Navbar: React.FC = () => {
                   Journals <ChevronDown size={16} />
                 </div>
               </div>
+
+              <Link href="/les" className="hover:text-primary transition">
+                LES
+              </Link>
 
               <Link href="/careers" className="hover:text-primary transition">
                 Careers
@@ -1423,15 +1567,14 @@ const Navbar: React.FC = () => {
                       <ul className="space-y-3">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
-                            <Link
-                              href={link.href}
-                              className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group"
-                            >
-                              <ChevronDown
-                                size={16}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
-                              />
-                              {link.name}
+                            <Link href={link.href} className="block group">
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-primary transition flex items-start gap-2">
+                                <ChevronDown size={16} className="mt-0.5 -rotate-90 text-gray-400 group-hover:text-primary" />
+                                <span>{link.name}</span>
+                              </div>
+                              {link.subtitle && (
+                                <p className="text-xs text-gray-500 mt-1 ml-6">{link.subtitle}</p>
+                              )}
                             </Link>
                           </li>
                         ))}
@@ -1488,18 +1631,17 @@ const Navbar: React.FC = () => {
                       <h3 className="text-primary font-bold text-sm pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
-                      <ul className="space-y-2">
+                      <ul className="space-y-3">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
-                            <Link
-                              href={link.href}
-                              className="text-xm text-gray-700 hover:text-primary transition flex items-center gap-1 group"
-                            >
-                              <ChevronDown
-                                size={14}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
-                              />
-                              {link.name}
+                            <Link href={link.href} className="block group">
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-primary transition flex items-start gap-2">
+                                <ChevronDown size={16} className="mt-0.5 -rotate-90 text-gray-400 group-hover:text-primary" />
+                                <span>{link.name}</span>
+                              </div>
+                              {link.subtitle && (
+                                <p className="text-xs text-gray-500 mt-1 ml-6">{link.subtitle}</p>
+                              )}
                             </Link>
                           </li>
                         ))}
@@ -1558,15 +1700,14 @@ const Navbar: React.FC = () => {
                       <ul className="space-y-3">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
-                            <Link
-                              href={link.href}
-                              className="text-sm text-gray-700 hover:text-primary transition flex items-center gap-2 group"
-                            >
-                              <ChevronDown
-                                size={16}
-                                className="rotate-[-90deg] text-gray-400 group-hover:text-primary"
-                              />
-                              {link.name}
+                            <Link href={link.href} className="block group">
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-primary transition flex items-start gap-2">
+                                <ChevronDown size={16} className="mt-0.5 -rotate-90 text-gray-400 group-hover:text-primary" />
+                                <span>{link.name}</span>
+                              </div>
+                              {link.subtitle && (
+                                <p className="text-xs text-gray-500 mt-1 ml-6">{link.subtitle}</p>
+                              )}
                             </Link>
                           </li>
                         ))}
@@ -1580,7 +1721,99 @@ const Navbar: React.FC = () => {
         </div>
       )}
 
+      {/* Student dropdown */}
+      {activeDropdown === "student" && (
+        <div
+          className="fixed left-0 right-0 z-50 pt-3"
+          style={{ top: "96px" }}
+          onMouseEnter={() => setActiveDropdown("student")}
+          onMouseLeave={() => setActiveDropdown(null)}
+        >
+          <div className="max-w-4xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="w-72 bg-linear-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden" style={{ backgroundImage: "url(/assets/loyola-building.png)", backgroundSize: "cover", backgroundPosition: "center" }}>
+                <div className="absolute inset-0 bg-linear-to-br from-primary/90 to-primary/90 z-0" />
+                <div className="relative z-10">
+                  <h2 className="text-2xl font-bold mb-4">{menuData.student.title}</h2>
+                  <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.student.description}</p>
+                </div>
+                <Link href={menuData.student.ctaLink} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10 relative">
+                  {menuData.student.ctaText} <ArrowRight size={18} />
+                </Link>
+              </div>
+              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+                <div className="grid grid-cols-2 gap-8">
+                  {menuData.student.sections.map((section, idx) => (
+                    <div key={idx} className="space-y-4">
+                      <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">{section.title}</h3>
+                      <ul className="space-y-3">
+                        {section.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Link href={link.href} className="block group">
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-primary transition flex items-start gap-2">
+                                <ChevronDown size={16} className="mt-0.5 -rotate-90 text-gray-400 group-hover:text-primary" />
+                                <span>{link.name}</span>
+                              </div>
+                              {link.subtitle && <p className="text-xs text-gray-500 mt-1 ml-6">{link.subtitle}</p>}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
+      {/* News & Events dropdown */}
+      {activeDropdown === "newsEvents" && (
+        <div
+          className="fixed left-0 right-0 z-50 pt-3"
+          style={{ top: "96px" }}
+          onMouseEnter={() => setActiveDropdown("newsEvents")}
+          onMouseLeave={() => setActiveDropdown(null)}
+        >
+          <div className="max-w-4xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+              <div className="w-72 bg-linear-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden" style={{ backgroundImage: "url(/assets/loyola-building.png)", backgroundSize: "cover", backgroundPosition: "center" }}>
+                <div className="absolute inset-0 bg-linear-to-br from-primary/90 to-primary/90 z-0" />
+                <div className="relative z-10">
+                  <h2 className="text-2xl font-bold mb-4">{menuData.newsEvents.title}</h2>
+                  <p className="text-white/90 text-sm leading-relaxed mb-6">{menuData.newsEvents.description}</p>
+                </div>
+                <Link href={menuData.newsEvents.ctaLink} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all z-10 relative">
+                  {menuData.newsEvents.ctaText} <ArrowRight size={18} />
+                </Link>
+              </div>
+              <div className="flex-1 bg-white p-8 border-l border-gray-100">
+                <div className="grid grid-cols-2 gap-8">
+                  {menuData.newsEvents.sections.map((section, idx) => (
+                    <div key={idx} className="space-y-4">
+                      <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">{section.title}</h3>
+                      <ul className="space-y-3">
+                        {section.links.map((link, linkIdx) => (
+                          <li key={linkIdx}>
+                            <Link href={link.href} className="block group">
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-primary transition flex items-start gap-2">
+                                <ChevronDown size={16} className="mt-0.5 -rotate-90 text-gray-400 group-hover:text-primary" />
+                                <span>{link.name}</span>
+                              </div>
+                              {link.subtitle && <p className="text-xs text-gray-500 mt-1 ml-6">{link.subtitle}</p>}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Menu */}
       <div
