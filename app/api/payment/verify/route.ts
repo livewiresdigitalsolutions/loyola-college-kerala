@@ -23,12 +23,6 @@ export async function POST(request: Request) {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, email, amount } = await request.json();
 
-      razorpay_order_id,
-      razorpay_payment_id,
-      email,
-      amount
-    });
-
     // Validate required fields
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !email) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -40,11 +34,6 @@ export async function POST(request: Request) {
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
       .update(sign.toString())
       .digest('hex');
-
-      received: razorpay_signature,
-      expected: expectedSign,
-      match: razorpay_signature === expectedSign
-    });
 
     if (razorpay_signature !== expectedSign) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });

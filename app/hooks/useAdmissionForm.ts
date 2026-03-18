@@ -617,11 +617,6 @@ export const useAdmissionForm = (userEmail: string | null) => {
       }
 
       let currentAdmissionId = basicResult.data?.id || admissionId;
-      
-        fromBasicResult: basicResult.data?.id,
-        passedAdmissionId: admissionId,
-        usingId: currentAdmissionId
-      });
 
       if (!currentAdmissionId) {
         throw new Error('No admission ID available after saving basic info');

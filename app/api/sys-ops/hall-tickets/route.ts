@@ -278,14 +278,7 @@ async function createHallTicketsMySQL(tickets: any[]) {
     await connection.end();
     return { success: true, count: tickets.length };
   } catch (error: any) {
-    await connection.rollback();
     await connection.end();
-      code: error.code,
-      errno: error.errno,
-      message: error.message,
-      sqlState: error.sqlState,
-      sqlMessage: error.sqlMessage
-    });
     throw error;
   }
 }

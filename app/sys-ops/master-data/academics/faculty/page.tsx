@@ -34,6 +34,12 @@ export default function FacultyManagement() {
   const [editing, setEditing] = useState<FacultyMember | null>(null);
   const [form, setForm] = useState(defaultForm);
   const [filterDept, setFilterDept] = useState("All");
+  const [showNewDept, setShowNewDept] = useState(false);
+  const [newDeptValue, setNewDeptValue] = useState("");
+  const [customCategories, setCustomCategories] = useState<string[]>([]);
+  const [showNewCategory, setShowNewCategory] = useState(false);
+  const [newCategoryValue, setNewCategoryValue] = useState("");
+  const [allDepartments, setAllDepartments] = useState<string[]>([]);
 
   const fetchData = async () => {
     try {
@@ -43,7 +49,17 @@ export default function FacultyManagement() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  const fetchDepartments = async () => {
+    try {
+      const res = await fetch("/api/academics/departments");
+      if (res.ok) {
+        const data = await res.json();
+        setAllDepartments(data.map((d: any) => d.name).filter(Boolean));
+      }
+    } catch {}
+  };
+
+  useEffect(() => { fetchData(); fetchDepartments(); }, []);
 
   const departments = ["All", ...Array.from(new Set(faculty.map((f) => f.department).filter(Boolean)))] as string[];
   const filtered = filterDept === "All" ? faculty : faculty.filter((f) => f.department === filterDept);
@@ -152,22 +168,84 @@ export default function FacultyManagement() {
             <button onClick={() => setShowForm(false)}><X className="w-5 h-5" /></button>
           </div>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <input required placeholder="Full Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <input required placeholder="Designation" value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <input placeholder="Qualification" value={form.qualification} onChange={(e) => setForm({ ...form, qualification: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <input placeholder="Specialization" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <input placeholder="Email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <input placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <input placeholder="Department" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} className="px-3 py-2 border rounded-lg" />
-            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="px-3 py-2 border rounded-lg">
-              <option value="Teaching">Teaching</option>
-              <option value="Non-Teaching">Non-Teaching</option>
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name <span className="text-red-500">*</span></label>
+              <input required placeholder="e.g. Dr. John Doe" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Designation <span className="text-red-500">*</span></label>
+              <input required placeholder="e.g. Assistant Professor" value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Qualification</label>
+              <input placeholder="e.g. MCA" value={form.qualification} onChange={(e) => setForm({ ...form, qualification: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+              <input placeholder="e.g. Cybersecurity" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input placeholder="e.g. name@college.edu" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input placeholder="e.g. 9876543210" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2 border rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+              {!showNewDept ? (
+                <select
+                  value={form.department}
+                  onChange={(e) => {
+                    if (e.target.value === "__add_new__") { setShowNewDept(true); setNewDeptValue(""); }
+                    else setForm({ ...form, department: e.target.value });
+                  }}
+                  className="w-full px-3 py-2 border rounded-lg"
+                >
+                  <option value="">Select Department</option>
+                  {allDepartments.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                  <option value="__add_new__">+ Add New Department</option>
+                </select>
+              ) : (
+                <div className="flex gap-2">
+                  <input autoFocus placeholder="Department name" value={newDeptValue} onChange={(e) => setNewDeptValue(e.target.value)} className="flex-1 px-3 py-2 border rounded-lg text-sm" />
+                  <button type="button" onClick={() => { if (newDeptValue.trim()) { setForm({ ...form, department: newDeptValue.trim() }); setShowNewDept(false); } }} className="px-3 py-2 bg-primary text-white rounded-lg text-sm">Add</button>
+                  <button type="button" onClick={() => setShowNewDept(false)} className="px-3 py-2 border rounded-lg text-sm">Cancel</button>
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              {!showNewCategory ? (
+                <select
+                  value={form.category}
+                  onChange={(e) => {
+                    if (e.target.value === "__add_new__") { setShowNewCategory(true); setNewCategoryValue(""); }
+                    else setForm({ ...form, category: e.target.value });
+                  }}
+                  className="w-full px-3 py-2 border rounded-lg"
+                >
+                  <option value="Teaching">Teaching</option>
+                  <option value="Non-Teaching">Non-Teaching</option>
+                  {customCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+                  <option value="__add_new__">+ Add New Category</option>
+                </select>
+              ) : (
+                <div className="flex gap-2">
+                  <input autoFocus placeholder="Category name" value={newCategoryValue} onChange={(e) => setNewCategoryValue(e.target.value)} className="flex-1 px-3 py-2 border rounded-lg text-sm" />
+                  <button type="button" onClick={() => { if (newCategoryValue.trim()) { setCustomCategories([...customCategories, newCategoryValue.trim()]); setForm({ ...form, category: newCategoryValue.trim() }); setShowNewCategory(false); } }} className="px-3 py-2 bg-primary text-white rounded-lg text-sm">Add</button>
+                  <button type="button" onClick={() => setShowNewCategory(false)} className="px-3 py-2 border rounded-lg text-sm">Cancel</button>
+                </div>
+              )}
+            </div>
             <div className="lg:col-span-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
               <div className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-full overflow-hidden border"><Image src={form.image} alt="Preview" fill className="object-cover" /></div>
-                <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-gray-50 text-sm"><Upload className="w-4 h-4" /> Upload<input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" /></label>
+                <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-gray-50 text-sm"><Upload className="w-4 h-4" /> {form.image && form.image !== "/assets/defaultprofile.png" ? "Change Photo" : "Upload Photo"}<input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" /></label>
               </div>
             </div>
             <div className="lg:col-span-3 flex gap-2">

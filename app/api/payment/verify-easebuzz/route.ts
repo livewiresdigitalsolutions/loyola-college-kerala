@@ -568,13 +568,6 @@ export async function POST(request: Request) {
       );
     }
 
-      txnid: transactionData.txnid,
-      status: transactionData.status,
-      amount: transactionData.amount,
-      easepayid: transactionData.easepayid,
-      mode: transactionData.mode,
-    });
-
     // Step 5: Check if payment was successful
     if (transactionData.status !== 'success') {
       return NextResponse.json(
@@ -621,12 +614,6 @@ export async function POST(request: Request) {
       }
 
     } else {
-        host: mysqlConfig.host,
-        port: mysqlConfig.port,
-        database: mysqlConfig.database,
-        user: mysqlConfig.user,
-      });
-
       let connection;
       
       try {
@@ -667,10 +654,6 @@ export async function POST(request: Request) {
         );
 
         const mysqlResult = updateResult as mysql.ResultSetHeader;
-        
-          affectedRows: mysqlResult.affectedRows,
-          changedRows: mysqlResult.changedRows,
-        });
 
         if (mysqlResult.affectedRows === 0) {
           return NextResponse.json(
@@ -681,12 +664,6 @@ export async function POST(request: Request) {
 
 
       } catch (dbError) {
-          error: dbError,
-          message: dbError instanceof Error ? dbError.message : 'Unknown',
-          code: (dbError as any).code,
-          errno: (dbError as any).errno,
-          sql: (dbError as any).sql,
-        });
         
         return NextResponse.json(
           { 

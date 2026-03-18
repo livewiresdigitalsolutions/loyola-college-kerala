@@ -41,7 +41,13 @@ export async function POST(request: Request) {
       fileUrl = urlData.publicUrl;
     } else {
       const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
-      const uploadDir = path.join(process.cwd(), "public", "event-reports");
+
+      const isProduction = process.env.NODE_ENV === 'production';
+      const baseUploadDir = isProduction 
+        ? path.join(process.cwd(), '..', 'loyola-uploads') 
+        : path.join(process.cwd(), 'uploads');
+        
+      const uploadDir = path.join(baseUploadDir, "event-reports");
       
       try {
         await fs.access(uploadDir);
@@ -54,7 +60,7 @@ export async function POST(request: Request) {
       const buffer = Buffer.from(arrayBuffer);
       await fs.writeFile(filePath, buffer);
 
-      fileUrl = `/event-reports/${fileName}`;
+      fileUrl = `/api/media/event-reports/${fileName}`;
     }
 
     return NextResponse.json({ success: true, url: fileUrl });

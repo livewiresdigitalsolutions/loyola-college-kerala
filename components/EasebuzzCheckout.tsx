@@ -295,14 +295,6 @@ export default function EasebuzzCheckout({
       localStorage.setItem("easebuzz_pending_email", email);
       localStorage.setItem("easebuzz_pending_amount", numAmount.toString());
 
-        txnid: transactionId,
-        amount: numAmount.toFixed(2),
-        firstname: firstname.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        productinfo: productinfo,
-      });
-
       // Call your backend to initiate Easebuzz payment
       const response = await fetch("/api/payment/easebuzz-hash", {
         method: "POST",

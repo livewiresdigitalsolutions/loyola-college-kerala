@@ -27,12 +27,13 @@ export default function ProgrammesSection({ programmes }: ProgrammesSectionProps
           {progs.map((prog) => (
             <div
               key={prog.id}
-              className="bg-white border-2 border-gray-100 p-6 rounded-xl hover:border-primary hover:shadow-lg transition-all duration-300"
+              className="p-6 rounded-sm hover:shadow-md transition-all duration-300 flex flex-col"
+              style={{ backgroundColor: "#F6F6EE" }}
             >
-              <h4 className="text-xl font-bold text-gray-900 mb-3">
+              <h4 className="text-xl font-bold mb-4" style={{ color: "#1a5632" }}>
                 {prog.name}
               </h4>
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2 text-sm text-gray-600 flex-1">
                 <p>
                   <span className="font-semibold">Duration:</span> {prog.duration}
                 </p>
@@ -53,7 +54,7 @@ export default function ProgrammesSection({ programmes }: ProgrammesSectionProps
   };
   
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-4xl font-bold text-gray-900 uppercase mb-12 text-center"
         style = {{color: "#1a3c2a"}}>
@@ -61,7 +62,7 @@ export default function ProgrammesSection({ programmes }: ProgrammesSectionProps
           Programmes
           <div
               className="w-20 h-[3px] mx-auto mb-12"
-              style={{ backgroundColor: "#ffffff" }}
+              style={{ backgroundColor: "#1a3c2a" }}
             />
         </h2>
         

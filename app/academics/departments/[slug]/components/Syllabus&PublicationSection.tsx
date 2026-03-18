@@ -71,7 +71,7 @@ export default function SyllabusSection({
             {/* Decorative underline */}
             <div
               className="w-20 h-[3px] mx-auto mb-12"
-              style={{ backgroundColor: "#ffffffff" }}
+              style={{ backgroundColor: "#1a3c2a" }}
             />
 
             {/* Publications grid */}
