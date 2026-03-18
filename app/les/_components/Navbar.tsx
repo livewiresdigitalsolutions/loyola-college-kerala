@@ -28,7 +28,9 @@ const navItems: NavItem[] = [
   { label: 'Counselling Appointment', href: '/les/counsellingAppointment' },
   { label: 'Gallery', href: '/les/gallery' },
   { label: 'Our Team', href: '/les/team' },
+  { label: 'Donate', href: '/les/donate' },
   { label: 'Contact Us', href: '/les/contact' },
+  
 ]
 
 export default function LesNavbar() {

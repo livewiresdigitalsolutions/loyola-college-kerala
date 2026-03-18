@@ -14,6 +14,7 @@ import {
   MessageSquare,
   HandHeart,
   Building2,
+  IndianRupee,
 } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -117,6 +118,16 @@ const formCards: LesCard[] = [
   },
 ];
 
+const paymentCards: LesCard[] = [
+  {
+    id: "donations",
+    title: "Donations",
+    description: "View and manage LES donation transactions",
+    icon: <IndianRupee className="w-8 h-8" />,
+    href: "/sys-ops/master-data/les/donations",
+  },
+];
+
 export default function LesManagement() {
   const router = useRouter();
 
@@ -167,6 +178,12 @@ export default function LesManagement() {
       <div>
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Form Submissions</h2>
         {renderCardGrid(formCards)}
+      </div>
+
+      {/* Transactions Section */}
+      <div>
+        <h2 className="text-xl font-semibold text-gray-700 mb-4">Transactions & Payments</h2>
+        {renderCardGrid(paymentCards)}
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Smartphone, Building2, ShieldCheck, ChevronDown, Loader2 } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Smartphone, Building2, ShieldCheck, ChevronDown, Loader2, CheckCircle, XCircle } from 'lucide-react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 const PRESET_AMOUNTS = [500, 1000, 2500, 5000]
@@ -21,6 +22,64 @@ declare global {
 }
 
 export default function DonateForm() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  // Modal State
+  const statusParam = searchParams.get('status')
+  const [showModal, setShowModal] = useState(!!statusParam)
+  const [verifying, setVerifying] = useState(true)
+  const [verified, setVerified] = useState(false)
+  const [transactionData, setTransactionData] = useState<any>(null)
+
+  useEffect(() => {
+    if (showModal) {
+      verifyPayment()
+    }
+  }, [showModal])
+
+  const verifyPayment = async () => {
+    try {
+      if (statusParam === 'failure') {
+        setVerified(false)
+        setVerifying(false)
+        return
+      }
+
+      let txnid = searchParams.get('txnid')
+      let email = searchParams.get('email')
+
+      if (!txnid) txnid = localStorage.getItem('les_donate_pending_txnid')
+      if (!email) email = localStorage.getItem('les_donate_pending_email')
+
+      if (!txnid) {
+        setVerifying(false)
+        return
+      }
+
+      const response = await fetch('/api/les/donate/verify-easebuzz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ txnid, email }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        setVerified(true)
+        setTransactionData(result.transaction)
+        localStorage.removeItem('les_donate_pending_txnid')
+        localStorage.removeItem('les_donate_pending_email')
+      } else {
+        setVerified(false)
+      }
+    } catch {
+      setVerified(false)
+    } finally {
+      setVerifying(false)
+    }
+  }
+
   const [donationType, setDonationType] = useState<'one-time' | 'recurring'>('one-time')
   const [selectedFund, setSelectedFund] = useState('general')
   const [selectedAmount, setSelectedAmount] = useState<number | null>(500)
@@ -71,112 +130,6 @@ export default function DonateForm() {
     return true
   }
 
-  // ─── Razorpay Payment ───
-  const handleRazorpayPayment = async () => {
-    if (!validateForm()) return
-
-    const amount = getFinalAmount()
-    setIsProcessing(true)
-
-    try {
-      // Step 1: Create order
-      const orderRes = await fetch('/api/les/donate/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount,
-          fund: selectedFund,
-          donationType,
-          donorName: donorName.trim(),
-          donorEmail: donorEmail.trim(),
-          donorPhone: donorPhone.trim(),
-        }),
-      })
-
-      const orderData = await orderRes.json()
-
-      if (!orderRes.ok || !orderData.success) {
-        toast.error(orderData.error || 'Failed to create order')
-        setIsProcessing(false)
-        return
-      }
-
-      // Step 2: Load Razorpay script if not loaded
-      if (!window.Razorpay) {
-        await new Promise<void>((resolve, reject) => {
-          const script = document.createElement('script')
-          script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-          script.onload = () => resolve()
-          script.onerror = () => reject(new Error('Failed to load Razorpay'))
-          document.head.appendChild(script)
-        })
-      }
-
-      // Step 3: Open Razorpay checkout
-      const options = {
-        key: orderData.keyId,
-        amount: orderData.amount,
-        currency: orderData.currency,
-        name: 'Loyola Extension Services',
-        description: `Donation - ${currentFund?.label || 'General Fund'}`,
-        order_id: orderData.orderId,
-        prefill: {
-          name: donorName.trim(),
-          email: donorEmail.trim(),
-          contact: donorPhone.trim(),
-        },
-        theme: { color: '#0d4a33' },
-        handler: async (response: any) => {
-          // Step 4: Verify payment
-          try {
-            const verifyRes = await fetch('/api/les/donate/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                donorName: donorName.trim(),
-                donorEmail: donorEmail.trim(),
-                donorPhone: donorPhone.trim(),
-                amount,
-                fund: selectedFund,
-                donationType,
-              }),
-            })
-
-            const verifyData = await verifyRes.json()
-
-            if (verifyRes.ok && verifyData.success) {
-              toast.success('Donation successful! Thank you for your support.')
-              // Reset form
-              setDonorName('')
-              setDonorEmail('')
-              setDonorPhone('')
-              setSelectedAmount(500)
-              setCustomAmount('')
-            } else {
-              toast.error(verifyData.error || 'Payment verification failed')
-            }
-          } catch {
-            toast.error('Payment verification failed. Please contact support.')
-          }
-        },
-        modal: {
-          ondismiss: () => {
-            setIsProcessing(false)
-          },
-        },
-      }
-
-      const rzp = new window.Razorpay(options)
-      rzp.open()
-    } catch (error) {
-      toast.error('Something went wrong. Please try again.')
-    } finally {
-      setIsProcessing(false)
-    }
-  }
 
   // ─── Easebuzz Payment ───
   const handleEasebuzzPayment = async () => {
@@ -364,41 +317,19 @@ export default function DonateForm() {
               </div>
             </div>
 
-            {/* Payment Method */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Select Payment Method
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
-                  onClick={handleRazorpayPayment}
-                  disabled={isProcessing}
-                  className="flex flex-col items-center justify-center py-4 px-4 bg-[#0d4a33] text-white rounded-xl hover:bg-[#0b3d2b] transition-colors shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {isProcessing ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <span className="font-semibold text-sm">Pay with Razorpay</span>
-                      <span className="text-xs text-white/70 mt-1">Cards, UPI, NetBanking</span>
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={handleEasebuzzPayment}
-                  disabled={isProcessing}
-                  className="flex flex-col items-center justify-center py-4 px-4 bg-white border-2 border-[#0d4a33]/20 text-[#0d4a33] rounded-xl hover:border-[#0d4a33]/40 hover:bg-[#0d4a33]/5 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {isProcessing ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <span className="font-semibold text-sm">Pay with Easebuzz</span>
-                      <span className="text-xs text-gray-500 mt-1">Cards, UPI, NetBanking</span>
-                    </>
-                  )}
-                </button>
-              </div>
+            {/* Payment Button */}
+            <div className="mt-8">
+              <button
+                onClick={handleEasebuzzPayment}
+                disabled={isProcessing}
+                className="w-full flex items-center justify-center py-4 px-4 bg-[#0d4a33] text-white rounded-xl hover:bg-[#0b3d2b] transition-colors shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isProcessing ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <span className="font-semibold text-base tracking-wide uppercase">Pay</span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -520,6 +451,81 @@ export default function DonateForm() {
           </div>
         </div>
       </div>
+
+      {/* Verification Modal Popup */}
+      {showModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center relative animate-in fade-in zoom-in duration-300">
+            {verifying ? (
+              <div className="py-12">
+                <Loader2 className="w-12 h-12 text-[#0d4a33] animate-spin mx-auto mb-4" />
+                <p className="text-lg text-gray-700 font-medium">Verifying your payment...</p>
+                <p className="text-sm text-gray-500 mt-2">Please do not close this window</p>
+              </div>
+            ) : verified && transactionData ? (
+              <>
+                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
+                  <CheckCircle className="w-12 h-12 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-green-700 mb-3">Thank You!</h3>
+                <p className="text-gray-600 mb-6">
+                  Your donation was successful. Thank you for supporting our cause!
+                </p>
+                
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-left space-y-2">
+                  <p className="text-sm text-green-800 flex justify-between">
+                    <span className="font-semibold">Transaction ID:</span>
+                    <span className="font-mono">{transactionData.txnid}</span>
+                  </p>
+                  <p className="text-sm text-green-800 flex justify-between">
+                    <span className="font-semibold">Amount:</span>
+                    <span className="font-bold">₹{transactionData.amount}</span>
+                  </p>
+                  {transactionData.fund && (
+                    <p className="text-sm text-green-800 flex justify-between">
+                      <span className="font-semibold">Fund:</span>
+                      <span className="capitalize">{transactionData.fund}</span>
+                    </p>
+                  )}
+                </div>
+
+                <p className="text-sm text-gray-500 mb-6">
+                  An 80G tax exemption receipt will be sent to your email within 5-7 working days.
+                </p>
+
+                <button
+                  onClick={() => {
+                    setShowModal(false)
+                    router.push('/les/donate')
+                  }}
+                  className="w-full py-3 bg-[#0d4a33] text-white rounded-xl hover:bg-[#0b3d2b] transition-colors font-semibold"
+                >
+                  Close & Done
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
+                  <XCircle className="w-12 h-12 text-white" />
+                </div>
+                <h3 className="text-3xl font-bold text-red-700 mb-3">Payment Failed</h3>
+                <p className="text-gray-600 mb-6">
+                  We couldn&apos;t verify your payment or the transaction failed. If the amount was deducted, please contact us.
+                </p>
+                <button
+                  onClick={() => {
+                    setShowModal(false)
+                    router.push('/les/donate')
+                  }}
+                  className="w-full py-3 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-colors font-semibold"
+                >
+                  Try Again
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   )
 }
