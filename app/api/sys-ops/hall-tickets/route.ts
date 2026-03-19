@@ -261,7 +261,7 @@ async function createHallTicketsMySQL(tickets: any[]) {
     `;
 
     for (const ticket of tickets) {
-      
+
       try {
         await connection.execute(insertQuery, [
           ticket.admission_id,
@@ -280,12 +280,6 @@ async function createHallTicketsMySQL(tickets: any[]) {
   } catch (error: any) {
     await connection.rollback();
     await connection.end();
-      code: error.code,
-      errno: error.errno,
-      message: error.message,
-      sqlState: error.sqlState,
-      sqlMessage: error.sqlMessage
-    });
     throw error;
   }
 }
@@ -351,15 +345,15 @@ export async function POST(request: Request) {
     }
 
     // Validate each ticket has required fields
-    const invalidTickets = tickets.filter(ticket => 
-      !ticket.admission_id || 
+    const invalidTickets = tickets.filter(ticket =>
+      !ticket.admission_id ||
       !ticket.exam_date ||
       !ticket.exam_time
     );
 
     if (invalidTickets.length > 0) {
       return NextResponse.json(
-        { 
+        {
           error: 'Some tickets have missing required fields',
           details: 'Required: admission_id, exam_date, exam_time',
           invalidTickets: invalidTickets
@@ -379,11 +373,11 @@ export async function POST(request: Request) {
       message: `${result.count} hall ticket(s) allocated successfully`,
     }, { status: 200 }); // Explicitly set 200 status
   } catch (error: any) {
-    
+
     // Check for duplicate entry error
     if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
       return NextResponse.json(
-        { 
+        {
           error: 'Duplicate hall ticket',
           details: 'One or more students already have hall tickets allocated',
           code: 'ER_DUP_ENTRY'
@@ -391,10 +385,10 @@ export async function POST(request: Request) {
         { status: 409 }
       );
     }
-    
+
     return NextResponse.json(
-      { 
-        error: 'Failed to allocate hall tickets', 
+      {
+        error: 'Failed to allocate hall tickets',
         details: error.message || String(error),
         code: error.code || 'UNKNOWN_ERROR',
         errno: error.errno,

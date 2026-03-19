@@ -246,51 +246,68 @@ function ReportsTab() {
 function TimelinesTab() {
     const { data: timelines, loading, refresh } = useData<Timeline>("timelines");
     const [showForm, setShowForm] = useState(false);
-    const [saving, setSaving] = useState(false);
+    const [file, setFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editForm, setEditForm] = useState<Partial<Timeline>>({});
-    const [form, setForm] = useState({ year: "", view_url: "", display_order: "0", is_active: true });
+    const [form, setForm] = useState({ year: "", display_order: "0", is_active: true });
 
-    const handleAdd = async () => {
-        if (!form.year) { toast.error("Year is required"); return; }
-        setSaving(true);
+    const handleUpload = async () => {
+        if (!file || !form.year) { toast.error("File and year are required"); return; }
+        setUploading(true);
         try {
-            const r = await fetch(API("timelines"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, display_order: parseInt(form.display_order) }) });
+            const fd = new FormData();
+            fd.append("file", file);
+            fd.append("year", form.year);
+            fd.append("display_order", form.display_order);
+            fd.append("is_active", form.is_active.toString());
+            const r = await fetch("/api/iqac/Activities/upload?type=timelines", { method: "POST", body: fd });
             const d = await r.json();
-            if (d.success) { toast.success("Timeline added"); setShowForm(false); setForm({ year: "", view_url: "", display_order: "0", is_active: true }); refresh(); }
+            if (d.success) { toast.success("Timeline uploaded"); setShowForm(false); setFile(null); setForm({ year: "", display_order: "0", is_active: true }); refresh(); }
             else toast.error(d.error || "Failed");
-        } catch { toast.error("Failed"); }
-        finally { setSaving(false); }
+        } catch { toast.error("Upload failed"); }
+        finally { setUploading(false); }
     };
 
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500">{timelines.length} timeline(s)</p>
-                <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-[#342D87] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2a2470]"><Plus className="w-4 h-4" /> Add Timeline</button>
+                <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-[#342D87] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2a2470]"><Plus className="w-4 h-4" /> Upload Timeline</button>
             </div>
             {showForm && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow p-5">
-                    <h3 className="font-bold mb-4">Add IQAC Timeline</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div><label className="block text-xs font-medium text-gray-700 mb-1">Year *</label><input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. 2021-22" value={form.year} onChange={e => setForm({ ...form, year: e.target.value })} /></div>
-                        <div><label className="block text-xs font-medium text-gray-700 mb-1">View URL</label><input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="https://..." value={form.view_url} onChange={e => setForm({ ...form, view_url: e.target.value })} /></div>
-                        <div><label className="block text-xs font-medium text-gray-700 mb-1">Display Order</label><input type="number" className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" value={form.display_order} onChange={e => setForm({ ...form, display_order: e.target.value })} /></div>
+                    <h3 className="font-bold mb-4">Upload IQAC Timeline</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-5 text-center hover:border-[#342D87] transition-colors">
+                                <input type="file" accept="application/pdf,image/*" onChange={e => setFile(e.target.files?.[0] || null)} className="hidden" id="tl-upload" />
+                                <label htmlFor="tl-upload" className="cursor-pointer flex flex-col items-center"><Upload className="w-8 h-8 text-gray-400 mb-2" /><span className="text-sm text-gray-600">Select file</span><span className="text-xs text-gray-400 mt-1">PDF or Image · Max 20MB</span></label>
+                            </div>
+                            {file && <p className="mt-2 text-xs text-green-700 bg-green-50 rounded px-3 py-2 truncate">{file.name}</p>}
+                        </div>
+                        <div className="space-y-3">
+                            <div><label className="block text-xs font-medium text-gray-700 mb-1">Year *</label><input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. 2021-22" value={form.year} onChange={e => setForm({ ...form, year: e.target.value })} /></div>
+                            <div><label className="block text-xs font-medium text-gray-700 mb-1">Display Order</label><input type="number" className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" value={form.display_order} onChange={e => setForm({ ...form, display_order: e.target.value })} /></div>
+                            <div className="flex items-center gap-2"><input type="checkbox" id="tl_active" checked={form.is_active} onChange={e => setForm({ ...form, is_active: e.target.checked })} /><label htmlFor="tl_active" className="text-sm text-gray-700">Active</label></div>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-4 mb-4"><input type="checkbox" id="tl_active" checked={form.is_active} onChange={e => setForm({ ...form, is_active: e.target.checked })} /><label htmlFor="tl_active" className="text-sm text-gray-700">Active</label></div>
-                    <div className="flex gap-3"><button onClick={handleAdd} disabled={saving} className="bg-[#342D87] text-white px-5 py-2 rounded-lg text-sm disabled:opacity-50">{saving ? "Saving..." : "Add"}</button><button onClick={() => setShowForm(false)} className="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg text-sm">Cancel</button></div>
+                    <div className="flex gap-3 mt-4">
+                        <button onClick={handleUpload} disabled={uploading || !file} className="flex items-center gap-2 bg-[#342D87] text-white px-5 py-2 rounded-lg text-sm disabled:opacity-50">{uploading ? "Uploading..." : <><Upload className="w-4 h-4" />Upload</>}</button>
+                        <button onClick={() => { setShowForm(false); setFile(null); }} className="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg text-sm">Cancel</button>
+                    </div>
                 </div>
             )}
             <div className="rounded-xl border border-gray-200 overflow-hidden shadow">
                 <table className="w-full text-sm">
-                    <thead className="bg-gray-50 text-xs uppercase text-gray-600"><tr><th className="px-4 py-3 text-left">Year</th><th className="px-4 py-3 text-left">View URL</th><th className="px-4 py-3 text-left">Status</th><th className="px-4 py-3 text-left">Actions</th></tr></thead>
+                    <thead className="bg-gray-50 text-xs uppercase text-gray-600"><tr><th className="px-4 py-3 text-left">Year</th><th className="px-4 py-3 text-left">File</th><th className="px-4 py-3 text-left">Status</th><th className="px-4 py-3 text-left">Actions</th></tr></thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? <tr><td colSpan={4} className="text-center py-8 text-gray-400">Loading...</td></tr>
                             : timelines.length === 0 ? <tr><td colSpan={4} className="text-center py-8 text-gray-400">No timelines yet.</td></tr>
                                 : timelines.map(t => (
                                     <tr key={t.id} className="hover:bg-gray-50">
                                         <td className="px-4 py-3 font-medium">{editingId === t.id ? <input className="w-24 border rounded px-2 py-1 text-sm" value={editForm.year ?? t.year} onChange={e => setEditForm({ ...editForm, year: e.target.value })} /> : t.year}</td>
-                                        <td className="px-4 py-3 text-gray-500 max-w-[200px] truncate">{editingId === t.id ? <input className="w-full border rounded px-2 py-1 text-sm" value={editForm.view_url ?? t.view_url} onChange={e => setEditForm({ ...editForm, view_url: e.target.value })} /> : (t.view_url || "—")}</td>
+                                        <td className="px-4 py-3">{t.view_url ? <a href={t.view_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline flex items-center gap-1"><FileText className="w-3.5 h-3.5" />View</a> : <span className="text-gray-400 text-xs">—</span>}</td>
                                         <td className="px-4 py-3"><StatusBadge active={t.is_active} onToggle={() => toggleActive("timelines", t.id, t.is_active, refresh)} /></td>
                                         <td className="px-4 py-3">
                                             {editingId === t.id
@@ -305,6 +322,7 @@ function TimelinesTab() {
         </div>
     );
 }
+
 
 // ─── Minutes Tab ──────────────────────────────────────────────────────────────
 function MinutesTab() {

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         try {
             let result: any;
             if (type === "members") {
-                if (!body.name || !body.role) return NextResponse.json({ success: false, error: "Name and role are required" }, { status: 400 });
+                if (!body.name) return NextResponse.json({ success: false, error: "Name is required" }, { status: 400 });
                 [result] = await connection.execute(
                     "INSERT INTO iqac_members (role, name, department, category, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?)",
                     [body.role, body.name, body.department || "", body.category || "general", body.display_order || 0, body.is_active !== false ? 1 : 0]

@@ -4,54 +4,35 @@ import React, { useEffect, useState } from "react";
 
 interface IqacMember {
     id: number;
-    role: string;
+    role: string;       // sub-designation / extra info (e.g. "Principal", "Head Accountant")
     name: string;
-    department?: string;
-    category?: string;
+    department?: string; // HoD of which dept, or extra label shown on the right
+    category: string;   // the section heading label (e.g. "Chairperson", "IQAC Coordinator")
     display_order: number;
+    is_active?: boolean;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-    Chairperson: "Chairperson",
-    arts: "Member of the Department of Arts",
-    science: "Member of the Department of Science",
-    admin: "Administrative Expert",
-    alumni: "Alumni",
-    student: "Student Representative",
-    local: "Local Society Representative",
-    industry: "Industry / Employer Representative",
-};
-
-// Fallback static data (used while DB is being populated)
-const STATIC_MEMBERS: IqacMember[] = [
-    { id: 1, role: "Chairperson", name: "Dr. George Thomas, SJ – Principal", category: "general", display_order: 1 },
-    { id: 2, role: "IQAC Coordinator", name: "Fr. Biju SJ", category: "general", display_order: 2 },
-    { id: 3, role: "Asst. Coordinator", name: "Dr. SGC and Mr. H. Jamal", category: "general", display_order: 3 },
-    { id: 4, role: "Librarian", name: "Dr. P.C. Kurian V", category: "general", display_order: 4 },
-    { id: 5, role: "Member of the Dept. of Arts", name: "Dr. Prawathy P.K.", department: "HoD, Department of Social Work", category: "arts", display_order: 5 },
-    { id: 6, role: "", name: "Dr. Asha R", department: "HoD, Department of Development Management", category: "arts", display_order: 6 },
-    { id: 7, role: "", name: "Ms. Jose Nithiladamanilan Chirayil", department: "HoD, Department of Counselling Psychology", category: "arts", display_order: 7 },
-    { id: 8, role: "", name: "Dr. Justin Mathew", department: "HoD, MCAM, Business Management", category: "arts", display_order: 8 },
-    { id: 9, role: "", name: "Dr. Siranjeevi M", department: "HoD, MCAM (CS) / IT Dept", category: "arts", display_order: 9 },
-    { id: 10, role: "", name: "Dr. Geo Varghese Alexander", department: "HoD, M.Sc. Psychology", category: "arts", display_order: 10 },
-    { id: 11, role: "", name: "Dr. Joyal V Sebastian", department: "HoD (I/C) MAECO", category: "arts", display_order: 11 },
-    { id: 12, role: "", name: "Mr. Anurag B", category: "arts", display_order: 12 },
-    { id: 13, role: "", name: "Mr. Agnel B", category: "arts", display_order: 13 },
-    { id: 14, role: "", name: "Mr. Jito Sam Thomas", category: "arts", display_order: 14 },
-    { id: 15, role: "Administrative Expert", name: "Prof. Steven Simon Therd", category: "admin", display_order: 15 },
-    { id: 16, role: "Swimming Trainer", name: "Prof. Saji Leela", category: "admin", display_order: 16 },
-    { id: 17, role: "Controller of Examination", name: "Fr. Hildegard Fr. M", category: "admin", display_order: 17 },
-    { id: 18, role: "Bursar", name: "Fr. D. Barry L. Gracias", category: "admin", display_order: 18 },
-    { id: 19, role: "Non-Teaching Staff Rep.", name: "Mr. Joji C", category: "admin", display_order: 19 },
-    { id: 20, role: "", name: "Mr. Joel Gojnath", category: "admin", display_order: 20 },
-    { id: 21, role: "Local Society Rep.", name: "Dr. Suvarna Seri", category: "local", display_order: 21 },
-    { id: 22, role: "", name: "Dr. Jimmy Thomas, J", category: "local", display_order: 22 },
+// Ordered list of section headings — matches the DB `category` values
+const SECTION_ORDER = [
+    "Chairperson",
+    "IQAC Coordinator",
+    "Asst. Coordinator",
+    "Librarian",
+    "Head of the Departments",
+    "Academic Expert",
+    "Autonomy Director",
+    "Controller of Examination",
+    "Bursar",
+    "Non Teaching Staff Representatives",
+    "Local Society Representative",
+    "Alumni Representative",
+    "Student Representatives",
+    "Employer Representative",
 ];
 
 export default function IqacMembers() {
     const [members, setMembers] = useState<IqacMember[]>([]);
     const [loading, setLoading] = useState(true);
-    const [usedFallback, setUsedFallback] = useState(false);
 
     useEffect(() => {
         fetch("/api/iqac/About?type=members")
@@ -59,25 +40,11 @@ export default function IqacMembers() {
             .then((d) => {
                 if (d.success && d.data && d.data.length > 0) {
                     setMembers(d.data);
-                } else {
-                    // Fall back to static data if DB table is empty or not ready
-                    setMembers(STATIC_MEMBERS);
-                    setUsedFallback(true);
                 }
             })
-            .catch(() => {
-                setMembers(STATIC_MEMBERS);
-                setUsedFallback(true);
-            })
+            .catch(console.error)
             .finally(() => setLoading(false));
     }, []);
-
-    // Group by category
-    const categories = Object.keys(CATEGORY_LABELS);
-    const grouped = categories.map(cat => ({
-        label: CATEGORY_LABELS[cat],
-        items: members.filter(m => (m.category || "general") === cat),
-    })).filter(g => g.items.length > 0);
 
     if (loading) {
         return (
@@ -90,46 +57,101 @@ export default function IqacMembers() {
         );
     }
 
+    // Group members by their category, preserving SECTION_ORDER
+    const sections = SECTION_ORDER.map((label) => ({
+        label,
+        items: members
+            .filter((m) => (m.category || "") === label)
+            .sort((a, b) => a.display_order - b.display_order),
+    })).filter((s) => s.items.length > 0);
+
     return (
         <section className="bg-white py-10 border-t border-gray-100">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="mb-6">
+                {/* Heading */}
+                <div className="mb-8">
                     <h2 className="text-xl md:text-2xl font-bold text-primary uppercase tracking-wide">
                         IQAC Members
                     </h2>
-                    <div className="mt-2 w-16 h-0.5 bg-primary" />
+                    <div className="mt-2 w-36 h-1 bg-[var(--primary)]" />
                 </div>
 
-                <div className="overflow-x-auto rounded border border-gray-200 shadow-sm">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="bg-primary text-white text-xs uppercase tracking-wide">
-                                <th className="px-4 py-3 text-left w-1/4">Role</th>
-                                <th className="px-4 py-3 text-left w-1/3">Name</th>
-                                <th className="px-4 py-3 text-left">Department / Designation</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {grouped.map((group) => (
-                                <React.Fragment key={group.label}>
-                                    {/* Category header row */}
-                                    <tr className="bg-primary/10">
-                                        <td colSpan={3} className="px-4 py-2 text-xs font-semibold text-primary uppercase tracking-wide">
-                                            {group.label}
-                                        </td>
-                                    </tr>
-                                    {group.items.map((member) => (
-                                        <tr key={member.id} className="hover:bg-gray-50">
-                                            <td className="px-4 py-2.5 text-gray-600 text-xs">{member.role || ""}</td>
-                                            <td className="px-4 py-2.5 font-medium text-gray-800">{member.name}</td>
-                                            <td className="px-4 py-2.5 text-gray-500 text-xs">{member.department || ""}</td>
-                                        </tr>
-                                    ))}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                {sections.length === 0 ? (
+                    <p className="text-gray-400 text-sm">No members added yet.</p>
+                ) : (
+                    <div className="divide-y divide-gray-100">
+                        {sections.map((section) => (
+                            <div key={section.label} className="py-2">
+                                {section.items.length === 1 ? (
+                                    /* Single-member category: role label | name · sub-role | dept right */
+                                    <div className="flex items-baseline gap-4 py-2">
+                                        {/* Left: category label */}
+                                        <span className="w-56 flex-shrink-0 text-sm font-semibold text-[var(--secondary)] italic">
+                                            {section.label}:
+                                        </span>
+                                        {/* Middle: name + optional sub-designation */}
+                                        <span className="flex-1 text-sm font-medium text-gray-800">
+                                            {section.items[0].name}
+                                            {section.items[0].role && (
+                                                <span className="text-gray-400 font-normal ml-2 text-xs">
+                                                    · {section.items[0].role}
+                                                </span>
+                                            )}
+                                        </span>
+                                        {/* Right: department */}
+                                        {section.items[0].department && (
+                                            <span className="text-xs text-gray-400 text-right ml-auto">
+                                                {section.items[0].department}
+                                            </span>
+                                        )}
+                                    </div>
+                                ) : (
+                                    /* Multi-member category: label on first row, then indented members */
+                                    <>
+                                        <div className="flex items-baseline gap-4 py-2">
+                                            <span className="w-56 flex-shrink-0 text-sm font-semibold text-[var(--secondary)] italic">
+                                                {section.label}:
+                                            </span>
+                                            {/* First member inline with the label */}
+                                            <span className="flex-1 text-sm font-medium text-gray-800">
+                                                {section.items[0].name}
+                                                {section.items[0].role && (
+                                                    <span className="text-gray-400 font-normal ml-2 text-xs">
+                                                        · {section.items[0].role}
+                                                    </span>
+                                                )}
+                                            </span>
+                                            {section.items[0].department && (
+                                                <span className="text-xs text-gray-400 text-right ml-auto">
+                                                    {section.items[0].department}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {/* Remaining members indented under the label */}
+                                        {section.items.slice(1).map((member) => (
+                                            <div key={member.id} className="flex items-baseline gap-4 py-1.5">
+                                                <span className="w-56 flex-shrink-0" /> {/* spacer to align */}
+                                                <span className="flex-1 text-sm font-medium text-gray-800">
+                                                    {member.name}
+                                                    {member.role && (
+                                                        <span className="text-gray-400 font-normal ml-2 text-xs">
+                                                            · {member.role}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                                {member.department && (
+                                                    <span className="text-xs text-gray-400 text-right ml-auto">
+                                                        {member.department}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     );

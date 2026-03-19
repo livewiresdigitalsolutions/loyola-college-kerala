@@ -20,23 +20,23 @@ export default function IqacTimelines() {
     if (timelines.length === 0) return null;
 
     return (
-        <section className="py-10 md:py-12 bg-white">
+        <section className="py-10 md:py-12 bg-gray-50/50">
             <div className="max-w-7xl mx-auto px-4 md:px-6">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-2">IQAC Timelines</h2>
+                <h2 className="text-lg md:text-xl font-bold text-primary mb-2 tracking-wide">IQAC Timelines</h2>
                 <div className="mt-2 w-10 h-0.5 bg-primary mb-6" />
-                <div className="overflow-x-auto rounded-sm shadow-sm border border-gray-200 max-w-lg">
+                <div className="overflow-x-auto rounded-sm shadow-sm border border-gray-200">
                     <table className="w-full border-collapse text-sm">
                         <thead>
                             <tr style={{ background: "#0d4a33" }}>
                                 <th className="px-4 py-3 text-left text-white font-semibold text-xs uppercase tracking-wide border-r border-green-800">Year</th>
-                                <th className="px-4 py-3 text-left text-white font-semibold text-xs uppercase tracking-wide">View</th>
+                                <th className="px-4 py-3 text-left text-white font-semibold text-xs uppercase tracking-wide w-36">View</th>
                             </tr>
                         </thead>
                         <tbody>
                             {timelines.map((t, idx) => (
                                 <tr key={t.id} className={`border-b border-gray-100 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-green-50/40 transition-colors`}>
                                     <td className="px-4 py-3 text-gray-900 font-medium">{t.year}</td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 text-left">
                                         {t.view_url ? (
                                             <a
                                                 href={t.view_url}

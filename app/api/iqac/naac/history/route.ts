@@ -39,7 +39,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { cycle, period, naac_score, principal, director, naac_coordinator, core_team, display_order, is_active } = body;
+        const { cycle, period, naac_score, principal, coordinator, asst_coordinator, core_team, display_order, is_active } = body;
 
         if (!cycle || !period || !naac_score || !principal) {
             return NextResponse.json(
@@ -52,9 +52,9 @@ export async function POST(request: Request) {
         try {
             const [result] = await connection.execute(
                 `INSERT INTO naac_accreditation_history 
-        (cycle, period, naac_score, principal, director, naac_coordinator, core_team, display_order, is_active) 
+        (cycle, period, naac_score, principal, coordinator, asst_coordinator, core_team, display_order, is_active) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [cycle, period, naac_score, principal, director || "", naac_coordinator || "", core_team || "", display_order || 0, is_active !== false ? 1 : 0]
+                [cycle, period, naac_score, principal, coordinator || "", asst_coordinator || "", core_team || "", display_order || 0, is_active !== false ? 1 : 0]
             );
             return NextResponse.json({
                 success: true,
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
     try {
         const body = await request.json();
-        const { id, cycle, period, naac_score, principal, director, naac_coordinator, core_team, display_order, is_active } = body;
+        const { id, cycle, period, naac_score, principal, coordinator, asst_coordinator, core_team, display_order, is_active } = body;
 
         if (!id) {
             return NextResponse.json({ success: false, error: "ID is required" }, { status: 400 });
@@ -92,8 +92,8 @@ export async function PUT(request: Request) {
             if (period !== undefined) { updates.push("period = ?"); params.push(period); }
             if (naac_score !== undefined) { updates.push("naac_score = ?"); params.push(naac_score); }
             if (principal !== undefined) { updates.push("principal = ?"); params.push(principal); }
-            if (director !== undefined) { updates.push("director = ?"); params.push(director); }
-            if (naac_coordinator !== undefined) { updates.push("naac_coordinator = ?"); params.push(naac_coordinator); }
+            if (coordinator !== undefined) { updates.push("coordinator = ?"); params.push(coordinator); }
+            if (asst_coordinator !== undefined) { updates.push("asst_coordinator = ?"); params.push(asst_coordinator); }
             if (core_team !== undefined) { updates.push("core_team = ?"); params.push(core_team); }
             if (display_order !== undefined) { updates.push("display_order = ?"); params.push(display_order); }
             if (is_active !== undefined) { updates.push("is_active = ?"); params.push(is_active ? 1 : 0); }

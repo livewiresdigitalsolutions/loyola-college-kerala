@@ -8,10 +8,8 @@ import { toast, Toaster } from "react-hot-toast";
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface SsrDoc {
     id: number;
+    s_no: number;
     title: string;
-    cycle: number;
-    academic_year: string;
-    description: string;
     pdf_url: string;
     file_name: string;
     display_order: number;
@@ -28,14 +26,7 @@ export default function SsrAdminPage() {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editForm, setEditForm] = useState<Partial<SsrDoc>>({});
 
-    const emptyForm = {
-        title: "",
-        cycle: "",
-        academic_year: "",
-        description: "",
-        display_order: "0",
-        is_active: true,
-    };
+    const emptyForm = { s_no: "", title: "", display_order: "0", is_active: true };
     const [form, setForm] = useState(emptyForm);
 
     const fetch_ = async () => {
@@ -62,8 +53,8 @@ export default function SsrAdminPage() {
     };
 
     const handleUpload = async () => {
-        if (!file || !form.title || !form.cycle) {
-            toast.error("File, title, and cycle are required");
+        if (!file || !form.title || !form.s_no) {
+            toast.error("File, title, and S.No are required");
             return;
         }
         setUploading(true);
@@ -71,9 +62,7 @@ export default function SsrAdminPage() {
             const fd = new FormData();
             fd.append("file", file);
             fd.append("title", form.title);
-            fd.append("cycle", form.cycle);
-            fd.append("academic_year", form.academic_year);
-            fd.append("description", form.description);
+            fd.append("s_no", form.s_no);
             fd.append("display_order", form.display_order);
             fd.append("is_active", form.is_active.toString());
 
@@ -135,9 +124,7 @@ export default function SsrAdminPage() {
 
             <div>
                 <h1 className="text-3xl font-bold text-gray-900">SSR Document Management</h1>
-                <p className="text-gray-600 mt-1">
-                    Manage Self Study Report (SSR) documents for IQAC
-                </p>
+                <p className="text-gray-600 mt-1">Manage Self Study Report (SSR) documents for IQAC</p>
             </div>
 
             {/* Header row */}
@@ -161,9 +148,7 @@ export default function SsrAdminPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* File Upload */}
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-2">
-                                PDF / File *
-                            </label>
+                            <label className="block text-xs font-medium text-gray-700 mb-2">PDF / File *</label>
                             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#342D87] transition-colors cursor-pointer">
                                 <input
                                     type="file"
@@ -182,10 +167,7 @@ export default function SsrAdminPage() {
                                 <div className="mt-3 flex items-center gap-2 bg-green-50 border border-green-200 rounded px-3 py-2 text-sm text-green-700">
                                     <FileText className="w-4 h-4 flex-shrink-0" />
                                     <span className="truncate">{file.name}</span>
-                                    <button
-                                        onClick={() => setFile(null)}
-                                        className="ml-auto text-green-500 hover:text-red-500 flex-shrink-0"
-                                    >
+                                    <button onClick={() => setFile(null)} className="ml-auto text-green-500 hover:text-red-500 flex-shrink-0">
                                         <X className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -194,31 +176,33 @@ export default function SsrAdminPage() {
 
                         {/* Fields */}
                         <div className="space-y-4">
-                            {[
-                                { label: "Title *", key: "title", placeholder: "e.g. SSR – Cycle 3" },
-                                { label: "Cycle *", key: "cycle", placeholder: "e.g. 3", type: "number" },
-                                { label: "Academic Year", key: "academic_year", placeholder: "e.g. 2021-22" },
-                                { label: "Display Order", key: "display_order", type: "number" },
-                            ].map(({ label, key, placeholder, type = "text" }) => (
-                                <div key={key}>
-                                    <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
-                                    <input
-                                        type={type}
-                                        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
-                                        placeholder={placeholder}
-                                        value={(form as any)[key]}
-                                        onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                                    />
-                                </div>
-                            ))}
                             <div>
-                                <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
-                                <textarea
-                                    rows={2}
-                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] resize-none"
-                                    placeholder="Brief description of this SSR..."
-                                    value={form.description}
-                                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                                <label className="block text-xs font-medium text-gray-700 mb-1">S.No *</label>
+                                <input
+                                    type="number"
+                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
+                                    placeholder="e.g. 1"
+                                    value={form.s_no}
+                                    onChange={(e) => setForm({ ...form, s_no: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Title *</label>
+                                <input
+                                    type="text"
+                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
+                                    placeholder="e.g. SSR 2021"
+                                    value={form.title}
+                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Display Order</label>
+                                <input
+                                    type="number"
+                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
+                                    value={form.display_order}
+                                    onChange={(e) => setForm({ ...form, display_order: e.target.value })}
                                 />
                             </div>
                             <div className="flex items-center gap-2">
@@ -260,10 +244,8 @@ export default function SsrAdminPage() {
                 <table className="w-full text-sm">
                     <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
                         <tr>
-                            <th className="px-4 py-3 text-left">Cycle</th>
-                            <th className="px-4 py-3 text-left">Academic Year</th>
+                            <th className="px-4 py-3 text-left">S.No</th>
                             <th className="px-4 py-3 text-left">Title</th>
-                            <th className="px-4 py-3 text-left">Description</th>
                             <th className="px-4 py-3 text-left">File</th>
                             <th className="px-4 py-3 text-left">Order</th>
                             <th className="px-4 py-3 text-left">Status</th>
@@ -272,34 +254,24 @@ export default function SsrAdminPage() {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {loading ? (
-                            <tr><td colSpan={8} className="text-center py-8 text-gray-400">Loading...</td></tr>
+                            <tr><td colSpan={6} className="text-center py-8 text-gray-400">Loading...</td></tr>
                         ) : docs.length === 0 ? (
-                            <tr><td colSpan={8} className="text-center py-8 text-gray-400">No SSR documents yet. Upload the first one.</td></tr>
+                            <tr><td colSpan={6} className="text-center py-8 text-gray-400">No SSR documents yet. Upload the first one.</td></tr>
                         ) : docs.map((doc) => (
                             <tr key={doc.id} className="hover:bg-gray-50">
                                 {editingId === doc.id ? (
                                     <>
                                         <td className="px-4 py-2">
                                             <input type="number" className="w-16 border rounded px-2 py-1 text-sm"
-                                                value={editForm.cycle ?? doc.cycle}
-                                                onChange={(e) => setEditForm({ ...editForm, cycle: parseInt(e.target.value) })} />
-                                        </td>
-                                        <td className="px-4 py-2">
-                                            <input className="w-24 border rounded px-2 py-1 text-sm"
-                                                value={editForm.academic_year ?? doc.academic_year}
-                                                onChange={(e) => setEditForm({ ...editForm, academic_year: e.target.value })} />
+                                                value={editForm.s_no ?? doc.s_no}
+                                                onChange={(e) => setEditForm({ ...editForm, s_no: parseInt(e.target.value) })} />
                                         </td>
                                         <td className="px-4 py-2">
                                             <input className="w-48 border rounded px-2 py-1 text-sm"
                                                 value={editForm.title ?? doc.title}
                                                 onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} />
                                         </td>
-                                        <td className="px-4 py-2">
-                                            <input className="w-52 border rounded px-2 py-1 text-sm"
-                                                value={editForm.description ?? doc.description}
-                                                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} />
-                                        </td>
-                                        <td className="px-4 py-2 text-gray-400 text-xs">—</td>
+                                        <td className="px-4 py-2 text-gray-400 text-xs">{doc.file_name || "—"}</td>
                                         <td className="px-4 py-2">
                                             <input type="number" className="w-16 border rounded px-2 py-1 text-sm"
                                                 value={editForm.display_order ?? doc.display_order}
@@ -319,16 +291,14 @@ export default function SsrAdminPage() {
                                     </>
                                 ) : (
                                     <>
-                                        <td className="px-4 py-3 font-bold text-indigo-700">{doc.cycle}</td>
-                                        <td className="px-4 py-3 text-gray-600">{doc.academic_year || "—"}</td>
-                                        <td className="px-4 py-3 font-medium text-gray-900 max-w-[200px] truncate">{doc.title}</td>
-                                        <td className="px-4 py-3 text-gray-500 text-xs max-w-[200px] truncate">{doc.description || "—"}</td>
+                                        <td className="px-4 py-3 font-bold text-indigo-700">{doc.s_no}</td>
+                                        <td className="px-4 py-3 font-medium text-gray-900">{doc.title}</td>
                                         <td className="px-4 py-3">
                                             {doc.pdf_url ? (
                                                 <a href={doc.pdf_url} target="_blank" rel="noopener noreferrer"
                                                     className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 underline">
                                                     <FileText className="w-3.5 h-3.5" />
-                                                    {doc.file_name ? doc.file_name.substring(0, 20) + "…" : "View"}
+                                                    {doc.file_name ? doc.file_name.substring(0, 25) + "…" : "View"}
                                                 </a>
                                             ) : (
                                                 <span className="text-gray-400 text-xs">No file</span>
@@ -345,16 +315,10 @@ export default function SsrAdminPage() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => { setEditingId(doc.id); setEditForm(doc); }}
-                                                    className="text-blue-600 hover:text-blue-800"
-                                                >
+                                                <button onClick={() => { setEditingId(doc.id); setEditForm(doc); }} className="text-blue-600 hover:text-blue-800">
                                                     <Pencil className="w-4 h-4" />
                                                 </button>
-                                                <button
-                                                    onClick={() => handleDelete(doc.id)}
-                                                    className="text-red-500 hover:text-red-700"
-                                                >
+                                                <button onClick={() => handleDelete(doc.id)} className="text-red-500 hover:text-red-700">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>

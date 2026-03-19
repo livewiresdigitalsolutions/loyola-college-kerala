@@ -29,10 +29,10 @@ export default function FeedbackHero() {
                                 <span className="text-[#F0B129] font-medium">Feedback</span>
                             </nav>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">Feedback</h1>
-                            <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
+                            {/* <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
                                 Download feedback forms and view feedback action taken reports from the IQAC
                                 at Loyola College of Social Sciences, Kerala.
-                            </p>
+                            </p> */}
                         </div>
                     </div>
                 </div>

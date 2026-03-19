@@ -43,12 +43,12 @@ export default function AqarDocuments() {
             <div className="max-w-7xl mx-auto px-4 md:px-6">
                 {/* Section Header */}
                 <div className="mb-8">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                    <h2 className="text-xl md:text-2xl font-bold text-primary tracking-wide">
                         Annual Quality Assurance Reports (AQAR)
                     </h2>
                     <div className="mt-2 w-12 h-0.5 bg-primary" />
                     <p className="mt-3 text-sm text-gray-600 max-w-2xl">
-                        Download the Annual Quality Assurance Reports prepared for NAAC accreditation cycles.
+                        View the Annual Quality Assurance Reports prepared for NAAC accreditation cycles.
                     </p>
                 </div>
 
@@ -67,7 +67,7 @@ export default function AqarDocuments() {
                             {/* Table Header */}
                             <thead>
                                 <tr style={{ background: "#0d4a33" }}>
-                                    {["S.No", "AQAR", "Download"].map((h) => (
+                                    {["S.No", "AQAR", "View PDF"].map((h) => (
                                         <th
                                             key={h}
                                             className="px-4 py-3 text-left text-white font-semibold text-xs uppercase tracking-wide border-r border-green-800 last:border-r-0"
@@ -81,7 +81,7 @@ export default function AqarDocuments() {
                                 {cycles.map((cycle) => (
                                     <React.Fragment key={cycle}>
                                         {/* Cycle Group Header Row */}
-                                        <tr style={{ background: "#1a5c3f" }}>
+                                        <tr style={{ background: "#a9b2aeff" }}>
                                             <td
                                                 colSpan={3}
                                                 className="px-4 py-2 text-white text-xs font-semibold uppercase tracking-wider"

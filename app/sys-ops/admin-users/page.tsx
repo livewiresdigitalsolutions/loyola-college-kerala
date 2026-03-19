@@ -287,13 +287,12 @@ export default function AdminUsers() {
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           <Shield
-                            className={`w-4 h-4 ${
-                              admin.role === "super_admin"
+                            className={`w-4 h-4 ${admin.role === "super_admin"
                                 ? "text-purple-600"
                                 : admin.role === "admin"
-                                ? "text-blue-600"
-                                : "text-gray-600"
-                            }`}
+                                  ? "text-blue-600"
+                                  : "text-gray-600"
+                              }`}
                           />
                           <span className="text-sm text-gray-700 capitalize">
                             {admin.role.replace("_", " ")}
@@ -347,11 +346,10 @@ export default function AdminUsers() {
                             onClick={() =>
                               handleToggleActive(admin.id, admin.is_active)
                             }
-                            className={`p-2 rounded-lg transition-colors ${
-                              admin.is_active
+                            className={`p-2 rounded-lg transition-colors ${admin.is_active
                                 ? "bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
                                 : "bg-green-50 text-green-600 hover:bg-green-100"
-                            }`}
+                              }`}
                             title={
                               admin.is_active
                                 ? "Deactivate user"
@@ -505,6 +503,8 @@ export default function AdminUsers() {
                   <option value="admin">Admin</option>
                   <option value="super_admin">Super Admin</option>
                   <option value="viewer">Viewer</option>
+                  <option value="les_admin">LES Admin</option>
+
                 </select>
               </div>
 
@@ -614,6 +614,7 @@ export default function AdminUsers() {
                   <option value="admin">Admin</option>
                   <option value="super_admin">Super Admin</option>
                   <option value="viewer">Viewer</option>
+                  <option value="les_admin">LES Admin</option>
                 </select>
               </div>
 

@@ -32,10 +32,16 @@ export default function SysOpsLogin() {
         sessionStorage.setItem("sys_ops_auth", "true");
         sessionStorage.setItem("sys_ops_user", credentials.username);
         sessionStorage.setItem("sys_ops_token", data.token);
+        sessionStorage.setItem("sys_ops_role", data.user?.role || "admin");
         toast.success("Login successful!");
         setTimeout(() => {
-          router.push("/sys-ops/dashboard");
+          if (data.user?.role === "les_admin") {
+            router.push("/sys-ops/master-data/les");
+          } else {
+            router.push("/sys-ops/dashboard");
+          }
         }, 500);
+
       } else {
         toast.error(data.error || "Invalid credentials");
         setIsLoading(false);

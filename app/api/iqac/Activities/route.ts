@@ -55,6 +55,19 @@ export async function POST(request: Request) {
             let result: any;
             if (type === "activities") {
                 if (!body.text) return NextResponse.json({ success: false, error: "Text is required" }, { status: 400 });
+                // Enforce unique display_order
+                if (body.display_order !== undefined && body.display_order !== null) {
+                    const [existing] = await connection.execute(
+                        "SELECT id FROM iqac_activity_items WHERE display_order = ?",
+                        [body.display_order]
+                    ) as any[];
+                    if ((existing as any[]).length > 0) {
+                        return NextResponse.json(
+                            { success: false, error: `Order ${body.display_order} is already taken by another activity. Please use a different order number.` },
+                            { status: 409 }
+                        );
+                    }
+                }
                 [result] = await connection.execute(
                     "INSERT INTO iqac_activity_items (text, display_order, is_active) VALUES (?, ?, ?)",
                     [body.text, body.display_order || 0, body.is_active !== false ? 1 : 0]
@@ -102,6 +115,19 @@ export async function PUT(request: Request) {
 
         const connection = await mysql.createConnection(mysqlConfig);
         try {
+            // Enforce unique display_order for activities
+            if (type === "activities" && fields.display_order !== undefined && fields.display_order !== null) {
+                const [existing] = await connection.execute(
+                    "SELECT id FROM iqac_activity_items WHERE display_order = ? AND id != ?",
+                    [fields.display_order, id]
+                ) as any[];
+                if ((existing as any[]).length > 0) {
+                    return NextResponse.json(
+                        { success: false, error: `Order ${fields.display_order} is already taken by another activity. Please use a different order number.` },
+                        { status: 409 }
+                    );
+                }
+            }
             const updates: string[] = [];
             const params: any[] = [];
             for (const [key, value] of Object.entries(fields)) {

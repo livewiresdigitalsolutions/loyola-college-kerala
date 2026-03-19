@@ -22,7 +22,7 @@ export async function GET(request: Request) {
         try {
             let sql = "SELECT * FROM ssr_documents WHERE 1=1";
             if (!includeInactive) sql += " AND is_active = 1";
-            sql += " ORDER BY display_order ASC, cycle ASC";
+            sql += " ORDER BY display_order ASC, s_no ASC";
             const [rows] = await connection.execute(sql);
             return NextResponse.json({ success: true, data: rows });
         } finally {
@@ -41,11 +41,11 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { title, cycle, academic_year, description, pdf_url, display_order, is_active } = body;
+        const { title, s_no, pdf_url, file_name, display_order, is_active } = body;
 
-        if (!title || !cycle) {
+        if (!title || !s_no) {
             return NextResponse.json(
-                { success: false, error: "Title and cycle are required" },
+                { success: false, error: "Title and s_no are required" },
                 { status: 400 }
             );
         }
@@ -54,14 +54,13 @@ export async function POST(request: Request) {
         try {
             const [result] = await connection.execute(
                 `INSERT INTO ssr_documents 
-                 (title, cycle, academic_year, description, pdf_url, display_order, is_active) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                 (title, s_no, pdf_url, file_name, display_order, is_active) 
+                 VALUES (?, ?, ?, ?, ?, ?)`,
                 [
                     title,
-                    cycle,
-                    academic_year || "",
-                    description || "",
+                    s_no,
                     pdf_url || "",
+                    file_name || "",
                     display_order || 0,
                     is_active !== false ? 1 : 0,
                 ]
@@ -87,7 +86,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
     try {
         const body = await request.json();
-        const { id, title, cycle, academic_year, description, pdf_url, display_order, is_active } = body;
+        const { id, title, s_no, pdf_url, file_name, display_order, is_active } = body;
 
         if (!id) {
             return NextResponse.json({ success: false, error: "ID is required" }, { status: 400 });
@@ -99,10 +98,9 @@ export async function PUT(request: Request) {
             const params: any[] = [];
 
             if (title !== undefined) { updates.push("title = ?"); params.push(title); }
-            if (cycle !== undefined) { updates.push("cycle = ?"); params.push(cycle); }
-            if (academic_year !== undefined) { updates.push("academic_year = ?"); params.push(academic_year); }
-            if (description !== undefined) { updates.push("description = ?"); params.push(description); }
+            if (s_no !== undefined) { updates.push("s_no = ?"); params.push(s_no); }
             if (pdf_url !== undefined) { updates.push("pdf_url = ?"); params.push(pdf_url); }
+            if (file_name !== undefined) { updates.push("file_name = ?"); params.push(file_name); }
             if (display_order !== undefined) { updates.push("display_order = ?"); params.push(display_order); }
             if (is_active !== undefined) { updates.push("is_active = ?"); params.push(is_active ? 1 : 0); }
 

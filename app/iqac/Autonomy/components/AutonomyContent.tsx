@@ -51,12 +51,12 @@ export default function AutonomyContent() {
 
     return (
         <section className="bg-white py-10 md:py-14">
-            <div className="max-w-4xl mx-auto px-4 md:px-6">
+            <div className="max-w-7xl mx-auto px-4 md:px-6">
                 {/* Section heading */}
-                <div className="mb-6">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">Autonomy</h2>
-                    <div className="mt-2 w-10 h-0.5 bg-primary mb-3" />
-                    <p className="text-sm text-gray-500">
+                <div className="mb-8">
+                    <h2 className="text-xl md:text-2xl font-bold text-primary tracking-wide">Autonomy</h2>
+                    <div className="mt-2 w-12 h-0.5 bg-primary" />
+                    <p className="mt-3 text-sm text-gray-600 max-w-2xl">
                         Access official autonomy documents, committee minutes, and institutional policies.
                     </p>
                 </div>
@@ -68,15 +68,15 @@ export default function AutonomyContent() {
 
                 {/* ── Minutes accordion ── */}
                 {allCommittees.length > 0 && (
-                    <div className="mt-6 mb-4">
-                        <h3 className="text-base md:text-lg font-bold text-gray-900 mb-4">Minutes</h3>
+                    <div className="mt-6 mb-4 bg-[#F6F6EE]">
+                        <h3 className="text-base md:text-lg font-bold text-primary tracking-wide mb-4">Minutes</h3>
                         <div className="space-y-3">
                             {allCommittees.map(committee => (
-                                <div key={committee} className="border border-gray-200 rounded-sm overflow-hidden">
+                                <div key={committee} className="border border-gray-200 rounded-sm bg-[#F6F6EE]overflow-hidden">
                                     {/* Accordion header */}
                                     <button
                                         onClick={() => toggleCommittee(committee)}
-                                        className="w-full flex items-center justify-between px-5 py-3 bg-gray-50 hover:bg-green-50/40 transition-colors text-left"
+                                        className="w-full flex items-center justify-between px-5 py-3 bg-[#F6F6EE] hover:bg-green-50/40 transition-colors text-left"
                                     >
                                         <span className="text-sm font-semibold text-gray-800">{committee}</span>
                                         {openCommittees[committee]
@@ -133,15 +133,15 @@ export default function AutonomyContent() {
 
 function StandaloneRow({ doc }: { doc: StandaloneDoc }) {
     return (
-        <div className="flex items-center justify-between py-4 border-b border-gray-100 hover:bg-gray-50/60 transition-colors px-1">
-            <span className="text-sm font-medium text-gray-900 flex-1 pr-4">{doc.title}</span>
+        <div className="flex items-center justify-between px-5 py-4 mb-3 border border-gray-200 rounded hover:bg-gray-50/60 transition-colors">
+            <span className="text-sm font-bold text-gray-900 flex-1 pr-4">{doc.title}</span>
             {doc.pdf_url ? (
                 <a
                     href={doc.pdf_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     download
-                    className="inline-flex items-center gap-1.5 bg-primary text-white text-xs px-3 py-1.5 rounded hover:bg-primary/90 transition-colors font-medium whitespace-nowrap flex-shrink-0"
+                    className="inline-flex items-center gap-1.5 bg-primary text-white text-xs px-4 py-2 rounded hover:bg-primary/90 transition-colors font-medium whitespace-nowrap flex-shrink-0"
                 >
                     <Download className="w-3.5 h-3.5" /> Download
                 </a>

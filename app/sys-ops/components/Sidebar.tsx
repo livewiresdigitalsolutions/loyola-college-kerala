@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   FileText,
@@ -18,52 +19,35 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-  {
-    name: "Dashboard",
-    icon: LayoutDashboard,
-    path: "/sys-ops/dashboard",
-  },
-  {
-    name: "Admissions",
-    icon: FileText,
-    path: "/sys-ops/admissions",
-  },
-  {
-    name: "Admin Users",
-    icon: ShieldUser,
-    path: "/sys-ops/admin-users",
-  },
-  {
-    name: "Master Data",
-    icon: Database,
-    path: "/sys-ops/master-data",
-  },
-  {
-    name: "Allot Enterance Exam",
-    icon: Landmark,
-    path: "/sys-ops/hall-tickets",
-  },
-  {
-    name: "LES Management",
-    icon: HeartHandshake,
-    path: "/sys-ops/master-data/les",
-  },
-  {
-    name: "Settings",
-    icon: Settings,
-    path: "/sys-ops/settings",
-    disabled: true,
-  },
+  { name: "Dashboard",        icon: LayoutDashboard, path: "/sys-ops/dashboard",       allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "Admissions",       icon: FileText,         path: "/sys-ops/admissions",      allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "Admin Users",      icon: ShieldUser,       path: "/sys-ops/admin-users",     allowedRoles: ["super_admin","admin"] },
+  { name: "Master Data",      icon: Database,         path: "/sys-ops/master-data",     allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "Allot Entrance Exam", icon: Landmark,      path: "/sys-ops/hall-tickets",    allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "LES Management",   icon: HeartHandshake,   path: "/sys-ops/master-data/les", allowedRoles: ["super_admin","les_admin"] },
+  { name: "Settings",         icon: Settings,         path: "/sys-ops/settings",        allowedRoles: ["super_admin","admin","viewer"], disabled: true },
 ];
+
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [userRole, setUserRole] = useState<string>("");
+
+useEffect(() => {
+  const role = sessionStorage.getItem("sys_ops_role") || "admin";
+  setUserRole(role);
+}, [pathname]);
+
+const visibleItems = userRole
+  ? menuItems.filter((item) => item.allowedRoles.includes(userRole))
+  : [];
 
   const handleLogout = () => {
     sessionStorage.removeItem("sys_ops_auth");
     sessionStorage.removeItem("sys_ops_user");
     sessionStorage.removeItem("sys_ops_token");
+    sessionStorage.removeItem("sys_ops_role");   
     router.push("/sys-ops/login");
   };
 
@@ -82,7 +66,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 p-4 space-y-2">
-        {menuItems.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
 

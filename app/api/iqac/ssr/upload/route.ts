@@ -19,9 +19,7 @@ export async function POST(request: Request) {
         const formData = await request.formData();
         const file = formData.get("file") as File;
         const title = formData.get("title") as string;
-        const cycle = parseInt(formData.get("cycle") as string) || 1;
-        const academic_year = formData.get("academic_year") as string || "";
-        const description = formData.get("description") as string || "";
+        const s_no = parseInt(formData.get("s_no") as string) || 1;
         const display_order = parseInt(formData.get("display_order") as string) || 0;
         const is_active = formData.get("is_active") !== "false";
 
@@ -64,9 +62,9 @@ export async function POST(request: Request) {
         try {
             const [result] = await connection.execute(
                 `INSERT INTO ssr_documents 
-                 (title, cycle, academic_year, description, pdf_url, file_name, display_order, is_active) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                [title, cycle, academic_year, description, fileUrl, file.name, display_order, is_active ? 1 : 0]
+                 (title, s_no, pdf_url, file_name, display_order, is_active) 
+                 VALUES (?, ?, ?, ?, ?, ?)`,
+                [title, s_no, fileUrl, file.name, display_order, is_active ? 1 : 0]
             );
             return NextResponse.json({
                 success: true,

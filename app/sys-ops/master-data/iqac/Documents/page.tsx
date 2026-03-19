@@ -8,12 +8,20 @@ import { toast, Toaster } from "react-hot-toast";
 interface IqacDoc { id: number; title: string; category: string; pdf_url: string; file_name?: string; display_order: number; category_order: number; is_active: boolean; }
 
 const PRESET_CATEGORIES = [
-    "Institutional Documents",
-    "Policy Documents",
-    "Academic Documents",
-    "Administrative Documents",
-    "Student Related Documents",
-    "Research Documents",
+    "SSR Documents",
+    "Extended Profile of the Institution",
+    "Criteria 1: Curricular Aspects",
+    "Criteria 2: Teaching-Learning and Evaluation",
+    "Criteria 3: Research, Innovation and Extension",
+    "Criteria 4: Infrastructure and Learning Resources",
+    "Criteria 5: Student Support and Progression",
+    "Criteria 7: Institutional Values and Best Practices",
+    "Academic Calendar and Handbook",
+    "Notification of Formation of IQAC",
+    "Institutional Best Practice",
+    "Institutional Distinctiveness",
+    "Programme Outcomes, Programme Specific Outcomes & Course Outcomes",
+    "Procedures and Policies for Maintaining and Utilizing Physical, Academic and Support Facilities",
 ];
 
 function StatusBadge({ active, onToggle }: { active: boolean; onToggle: () => void }) {

@@ -34,7 +34,7 @@ export default function Intro() {
           {/* Image - Small thumbnail on right */}
           <div className="shrink-0 self-start">
             <Image
-              src="/assets/les/lesintro.png"
+              src="/assets/les/images/1771084217026-download.jpg"
               alt="LES Team"
               width={200}
               height={200}

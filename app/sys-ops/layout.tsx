@@ -24,6 +24,13 @@ export default function SysOpsLayout({
     }
 
     if (authStatus === "true") {
+      const role = sessionStorage.getItem("sys_ops_role") || "admin";
+
+      if (role === "les_admin" && !pathname.startsWith("/sys-ops/master-data/les")) {
+        router.push("/sys-ops/master-data/les");
+        return;
+      }
+
       setIsAuthenticated(true);
       setIsLoading(false);
     } else {

@@ -36,7 +36,7 @@ export default function IqacAbout() {
                     <div className="mt-2 w-36 h-1 bg-[var(--primary)]" />
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 font-size-18">
+                <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 font-size-18 lg:items-stretch">
                     {/* LEFT: Text Content */}
                     <div className="text-xl flex-1 text-justify ">
                         <p className="text-gray-700 md:text-lg leading-relaxed mb-6">
@@ -77,10 +77,10 @@ export default function IqacAbout() {
 
                     {/* RIGHT: Coordinator Images */}
                     {coordinators.length > 0 && (
-                        <div className="flex flex-row lg:flex-row gap-6 justify-center lg:justify-end items-start">
+                        <div className="flex flex-row gap-6 justify-center lg:justify-end self-stretch">
                             {coordinators.map((coord) => (
-                                <div key={coord.id} className="text-center">
-                                    <div className="relative w-32 h-40 md:w-40 md:h-48 overflow-hidden shadow-md mx-auto">
+                                <div key={coord.id} className="flex flex-col text-center h-full">
+                                    <div className="relative flex-1 w-44 md:w-52 min-h-[200px] overflow-hidden shadow-md mx-auto">
                                         <Image
                                             src={coord.image_url}
                                             alt={coord.name || "IQAC Coordinator"}

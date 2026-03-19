@@ -43,7 +43,7 @@ export default function AqarFormatDocuments() {
             <div className="max-w-7xl mx-auto px-4 md:px-6">
                 {/* Section Header */}
                 <div className="mb-8">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">AQAR Formats</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-primary tracking-wide">AQAR Formats</h2>
                     <div className="mt-2 w-12 h-0.5 bg-primary" />
                     <p className="mt-3 text-sm text-gray-600 max-w-2xl">
                         Download various forms and formats required for institutional documentation

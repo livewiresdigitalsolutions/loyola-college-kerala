@@ -22,7 +22,7 @@ export default function IqacMinutes() {
     return (
         <section className="py-10 md:py-12 bg-gray-50/50">
             <div className="max-w-7xl mx-auto px-4 md:px-6">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-2">IQAC Minutes and Action Taken Report</h2>
+                <h2 className="text-lg md:text-xl font-bold text-primary tracking-wide mb-2">IQAC Minutes and Action Taken Report</h2>
                 <div className="mt-2 w-10 h-0.5 bg-primary mb-6" />
                 <div className="overflow-x-auto rounded-sm shadow-sm border border-gray-200">
                     <table className="w-full border-collapse text-sm">

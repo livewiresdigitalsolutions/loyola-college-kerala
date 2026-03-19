@@ -28,7 +28,8 @@ export async function POST(request: Request) {
 
         if (!file) return NextResponse.json({ success: false, error: "File is required" }, { status: 400 });
         if (type === "reports" && !title) return NextResponse.json({ success: false, error: "Title is required" }, { status: 400 });
-        if (type === "minutes" && !year) return NextResponse.json({ success: false, error: "Year is required" }, { status: 400 });
+        if ((type === "minutes" || type === "timelines") && !year) return NextResponse.json({ success: false, error: "Year is required" }, { status: 400 });
+
 
         const isPdf = file.type === "application/pdf";
         const isImage = file.type.startsWith("image/");
@@ -55,6 +56,11 @@ export async function POST(request: Request) {
                 [result] = await connection.execute(
                     "INSERT INTO iqac_minutes (year, pdf_url, file_name, display_order, is_active) VALUES (?, ?, ?, ?, ?)",
                     [year, fileUrl, file.name, display_order, is_active ? 1 : 0]
+                );
+            } else if (type === "timelines") {
+                [result] = await connection.execute(
+                    "INSERT INTO iqac_timelines (year, view_url, display_order, is_active) VALUES (?, ?, ?, ?)",
+                    [year, fileUrl, display_order, is_active ? 1 : 0]
                 );
             } else {
                 return NextResponse.json({ success: false, error: "Invalid upload type" }, { status: 400 });

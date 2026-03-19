@@ -194,20 +194,20 @@ function CoordinatorsTab() {
 
 // ─── Members Tab ──────────────────────────────────────────────────────────────
 const MEMBER_CATEGORIES = [
-    { value: "Chairperson", label: "Chairperson" },
-    { value: "admin", label: "IQAC Coordinator" },
-    { value: "admin", label: "Asst. Coordinator" },
-    { value: "admin", label: "Librarian" },
-    { value: "admin", label: "Head of the Departments" },
-    { value: "admin", label: "Academic Expert" },
-    { value: "admin", label: "Autonomy Director" },
-    { value: "admin", label: "Controller of Examination" },
-    { value: "admin", label: "Bursar" },
-    { value: "admin", label: "Non Teaching Staff Representatives" },
-    { value: "admin", label: "Local Society Representative" },
-    { value: "admin", label: "Alumni Representative" },
-    { value: "admin", label: "Student Representative" },
-    { value: "admin", label: "Employer Representative" },
+    { value: "Chairperson",                        label: "Chairperson" },
+    { value: "IQAC Coordinator",                   label: "IQAC Coordinator" },
+    { value: "Asst. Coordinator",                  label: "Asst. Coordinator" },
+    { value: "Librarian",                          label: "Librarian" },
+    { value: "Head of the Departments",            label: "Head of the Departments" },
+    { value: "Academic Expert",                    label: "Academic Expert" },
+    { value: "Autonomy Director",                  label: "Autonomy Director" },
+    { value: "Controller of Examination",          label: "Controller of Examination" },
+    { value: "Bursar",                             label: "Bursar" },
+    { value: "Non Teaching Staff Representatives", label: "Non Teaching Staff Representatives" },
+    { value: "Local Society Representative",       label: "Local Society Representative" },
+    { value: "Alumni Representative",             label: "Alumni Representative" },
+    { value: "Student Representatives",            label: "Student Representatives" },
+    { value: "Employer Representative",            label: "Employer Representative" },
 ];
 
 function MembersTab() {
@@ -216,7 +216,7 @@ function MembersTab() {
     const [saving, setSaving] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editForm, setEditForm] = useState<Partial<Member>>({});
-    const [form, setForm] = useState({ role: "", name: "", department: "", category: "general", display_order: "0", is_active: true });
+    const [form, setForm] = useState({ role: "", name: "", department: "", category: "Chairperson", display_order: "0", is_active: true });
 
     const handleAdd = async () => {
         if (!form.name) { toast.error("Name is required"); return; }
@@ -224,7 +224,7 @@ function MembersTab() {
         try {
             const r = await fetch(API("members"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, display_order: parseInt(form.display_order) }) });
             const d = await r.json();
-            if (d.success) { toast.success("Member added"); setShowForm(false); setForm({ role: "", name: "", department: "", category: "general", display_order: "0", is_active: true }); refresh(); }
+            if (d.success) { toast.success("Member added"); setShowForm(false); setForm({ role: "", name: "", department: "", category: "Chairperson", display_order: "0", is_active: true }); refresh(); }
             else toast.error(d.error || "Failed");
         } catch { toast.error("Failed"); }
         finally { setSaving(false); }

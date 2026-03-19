@@ -8,8 +8,8 @@ interface HistoryRecord {
     period: string;
     naac_score: string;
     principal: string;
-    director: string;
-    naac_coordinator: string;
+    coordinator: string;
+    asst_coordinator: string;
     core_team: string;
 }
 
@@ -65,8 +65,8 @@ export default function NaacHistory() {
                                         <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{rec.period}</td>
                                         <td className="px-4 py-3 text-gray-700">{rec.naac_score}</td>
                                         <td className="px-4 py-3 text-gray-700">{rec.principal}</td>
-                                        <td className="px-4 py-3 text-gray-700">{rec.director}</td>
-                                        <td className="px-4 py-3 text-gray-700">{rec.naac_coordinator}</td>
+                                        <td className="px-4 py-3 text-gray-700">{rec.coordinator}</td>
+                                        <td className="px-4 py-3 text-gray-700">{rec.asst_coordinator}</td>
                                         <td className="px-4 py-3 text-gray-600 text-xs">
                                             {rec.core_team
                                                 ? rec.core_team.split("\n").map((name, i) => (

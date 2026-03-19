@@ -48,11 +48,11 @@ export default function AqarHero() {
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                                 Annual Quality Assurance Reports (AQAR)
                             </h1>
-                            <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
+                            {/* <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
                                 Annual Quality Assurance Reports submitted to NAAC documenting the
                                 quality initiatives and academic developments of Loyola College of
                                 Social Sciences, Kerala.
-                            </p>
+                            </p> */}
                         </div>
                     </div>
                 </div>

@@ -1,16 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { FileText, Download, BookOpen } from "lucide-react";
+import { BookOpen, Download } from "lucide-react";
 
 interface SsrDocument {
     id: number;
+    s_no: number;
     title: string;
-    cycle: number;
-    academic_year: string;
-    description: string;
     pdf_url: string;
-    display_order: number;
 }
 
 export default function SsrDocuments() {
@@ -30,12 +27,12 @@ export default function SsrDocuments() {
             <div className="max-w-7xl mx-auto px-4 md:px-6">
                 {/* Section Header */}
                 <div className="mb-8">
-                    <h2 className="text-xl md:text-2xl font-bold text-primary  tracking-wide">
-                        Self Study Report
+                    <h2 className="text-xl md:text-2xl font-bold text-primary tracking-wide">
+                        Self Study Reports (SSR)
                     </h2>
                     <div className="mt-2 w-12 h-0.5 bg-primary" />
                     <p className="mt-3 text-sm text-gray-600 max-w-2xl">
-                        Download the Self Study Reports submitted to NAAC for each accreditation cycle.
+                        Download the Self Study Reports prepared for NAAC accreditation cycles.
                     </p>
                 </div>
 
@@ -53,7 +50,7 @@ export default function SsrDocuments() {
                         <table className="w-full border-collapse text-sm">
                             <thead>
                                 <tr style={{ background: "#0d4a33" }}>
-                                    {["Cycle", "Academic Year", "Title", "Description", "Download"].map((h) => (
+                                    {["S.No", "SSR", "Download"].map((h) => (
                                         <th
                                             key={h}
                                             className="px-4 py-3 text-left text-white font-semibold text-xs uppercase tracking-wide whitespace-nowrap border-r border-green-800 last:border-r-0"
@@ -69,28 +66,21 @@ export default function SsrDocuments() {
                                         key={doc.id}
                                         className={`border-b border-gray-100 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-green-50/40 transition-colors`}
                                     >
-                                        <td className="px-4 py-3 font-bold text-primary text-center text-base">
-                                            {doc.cycle}
+                                        {/* S.No */}
+                                        <td className="px-4 py-3 font-bold text-primary text-base w-16">
+                                            {doc.s_no}
                                         </td>
-                                        <td className="px-4 py-3 text-gray-700 font-medium whitespace-nowrap">
-                                            {doc.academic_year || "—"}
+                                        {/* SSR Title */}
+                                        <td className="px-4 py-3 text-gray-800 font-medium">
+                                            {doc.title}
                                         </td>
-                                        <td className="px-4 py-3 text-gray-900 font-medium">
-                                            <div className="flex items-center gap-2">
-                                                <FileText className="w-4 h-4 text-primary/70 flex-shrink-0" />
-                                                {doc.title}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 text-gray-600 text-xs max-w-xs">
-                                            {doc.description || "—"}
-                                        </td>
-                                        <td className="px-4 py-3">
+                                        {/* Download */}
+                                        <td className="px-4 py-3 w-40">
                                             {doc.pdf_url ? (
                                                 <a
                                                     href={doc.pdf_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1.5 bg-primary text-white text-xs px-3 py-1.5 rounded hover:bg-primary/90 transition-colors font-medium"
+                                                    download
+                                                    className="inline-flex items-center gap-1.5 bg-primary text-white text-xs px-4 py-2 rounded hover:bg-primary/90 transition-colors font-medium"
                                                 >
                                                     <Download className="w-3.5 h-3.5" />
                                                     Download

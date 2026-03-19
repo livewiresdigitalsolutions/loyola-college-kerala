@@ -9,7 +9,7 @@ import Image from "next/image";
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface HistoryRecord {
     id: number; cycle: number; period: string; naac_score: string;
-    principal: string; director: string; naac_coordinator: string;
+    principal: string; coordinator: string; asst_coordinator: string;
     core_team: string; display_order: number; is_active: boolean;
 }
 interface Certificate { id: number; title: string; image_url: string; display_order: number; is_active: boolean; }
@@ -84,7 +84,7 @@ function HistoryTab() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
-    const emptyForm = { cycle: "", period: "", naac_score: "", principal: "", director: "", naac_coordinator: "", core_team: "", display_order: "0", is_active: true };
+    const emptyForm = { cycle: "", period: "", naac_score: "", principal: "", coordinator: "", asst_coordinator: "", core_team: "", display_order: "0", is_active: true };
     const [form, setForm] = useState(emptyForm);
     const [editForm, setEditForm] = useState<Partial<HistoryRecord>>({});
 
@@ -174,8 +174,8 @@ function HistoryTab() {
                         {field("Period *", "period", "e.g. 2005")}
                         {field("NAAC Score *", "naac_score", "e.g. Five Stars")}
                         {field("Principal *", "principal", "Dr. John Smith, SJ")}
-                        {field("Director / Rector", "director", "Fr. Michael SJ")}
-                        {field("NAAC Coordinator", "naac_coordinator", "Dr. Jane Doe")}
+                        {field("NAAC Coordinator", "coordinator", "Dr. Jane Doe")}
+                        {field("Asst. Coordinator", "asst_coordinator", "Fr. Michael SJ")}
                         <div className="lg:col-span-2">
                             <label className="block text-xs font-medium text-gray-700 mb-1">Core Team (one per line)</label>
                             <textarea
@@ -228,8 +228,8 @@ function HistoryTab() {
                                         <td className="px-4 py-2"><input className="w-24 border rounded px-2 py-1 text-sm" value={editForm.period ?? rec.period} onChange={(e) => setEditForm({ ...editForm, period: e.target.value })} /></td>
                                         <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.naac_score ?? rec.naac_score} onChange={(e) => setEditForm({ ...editForm, naac_score: e.target.value })} /></td>
                                         <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.principal ?? rec.principal} onChange={(e) => setEditForm({ ...editForm, principal: e.target.value })} /></td>
-                                        <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.naac_coordinator ?? rec.naac_coordinator} onChange={(e) => setEditForm({ ...editForm, naac_coordinator: e.target.value })} /></td>
-                                        <td className="px-4 py-2">—</td>
+                                        <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.coordinator ?? rec.coordinator} onChange={(e) => setEditForm({ ...editForm, coordinator: e.target.value })} /></td>
+                                        <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.asst_coordinator ?? rec.asst_coordinator} onChange={(e) => setEditForm({ ...editForm, asst_coordinator: e.target.value })} /></td>
                                         <td className="px-4 py-2">
                                             <div className="flex gap-1">
                                                 <button onClick={() => handleUpdate(rec.id)} className="flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded text-xs"><Check className="w-3 h-3" /> Save</button>
@@ -243,7 +243,8 @@ function HistoryTab() {
                                         <td className="px-4 py-3 text-gray-600">{rec.period}</td>
                                         <td className="px-4 py-3 text-gray-600 max-w-[180px] truncate">{rec.naac_score}</td>
                                         <td className="px-4 py-3 text-gray-600 max-w-[150px] truncate">{rec.principal}</td>
-                                        <td className="px-4 py-3 text-gray-600 max-w-[150px] truncate">{rec.naac_coordinator}</td>
+                                        <td className="px-4 py-3 text-gray-600 max-w-[150px] truncate">{rec.coordinator}</td>
+                                        <td className="px-4 py-3 text-gray-600 max-w-[150px] truncate">{rec.asst_coordinator}</td>
                                         <td className="px-4 py-3">
                                             <button onClick={() => handleToggle(rec.id, rec.is_active)} className={`text-xs px-2 py-1 rounded-full ${rec.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                                                 {rec.is_active ? "Active" : "Inactive"}

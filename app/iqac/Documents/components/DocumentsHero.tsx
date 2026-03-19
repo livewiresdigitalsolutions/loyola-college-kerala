@@ -29,10 +29,10 @@ export default function DocumentsHero() {
                                 <span className="text-[#F0B129] font-medium">Documents</span>
                             </nav>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">Documents</h1>
-                            <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
+                            {/* <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
                                 Browse and download official IQAC documents, policies, and reports of
                                 Loyola College of Social Sciences, Kerala.
-                            </p>
+                            </p> */}
                         </div>
                     </div>
                 </div>

@@ -8,12 +8,12 @@ function DownloadTable({ title, docs }: { title: string; docs: FeedbackDoc[] }) 
     if (docs.length === 0) return null;
     return (
         <div className="mb-10">
-            <h3 className="text-base md:text-lg font-bold text-gray-900 mb-4">{title}</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-primary tracking-wide mb-4">{title}</h3>
             <div className="overflow-x-auto rounded-sm shadow-sm border border-gray-200">
                 <table className="w-full border-collapse text-sm">
                     <thead>
                         <tr style={{ background: "#0d4a33" }}>
-                            {["S.No", "Feedback Forms", "Download"].map(h => (
+                            {["S.No", "Report Name", "Download"].map(h => (
                                 <th key={h} className="px-4 py-3 text-left text-white font-semibold text-xs uppercase tracking-wide border-r border-green-800 last:border-r-0">{h}</th>
                             ))}
                         </tr>
@@ -68,7 +68,7 @@ export default function FeedbackContent() {
             <div className="max-w-7xl mx-auto px-4 md:px-6">
                 {/* Page heading */}
                 <div className="mb-8">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">Feedback</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-primary tracking-wide">Feedback</h2>
                     <div className="mt-2 w-10 h-0.5 bg-primary mb-3" />
                     <p className="text-sm text-gray-500">Download feedback forms and access action taken reports from IQAC.</p>
                 </div>
@@ -76,8 +76,9 @@ export default function FeedbackContent() {
                 {/* ── Feedback Forms buttons ── */}
                 {forms.length > 0 && (
                     <div className="mb-10">
-                        <h3 className="text-base md:text-lg font-bold text-gray-900 mb-4">Feedback Forms</h3>
-                        <div className="flex flex-wrap gap-3">
+                        <h3 className="text-xl md:text-2xl font-bold text-primary tracking-wide mb-4">Feedback Forms</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
                             {forms.map(f => (
                                 <a
                                     key={f.id}
@@ -86,7 +87,7 @@ export default function FeedbackContent() {
                                     rel="noopener noreferrer"
                                     download
                                     style={{ background: "#0d4a33" }}
-                                    className="inline-flex items-center gap-2 text-white text-sm px-5 py-3 rounded-sm hover:brightness-110 transition-all font-medium"
+                                    className="flex flex-col items-center justify-center gap-2 text-white px-6 py-6 rounded-sm hover:brightness-110 transition-all text-center"
                                 >
                                     <Download className="w-4 h-4 flex-shrink-0" />
                                     {f.title}
@@ -99,9 +100,10 @@ export default function FeedbackContent() {
                 {/* ── Feedback and ATR section ── */}
                 {(reports.length > 0 || atr.length > 0) && (
                     <div>
-                        <h3 className="text-base md:text-lg font-bold text-gray-900 mb-6">
-                            Feedback and Action Taken Reports
-                        </h3>
+                        <div className="mb-8">
+                            <h3 className="text-xl md:text-2xl font-bold text-primary tracking-wide mb-4">Feedback and Action Taken Reports</h3>
+                            <div className="mt-2 w-full h-0.5 bg-black mb-3" />
+                        </div>
                         <DownloadTable title="Feedback Reports" docs={reports} />
                         <DownloadTable title="Action Taken Reports" docs={atr} />
                     </div>

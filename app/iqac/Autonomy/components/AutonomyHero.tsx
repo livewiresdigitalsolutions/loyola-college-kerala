@@ -31,10 +31,10 @@ export default function AutonomyHero() {
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                                 Autonomy
                             </h1>
-                            <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
+                            {/* <p className="mt-4 text-white/80 text-base md:text-lg max-w-2xl">
                                 Access official autonomy documents, committee minutes, and institutional policies
                                 of Loyola College of Social Sciences, Kerala.
-                            </p>
+                            </p> */}
                         </div>
                     </div>
                 </div>
