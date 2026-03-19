@@ -5,8 +5,8 @@ export default function WhoWeAreSection() {
     <section className="bg-white py-16 md:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div>
+          <div className="w-20 h-1 bg-[var(--primary)] mb-6"></div>
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary)] mb-6">Who We Are</h2>
-          <div className="w-20 h-1 bg-[var(--secondary)] mb-6"></div>
           
           <p className="text-gray-700 leading-relaxed mb-4">
             Loyola College of Social Sciences stands as a beacon of academic excellence in Kerala, 
@@ -29,10 +29,10 @@ export default function WhoWeAreSection() {
           </p>
         </div>
         
-        <div className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-xl">
+        <div className="relative aspect-[3/4] w-full max-w-[380px] mx-auto rounded-sm overflow-hidden shadow-xl lg:ml-auto">
           <Image
-            src="/images/students-walking.jpg"
-            alt="Students walking on campus"
+            src="/assets/about/whoweare.png"
+            alt="Who We Are"
             fill
             className="object-cover"
           />

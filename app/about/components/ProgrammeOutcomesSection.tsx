@@ -12,10 +12,10 @@ export default function ProgrammeOutcomesSection() {
   return (
     <section className="bg-[#f8f8f3] py-16 md:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="relative h-[450px] w-full rounded-lg overflow-hidden shadow-xl">
+        <div className="relative aspect-[3/4] w-full max-w-[380px] mx-auto rounded-sm overflow-hidden shadow-xl lg:mr-auto">
           <Image
-            src="/images/campus-building.jpg"
-            alt="Campus building"
+            src="/assets/about/po.png"
+            alt="Programme Outcomes"
             fill
             className="object-cover"
           />

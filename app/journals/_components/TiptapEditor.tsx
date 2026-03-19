@@ -17,9 +17,10 @@ import {
 interface TiptapEditorProps {
   content: string;
   onChange: (html: string) => void;
+  minimal?: boolean;
 }
 
-function MenuBar({ editor }: { editor: any }) {
+function MenuBar({ editor, minimal }: { editor: any; minimal?: boolean }) {
   if (!editor) return null;
 
   const btnClass = (active: boolean) =>
@@ -58,17 +59,20 @@ function MenuBar({ editor }: { editor: any }) {
 
       <div className="w-px h-6 bg-gray-200 mx-1" />
 
-      <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} className={btnClass(editor.isActive("heading", { level: 1 }))} title="Heading 1">
-        <Heading1 size={16} />
-      </button>
-      <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btnClass(editor.isActive("heading", { level: 2 }))} title="Heading 2">
-        <Heading2 size={16} />
-      </button>
-      <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btnClass(editor.isActive("heading", { level: 3 }))} title="Heading 3">
-        <Heading3 size={16} />
-      </button>
-
-      <div className="w-px h-6 bg-gray-200 mx-1" />
+      {!minimal && (
+        <>
+          <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} className={btnClass(editor.isActive("heading", { level: 1 }))} title="Heading 1">
+            <Heading1 size={16} />
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btnClass(editor.isActive("heading", { level: 2 }))} title="Heading 2">
+            <Heading2 size={16} />
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btnClass(editor.isActive("heading", { level: 3 }))} title="Heading 3">
+            <Heading3 size={16} />
+          </button>
+          <div className="w-px h-6 bg-gray-200 mx-1" />
+        </>
+      )}
 
       <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btnClass(editor.isActive("bulletList"))} title="Bullet List">
         <List size={16} />
@@ -76,41 +80,43 @@ function MenuBar({ editor }: { editor: any }) {
       <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btnClass(editor.isActive("orderedList"))} title="Numbered List">
         <ListOrdered size={16} />
       </button>
-      <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={btnClass(editor.isActive("blockquote"))} title="Quote">
-        <Quote size={16} />
-      </button>
-      <button type="button" onClick={() => editor.chain().focus().toggleCodeBlock().run()} className={btnClass(editor.isActive("codeBlock"))} title="Code Block">
-        <Code size={16} />
-      </button>
-      <button type="button" onClick={() => editor.chain().focus().setHorizontalRule().run()} className={btnClass(false)} title="Horizontal Rule">
-        <Minus size={16} />
-      </button>
+      
+      {!minimal && (
+        <>
+          <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={btnClass(editor.isActive("blockquote"))} title="Quote">
+            <Quote size={16} />
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().toggleCodeBlock().run()} className={btnClass(editor.isActive("codeBlock"))} title="Code Block">
+            <Code size={16} />
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().setHorizontalRule().run()} className={btnClass(false)} title="Horizontal Rule">
+            <Minus size={16} />
+          </button>
+          <div className="w-px h-6 bg-gray-200 mx-1" />
 
-      <div className="w-px h-6 bg-gray-200 mx-1" />
+          <button type="button" onClick={() => editor.chain().focus().setTextAlign("left").run()} className={btnClass(editor.isActive({ textAlign: "left" }))} title="Align Left">
+            <AlignLeft size={16} />
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().setTextAlign("center").run()} className={btnClass(editor.isActive({ textAlign: "center" }))} title="Align Center">
+            <AlignCenter size={16} />
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().setTextAlign("right").run()} className={btnClass(editor.isActive({ textAlign: "right" }))} title="Align Right">
+            <AlignRight size={16} />
+          </button>
+          <button type="button" onClick={() => editor.chain().focus().setTextAlign("justify").run()} className={btnClass(editor.isActive({ textAlign: "justify" }))} title="Justify">
+            <AlignJustify size={16} />
+          </button>
+          <div className="w-px h-6 bg-gray-200 mx-1" />
 
-      <button type="button" onClick={() => editor.chain().focus().setTextAlign("left").run()} className={btnClass(editor.isActive({ textAlign: "left" }))} title="Align Left">
-        <AlignLeft size={16} />
-      </button>
-      <button type="button" onClick={() => editor.chain().focus().setTextAlign("center").run()} className={btnClass(editor.isActive({ textAlign: "center" }))} title="Align Center">
-        <AlignCenter size={16} />
-      </button>
-      <button type="button" onClick={() => editor.chain().focus().setTextAlign("right").run()} className={btnClass(editor.isActive({ textAlign: "right" }))} title="Align Right">
-        <AlignRight size={16} />
-      </button>
-      <button type="button" onClick={() => editor.chain().focus().setTextAlign("justify").run()} className={btnClass(editor.isActive({ textAlign: "justify" }))} title="Justify">
-        <AlignJustify size={16} />
-      </button>
-
-      <div className="w-px h-6 bg-gray-200 mx-1" />
-
-      <button type="button" onClick={addLink} className={btnClass(editor.isActive("link"))} title="Add Link">
-        <Link2 size={16} />
-      </button>
-      <button type="button" onClick={addImage} className={btnClass(false)} title="Add Image">
-        <Image size={16} />
-      </button>
-
-      <div className="w-px h-6 bg-gray-200 mx-1" />
+          <button type="button" onClick={addLink} className={btnClass(editor.isActive("link"))} title="Add Link">
+            <Link2 size={16} />
+          </button>
+          <button type="button" onClick={addImage} className={btnClass(false)} title="Add Image">
+            <Image size={16} />
+          </button>
+          <div className="w-px h-6 bg-gray-200 mx-1" />
+        </>
+      )}
 
       <button type="button" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} className={`${btnClass(false)} disabled:opacity-30`} title="Undo">
         <Undo size={16} />
@@ -122,7 +128,7 @@ function MenuBar({ editor }: { editor: any }) {
   );
 }
 
-export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
+export default function TiptapEditor({ content, onChange, minimal }: TiptapEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -140,15 +146,14 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm sm:prose max-w-none min-h-[400px] p-4 focus:outline-none",
+        class: `prose prose-sm sm:prose max-w-none p-4 focus:outline-none ${minimal ? 'min-h-[150px]' : 'min-h-[400px]'}`,
       },
     },
   });
 
   return (
     <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
-      <MenuBar editor={editor} />
+      <MenuBar editor={editor} minimal={minimal} />
       <EditorContent editor={editor} />
     </div>
   );

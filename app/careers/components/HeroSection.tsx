@@ -12,7 +12,7 @@ export default function EvHero() {
                 {/* BACKGROUND IMAGE */}
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="/assets/visitors-bg.png"
+                        src="/assets/loyola-building.png"
                         alt="Eminent Visitors"
                         fill
                         className="object-cover"

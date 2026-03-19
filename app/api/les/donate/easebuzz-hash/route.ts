@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         }
 
         const cleanAmount = numAmount.toFixed(2);
-        const cleanProductinfo = `LES Donation - ${fund || 'General Fund'} (${donationType || 'one-time'})`;
+        const cleanProductinfo = 'LES Donation';
         const cleanFirstname = String(donorName).trim();
         const cleanEmail = String(donorEmail).trim().toLowerCase();
         const cleanPhone = String(donorPhone).trim();
@@ -64,10 +64,10 @@ export async function POST(request: Request) {
             );
         }
 
-        // UDF fields - store donation metadata
-        const udf1 = fund || 'general';
-        const udf2 = donationType || 'one-time';
-        const udf3 = 'les-donate-page';
+        // UDF fields - clear them to prevent special character validation issues
+        const udf1 = '';
+        const udf2 = '';
+        const udf3 = '';
         const udf4 = '';
         const udf5 = '';
         const udf6 = '';
@@ -84,10 +84,10 @@ export async function POST(request: Request) {
             .update(hashString)
             .digest('hex');
 
-        // Prepare callback URLs (donation-specific pages)
+        // Prepare callback URLs (redirect back to donate page with status and txnid)
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-        const successUrl = `${baseUrl}/les/donate/payment-success?txnid=${encodeURIComponent(txnid)}&email=${encodeURIComponent(cleanEmail)}`;
-        const failureUrl = `${baseUrl}/les/donate/payment-failure?txnid=${encodeURIComponent(txnid)}&email=${encodeURIComponent(cleanEmail)}`;
+        const successUrl = `${baseUrl}/les/donate?status=success&txnid=${encodeURIComponent(txnid)}&email=${encodeURIComponent(cleanEmail)}`;
+        const failureUrl = `${baseUrl}/les/donate?status=failure&txnid=${encodeURIComponent(txnid)}&email=${encodeURIComponent(cleanEmail)}`;
 
         // Prepare form data for Easebuzz API
         const formData = new URLSearchParams();

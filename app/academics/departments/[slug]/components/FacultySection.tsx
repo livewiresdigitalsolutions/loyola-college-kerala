@@ -41,13 +41,7 @@ export default function FacultySection({ faculty }: FacultySectionProps) {
               <p className="text-gray-600 text-sm mt-1">
                 {member.designation}
               </p>
-              <a
-                href="#"
-                className="inline-flex items-center gap-1 text-amber-600 text-xs font-semibold uppercase tracking-wide mt-3 hover:text-amber-700 transition-colors"
-              >
-                View Full Profile
-                <span className="ml-1">→</span>
-              </a>
+
             </div>
           ))}
         </div>

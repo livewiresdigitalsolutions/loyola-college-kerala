@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 
-const stats = [
-  { region: 'Europe', count: 1005 },
-  { region: 'Asia', count: 1001 },
-  { region: 'Australia', count: 1002 },
-]
+type Stat = {
+  id: number
+  region: string
+  count: number
+  sort_order: number
+}
 
 function AnimatedCounter({ target, isVisible }: { target: number; isVisible: boolean }) {
   const [count, setCount] = useState(0)
@@ -34,8 +35,20 @@ function AnimatedCounter({ target, isVisible }: { target: number; isVisible: boo
 }
 
 export default function AlumniStats() {
+  const [stats, setStats] = useState<Stat[]>([])
   const [isVisible, setIsVisible] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    fetch('/api/alumni/world-stats')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setStats(data)
+        }
+      })
+      .catch(err => console.error('Failed to load world stats', err))
+  }, [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -66,9 +79,9 @@ export default function AlumniStats() {
         </div>
 
         {/* Stats */}
-        <div className="flex justify-center items-end gap-16 md:gap-24 lg:gap-32">
+        <div className="flex justify-center items-end gap-16 md:gap-24 lg:gap-32 flex-wrap">
           {stats.map((stat, index) => (
-            <div key={index} className="text-center">
+            <div key={stat.id || index} className="text-center">
               <div className="w-3 h-3 bg-white/80 rounded-full mx-auto mb-4" />
               <p className="text-white/60 text-sm mb-2">{stat.region}</p>
               <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">

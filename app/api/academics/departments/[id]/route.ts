@@ -23,7 +23,7 @@ export async function PUT(
 ) {
     try {
         const body = await request.json();
-        const { name, slug, short_description, category, image, introduction, goals, eligibility, programmes, syllabus, faculty_list, sort_order } = body;
+        const { name, slug, short_description, category, image, introduction, goals, eligibility, programmes, syllabus, faculty_list, sort_order, syllabus_links, publications } = body;
         const { id } = await params;
         const idNum = parseInt(id);
 
@@ -43,6 +43,8 @@ export async function PUT(
             programmes: programmes ? (typeof programmes === 'string' ? programmes : JSON.stringify(programmes)) : null,
             syllabus: syllabus ? (typeof syllabus === 'string' ? syllabus : JSON.stringify(syllabus)) : null,
             faculty_list: faculty_list ? (typeof faculty_list === 'string' ? faculty_list : JSON.stringify(faculty_list)) : null,
+            syllabus_links: syllabus_links ? (typeof syllabus_links === 'string' ? syllabus_links : JSON.stringify(syllabus_links)) : null,
+            publications: publications ? (typeof publications === 'string' ? publications : JSON.stringify(publications)) : null,
             sort_order,
         };
 
@@ -57,8 +59,8 @@ export async function PUT(
         } else {
             const connection = await mysql.createConnection(mysqlConfig);
             await connection.execute(
-                'UPDATE academic_departments SET name = ?, slug = ?, short_description = ?, category = ?, image = ?, introduction = ?, goals = ?, eligibility = ?, programmes = ?, syllabus = ?, faculty_list = ?, sort_order = ? WHERE id = ?',
-                [record.name, record.slug, record.short_description, record.category, record.image, record.introduction, record.goals, record.eligibility, record.programmes, record.syllabus, record.faculty_list, record.sort_order, idNum]
+                'UPDATE academic_departments SET name = ?, slug = ?, short_description = ?, category = ?, image = ?, introduction = ?, goals = ?, eligibility = ?, programmes = ?, syllabus = ?, faculty_list = ?, sort_order = ?, syllabus_links = ?, publications = ? WHERE id = ?',
+                [record.name, record.slug, record.short_description, record.category, record.image, record.introduction, record.goals, record.eligibility, record.programmes, record.syllabus, record.faculty_list, record.sort_order, record.syllabus_links, record.publications, idNum]
             );
             await connection.end();
             return NextResponse.json({ id: idNum, ...record });
@@ -71,6 +73,9 @@ export async function PUT(
     }
 }
 
+import { unlink } from 'fs/promises';
+import path from 'path';
+
 export async function DELETE(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -78,6 +83,49 @@ export async function DELETE(
     try {
         const { id } = await params;
         const idNum = parseInt(id);
+
+        let department;
+        if (isDevelopment) {
+            const { data } = await supabase.from('academic_departments').select('*').eq('id', idNum).single();
+            department = data;
+        } else {
+            const connection = await mysql.createConnection(mysqlConfig);
+            const [rows]: any = await connection.execute('SELECT * FROM academic_departments WHERE id = ?', [idNum]);
+            department = rows[0];
+            await connection.end();
+        }
+
+        if (department) {
+            const urlsToDelete: string[] = [];
+            if (department.image) urlsToDelete.push(department.image);
+            
+            try {
+                const facultyList = typeof department.faculty_list === 'string' ? JSON.parse(department.faculty_list) : department.faculty_list;
+                if (Array.isArray(facultyList)) facultyList.forEach((f: any) => { if (f.image) urlsToDelete.push(f.image); });
+            } catch {}
+
+            try {
+                const syllabusLinks = typeof department.syllabus_links === 'string' ? JSON.parse(department.syllabus_links) : department.syllabus_links;
+                if (Array.isArray(syllabusLinks)) syllabusLinks.forEach((link: any) => { if (link.url) urlsToDelete.push(link.url); });
+            } catch {}
+
+            try {
+                const publications = typeof department.publications === 'string' ? JSON.parse(department.publications) : department.publications;
+                if (Array.isArray(publications)) publications.forEach((pub: any) => { if (pub.image) urlsToDelete.push(pub.image); });
+            } catch {}
+
+            const uploadDir = path.join(process.cwd(), 'public');
+            for (const url of urlsToDelete) {
+                if (url && url.startsWith('/assets/academics/uploads/')) {
+                    try {
+                        const filepath = path.join(uploadDir, ...url.split('/').filter(Boolean));
+                        await unlink(filepath).catch(() => {});
+                    } catch (e) {
+                        console.error('Failed to delete file:', url);
+                    }
+                }
+            }
+        }
 
         if (isDevelopment) {
             const { error } = await supabase.from('academic_departments').delete().eq('id', idNum);
@@ -87,7 +135,7 @@ export async function DELETE(
             await connection.execute('DELETE FROM academic_departments WHERE id = ?', [idNum]);
             await connection.end();
         }
-        return NextResponse.json({ message: 'Department deleted successfully' });
+        return NextResponse.json({ message: 'Department and associated files deleted successfully' });
     } catch (error: any) {
         return NextResponse.json(
             { error: 'Failed to delete department', details: error.message },

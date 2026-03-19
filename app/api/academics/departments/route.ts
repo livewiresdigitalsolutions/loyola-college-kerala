@@ -59,6 +59,8 @@ export async function GET(request: Request) {
                 programmes: typeof dept.programmes === 'string' ? JSON.parse(dept.programmes) : dept.programmes,
                 syllabus: typeof dept.syllabus === 'string' ? JSON.parse(dept.syllabus) : dept.syllabus,
                 faculty_list: typeof dept.faculty_list === 'string' ? JSON.parse(dept.faculty_list) : dept.faculty_list,
+                syllabus_links: typeof dept.syllabus_links === 'string' ? JSON.parse(dept.syllabus_links) : dept.syllabus_links,
+                publications: typeof dept.publications === 'string' ? JSON.parse(dept.publications) : dept.publications,
             }));
         }
 
@@ -74,7 +76,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, slug, short_description, category, image, introduction, goals, eligibility, programmes, syllabus, faculty_list, sort_order } = body;
+        const { name, slug, short_description, category, image, introduction, goals, eligibility, programmes, syllabus, faculty_list, sort_order, syllabus_links, publications } = body;
 
         if (!name || !slug) {
             return NextResponse.json({ error: 'Name and slug are required' }, { status: 400 });
@@ -92,6 +94,8 @@ export async function POST(request: Request) {
             programmes: programmes ? (typeof programmes === 'string' ? programmes : JSON.stringify(programmes)) : null,
             syllabus: syllabus ? (typeof syllabus === 'string' ? syllabus : JSON.stringify(syllabus)) : null,
             faculty_list: faculty_list ? (typeof faculty_list === 'string' ? faculty_list : JSON.stringify(faculty_list)) : null,
+            syllabus_links: syllabus_links ? (typeof syllabus_links === 'string' ? syllabus_links : JSON.stringify(syllabus_links)) : null,
+            publications: publications ? (typeof publications === 'string' ? publications : JSON.stringify(publications)) : null,
             sort_order: sort_order || 0,
         };
 
@@ -105,8 +109,8 @@ export async function POST(request: Request) {
         } else {
             const connection = await mysql.createConnection(mysqlConfig);
             const [result]: any = await connection.execute(
-                'INSERT INTO academic_departments (name, slug, short_description, category, image, introduction, goals, eligibility, programmes, syllabus, faculty_list, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [record.name, record.slug, record.short_description, record.category, record.image, record.introduction, record.goals, record.eligibility, record.programmes, record.syllabus, record.faculty_list, record.sort_order]
+                'INSERT INTO academic_departments (name, slug, short_description, category, image, introduction, goals, eligibility, programmes, syllabus, faculty_list, sort_order, syllabus_links, publications) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [record.name, record.slug, record.short_description, record.category, record.image, record.introduction, record.goals, record.eligibility, record.programmes, record.syllabus, record.faculty_list, record.sort_order, record.syllabus_links, record.publications]
             );
             await connection.end();
             return NextResponse.json({ id: result.insertId, ...record });

@@ -1,11 +1,18 @@
-// app/api/les/donate/verify-easebuzz/route.ts
-// Easebuzz transaction verification for LES Donations
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import mysql from 'mysql2/promise';
 
 const EASEBUZZ_SALT = process.env.LES_EASEBUZZ_SALT!;
 const EASEBUZZ_KEY = process.env.LES_EASEBUZZ_KEY!;
 const EASEBUZZ_DASHBOARD_URL = process.env.LES_EASEBUZZ_DASHBOARD_URL || 'https://testdashboard.easebuzz.in';
+
+const dbConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '3306'),
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_DATABASE || 'loyola',
+};
 
 export async function POST(request: Request) {
     try {
@@ -85,19 +92,33 @@ export async function POST(request: Request) {
             );
         }
 
-        // TODO: Store donation record in database when donations table is created
-        console.log('✅ LES Donation (Easebuzz) verified successfully:', {
-            txnid: transactionData.txnid,
-            easepayid: transactionData.easepayid,
-            amount: transactionData.amount,
-            status: transactionData.status,
-            mode: transactionData.mode,
-            email: transactionData.email,
-            fund: transactionData.udf1,
-            donationType: transactionData.udf2,
-            gateway: 'easebuzz',
-            timestamp: new Date().toISOString(),
-        });
+        // Store donation record in database
+        try {
+            const connection = await mysql.createConnection(dbConfig);
+            await connection.execute(
+                `INSERT INTO les_donations 
+                (txnid, easepayid, amount, status, name, email, phone, fund, donation_type, gateway) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE status = VALUES(status)`,
+                [
+                    transactionData.txnid,
+                    transactionData.easepayid,
+                    transactionData.amount,
+                    transactionData.status,
+                    transactionData.firstname || '',
+                    transactionData.email || email || '',
+                    transactionData.phone || '',
+                    transactionData.udf1 || 'general',
+                    transactionData.udf2 || 'one-time',
+                    'easebuzz'
+                ]
+            );
+            await connection.end();
+            console.log('✅ LES Donation verified and saved to database successfully');
+        } catch (dbError) {
+            console.error('Database insertion error for donation:', dbError);
+            // We still return success since payment was verified, but log the DB error
+        }
 
         return NextResponse.json({
             success: true,

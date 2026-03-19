@@ -3,10 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Users, Image as ImageIcon, Calendar, Award, Crown, UserCog, Mail } from "lucide-react";
+import { ArrowLeft, Users, Image as ImageIcon, Calendar, Award, Crown, UserCog, Mail, Globe } from "lucide-react";
 
 const alumniCards = [
   { id: "users", title: "Alumni Users", description: "View and manage registered alumni accounts", href: "/sys-ops/master-data/alumni/users", icon: <Users className="w-6 h-6" />, color: "bg-emerald-600" },
+  { id: "world-stats", title: "World Stats", description: "Manage 'Alumni Around the World' statistics", href: "/sys-ops/master-data/alumni/world-stats", icon: <Globe className="w-6 h-6" />, color: "bg-blue-500" },
   { id: "gallery", title: "Gallery", description: "Upload and manage alumni event gallery images", href: "/sys-ops/master-data/alumni/gallery", icon: <ImageIcon className="w-6 h-6" />, color: "bg-blue-600" },
   { id: "events", title: "Events & Seminars", description: "Manage alumni events and seminar listings", href: "/sys-ops/master-data/alumni/events", icon: <Calendar className="w-6 h-6" />, color: "bg-purple-600" },
   { id: "awards", title: "Awards & Scholarships", description: "Manage award and scholarship records", href: "/sys-ops/master-data/alumni/awards", icon: <Award className="w-6 h-6" />, color: "bg-amber-500" },
