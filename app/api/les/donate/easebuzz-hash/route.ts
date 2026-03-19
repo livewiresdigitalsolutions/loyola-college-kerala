@@ -13,6 +13,10 @@ export async function POST(request: Request) {
     try {
         const { amount, fund, donationType, donorName, donorEmail, donorPhone } = await request.json();
 
+        // Dynamically detect base URL from the incoming request (works on localhost and production)
+        const requestUrl = new URL(request.url);
+        const baseUrl = `${requestUrl.protocol}//${requestUrl.host}`;
+
         // Validate Easebuzz credentials
         if (!EASEBUZZ_KEY || !EASEBUZZ_SALT) {
             return NextResponse.json(
@@ -85,7 +89,6 @@ export async function POST(request: Request) {
             .digest('hex');
 
         // Prepare callback URLs (redirect back to donate page with status and txnid)
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
         const successUrl = `${baseUrl}/les/donate?status=success&txnid=${encodeURIComponent(txnid)}&email=${encodeURIComponent(cleanEmail)}`;
         const failureUrl = `${baseUrl}/les/donate?status=failure&txnid=${encodeURIComponent(txnid)}&email=${encodeURIComponent(cleanEmail)}`;
 

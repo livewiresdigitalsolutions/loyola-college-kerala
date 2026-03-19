@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import mysql from 'mysql2/promise';
+import { sendDonationAcknowledgment } from '@/lib/lesDonationEmail';
 
 const EASEBUZZ_SALT = process.env.LES_EASEBUZZ_SALT!;
 const EASEBUZZ_KEY = process.env.LES_EASEBUZZ_KEY!;
@@ -115,6 +116,22 @@ export async function POST(request: Request) {
             );
             await connection.end();
             console.log('✅ LES Donation verified and saved to database successfully');
+
+            // Send acknowledgment email with PDF invoice (non-blocking)
+            sendDonationAcknowledgment({
+                txnid: transactionData.txnid,
+                easepayid: transactionData.easepayid,
+                amount: transactionData.amount,
+                name: transactionData.firstname || '',
+                email: transactionData.email || email || '',
+                phone: transactionData.phone || '',
+                fund: transactionData.udf1 || 'general',
+                donationType: transactionData.udf2 || 'one-time',
+            }).then(() => {
+                console.log('📧 Donation acknowledgment email sent successfully');
+            }).catch((emailErr) => {
+                console.error('Failed to send donation acknowledgment email:', emailErr);
+            });
         } catch (dbError) {
             console.error('Database insertion error for donation:', dbError);
             // We still return success since payment was verified, but log the DB error

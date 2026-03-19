@@ -4,9 +4,9 @@ import DepartmentsPage from "../academics/departments/page";
 import AdmissionProcess from "../admission/components/AdmissionProcess";
 import AdmissionsHero from "../admission/components/AdmissionsHero";
 import StartApplication from "../admission/components/StartApplication";
-import AcademicProgrammes from "../Home/components/AcademicPrograms";
-import AnnouncementMarquee from "../Home/components/Announcements";
-import LoyolaAtAGlance from "../Home/components/Glance";
+import AcademicProgrammes from "../home/components/AcademicPrograms";
+import AnnouncementMarquee from "../home/components/Announcements";
+import LoyolaAtAGlance from "../home/components/Glance";
 
 
 export default function Demopage() {
