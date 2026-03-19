@@ -10,8 +10,18 @@ const JOURNAL_JWT_SECRET = new TextEncoder().encode(
   process.env.JOURNAL_JWT_SECRET || process.env.JWT_SECRET || 'loyola-journal-secret-key-min-32-characters'
 );
 
+// Paths under public/ that contain dynamically uploaded files
+const DYNAMIC_ASSET_PREFIXES = ['/assets/', '/iqac/', '/hero/', '/ig-members/', '/students-progression/'];
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Route dynamic uploaded assets through the API media handler (bypasses Next.js route cache)
+  if (DYNAMIC_ASSET_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/api/media${pathname}`;
+    return NextResponse.rewrite(url);
+  }
 
   // Protect journal dashboard routes
   if (pathname.startsWith('/journals/dashboard')) {
@@ -82,5 +92,13 @@ export async function middleware(request: NextRequest) {
 
 // Configure which routes to protect
 export const config = {
-  matcher: ['/admission-form/:path*', '/journals/dashboard/:path*'],
+  matcher: [
+    '/admission-form/:path*',
+    '/journals/dashboard/:path*',
+    '/assets/:path*',
+    '/iqac/:path*',
+    '/hero/:path*',
+    '/ig-members/:path*',
+    '/students-progression/:path*',
+  ],
 };

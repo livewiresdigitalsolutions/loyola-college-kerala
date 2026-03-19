@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-export async function GET(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
+export async function GET(_request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   try {
     const { path: filePathArray } = await context.params;
     
@@ -23,11 +23,21 @@ export async function GET(request: NextRequest, context: { params: Promise<{ pat
       return new NextResponse('Forbidden', { status: 403 });
     }
 
+    // Resolve file: check loyola-uploads/ first, then fall back to public/
+    let resolvedPath = absolutePath;
     if (!fs.existsSync(absolutePath)) {
-      return new NextResponse('File not found', { status: 404 });
+      const publicDir = path.join(process.cwd(), 'public');
+      const publicPath = path.join(publicDir, ...filePathArray);
+      if (!publicPath.startsWith(publicDir)) {
+        return new NextResponse('Forbidden', { status: 403 });
+      }
+      if (!fs.existsSync(publicPath)) {
+        return new NextResponse('File not found', { status: 404 });
+      }
+      resolvedPath = publicPath;
     }
 
-    const fileBuffer = fs.readFileSync(absolutePath);
+    const fileBuffer = fs.readFileSync(resolvedPath);
     
     // Determine content type
     const ext = path.extname(absolutePath).toLowerCase();
