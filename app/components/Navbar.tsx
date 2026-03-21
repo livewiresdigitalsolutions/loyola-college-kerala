@@ -1261,6 +1261,11 @@ const Navbar: React.FC = () => {
         className={`fixed top-0 z-50 w-full transition-all duration-300 ${
           isTransparent ? "bg-transparent" : "bg-white shadow-md"
         }`}
+        onClick={(e) => {
+          if (!(e.target as Element).closest('.nav-trigger')) {
+            setActiveDropdown(null);
+          }
+        }}
       >
         {/* Top bar */}
         <div
@@ -1305,9 +1310,10 @@ const Navbar: React.FC = () => {
                 Admissions
               </Link>
               <div
-                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition"
+                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition nav-trigger"
                 onMouseEnter={() => setActiveDropdown("student")}
                 onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => setActiveDropdown(activeDropdown === "student" ? null : "student")}
               >
                 Student <ChevronDown size={14} />
               </div>
@@ -1315,9 +1321,10 @@ const Navbar: React.FC = () => {
                 Alumni
               </Link>
               <div
-                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition"
+                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition nav-trigger"
                 onMouseEnter={() => setActiveDropdown("newsEvents")}
                 onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => setActiveDropdown(activeDropdown === "newsEvents" ? null : "newsEvents")}
               >
                 News & Events <ChevronDown size={14} />
               </div>
@@ -1382,9 +1389,10 @@ const Navbar: React.FC = () => {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-7 font-medium text-[15px]">
               <div
-                className="relative"
+                className="relative nav-trigger"
                 onMouseEnter={() => setActiveDropdown("about")}
                 onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => setActiveDropdown(activeDropdown === "about" ? null : "about")}
               >
                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   About <ChevronDown size={16} />
@@ -1392,9 +1400,10 @@ const Navbar: React.FC = () => {
               </div>
 
               <div
-                className="relative"
+                className="relative nav-trigger"
                 onMouseEnter={() => setActiveDropdown("academics")}
                 onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => setActiveDropdown(activeDropdown === "academics" ? null : "academics")}
               >
                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   Academics <ChevronDown size={16} />
@@ -1406,9 +1415,10 @@ const Navbar: React.FC = () => {
               </Link>
 
               <div
-                className="relative"
+                className="relative nav-trigger"
                 onMouseEnter={() => setActiveDropdown("iqac")}
                 onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => setActiveDropdown(activeDropdown === "iqac" ? null : "iqac")}
               >
                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   IQAC <ChevronDown size={16} />
@@ -1416,9 +1426,10 @@ const Navbar: React.FC = () => {
               </div>
 
               <div
-                className="relative"
+                className="relative nav-trigger"
                 onMouseEnter={() => setActiveDropdown("journals")}
                 onMouseLeave={() => setActiveDropdown(null)}
+                onClick={() => setActiveDropdown(activeDropdown === "journals" ? null : "journals")}
               >
                 <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
                   Journals <ChevronDown size={16} />
@@ -1443,7 +1454,7 @@ const Navbar: React.FC = () => {
 
       {/* Backdrop - stays when hovering dropdown */}
       {activeDropdown && (
-        <div className="fixed inset-0 z-40" style={{ top: "100px" }} />
+        <div className="fixed inset-0 z-40" style={{ top: "100px" }} onClick={() => setActiveDropdown(null)} />
       )}
 
       {/* Mega Menu Dropdowns - With Left Blue Sidebar */}
