@@ -140,10 +140,16 @@ function RankHoldersTab() {
         setPreview(URL.createObjectURL(f));
     };
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+    const fourDigit = (v: string) => /^\d{0,4}$/.test(v);
+
     const handleAdd = async () => {
         if (!file || !newForm.name || !newForm.department) {
             toast.error("Image, name, and department are required"); return;
         }
+        if (!textOnly(newForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (!textOnly(newForm.department)) { toast.error("Department must contain only letters"); return; }
+        if (newForm.batch_year && !/^\d{4}$/.test(newForm.batch_year)) { toast.error("Batch Year must be exactly 4 digits"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -180,6 +186,9 @@ function RankHoldersTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.name !== undefined && !textOnly(editForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (editForm.department !== undefined && !textOnly(editForm.department)) { toast.error("Department must contain only letters"); return; }
+        if (editForm.batch_year && !/^\d{4}$/.test(editForm.batch_year)) { toast.error("Batch Year must be exactly 4 digits"); return; }
         const r = await fetch(`${BASE}?type=rank-holders`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -215,11 +224,11 @@ function RankHoldersTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => setNewForm({ ...newForm, name: e.target.value })} />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, name: e.target.value }); }} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.department} onChange={e => setNewForm({ ...newForm, department: e.target.value })} />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.department} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, department: e.target.value }); }} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Rank</label>
@@ -231,7 +240,7 @@ function RankHoldersTab() {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Batch Year</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" placeholder="e.g. 2023-24" value={newForm.batch_year} onChange={e => setNewForm({ ...newForm, batch_year: e.target.value })} />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" placeholder="e.g. 2024" maxLength={4} value={newForm.batch_year} onChange={e => { if (/^\d{0,4}$/.test(e.target.value)) setNewForm({ ...newForm, batch_year: e.target.value }); }} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
@@ -264,14 +273,14 @@ function RankHoldersTab() {
                         <div className="p-3">
                             {editingId === item.id ? (
                                 <div className="space-y-2">
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => setEditForm({ ...editForm, name: e.target.value })} placeholder="Name" />
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.department ?? ""} onChange={e => setEditForm({ ...editForm, department: e.target.value })} placeholder="Department" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, name: e.target.value }); }} placeholder="Name" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.department ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, department: e.target.value }); }} placeholder="Department" />
                                     <select className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.rank ?? "FIRST"} onChange={e => setEditForm({ ...editForm, rank: e.target.value as any })}>
                                         <option value="FIRST">FIRST</option>
                                         <option value="SECOND">SECOND</option>
                                         <option value="THIRD">THIRD</option>
                                     </select>
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.batch_year ?? ""} onChange={e => setEditForm({ ...editForm, batch_year: e.target.value })} placeholder="Batch Year" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" maxLength={4} value={editForm.batch_year ?? ""} onChange={e => { if (/^\d{0,4}$/.test(e.target.value)) setEditForm({ ...editForm, batch_year: e.target.value }); }} placeholder="Batch Year (4 digits)" />
                                     <div className="flex gap-2">
                                         <button onClick={handleSaveEdit} className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded text-xs hover:bg-green-700"><Check className="w-3 h-3" /> Save</button>
                                         <button onClick={() => setEditingId(null)} className="flex items-center gap-1 bg-gray-100 text-gray-700 px-3 py-1.5 rounded text-xs"><X className="w-3 h-3" /> Cancel</button>
@@ -336,10 +345,15 @@ function QualifiersTab() {
         setFile(f); setPreview(URL.createObjectURL(f));
     };
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!file || !newForm.name || !newForm.department) {
             toast.error("Image, name, and department are required"); return;
         }
+        if (!textOnly(newForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (!textOnly(newForm.department)) { toast.error("Department must contain only letters"); return; }
+        if (newForm.year_range && !/^\d{4}$/.test(newForm.year_range)) { toast.error("Year Range must be exactly 4 digits"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -374,6 +388,9 @@ function QualifiersTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.name !== undefined && !textOnly(editForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (editForm.department !== undefined && !textOnly(editForm.department)) { toast.error("Department must contain only letters"); return; }
+        if (editForm.year_range && !/^\d{4}$/.test(editForm.year_range)) { toast.error("Year Range must be exactly 4 digits"); return; }
         const r = await fetch(`${BASE}?type=qualifiers`, {
             method: "PUT", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: editingId, ...editForm }),
@@ -406,12 +423,18 @@ function QualifiersTab() {
                         <input id="q-upload" type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {[["name", "Name *", "text"], ["department", "Department *", "text"], ["year_range", "Year Range", "text"]].map(([field, label, type]) => (
-                            <div key={field}>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-                                <input type={type} className="w-full border border-gray-300 rounded p-2 text-sm" value={(newForm as any)[field]} onChange={e => setNewForm({ ...newForm, [field]: e.target.value })} placeholder={field === "year_range" ? "e.g. 2022-24" : ""} />
-                            </div>
-                        ))}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                            <input type="text" className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, name: e.target.value }); }} />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
+                            <input type="text" className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.department} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, department: e.target.value }); }} />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Year Range</label>
+                            <input type="text" className="w-full border border-gray-300 rounded p-2 text-sm" maxLength={4} value={newForm.year_range} onChange={e => { if (/^\d{0,4}$/.test(e.target.value)) setNewForm({ ...newForm, year_range: e.target.value }); }} placeholder="e.g. 2024" />
+                        </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                             <select className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.qualifier_type} onChange={e => setNewForm({ ...newForm, qualifier_type: e.target.value as any })}>
@@ -454,9 +477,9 @@ function QualifiersTab() {
                         <div className="p-3">
                             {editingId === item.id ? (
                                 <div className="space-y-2">
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => setEditForm({ ...editForm, name: e.target.value })} placeholder="Name" />
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.department ?? ""} onChange={e => setEditForm({ ...editForm, department: e.target.value })} placeholder="Department" />
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.year_range ?? ""} onChange={e => setEditForm({ ...editForm, year_range: e.target.value })} placeholder="Year Range" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, name: e.target.value }); }} placeholder="Name" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.department ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, department: e.target.value }); }} placeholder="Department" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" maxLength={4} value={editForm.year_range ?? ""} onChange={e => { if (/^\d{0,4}$/.test(e.target.value)) setEditForm({ ...editForm, year_range: e.target.value }); }} placeholder="Year Range (4 digits)" />
                                     <select className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.qualifier_type ?? "NET"} onChange={e => setEditForm({ ...editForm, qualifier_type: e.target.value as any })}>
                                         <option value="NET">UGC NET</option><option value="JRF">JRF</option><option value="COMPETITION">Competition</option>
                                     </select>
@@ -510,8 +533,12 @@ function PlacementsTab() {
 
     useEffect(() => { fetch_(); }, []);
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!newForm.title) { toast.error("Title is required"); return; }
+        if (!textOnly(newForm.department)) { toast.error("Department must contain only letters"); return; }
+        if (newForm.year_range && !/^\d{4}$/.test(newForm.year_range)) { toast.error("Year Range must be exactly 4 digits"); return; }
         const r = await fetch(`${BASE}?type=placements`, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...newForm, is_active: newForm.is_active ? 1 : 0 }),
@@ -541,6 +568,8 @@ function PlacementsTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.department !== undefined && !textOnly(editForm.department)) { toast.error("Department must contain only letters"); return; }
+        if (editForm.year_range && !/^\d{4}$/.test(editForm.year_range)) { toast.error("Year Range must be exactly 4 digits"); return; }
         const r = await fetch(`${BASE}?type=placements`, {
             method: "PUT", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: editingId, ...editForm }),
@@ -569,11 +598,11 @@ function PlacementsTab() {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Year Range</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.year_range} onChange={e => setNewForm({ ...newForm, year_range: e.target.value })} placeholder="e.g. 2019-21" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" maxLength={4} value={newForm.year_range} onChange={e => { if (/^\d{0,4}$/.test(e.target.value)) setNewForm({ ...newForm, year_range: e.target.value }); }} placeholder="e.g. 2024" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.department} onChange={e => setNewForm({ ...newForm, department: e.target.value })} />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.department} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, department: e.target.value }); }} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
@@ -613,13 +642,13 @@ function PlacementsTab() {
                                 </td>
                                 <td className="px-4 py-3 text-amber-600 font-semibold">
                                     {editingId === item.id
-                                        ? <input className="w-24 border border-gray-300 rounded p-1.5 text-sm" value={editForm.year_range ?? ""} onChange={e => setEditForm({ ...editForm, year_range: e.target.value })} />
+                                        ? <input className="w-24 border border-gray-300 rounded p-1.5 text-sm" maxLength={4} value={editForm.year_range ?? ""} onChange={e => { if (/^\d{0,4}$/.test(e.target.value)) setEditForm({ ...editForm, year_range: e.target.value }); }} />
                                         : item.year_range
                                     }
                                 </td>
                                 <td className="px-4 py-3 text-gray-500">
                                     {editingId === item.id
-                                        ? <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.department ?? ""} onChange={e => setEditForm({ ...editForm, department: e.target.value })} />
+                                        ? <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.department ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, department: e.target.value }); }} />
                                         : item.department
                                     }
                                 </td>
@@ -673,8 +702,11 @@ function InitiativesTab() {
 
     useEffect(() => { fetch_(); }, []);
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!newForm.title) { toast.error("Title is required"); return; }
+        if (!textOnly(newForm.title)) { toast.error("Title must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=initiatives`, {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...newForm, is_active: newForm.is_active ? 1 : 0 }),
@@ -704,6 +736,7 @@ function InitiativesTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.title !== undefined && !textOnly(editForm.title)) { toast.error("Title must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=initiatives`, {
             method: "PUT", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: editingId, ...editForm }),
@@ -728,7 +761,7 @@ function InitiativesTab() {
                     <div className="space-y-3">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.title} onChange={e => setNewForm({ ...newForm, title: e.target.value })} placeholder="e.g. Cancer Detection Camp" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.title} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, title: e.target.value }); }} placeholder="e.g. Cancer Detection Camp" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -767,7 +800,7 @@ function InitiativesTab() {
                             <tr key={item.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 font-medium max-w-[200px]">
                                     {editingId === item.id
-                                        ? <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.title ?? ""} onChange={e => setEditForm({ ...editForm, title: e.target.value })} />
+                                        ? <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.title ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, title: e.target.value }); }} />
                                         : item.title
                                     }
                                 </td>

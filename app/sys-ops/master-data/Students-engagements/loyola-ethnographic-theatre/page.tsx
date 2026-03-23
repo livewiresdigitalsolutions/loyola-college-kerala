@@ -135,8 +135,12 @@ function OrganizingTeamTab() {
         setFile(f); setPreview(URL.createObjectURL(f));
     };
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!file || !newForm.name || !newForm.role) { toast.error("Image, name and role are required"); return; }
+        if (!textOnly(newForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (!textOnly(newForm.role)) { toast.error("Role must contain only letters"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -163,6 +167,8 @@ function OrganizingTeamTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.name !== undefined && !textOnly(editForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (editForm.role !== undefined && !textOnly(editForm.role)) { toast.error("Role must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=organizing-team`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingId, ...editForm }) });
         const d = await r.json(); if (d.success) { toast.success("Updated"); setEditingId(null); load(); } else toast.error(d.error || "Failed");
     };
@@ -184,11 +190,11 @@ function OrganizingTeamTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => setNewForm({ ...newForm, name: e.target.value })} placeholder="e.g. Fr.Dr. Saji S.J" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, name: e.target.value }); }} placeholder="e.g. Fr.Dr. Saji SJ" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.role} onChange={e => setNewForm({ ...newForm, role: e.target.value })} placeholder="e.g. STAFF CO-ORDINATOR" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.role} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, role: e.target.value }); }} placeholder="e.g. STAFF CO-ORDINATOR" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
@@ -217,8 +223,8 @@ function OrganizingTeamTab() {
                         <div className="p-4">
                             {editingId === item.id ? (
                                 <div className="space-y-2">
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => setEditForm({ ...editForm, name: e.target.value })} placeholder="Name" />
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.role ?? ""} onChange={e => setEditForm({ ...editForm, role: e.target.value })} placeholder="Role" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, name: e.target.value }); }} placeholder="Name" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.role ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, role: e.target.value }); }} placeholder="Role" />
                                     <div className="flex gap-2">
                                         <button onClick={handleSaveEdit} className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded text-xs"><Check className="w-3 h-3" /> Save</button>
                                         <button onClick={() => setEditingId(null)} className="flex items-center gap-1 bg-gray-100 text-gray-700 px-3 py-1.5 rounded text-xs"><X className="w-3 h-3" /> Cancel</button>
@@ -264,8 +270,11 @@ function ThemesTab() {
     };
     useEffect(() => { load(); }, []);
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!newTheme.trim()) { toast.error("Theme text required"); return; }
+        if (!textOnly(newTheme.trim())) { toast.error("Theme must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=themes`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ theme: newTheme.trim(), display_order: items.length, is_active: 1 }) });
         const d = await r.json();
         if (d.success) { toast.success("Theme added"); setNewTheme(""); setShowAdd(false); load(); }
@@ -285,6 +294,7 @@ function ThemesTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (!textOnly(editTheme)) { toast.error("Theme must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=themes`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingId, theme: editTheme }) });
         const d = await r.json(); if (d.success) { toast.success("Updated"); setEditingId(null); load(); } else toast.error(d.error || "Failed");
     };
@@ -304,7 +314,7 @@ function ThemesTab() {
                     <h2 className="font-bold text-lg">Add Suggested Theme</h2>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Theme / Issue *</label>
-                        <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newTheme} onChange={e => setNewTheme(e.target.value)} placeholder="e.g. Waste management" onKeyDown={e => e.key === "Enter" && handleAdd()} />
+                        <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newTheme} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewTheme(e.target.value); }} placeholder="e.g. Waste management" onKeyDown={e => e.key === "Enter" && handleAdd()} />
                     </div>
                     <div className="flex gap-3">
                         <GreenBtn onClick={handleAdd} className="text-sm px-5 py-2">Save</GreenBtn>
@@ -319,7 +329,7 @@ function ThemesTab() {
                         <div key={item.id} className="group relative">
                             {editingId === item.id ? (
                                 <div className="flex items-center gap-2 border rounded-full px-3 py-1.5" style={{ borderColor: LG }}>
-                                    <input className="text-sm border-0 outline-none w-36" value={editTheme} onChange={e => setEditTheme(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSaveEdit()} autoFocus />
+                                    <input className="text-sm border-0 outline-none w-36" value={editTheme} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditTheme(e.target.value); }} onKeyDown={e => e.key === "Enter" && handleSaveEdit()} autoFocus />
                                     <button onClick={handleSaveEdit} className="text-green-600 hover:text-green-700"><Check className="w-3.5 h-3.5" /></button>
                                     <button onClick={() => setEditingId(null)} className="text-gray-400 hover:text-gray-600"><X className="w-3.5 h-3.5" /></button>
                                 </div>
@@ -402,7 +412,7 @@ function ActivitiesTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Date / Period *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} placeholder="e.g. 30th October 2020" />
+                            <input type="date" className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
@@ -438,7 +448,7 @@ function ActivitiesTab() {
                         {items.map(item => (
                             <tr key={item.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 text-gray-500 font-medium align-top">
-                                    {editingId === item.id ? <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /> : item.date}
+                                    {editingId === item.id ? <input type="date" className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /> : item.date}
                                 </td>
                                 <td className="px-4 py-3 text-gray-700 font-medium">
                                     {editingId === item.id ? <textarea rows={2} className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.description ?? ""} onChange={e => setEditForm({ ...editForm, description: e.target.value })} /> : item.description}

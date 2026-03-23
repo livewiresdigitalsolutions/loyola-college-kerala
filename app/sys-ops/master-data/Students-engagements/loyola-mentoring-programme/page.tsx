@@ -105,8 +105,12 @@ function OrganizingTeamTab() {
         setFile(f); setPreview(URL.createObjectURL(f));
     };
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!file || !newForm.name || !newForm.role) { toast.error("Photo, name and role required"); return; }
+        if (!textOnly(newForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (!textOnly(newForm.role)) { toast.error("Role must contain only letters"); return; }
         setUploading(true);
         try {
             const fd = new FormData(); fd.append("file", file);
@@ -131,6 +135,8 @@ function OrganizingTeamTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.name !== undefined && !textOnly(editForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (editForm.role !== undefined && !textOnly(editForm.role)) { toast.error("Role must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=organizing-team`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingId, ...editForm }) });
         const d = await r.json(); if (d.success) { toast.success("Updated"); setEditingId(null); load(); } else toast.error(d.error || "Failed");
     };
@@ -150,11 +156,11 @@ function OrganizingTeamTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => setNewForm({ ...newForm, name: e.target.value })} placeholder="e.g. S.C. Andrew Michael" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, name: e.target.value }); }} placeholder="e.g. Andrew Michael" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.role} onChange={e => setNewForm({ ...newForm, role: e.target.value })} placeholder="e.g. MENTORING COORDINATOR" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.role} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, role: e.target.value }); }} placeholder="e.g. MENTORING COORDINATOR" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
@@ -183,8 +189,8 @@ function OrganizingTeamTab() {
                         <div className="p-4">
                             {editingId === item.id ? (
                                 <div className="space-y-2">
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => setEditForm({ ...editForm, name: e.target.value })} placeholder="Name" />
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.role ?? ""} onChange={e => setEditForm({ ...editForm, role: e.target.value })} placeholder="Role" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, name: e.target.value }); }} placeholder="Name" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.role ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, role: e.target.value }); }} placeholder="Role" />
                                     <div className="flex gap-2">
                                         <button onClick={handleSaveEdit} className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded text-xs"><Check className="w-3 h-3" /> Save</button>
                                         <button onClick={() => setEditingId(null)} className="flex items-center gap-1 bg-gray-100 text-gray-700 px-3 py-1.5 rounded text-xs"><X className="w-3 h-3" /> Cancel</button>
@@ -230,8 +236,11 @@ function SessionsTab() {
     };
     useEffect(() => { load(); }, []);
 
+    const isValidUrl = (v: string) => { try { new URL(v); return true; } catch { return false; } };
+
     const handleAdd = async () => {
         if (!newForm.date || !newForm.batch || !newForm.description) { toast.error("Date, batch and description required"); return; }
+        if (newForm.report_link && !isValidUrl(newForm.report_link)) { toast.error("Report Link must be a valid URL (e.g. https://...)"); return; }
         const r = await fetch(`${BASE}?type=sessions`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...newForm, is_active: newForm.is_active ? 1 : 0 }) });
         const d = await r.json();
         if (d.success) { toast.success("Session added"); setShowAdd(false); setNewForm({ date: "", batch: "", description: "", report_link: "", display_order: 0, is_active: true }); load(); }
@@ -251,6 +260,7 @@ function SessionsTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.report_link && !isValidUrl(editForm.report_link)) { toast.error("Report Link must be a valid URL (e.g. https://...)"); return; }
         const r = await fetch(`${BASE}?type=sessions`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingId, ...editForm }) });
         const d = await r.json(); if (d.success) { toast.success("Updated"); setEditingId(null); load(); } else toast.error(d.error || "Failed");
     };
@@ -269,7 +279,7 @@ function SessionsTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Date / Period *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} placeholder="e.g. Dec 2025" />
+                            <input type="date" className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Batch *</label>
@@ -307,7 +317,7 @@ function SessionsTab() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-600 mb-1">Date</label>
-                                        <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value })} />
+                                        <input type="date" className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value })} />
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-600 mb-1">Batch</label>

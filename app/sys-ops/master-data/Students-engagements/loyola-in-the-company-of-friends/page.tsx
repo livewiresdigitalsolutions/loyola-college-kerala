@@ -116,8 +116,12 @@ function OrganizingTeamTab() {
         setFile(f); setPreview(URL.createObjectURL(f));
     };
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!file || !newForm.name || !newForm.role) { toast.error("Image, name and role are required"); return; }
+        if (!textOnly(newForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (!textOnly(newForm.role)) { toast.error("Role must contain only letters"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -145,6 +149,8 @@ function OrganizingTeamTab() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.name !== undefined && !textOnly(editForm.name)) { toast.error("Name must contain only letters"); return; }
+        if (editForm.role !== undefined && !textOnly(editForm.role)) { toast.error("Role must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=organizing-team`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingId, ...editForm }) });
         const d = await r.json();
         if (d.success) { toast.success("Updated"); setEditingId(null); load(); } else toast.error(d.error || "Failed");
@@ -167,11 +173,11 @@ function OrganizingTeamTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => setNewForm({ ...newForm, name: e.target.value })} placeholder="e.g. Dr. Sunil Kumar P" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.name} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, name: e.target.value }); }} placeholder="e.g. Dr Sunil Kumar" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.role} onChange={e => setNewForm({ ...newForm, role: e.target.value })} placeholder="e.g. STAFF COORDINATOR" />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.role} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, role: e.target.value }); }} placeholder="e.g. STAFF COORDINATOR" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
@@ -200,8 +206,8 @@ function OrganizingTeamTab() {
                         <div className="p-4">
                             {editingId === item.id ? (
                                 <div className="space-y-2">
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => setEditForm({ ...editForm, name: e.target.value })} placeholder="Name" />
-                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.role ?? ""} onChange={e => setEditForm({ ...editForm, role: e.target.value })} placeholder="Role" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.name ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, name: e.target.value }); }} placeholder="Name" />
+                                    <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.role ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, role: e.target.value }); }} placeholder="Role" />
                                     <div className="flex gap-2">
                                         <button onClick={handleSaveEdit} className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded text-xs"><Check className="w-3 h-3" /> Save</button>
                                         <button onClick={() => setEditingId(null)} className="flex items-center gap-1 bg-gray-100 text-gray-700 px-3 py-1.5 rounded text-xs"><X className="w-3 h-3" /> Cancel</button>
@@ -283,7 +289,7 @@ function ActivitiesTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} placeholder="e.g. 24th Jan 2025" />
+                            <input type="date" className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
@@ -319,7 +325,7 @@ function ActivitiesTab() {
                         {items.map(item => (
                             <tr key={item.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 text-gray-500 font-medium align-top">
-                                    {editingId === item.id ? <input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /> : item.date}
+                                    {editingId === item.id ? <input type="date" className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value })} /> : item.date}
                                 </td>
                                 <td className="px-4 py-3 text-gray-700 font-medium">
                                     {editingId === item.id ? <textarea rows={2} className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.description ?? ""} onChange={e => setEditForm({ ...editForm, description: e.target.value })} /> : item.description}
@@ -369,8 +375,11 @@ function ImageTextTab({ tabType, label }: { tabType: "achievements" | "events"; 
 
     const onFile = (e: React.ChangeEvent<HTMLInputElement>) => { const f = e.target.files?.[0]; if (f) { setFile(f); setPreview(URL.createObjectURL(f)); } };
 
+    const textOnly = (v: string) => /^[a-zA-Z\s]*$/.test(v);
+
     const handleAdd = async () => {
         if (!file || !newForm.title) { toast.error("Image and title required"); return; }
+        if (!textOnly(newForm.title)) { toast.error("Title must contain only letters"); return; }
         setUploading(true);
         try {
             const fd = new FormData(); fd.append("file", file);
@@ -394,6 +403,7 @@ function ImageTextTab({ tabType, label }: { tabType: "achievements" | "events"; 
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (editForm.title !== undefined && !textOnly(editForm.title)) { toast.error("Title must contain only letters"); return; }
         const r = await fetch(`${BASE}?type=${tabType}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: editingId, ...editForm }) });
         const d = await r.json(); if (d.success) { toast.success("Updated"); setEditingId(null); load(); } else toast.error(d.error || "Failed");
     };
@@ -413,11 +423,11 @@ function ImageTextTab({ tabType, label }: { tabType: "achievements" | "events"; 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.title} onChange={e => setNewForm({ ...newForm, title: e.target.value })} />
+                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.title} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setNewForm({ ...newForm, title: e.target.value }); }} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                            <input className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} placeholder="e.g. 27th February 2021" />
+                            <input type="date" className="w-full border border-gray-300 rounded p-2 text-sm" value={newForm.date} onChange={e => setNewForm({ ...newForm, date: e.target.value })} />
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -445,8 +455,8 @@ function ImageTextTab({ tabType, label }: { tabType: "achievements" | "events"; 
                         {editingId === item.id ? (
                             <div className="space-y-3">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div><label className="block text-xs font-medium text-gray-600 mb-1">Title</label><input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.title ?? ""} onChange={e => setEditForm({ ...editForm, title: e.target.value })} /></div>
-                                    <div><label className="block text-xs font-medium text-gray-600 mb-1">Date</label><input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={(editForm as any).date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value } as any)} /></div>
+                                    <div><label className="block text-xs font-medium text-gray-600 mb-1">Title</label><input className="w-full border border-gray-300 rounded p-1.5 text-sm" value={editForm.title ?? ""} onChange={e => { if (/^[a-zA-Z\s]*$/.test(e.target.value)) setEditForm({ ...editForm, title: e.target.value }); }} /></div>
+                                    <div><label className="block text-xs font-medium text-gray-600 mb-1">Date</label><input type="date" className="w-full border border-gray-300 rounded p-1.5 text-sm" value={(editForm as any).date ?? ""} onChange={e => setEditForm({ ...editForm, date: e.target.value } as any)} /></div>
                                     <div className="md:col-span-2"><label className="block text-xs font-medium text-gray-600 mb-1">Description</label><textarea rows={3} className="w-full border border-gray-300 rounded p-1.5 text-sm" value={(editForm as any).description ?? ""} onChange={e => setEditForm({ ...editForm, description: e.target.value } as any)} /></div>
                                 </div>
                                 <div className="flex gap-2">
