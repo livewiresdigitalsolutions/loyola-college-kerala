@@ -77,10 +77,11 @@ export default function IqacAbout() {
 
                     {/* RIGHT: Coordinator Images */}
                     {coordinators.length > 0 && (
-                        <div className="flex flex-row gap-6 justify-center lg:justify-end self-stretch">
+                        <div className="flex flex-row gap-4">
+                            {/* Only show max 2 (Coordinator + Asst. Coordinator) */}
                             {coordinators.map((coord) => (
-                                <div key={coord.id} className="flex flex-col text-center h-full">
-                                    <div className="relative flex-1 w-44 md:w-52 min-h-[200px] overflow-hidden shadow-md mx-auto">
+                                <div key={coord.id} className="flex flex-col text-center">
+                                    <div className="relative w-48 md:w-56 h-56 md:h-100 overflow-hidden shadow-md">
                                         <Image
                                             src={coord.image_url}
                                             alt={coord.name || "IQAC Coordinator"}

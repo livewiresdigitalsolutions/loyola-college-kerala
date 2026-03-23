@@ -31,7 +31,7 @@ export default function AqarFormatsHero() {
                                     Home
                                 </Link>
                                 <ChevronRight className="w-4 h-4" />
-                                <Link href="/iqac/Home" className="hover:text-white transition-colors">
+                                <Link href="/iqac/" className="hover:text-white transition-colors">
                                     IQAC
                                 </Link>
                                 <ChevronRight className="w-4 h-4" />

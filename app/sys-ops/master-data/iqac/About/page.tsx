@@ -62,6 +62,7 @@ function CoordinatorsTab() {
     };
 
     const handleUpload = async () => {
+        if (coords.length >= 2) { toast.error("Maximum 2 coordinators allowed. Delete one first."); return; }
         if (!file || !form.name) { toast.error("Photo and name are required"); return; }
         setUploading(true);
         try {
@@ -103,10 +104,14 @@ function CoordinatorsTab() {
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-500">{coords.length} coordinator(s)</p>
-                <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-[#342D87] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2a2470]">
-                    <Plus className="w-4 h-4" /> Add Coordinator
-                </button>
+                <p className="text-sm text-gray-500">{coords.length} / 2 coordinator(s)</p>
+                {coords.length < 2 ? (
+                    <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-[#342D87] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#2a2470]">
+                        <Plus className="w-4 h-4" /> Add Coordinator
+                    </button>
+                ) : (
+                    <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg">Maximum 2 coordinators allowed. Delete one to add another.</span>
+                )}
             </div>
 
             {showForm && (

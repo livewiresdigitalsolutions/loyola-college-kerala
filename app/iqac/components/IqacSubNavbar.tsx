@@ -11,7 +11,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { label: "Home", href: "/iqac/Home" },
+    { label: "Home", href: "/iqac/" },
     { label: "NAAC Accreditation", href: "/iqac/NAAC-Accreditation" },
     { label: "SSR", href: "/iqac/SSR" },
     { label: "AQARs", href: "/iqac/AQARs" },

@@ -13,11 +13,15 @@ const JOURNAL_JWT_SECRET = new TextEncoder().encode(
 // Paths under public/ that contain dynamically uploaded files
 const DYNAMIC_ASSET_PREFIXES = ['/assets/', '/iqac/', '/hero/', '/ig-members/', '/students-progression/'];
 
+// Only rewrite paths that are actual files (have a known file extension)
+const ASSET_EXTENSION_REGEX = /\.(png|jpe?g|webp|gif|svg|pdf|mp4|webm|ico|woff2?)$/i;
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Route dynamic uploaded assets through the API media handler (bypasses Next.js route cache)
-  if (DYNAMIC_ASSET_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
+  // Only apply to requests that have a file extension — page routes like /iqac/Activities must pass through normally
+  if (ASSET_EXTENSION_REGEX.test(pathname) && DYNAMIC_ASSET_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
     const url = request.nextUrl.clone();
     url.pathname = `/api/media${pathname}`;
     return NextResponse.rewrite(url);

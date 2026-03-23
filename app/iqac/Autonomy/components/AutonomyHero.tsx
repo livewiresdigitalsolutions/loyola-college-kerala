@@ -24,7 +24,7 @@ export default function AutonomyHero() {
                                     Home
                                 </Link>
                                 <ChevronRight className="w-4 h-4" />
-                                <Link href="/iqac/Home" className="hover:text-white transition-colors">IQAC</Link>
+                                <Link href="/iqac/" className="hover:text-white transition-colors">IQAC</Link>
                                 <ChevronRight className="w-4 h-4" />
                                 <span className="text-[#F0B129] font-medium">Autonomy</span>
                             </nav>

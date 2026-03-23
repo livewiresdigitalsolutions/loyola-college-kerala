@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import IqacSubNavbar from "../../components/IqacSubNavbar";
+import IqacSubNavbar from "./IqacSubNavbar";
 
 export default function IqacHero() {
     return (
