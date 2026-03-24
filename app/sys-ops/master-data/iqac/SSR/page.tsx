@@ -5,6 +5,10 @@ import { useState, useEffect } from "react";
 import { Trash2, Plus, Upload, Pencil, X, Check, FileText } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 
+// S.No: digits only, max 3 chars
+const toSNo   = (v: string) => v.replace(/\D/g, "").slice(0, 3);
+const isSNoVal = (v: string) => /^\d{1,3}$/.test(v);
+
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface SsrDoc {
     id: number;
@@ -57,6 +61,7 @@ export default function SsrAdminPage() {
             toast.error("File, title, and S.No are required");
             return;
         }
+        if (!isSNoVal(form.s_no)) { toast.error("S.No must be a number up to 3 digits"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -179,11 +184,13 @@ export default function SsrAdminPage() {
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">S.No *</label>
                                 <input
-                                    type="number"
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={3}
                                     className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
                                     placeholder="e.g. 1"
                                     value={form.s_no}
-                                    onChange={(e) => setForm({ ...form, s_no: e.target.value })}
+                                    onChange={(e) => setForm({ ...form, s_no: toSNo(e.target.value) })}
                                 />
                             </div>
                             <div>
@@ -262,9 +269,9 @@ export default function SsrAdminPage() {
                                 {editingId === doc.id ? (
                                     <>
                                         <td className="px-4 py-2">
-                                            <input type="number" className="w-16 border rounded px-2 py-1 text-sm"
+                                            <input type="text" inputMode="numeric" maxLength={3} className="w-16 border rounded px-2 py-1 text-sm"
                                                 value={editForm.s_no ?? doc.s_no}
-                                                onChange={(e) => setEditForm({ ...editForm, s_no: parseInt(e.target.value) })} />
+                                                onChange={(e) => setEditForm({ ...editForm, s_no: parseInt(toSNo(e.target.value)) || 0 })} />
                                         </td>
                                         <td className="px-4 py-2">
                                             <input className="w-48 border rounded px-2 py-1 text-sm"

@@ -5,6 +5,18 @@ import { useState, useEffect } from "react";
 import { Save, RefreshCw } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 
+// ─── Validation helpers ───────────────────────────────────────────────────────
+// Role Title: letters, spaces, dots, hyphens, apostrophes only
+const toRoleText  = (v: string) => v.replace(/[^A-Za-z\s.\-']/g, "");
+const isRoleText  = (v: string) => v === "" || /^[A-Za-z\s.\-']+$/.test(v);
+// Name: letters, spaces, dots, hyphens, apostrophes, commas (no digits)
+const toNameText  = (v: string) => v.replace(/[0-9]/g, "");
+const isNameText  = (v: string) => !/[0-9]/.test(v);
+// Phone: digits only, max 10
+const toPhone     = (v: string) => v.replace(/\D/g, "").slice(0, 10);
+// Email regex
+const isEmail     = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
 interface ContactInfo {
     id?: number;
     coordinator_name: string;
@@ -50,6 +62,19 @@ export default function ContactUsAdminPage() {
     useEffect(() => { fetch_(); }, []);
 
     const handleSave = async () => {
+        // Validate role titles
+        if (!isRoleText(form.coordinator_role))      { toast.error("Coordinator Role Title must contain only text"); return; }
+        if (!isRoleText(form.asst_coordinator_role)) { toast.error("Asst. Coordinator Role Title must contain only text"); return; }
+        if (!isRoleText(form.support_staff_role))    { toast.error("Support Staff Role Title must contain only text"); return; }
+        // Validate names (no numbers)
+        if (!isNameText(form.coordinator_name))      { toast.error("Coordinator Name must not contain numbers"); return; }
+        if (!isNameText(form.asst_coordinator_name)) { toast.error("Asst. Coordinator Name must not contain numbers"); return; }
+        if (!isNameText(form.support_staff_name))    { toast.error("Support Staff Name must not contain numbers"); return; }
+        // Validate email
+        if (form.email && !isEmail(form.email))      { toast.error("Please enter a valid email address"); return; }
+        // Validate phone
+        if (form.phone && form.phone.length !== 10)  { toast.error("Phone number must be exactly 10 digits"); return; }
+
         setSaving(true);
         try {
             const method = hasRecord ? "PUT" : "POST";
@@ -70,15 +95,21 @@ export default function ContactUsAdminPage() {
         finally { setSaving(false); }
     };
 
-    const field = (label: string, key: keyof ContactInfo, placeholder?: string) => (
+    const INPUT_CLS = "w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent";
+
+    const roleField = (label: string, key: keyof ContactInfo, placeholder?: string) => (
         <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
-            <input
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
-                placeholder={placeholder}
-                value={form[key] as string}
-                onChange={e => setForm({ ...form, [key]: e.target.value })}
-            />
+            <input className={INPUT_CLS} placeholder={placeholder} value={form[key] as string}
+                onChange={e => setForm({ ...form, [key]: toRoleText(e.target.value) })} />
+        </div>
+    );
+
+    const nameField = (label: string, key: keyof ContactInfo, placeholder?: string) => (
+        <div>
+            <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
+            <input className={INPUT_CLS} placeholder={placeholder} value={form[key] as string}
+                onChange={e => setForm({ ...form, [key]: toNameText(e.target.value) })} />
         </div>
     );
 
@@ -113,8 +144,8 @@ export default function ContactUsAdminPage() {
                                 Coordinator
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {field("Role Title", "coordinator_role", "e.g. IQAC Coordinator")}
-                                {field("Name", "coordinator_name", "e.g. Fr. Saji J, SJ")}
+                                {roleField("Role Title", "coordinator_role", "e.g. IQAC Coordinator")}
+                                {nameField("Name", "coordinator_name", "e.g. Fr. Saji J, SJ")}
                             </div>
                         </div>
 
@@ -124,8 +155,8 @@ export default function ContactUsAdminPage() {
                                 Assistant Coordinator
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {field("Role Title", "asst_coordinator_role", "e.g. IQAC Assistant Coordinator")}
-                                {field("Name", "asst_coordinator_name", "e.g. Dr. S.C. Andrew Michael")}
+                                {roleField("Role Title", "asst_coordinator_role", "e.g. IQAC Assistant Coordinator")}
+                                {nameField("Name", "asst_coordinator_name", "e.g. Dr. S.C. Andrew Michael")}
                             </div>
                         </div>
 
@@ -135,8 +166,8 @@ export default function ContactUsAdminPage() {
                                 Support Staff
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {field("Role Title", "support_staff_role", "e.g. IQAC Support Staff")}
-                                {field("Name", "support_staff_name", "e.g. Mr. Arun Gopinath")}
+                                {roleField("Role Title", "support_staff_role", "e.g. IQAC Support Staff")}
+                                {nameField("Name", "support_staff_name", "e.g. Mr. Arun Gopinath")}
                             </div>
                         </div>
                     </div>
@@ -147,8 +178,16 @@ export default function ContactUsAdminPage() {
                             Contact Details
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {field("Email Address", "email", "e.g. iqaclcss@gmail.com")}
-                            {field("Phone Number", "phone", "e.g. 0471-2592059")}
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Email Address</label>
+                                <input type="email" className={INPUT_CLS} placeholder="e.g. iqaclcss@gmail.com"
+                                    value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Phone Number</label>
+                                <input type="tel" inputMode="numeric" maxLength={10} className={INPUT_CLS} placeholder="e.g. 9876543210"
+                                    value={form.phone} onChange={e => setForm({ ...form, phone: toPhone(e.target.value) })} />
+                            </div>
                         </div>
                     </div>
 

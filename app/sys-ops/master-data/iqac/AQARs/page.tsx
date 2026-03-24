@@ -18,6 +18,14 @@ interface AqarDoc {
     is_active: boolean;
 }
 
+// ─── Validation helpers ────────────────────────────────────────────────────────
+// Cycle: digits only
+const toDigitsOnly = (v: string) => v.replace(/\D/g, "");
+const isDigitsOnly = (v: string) => v === "" || /^\d+$/.test(v);
+// Academic Year: digits and hyphens only
+const toAcadYear = (v: string) => v.replace(/[^0-9\-]/g, "");
+const isAcadYear = (v: string) => v === "" || /^[0-9\-]+$/.test(v);
+
 // ─── Main Component ─────────────────────────────────────────────────────────────
 export default function AqarAdminPage() {
     const [docs, setDocs] = useState<AqarDoc[]>([]);
@@ -66,6 +74,8 @@ export default function AqarAdminPage() {
             toast.error("File, title, and cycle are required");
             return;
         }
+        if (!isDigitsOnly(form.cycle)) { toast.error("Cycle must contain numbers only"); return; }
+        if (!isAcadYear(form.academic_year)) { toast.error("Academic Year must contain only numbers and hyphens"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -194,23 +204,46 @@ export default function AqarAdminPage() {
 
                         {/* Fields */}
                         <div className="space-y-4">
-                            {[
-                                { label: "Title *", key: "title", placeholder: "e.g. AQAR 2022-23" },
-                                { label: "Cycle *", key: "cycle", placeholder: "e.g. 4", type: "number" },
-                                { label: "Academic Year", key: "academic_year", placeholder: "e.g. 2022-23" },
-                                { label: "Display Order", key: "display_order", type: "number" },
-                            ].map(({ label, key, placeholder, type = "text" }) => (
-                                <div key={key}>
-                                    <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
-                                    <input
-                                        type={type}
-                                        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
-                                        placeholder={placeholder}
-                                        value={(form as any)[key]}
-                                        onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                                    />
-                                </div>
-                            ))}
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Title *</label>
+                                <input
+                                    type="text"
+                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
+                                    placeholder="e.g. AQAR 2022-23"
+                                    value={form.title}
+                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Cycle *</label>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
+                                    placeholder="e.g. 4"
+                                    value={form.cycle}
+                                    onChange={(e) => setForm({ ...form, cycle: toDigitsOnly(e.target.value) })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Academic Year</label>
+                                <input
+                                    type="text"
+                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
+                                    placeholder="e.g. 2022-23"
+                                    value={form.academic_year}
+                                    onChange={(e) => setForm({ ...form, academic_year: toAcadYear(e.target.value) })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">Display Order</label>
+                                <input
+                                    type="number"
+                                    className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
+                                    value={form.display_order}
+                                    onChange={(e) => setForm({ ...form, display_order: e.target.value })}
+                                />
+                            </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
                                 <textarea
@@ -287,7 +320,7 @@ export default function AqarAdminPage() {
                                         <td className="px-4 py-2">
                                             <input className="w-24 border rounded px-2 py-1 text-sm"
                                                 value={editForm.academic_year ?? doc.academic_year}
-                                                onChange={(e) => setEditForm({ ...editForm, academic_year: e.target.value })} />
+                                                onChange={(e) => setEditForm({ ...editForm, academic_year: toAcadYear(e.target.value) })} />
                                         </td>
                                         <td className="px-4 py-2">
                                             <input className="w-48 border rounded px-2 py-1 text-sm"

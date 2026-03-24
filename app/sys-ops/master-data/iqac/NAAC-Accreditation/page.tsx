@@ -6,7 +6,15 @@ import { Trash2, Plus, Upload, Pencil, X, Check, BookOpen, Award, Camera, Newspa
 import { toast, Toaster } from "react-hot-toast";
 import Image from "next/image";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Validation helpers ───────────────────────────────────────────────────────
+// Cycle: digits only, max 2 chars
+const toCycle     = (v: string) => v.replace(/\D/g, "").slice(0, 2);
+const isCycleVal  = (v: string) => /^\d{1,2}$/.test(v);
+// Period / Visit Year: digits only, max 4 chars
+const to4Digit    = (v: string) => v.replace(/\D/g, "").slice(0, 4);
+const is4Digit    = (v: string) => /^\d{4}$/.test(v);
+
+// ─── Types ───────────────────────────────────────────────────────────────────
 interface HistoryRecord {
     id: number; cycle: number; period: string; naac_score: string;
     principal: string; coordinator: string; asst_coordinator: string;
@@ -104,6 +112,8 @@ function HistoryTab() {
         if (!form.cycle || !form.period || !form.naac_score || !form.principal) {
             toast.error("Cycle, Period, NAAC Score, and Principal are required"); return;
         }
+        if (!isCycleVal(form.cycle))  { toast.error("Cycle must be a number up to 2 digits"); return; }
+        if (!is4Digit(form.period))   { toast.error("Period must be exactly 4 digits"); return; }
         setSaving(true);
         try {
             const r = await fetch("/api/iqac/naac/history", {
@@ -144,7 +154,7 @@ function HistoryTab() {
         } catch { toast.error("Failed to update status"); }
     };
 
-    const field = (label: string, key: keyof typeof form, placeholder?: string, type: string = "text") => (
+    const field = (label: string, key: keyof typeof form, placeholder?: string, type: string = "text", customOnChange?: (v: string) => void) => (
         <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
             <input
@@ -152,7 +162,7 @@ function HistoryTab() {
                 className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
                 placeholder={placeholder}
                 value={form[key] as string}
-                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                onChange={(e) => customOnChange ? customOnChange(e.target.value) : setForm({ ...form, [key]: e.target.value })}
             />
         </div>
     );
@@ -170,8 +180,8 @@ function HistoryTab() {
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                     <h3 className="font-bold text-lg mb-4">Add Accreditation Record</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {field("Cycle *", "cycle", "e.g. 1", "number")}
-                        {field("Period *", "period", "e.g. 2005")}
+                        {field("Cycle *", "cycle", "e.g. 1", "text", (v) => setForm({ ...form, cycle: toCycle(v) }))}
+                        {field("Period *", "period", "e.g. 2005", "text", (v) => setForm({ ...form, period: to4Digit(v) }))}
                         {field("NAAC Score *", "naac_score", "e.g. Five Stars")}
                         {field("Principal *", "principal", "Dr. John Smith, SJ")}
                         {field("NAAC Coordinator", "coordinator", "Dr. Jane Doe")}
@@ -224,8 +234,8 @@ function HistoryTab() {
                             <tr key={rec.id} className="hover:bg-gray-50">
                                 {editingId === rec.id ? (
                                     <>
-                                        <td className="px-4 py-2"><input type="number" className="w-16 border rounded px-2 py-1 text-sm" value={editForm.cycle ?? rec.cycle} onChange={(e) => setEditForm({ ...editForm, cycle: parseInt(e.target.value) })} /></td>
-                                        <td className="px-4 py-2"><input className="w-24 border rounded px-2 py-1 text-sm" value={editForm.period ?? rec.period} onChange={(e) => setEditForm({ ...editForm, period: e.target.value })} /></td>
+                                        <td className="px-4 py-2"><input type="text" inputMode="numeric" maxLength={2} className="w-16 border rounded px-2 py-1 text-sm" value={editForm.cycle ?? rec.cycle} onChange={(e) => setEditForm({ ...editForm, cycle: parseInt(toCycle(e.target.value)) || 0 })} /></td>
+                                        <td className="px-4 py-2"><input type="text" inputMode="numeric" maxLength={4} className="w-24 border rounded px-2 py-1 text-sm" value={editForm.period ?? rec.period} onChange={(e) => setEditForm({ ...editForm, period: to4Digit(e.target.value) })} /></td>
                                         <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.naac_score ?? rec.naac_score} onChange={(e) => setEditForm({ ...editForm, naac_score: e.target.value })} /></td>
                                         <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.principal ?? rec.principal} onChange={(e) => setEditForm({ ...editForm, principal: e.target.value })} /></td>
                                         <td className="px-4 py-2"><input className="w-40 border rounded px-2 py-1 text-sm" value={editForm.coordinator ?? rec.coordinator} onChange={(e) => setEditForm({ ...editForm, coordinator: e.target.value })} /></td>
@@ -482,6 +492,7 @@ function PeerVisitsTab() {
 
     const handleUpload = async () => {
         if (!file || !form.title) { toast.error("Cover image and title are required"); return; }
+        if (!is4Digit(form.visit_year)) { toast.error("Visit Year must be exactly 4 digits"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -565,7 +576,15 @@ function PeerVisitsTab() {
                             ].map(({ label, key, placeholder, type = "text" }) => (
                                 <div key={key}>
                                     <label className="block text-xs font-medium text-gray-700 mb-1">{label}</label>
-                                    <input type={type} className="w-full border rounded px-3 py-2 text-sm" placeholder={placeholder} value={(form as any)[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+                                    <input
+                                        type={type}
+                                        inputMode={key === "visit_year" ? "numeric" : undefined}
+                                        maxLength={key === "visit_year" ? 4 : undefined}
+                                        className="w-full border rounded px-3 py-2 text-sm"
+                                        placeholder={placeholder}
+                                        value={(form as any)[key]}
+                                        onChange={(e) => setForm({ ...form, [key]: key === "visit_year" ? to4Digit(e.target.value) : e.target.value })}
+                                    />
                                 </div>
                             ))}
                             <div className="flex items-center gap-2">
@@ -600,7 +619,7 @@ function PeerVisitsTab() {
                                         <div className="space-y-2">
                                             <input className="w-full border rounded px-2 py-1 text-xs" value={editForm.title ?? v.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} />
                                             <div className="flex gap-2">
-                                                <input type="number" className="w-20 border rounded px-2 py-1 text-xs" placeholder="Year" value={editForm.visit_year ?? v.visit_year} onChange={(e) => setEditForm({ ...editForm, visit_year: parseInt(e.target.value) })} />
+                                                <input type="text" inputMode="numeric" maxLength={4} className="w-20 border rounded px-2 py-1 text-xs" placeholder="Year" value={editForm.visit_year ?? v.visit_year} onChange={(e) => setEditForm({ ...editForm, visit_year: parseInt(to4Digit(e.target.value)) || 0 })} />
                                                 <input type="number" className="w-20 border rounded px-2 py-1 text-xs" placeholder="Photos" value={editForm.photo_count ?? v.photo_count} onChange={(e) => setEditForm({ ...editForm, photo_count: parseInt(e.target.value) })} />
                                             </div>
                                             <div className="flex gap-1">

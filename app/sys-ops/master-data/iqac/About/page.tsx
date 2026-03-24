@@ -18,6 +18,11 @@ const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
 
 const API = (type: string, extras = "") => `/api/iqac/About?type=${type}${extras}`;
 
+// Only letters, spaces, dots, hyphens, and apostrophes are allowed
+const TEXT_ONLY = /^[A-Za-z\s.\-']+$/;
+const isTextOnly = (v: string) => v === "" || TEXT_ONLY.test(v);
+const toTextOnly = (v: string) => v.replace(/[^A-Za-z\s.\-']/g, "");
+
 function useData<T>(type: string) {
     const [data, setData] = useState<T[]>([]);
     const [loading, setLoading] = useState(true);
@@ -64,6 +69,8 @@ function CoordinatorsTab() {
     const handleUpload = async () => {
         if (coords.length >= 2) { toast.error("Maximum 2 coordinators allowed. Delete one first."); return; }
         if (!file || !form.name) { toast.error("Photo and name are required"); return; }
+        if (!isTextOnly(form.name)) { toast.error("Name must contain only text (no numbers or special characters)"); return; }
+        if (!isTextOnly(form.role)) { toast.error("Role / Designation must contain only text (no numbers or special characters)"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -140,11 +147,11 @@ function CoordinatorsTab() {
                         <div className="space-y-3">
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Name *</label>
-                                <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Fr. Biju SJ" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+                                <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Fr. Biju SJ" value={form.name} onChange={e => setForm({ ...form, name: toTextOnly(e.target.value) })} />
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Role / Designation</label>
-                                <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. IQAC Coordinator" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} />
+                                <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. IQAC Coordinator" value={form.role} onChange={e => setForm({ ...form, role: toTextOnly(e.target.value) })} />
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Display Order</label>
@@ -225,6 +232,9 @@ function MembersTab() {
 
     const handleAdd = async () => {
         if (!form.name) { toast.error("Name is required"); return; }
+        if (!isTextOnly(form.name)) { toast.error("Name must contain only text (no numbers or special characters)"); return; }
+        if (!isTextOnly(form.role)) { toast.error("Role / Position must contain only text (no numbers or special characters)"); return; }
+        if (!isTextOnly(form.department)) { toast.error("Department / Designation must contain only text (no numbers or special characters)"); return; }
         setSaving(true);
         try {
             const r = await fetch(API("members"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, display_order: parseInt(form.display_order) }) });
@@ -282,15 +292,15 @@ function MembersTab() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">Name *</label>
-                            <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Dr. George Thomas SJ" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+                            <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Dr. George Thomas SJ" value={form.name} onChange={e => setForm({ ...form, name: toTextOnly(e.target.value) })} />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">Role / Position</label>
-                            <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Chairperson" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} />
+                            <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Chairperson" value={form.role} onChange={e => setForm({ ...form, role: toTextOnly(e.target.value) })} />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">Department / Designation</label>
-                            <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Principal" value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} />
+                            <input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. Principal" value={form.department} onChange={e => setForm({ ...form, department: toTextOnly(e.target.value) })} />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
@@ -337,17 +347,17 @@ function MembersTab() {
                                 <tr key={m.id} className="hover:bg-gray-50">
                                     <td className="px-4 py-3 font-medium max-w-[180px]">
                                         {editingId === m.id
-                                            ? <input className="w-full border rounded px-2 py-1 text-sm" value={editForm.name ?? m.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} />
+                                            ? <input className="w-full border rounded px-2 py-1 text-sm" value={editForm.name ?? m.name} onChange={e => setEditForm({ ...editForm, name: toTextOnly(e.target.value) })} />
                                             : m.name}
                                     </td>
                                     <td className="px-4 py-3 text-gray-600 max-w-[140px]">
                                         {editingId === m.id
-                                            ? <input className="w-full border rounded px-2 py-1 text-sm" value={editForm.role ?? m.role} onChange={e => setEditForm({ ...editForm, role: e.target.value })} />
+                                            ? <input className="w-full border rounded px-2 py-1 text-sm" value={editForm.role ?? m.role} onChange={e => setEditForm({ ...editForm, role: toTextOnly(e.target.value) })} />
                                             : (m.role || "—")}
                                     </td>
                                     <td className="px-4 py-3 text-gray-500 max-w-[180px] text-xs">
                                         {editingId === m.id
-                                            ? <input className="w-full border rounded px-2 py-1 text-sm" value={editForm.department ?? m.department} onChange={e => setEditForm({ ...editForm, department: e.target.value })} />
+                                            ? <input className="w-full border rounded px-2 py-1 text-sm" value={editForm.department ?? m.department} onChange={e => setEditForm({ ...editForm, department: toTextOnly(e.target.value) })} />
                                             : (m.department || "—")}
                                     </td>
                                     <td className="px-4 py-3 text-xs">

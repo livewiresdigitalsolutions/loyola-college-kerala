@@ -16,6 +16,10 @@ interface FormatDoc {
     is_active: boolean;
 }
 
+// Title: only letters, spaces, dots, hyphens, and apostrophes
+const toTextOnly = (v: string) => v.replace(/[^A-Za-z\s.\-']/g, "");
+const isTextOnly = (v: string) => v === "" || /^[A-Za-z\s.\-']+$/.test(v);
+
 const PRESET_CATEGORIES = [
     "Institutional Documentation",
     "Feedback & Assessment Forms",
@@ -69,6 +73,7 @@ export default function AqarFormatsAdminPage() {
             toast.error("File, title, and category are required");
             return;
         }
+        if (!isTextOnly(form.title)) { toast.error("Title must contain only text (no numbers or special characters)"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -200,7 +205,7 @@ export default function AqarFormatsAdminPage() {
                                     className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87] focus:border-transparent"
                                     placeholder="e.g. Staff Meeting Minutes"
                                     value={form.title}
-                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                    onChange={(e) => setForm({ ...form, title: toTextOnly(e.target.value) })}
                                 />
                             </div>
 
@@ -326,7 +331,7 @@ export default function AqarFormatsAdminPage() {
                                                             <input
                                                                 className="w-full border rounded px-2 py-1 text-sm"
                                                                 value={editForm.title ?? doc.title}
-                                                                onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                                                                onChange={(e) => setEditForm({ ...editForm, title: toTextOnly(e.target.value) })}
                                                             />
                                                         </td>
                                                         <td className="px-4 py-2">

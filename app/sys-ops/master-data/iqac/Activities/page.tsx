@@ -21,6 +21,10 @@ const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
 
 const API = (type: string, extras = "") => `/api/iqac/Activities?type=${type}${extras}`;
 
+// Year fields: no letters allowed (numbers and special characters only)
+const toNoText = (v: string) => v.replace(/[A-Za-z]/g, "");
+const isNoText = (v: string) => !/[A-Za-z]/.test(v);
+
 // ─── Shared helpers ────────────────────────────────────────────────────────────
 function useData<T>(type: string) {
     const [data, setData] = useState<T[]>([]);
@@ -336,6 +340,7 @@ function MinutesTab() {
 
     const handleUpload = async () => {
         if (!file || !form.year) { toast.error("File and year are required"); return; }
+        if (!isNoText(form.year)) { toast.error("Year must not contain letters"); return; }
         setUploading(true);
         try {
             const fd = new FormData();
@@ -369,7 +374,7 @@ function MinutesTab() {
                             {file && <p className="mt-2 text-xs text-green-700 bg-green-50 rounded px-3 py-2">{file.name}</p>}
                         </div>
                         <div className="space-y-3">
-                            <div><label className="block text-xs font-medium text-gray-700 mb-1">Year *</label><input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. 2022-2023" value={form.year} onChange={e => setForm({ ...form, year: e.target.value })} /></div>
+                            <div><label className="block text-xs font-medium text-gray-700 mb-1">Year *</label><input className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" placeholder="e.g. 2022-2023" value={form.year} onChange={e => setForm({ ...form, year: toNoText(e.target.value) })} /></div>
                             <div><label className="block text-xs font-medium text-gray-700 mb-1">Display Order</label><input type="number" className="w-full border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#342D87]" value={form.display_order} onChange={e => setForm({ ...form, display_order: e.target.value })} /></div>
                             <div className="flex items-center gap-2"><input type="checkbox" id="min_active" checked={form.is_active} onChange={e => setForm({ ...form, is_active: e.target.checked })} /><label htmlFor="min_active" className="text-sm text-gray-700">Active</label></div>
                         </div>
@@ -389,7 +394,7 @@ function MinutesTab() {
                                 : minutes.map((m, idx) => (
                                     <tr key={m.id} className="hover:bg-gray-50">
                                         <td className="px-4 py-3 text-gray-500 text-center w-12">{idx + 1}</td>
-                                        <td className="px-4 py-3 font-medium">{editingId === m.id ? <input className="w-32 border rounded px-2 py-1 text-sm" value={editYear} onChange={e => setEditYear(e.target.value)} /> : m.year}</td>
+                                        <td className="px-4 py-3 font-medium">{editingId === m.id ? <input className="w-32 border rounded px-2 py-1 text-sm" value={editYear} onChange={e => setEditYear(toNoText(e.target.value))} /> : m.year}</td>
                                         <td className="px-4 py-3">{m.pdf_url ? <a href={m.pdf_url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline flex items-center gap-1"><FileText className="w-3.5 h-3.5" />View</a> : <span className="text-gray-400 text-xs">—</span>}</td>
                                         <td className="px-4 py-3"><StatusBadge active={m.is_active} onToggle={() => toggleActive("minutes", m.id, m.is_active, refresh)} /></td>
                                         <td className="px-4 py-3">
