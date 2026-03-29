@@ -7,8 +7,34 @@ export default function RegisterComplaint() {
   const [isOpen, setIsOpen] = useState(true);
   const [submitted, setSubmitted] = useState(false);
 
+  // Controlled fields with validation
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState<{ name?: string; email?: string; phone?: string }>({});
+
+  // Name: allow letters, spaces, and . only
+  const handleNameChange = (v: string) => {
+    const cleaned = v.replace(/[^a-zA-Z\s.]/g, "");
+    setName(cleaned);
+    setErrors(e => ({ ...e, name: undefined }));
+  };
+
+  // Phone: digits only, max 10
+  const handlePhoneChange = (v: string) => {
+    const cleaned = v.replace(/\D/g, "").slice(0, 10);
+    setPhone(cleaned);
+    setErrors(e => ({ ...e, phone: undefined }));
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const newErrors: typeof errors = {};
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      newErrors.email = "Please enter a valid email address.";
+    if (phone && phone.length !== 10)
+      newErrors.phone = "Phone number must be exactly 10 digits.";
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
     setSubmitted(true);
   };
 
@@ -72,9 +98,12 @@ export default function RegisterComplaint() {
                   <input
                     type="text"
                     id="complaint-name"
+                    value={name}
+                    onChange={e => handleNameChange(e.target.value)}
                     placeholder="Enter your full name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#13432C]/20 focus:border-[#13432C] transition-colors"
+                    className={`w-full px-4 py-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#13432C]/20 focus:border-[#13432C] transition-colors ${errors.name ? "border-red-400" : "border-gray-300"}`}
                   />
+                  {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                 </div>
                 <div>
                   <label htmlFor="complaint-email" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -83,9 +112,12 @@ export default function RegisterComplaint() {
                   <input
                     type="email"
                     id="complaint-email"
+                    value={email}
+                    onChange={e => { setEmail(e.target.value); setErrors(err => ({ ...err, email: undefined })); }}
                     placeholder="Enter your email address"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#13432C]/20 focus:border-[#13432C] transition-colors"
+                    className={`w-full px-4 py-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#13432C]/20 focus:border-[#13432C] transition-colors ${errors.email ? "border-red-400" : "border-gray-300"}`}
                   />
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                 </div>
               </div>
 
@@ -115,9 +147,13 @@ export default function RegisterComplaint() {
                   <input
                     type="tel"
                     id="complaint-phone"
-                    placeholder="Enter your phone number"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#13432C]/20 focus:border-[#13432C] transition-colors"
+                    value={phone}
+                    onChange={e => handlePhoneChange(e.target.value)}
+                    placeholder="10-digit phone number"
+                    maxLength={10}
+                    className={`w-full px-4 py-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#13432C]/20 focus:border-[#13432C] transition-colors ${errors.phone ? "border-red-400" : "border-gray-300"}`}
                   />
+                  {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
               </div>
 

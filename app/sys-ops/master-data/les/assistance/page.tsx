@@ -20,6 +20,10 @@ export default function LesAssistancePage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", phone: "" });
 
+  // Validation helpers
+  const sanitizeContactName = (val: string) => val.replace(/[^a-zA-Z\s]/g, ""); // letters and spaces only
+  const sanitizePhone = (val: string) => val.replace(/[^0-9]/g, "").slice(0, 10); // digits only, max 10
+
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
@@ -32,6 +36,8 @@ export default function LesAssistancePage() {
 
   const handleAdd = async () => {
     if (!formData.name.trim() || !formData.phone.trim()) { toast.error("Name and phone are required"); return; }
+    if (/[^a-zA-Z\s]/.test(formData.name)) { toast.error("Contact name must contain only letters"); return; }
+    if (!/^\d{10}$/.test(formData.phone)) { toast.error("Phone number must be exactly 10 digits"); return; }
     try {
       const res = await fetch("/api/les/assistance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Contact added"); setFormData({ name: "", phone: "" }); setIsAdding(false); fetchItems(); }
@@ -41,6 +47,8 @@ export default function LesAssistancePage() {
 
   const handleUpdate = async (id: number) => {
     if (!formData.name.trim() || !formData.phone.trim()) { toast.error("Name and phone are required"); return; }
+    if (/[^a-zA-Z\s]/.test(formData.name)) { toast.error("Contact name must contain only letters"); return; }
+    if (!/^\d{10}$/.test(formData.phone)) { toast.error("Phone number must be exactly 10 digits"); return; }
     try {
       const res = await fetch(`/api/les/assistance/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Updated"); setEditingId(null); setFormData({ name: "", phone: "" }); fetchItems(); }
@@ -61,8 +69,8 @@ export default function LesAssistancePage() {
 
   const renderForm = (onSave: () => void) => (
     <div className="flex flex-col gap-3">
-      <input type="text" placeholder="Contact name (e.g. Police, Ambulance)" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
-      <input type="text" placeholder="Phone number" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Contact name (letters only)" value={formData.name} onChange={(e) => setFormData({ ...formData, name: sanitizeContactName(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Phone number (10 digits)" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: sanitizePhone(e.target.value) })} maxLength={10} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
       <div className="flex gap-3">
         <button onClick={onSave} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"><Save className="w-4 h-4" />Save</button>
         <button onClick={cancelEdit} className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"><X className="w-4 h-4" />Cancel</button>

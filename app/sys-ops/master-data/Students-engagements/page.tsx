@@ -3,10 +3,14 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Users, Image as ImageIcon, Calendar, Award, Crown, UserCog, Mail, Globe } from "lucide-react";
+import { ArrowLeft, Users, Image as ImageIcon, Calendar, Award, Crown, UserCog, Mail, Globe, GraduationCap, Leaf, Shield, ShieldCheck } from "lucide-react";
 
 const StudentsEngagementsCards = [
     { id: "students-progression", title: "Students Progression", description: "Manage rank holders, qualifiers, placements & initiatives", href: "/sys-ops/master-data/Students-engagements/students-progression", icon: <Users className="w-6 h-6" />, color: "bg-emerald-600" },
+    { id: "college-union", title: "College Union", description: "Manage College Union team, reports, activities, arts & gallery", href: "/sys-ops/master-data/Students-engagements/college-union", icon: <GraduationCap className="w-6 h-6" />, color: "bg-green-700" },
+    { id: "em-bio-diversity", title: "EM & Bio Diversity", description: "Manage organizing committee, gallery & contact details", href: "/sys-ops/master-data/Students-engagements/em-and-bio-diversity", icon: <Leaf className="w-6 h-6" />, color: "bg-teal-600" },
+    { id: "loyola-nss-unit", title: "Loyola NSS Unit", description: "Manage NSS committee, activities, blood connect, special camp, gallery & contact", href: "/sys-ops/master-data/Students-engagements/loyola-nss-unit", icon: <Shield className="w-6 h-6" />, color: "bg-orange-600" },
+    { id: "womens-cell", title: "Women's Cell", description: "Manage committee, admin structure, reports, news, activities, events, gallery & contact", href: "/sys-ops/master-data/Students-engagements/womens-cell", icon: <ShieldCheck className="w-6 h-6" />, color: "bg-pink-600" },
     { id: "loyola-mentoring-programme", title: "Loyola Mentoring Programme", description: "Manage LMP organizing team and mentoring session records", href: "/sys-ops/master-data/Students-engagements/loyola-mentoring-programme", icon: <Globe className="w-6 h-6" />, color: "bg-blue-500" },
     { id: "litcof-management", title: "Loyola-in-the-company-of-friends", description: "Upload and manage LITCOF organizing team, activities, achievements, events & gallery", href: "/sys-ops/master-data/Students-engagements/loyola-in-the-company-of-friends", icon: <ImageIcon className="w-6 h-6" />, color: "bg-blue-600" },
     { id: "lace-management", title: "Loyola Academy for Career Enhancement", description: "Manage LACE organizing team and activities", href: "/sys-ops/master-data/Students-engagements/loyola-academy-for-career-enhancement", icon: <Calendar className="w-6 h-6" />, color: "bg-purple-600" },

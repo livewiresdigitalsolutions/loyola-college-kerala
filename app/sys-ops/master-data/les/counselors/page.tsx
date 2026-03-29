@@ -27,6 +27,9 @@ export default function LesCounselorsPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", specialization: "", image: "" });
+
+  // Validation helpers — text + special chars, no digits
+  const sanitizeTextSpecial = (val: string) => val.replace(/[0-9]/g, "");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,6 +80,8 @@ export default function LesCounselorsPage() {
 
   const handleAdd = async () => {
     if (!formData.name.trim()) { toast.error("Name is required"); return; }
+    if (/[0-9]/.test(formData.name)) { toast.error("Counselor name must not contain numbers"); return; }
+    if (/[0-9]/.test(formData.specialization)) { toast.error("Specialization must not contain numbers"); return; }
     try {
       const res = await fetch("/api/les/counselors", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Counselor added"); setFormData({ name: "", specialization: "", image: "" }); setIsAdding(false); fetchItems(); }
@@ -86,6 +91,8 @@ export default function LesCounselorsPage() {
 
   const handleUpdate = async (id: number) => {
     if (!formData.name.trim()) { toast.error("Name is required"); return; }
+    if (/[0-9]/.test(formData.name)) { toast.error("Counselor name must not contain numbers"); return; }
+    if (/[0-9]/.test(formData.specialization)) { toast.error("Specialization must not contain numbers"); return; }
     try {
       const res = await fetch(`/api/les/counselors/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Updated"); setEditingId(null); setFormData({ name: "", specialization: "", image: "" }); fetchItems(); }
@@ -161,8 +168,8 @@ export default function LesCounselorsPage() {
 
   const renderForm = (onSave: () => void) => (
     <div className="flex flex-col gap-3">
-      <input type="text" placeholder="Counselor name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
-      <input type="text" placeholder="Specialization" value={formData.specialization} onChange={(e) => setFormData({ ...formData, specialization: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Counselor name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: sanitizeTextSpecial(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Specialization" value={formData.specialization} onChange={(e) => setFormData({ ...formData, specialization: sanitizeTextSpecial(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
       {/* Image Upload */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">

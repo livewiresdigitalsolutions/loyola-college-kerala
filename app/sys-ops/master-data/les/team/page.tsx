@@ -24,6 +24,11 @@ export default function LesTeamPage() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Validation helpers
+  const sanitizeName = (val: string) => val.replace(/[0-9]/g, ""); // Allow text + special chars, no digits
+  const sanitizeRole = (val: string) => val.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces only
+  const sanitizeAltText = (val: string) => val.replace(/[^a-zA-Z0-9\s]/g, ""); // Allow text and numbers, no special symbols
+
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
@@ -55,6 +60,9 @@ export default function LesTeamPage() {
 
   const handleAdd = async () => {
     if (!formData.name.trim() || !formData.role.trim()) { toast.error("Name and role are required"); return; }
+    if (/[0-9]/.test(formData.name)) { toast.error("Name must not contain numbers"); return; }
+    if (/[^a-zA-Z\s]/.test(formData.role)) { toast.error("Role must contain only letters"); return; }
+    if (formData.profile_url && /[^a-zA-Z0-9\s]/.test(formData.profile_url)) { toast.error("Alt text/description must not contain special symbols"); return; }
     try {
       const res = await fetch("/api/les/team", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Team member added"); setFormData({ name: "", role: "", image: "", profile_url: "" }); setIsAdding(false); fetchItems(); }
@@ -64,6 +72,9 @@ export default function LesTeamPage() {
 
   const handleUpdate = async (id: number) => {
     if (!formData.name.trim() || !formData.role.trim()) { toast.error("Name and role are required"); return; }
+    if (/[0-9]/.test(formData.name)) { toast.error("Name must not contain numbers"); return; }
+    if (/[^a-zA-Z\s]/.test(formData.role)) { toast.error("Role must contain only letters"); return; }
+    if (formData.profile_url && /[^a-zA-Z0-9\s]/.test(formData.profile_url)) { toast.error("Alt text/description must not contain special symbols"); return; }
     try {
       const res = await fetch(`/api/les/team/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Updated"); setEditingId(null); setFormData({ name: "", role: "", image: "", profile_url: "" }); fetchItems(); }
@@ -89,8 +100,8 @@ export default function LesTeamPage() {
 
   const renderForm = (onSave: () => void) => (
     <div className="flex flex-col gap-3">
-      <input type="text" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
-      <input type="text" placeholder="Role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: sanitizeName(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: sanitizeRole(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
       {/* Image Upload */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">
@@ -103,7 +114,7 @@ export default function LesTeamPage() {
         </div>
         <input type="text" placeholder="Or paste image URL" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none w-full text-sm" />
       </div>
-      <input type="text" placeholder="Profile URL (optional)" value={formData.profile_url} onChange={(e) => setFormData({ ...formData, profile_url: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Alt Text / Description (letters & numbers only)" value={formData.profile_url} onChange={(e) => setFormData({ ...formData, profile_url: sanitizeAltText(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
       <div className="flex gap-3">
         <button onClick={onSave} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"><Save className="w-4 h-4" />Save</button>
         <button onClick={cancelEdit} className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"><X className="w-4 h-4" />Cancel</button>

@@ -158,12 +158,13 @@ export async function DELETE(request: Request) {
 
         const connection = await mysql.createConnection(mysqlConfig);
         try {
-            // Try to delete associated file for reports and minutes
-            if (type === "reports" || type === "minutes") {
-                const [rows] = await connection.execute(`SELECT pdf_url FROM ${table} WHERE id = ?`, [id]);
+            // Try to delete associated file for reports, minutes, and timelines
+            if (type === "reports" || type === "minutes" || type === "timelines") {
+                const urlField = type === "timelines" ? "view_url" : "pdf_url";
+                const [rows] = await connection.execute(`SELECT ${urlField} AS file_url FROM ${table} WHERE id = ?`, [id]);
                 const rec = Array.isArray(rows) && rows.length > 0 ? (rows[0] as any) : null;
-                if (rec?.pdf_url && !rec.pdf_url.startsWith("http")) {
-                    try { await fs.unlink(path.join(process.cwd(), "public", rec.pdf_url)); } catch { }
+                if (rec?.file_url && !rec.file_url.startsWith("http")) {
+                    try { await fs.unlink(path.join(process.cwd(), "public", rec.file_url)); } catch { }
                 }
             }
             await connection.execute(`DELETE FROM ${table} WHERE id = ?`, [id]);

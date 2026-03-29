@@ -1,14 +1,27 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
-const teamMembers = [
-  {
-    name: "Dr Anitha S",
-    role: "COORDINATOR",
-    image: "/assets/associations/em-bio-diversity/anitha-s.jpg",
-  },
-];
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  image_url: string;
+}
 
 export default function OrganizingTeam() {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    fetch("/api/students/em-and-bio-diversity?type=organizing-team")
+      .then(r => r.json())
+      .then(d => { if (d.success) setTeamMembers(d.data || []); })
+      .catch(() => {});
+  }, []);
+
+  if (teamMembers.length === 0) return null;
+
   return (
     <section className="max-w-7xl mx-auto px-6 py-16 md:py-20">
       <h2 className="text-3xl md:text-[38px] font-bold text-gray-900 text-center mb-5">
@@ -17,11 +30,11 @@ export default function OrganizingTeam() {
       <div className="w-16 h-1 bg-[#13432C] rounded-full mx-auto mb-16"></div>
 
       <div className="flex flex-wrap justify-center gap-12 md:gap-24">
-        {teamMembers.map((member, i) => (
-          <div key={i} className="flex flex-col items-center text-center">
+        {teamMembers.map(member => (
+          <div key={member.id} className="flex flex-col items-center text-center">
             <div className="w-[140px] h-[140px] md:w-[160px] md:h-[160px] rounded-full overflow-hidden shadow-md shadow-gray-200 mb-6 drop-shadow-sm bg-gray-200">
               <Image
-                src={member.image}
+                src={member.image_url || "/assets/defaultprofile.png"}
                 alt={member.name}
                 width={160}
                 height={160}

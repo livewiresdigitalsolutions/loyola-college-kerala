@@ -54,13 +54,27 @@ export default function LesContactInfoPage() {
     finally { setLoading(false); }
   };
 
+  // Validation helpers
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const sanitizePhones = (val: string) => val.replace(/[^0-9,\s]/g, ""); // digits, commas and spaces only
+
   const handleSave = async () => {
+    // Validate emails
+    const emailList = formData.emails.split(",").map(s => s.trim()).filter(Boolean);
+    for (const email of emailList) {
+      if (!emailRegex.test(email)) { toast.error(`Invalid email: ${email}`); return; }
+    }
+    // Validate phones — each must be exactly 10 digits
+    const phoneList = formData.phones.split(",").map(s => s.trim()).filter(Boolean);
+    for (const phone of phoneList) {
+      if (!/^\d{10}$/.test(phone)) { toast.error(`Phone "${phone}" must be exactly 10 digits`); return; }
+    }
     setSaving(true);
     try {
       const payload = {
         address: formData.address,
-        emails: formData.emails.split(",").map(s => s.trim()).filter(Boolean),
-        phones: formData.phones.split(",").map(s => s.trim()).filter(Boolean),
+        emails: emailList,
+        phones: phoneList,
         office_hours_weekdays: formData.office_hours_weekdays,
         office_hours_saturday: formData.office_hours_saturday,
         office_hours_sunday: formData.office_hours_sunday,
@@ -97,8 +111,8 @@ export default function LesContactInfoPage() {
               <input type="text" value={formData.emails} onChange={(e) => setFormData({ ...formData, emails: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phones (comma separated)</label>
-              <input type="text" value={formData.phones} onChange={(e) => setFormData({ ...formData, phones: e.target.value })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phones (comma separated, 10 digits each)</label>
+              <input type="text" value={formData.phones} onChange={(e) => setFormData({ ...formData, phones: sanitizePhones(e.target.value) })} placeholder="e.g. 9876543210, 9123456789" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>

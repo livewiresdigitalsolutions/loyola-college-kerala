@@ -127,6 +127,9 @@ export default function LesCoordinatorsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({ name: "", role: "" });
 
+  // Validation helpers — allow text + special chars, no digits
+  const sanitizeTextSpecial = (val: string) => val.replace(/[0-9]/g, "");
+
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
@@ -139,6 +142,8 @@ export default function LesCoordinatorsPage() {
 
   const handleAdd = async () => {
     if (!formData.name.trim()) { toast.error("Name is required"); return; }
+    if (/[0-9]/.test(formData.name)) { toast.error("Name must not contain numbers"); return; }
+    if (/[0-9]/.test(formData.role)) { toast.error("Role must not contain numbers"); return; }
     try {
       const res = await fetch("/api/les/coordinators", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Coordinator added"); setFormData({ name: "", role: "" }); setIsAdding(false); fetchItems(); }
@@ -148,6 +153,8 @@ export default function LesCoordinatorsPage() {
 
   const handleUpdate = async (id: number) => {
     if (!formData.name.trim()) { toast.error("Name is required"); return; }
+    if (/[0-9]/.test(formData.name)) { toast.error("Name must not contain numbers"); return; }
+    if (/[0-9]/.test(formData.role)) { toast.error("Role must not contain numbers"); return; }
     try {
       const res = await fetch(`/api/les/coordinators/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       if (res.ok) { toast.success("Updated"); setEditingId(null); setFormData({ name: "", role: "" }); fetchItems(); }
@@ -168,8 +175,8 @@ export default function LesCoordinatorsPage() {
 
   const renderForm = (onSave: () => void) => (
     <div className="flex flex-col gap-3">
-      <input type="text" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
-      <input type="text" placeholder="Role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: sanitizeTextSpecial(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
+      <input type="text" placeholder="Role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: sanitizeTextSpecial(e.target.value) })} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#342D87] focus:border-transparent outline-none" />
       <div className="flex gap-3">
         <button onClick={onSave} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"><Save className="w-4 h-4" />Save</button>
         <button onClick={cancelEdit} className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"><X className="w-4 h-4" />Cancel</button>

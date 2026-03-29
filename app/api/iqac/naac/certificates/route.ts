@@ -68,7 +68,7 @@ export async function DELETE(request: Request) {
         try {
             const [rows] = await connection.execute("SELECT image_url FROM naac_certificates WHERE id = ?", [id]);
             const record = Array.isArray(rows) && rows.length > 0 ? (rows[0] as any) : null;
-            if (record?.image_url) {
+            if (record?.image_url && !record.image_url.startsWith("http")) {
                 const filePath = path.join(process.cwd(), "public", record.image_url);
                 try { await fs.unlink(filePath); } catch { }
             }
