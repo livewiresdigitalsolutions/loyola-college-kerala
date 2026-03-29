@@ -14,6 +14,9 @@ interface EminentVisitor {
     is_active: boolean;
 }
 
+// Strip digits – only allow text + special symbols
+const stripNonText = (val: string) => val.replace(/[0-9]/g, "");
+
 export default function EminentVisitorsPage() {
     const [visitors, setVisitors] = useState<EminentVisitor[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +71,14 @@ export default function EminentVisitorsPage() {
     const handleUploadVisitor = async () => {
         if (!selectedFile || !newVisitor.name) {
             toast.error("Please select an image and provide a name");
+            return;
+        }
+        if (/[0-9]/.test(newVisitor.name)) {
+            toast.error("Name must not contain numbers");
+            return;
+        }
+        if (newVisitor.title && /[0-9]/.test(newVisitor.title)) {
+            toast.error("Title / Designation must not contain numbers");
             return;
         }
 
@@ -163,6 +174,14 @@ export default function EminentVisitorsPage() {
 
     const handleSaveEdit = async () => {
         if (!editingId) return;
+        if (/[0-9]/.test(editForm.name)) {
+            toast.error("Name must not contain numbers");
+            return;
+        }
+        if (editForm.title && /[0-9]/.test(editForm.title)) {
+            toast.error("Title / Designation must not contain numbers");
+            return;
+        }
         try {
             const response = await fetch("/api/about", {
                 method: "PUT",
@@ -281,7 +300,7 @@ export default function EminentVisitorsPage() {
                                 placeholder="e.g. Dr. A.P.J. Abdul Kalam"
                                 value={newVisitor.name}
                                 onChange={(e) =>
-                                    setNewVisitor({ ...newVisitor, name: e.target.value })
+                                    setNewVisitor({ ...newVisitor, name: stripNonText(e.target.value) })
                                 }
                             />
                         </div>
@@ -297,7 +316,7 @@ export default function EminentVisitorsPage() {
                                 placeholder="e.g. Former President of India"
                                 value={newVisitor.title}
                                 onChange={(e) =>
-                                    setNewVisitor({ ...newVisitor, title: e.target.value })
+                                    setNewVisitor({ ...newVisitor, title: stripNonText(e.target.value) })
                                 }
                             />
                         </div>
@@ -394,14 +413,14 @@ export default function EminentVisitorsPage() {
                                             className="w-full rounded border border-gray-300 p-1.5 text-sm"
                                             placeholder="Name"
                                             value={editForm.name}
-                                            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                            onChange={(e) => setEditForm({ ...editForm, name: stripNonText(e.target.value) })}
                                         />
                                         <input
                                             type="text"
                                             className="w-full rounded border border-gray-300 p-1.5 text-sm"
                                             placeholder="Title / Designation"
                                             value={editForm.title}
-                                            onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                                            onChange={(e) => setEditForm({ ...editForm, title: stripNonText(e.target.value) })}
                                         />
                                         <input
                                             type="number"

@@ -24,8 +24,8 @@ export default function StudentsEngagements() {
                     <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Students Engagements</h1>
-                    <p className="text-gray-600 text-sm">Manage student engagement programmes and associations</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Student Engagement Management</h1>
+                    <p className="text-gray-600 text-sm">Manage all student engagement website content and user accounts</p>
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
