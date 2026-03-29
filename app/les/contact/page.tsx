@@ -6,6 +6,9 @@ import { Mail, Phone, MapPin, Clock, Send, User } from 'lucide-react'
 import { coordinators as fallbackCoordinators, contactInfo as fallbackContactInfo } from '../_data'
 import { submitContactForm, getCoordinators, getContactInfo } from '../_services/api'
 import { ContactFormData, ContactPerson, ContactInfo as ContactInfoType } from '../_data/types'
+import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
+import LimitedPhoneInput from '../_components/PhoneNumberInput'
 
 export default function ContactPage() {
   const [coordinatorsList, setCoordinatorsList] = useState<ContactPerson[]>(fallbackCoordinators)
@@ -27,7 +30,13 @@ export default function ContactPage() {
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    let { name, value } = e.target
+    
+    if (name === 'firstName' || name === 'lastName') {
+      value = value.replace(/[0-9]/g, '')
+    }
+    
+    setFormData({ ...formData, [name]: value })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,11 +145,26 @@ export default function ContactPage() {
                 <div className="w-12 h-12 bg-[#1a5632] rounded-full flex items-center justify-center shrink-0">
                   <Clock className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">Office Hours</h3>
-                  <p className="text-gray-600">{info?.officeHours?.weekdays}</p>
-                  <p className="text-gray-600">{info?.officeHours?.saturday}</p>
-                  <p className="text-gray-600">{info?.officeHours?.sunday}</p>
+                <div className="space-y-1">
+                  <h3 className="font-semibold text-gray-800 mb-2">Working Hours</h3>
+                  {info?.officeHours?.weekdays && (
+                    <div className="flex gap-2 text-sm">
+                      <span className="text-gray-500 min-w-[90px]">Weekdays :</span>
+                      <span className="text-gray-700">{info.officeHours.weekdays}</span>
+                    </div>
+                  )}
+                  {info?.officeHours?.saturday && (
+                    <div className="flex gap-2 text-sm">
+                      <span className="text-gray-500 min-w-[90px]">Saturday :</span>
+                      <span className="text-gray-700">{info.officeHours.saturday}</span>
+                    </div>
+                  )}
+                  {info?.officeHours?.sunday && (
+                    <div className="flex gap-2 text-sm">
+                      <span className="text-gray-500 min-w-[90px]">Sunday :</span>
+                      <span className="text-gray-700">{info.officeHours.sunday}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -186,6 +210,8 @@ export default function ContactPage() {
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition"
                       placeholder="John"
+                      minLength={2}
+                      maxLength={50}
                       required
                     />
                   </div>
@@ -198,6 +224,8 @@ export default function ContactPage() {
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition"
                       placeholder="Doe"
+                      minLength={1}
+                      maxLength={50}
                       required
                     />
                   </div>
@@ -212,20 +240,29 @@ export default function ContactPage() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition"
                     placeholder="john@example.com"
+                    pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                    title="Please enter a valid email address."
                     required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input 
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a5632] focus:border-transparent outline-none transition"
-                    placeholder="+91 XXXXX XXXXX"
-                  />
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-[#1a5632] focus-within:border-transparent transition overflow-hidden p-0!">
+                    <PhoneInput
+                      defaultCountry="IN"
+                      international
+                      countryCallingCodeEditable={false}
+                      name="phone"
+                      value={formData.phone}
+                      onChange={(value) => setFormData({ ...formData, phone: value || '' })}
+                      limitMaxLength={true}
+                      placeholder="+91 XXXXX XXXXX"
+                      className="w-full px-4 py-3 bg-transparent border-none outline-none focus:ring-0 [&>input]:outline-none [&>input]:bg-transparent"
+                      numberInputProps={{ required: true }}
+                      inputComponent={LimitedPhoneInput}
+                    />
+                  </div>
                 </div>
 
                 <div>

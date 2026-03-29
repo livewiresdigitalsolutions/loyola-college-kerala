@@ -974,6 +974,13 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close all menus when route changes
+  useEffect(() => {
+    setActiveDropdown(null);
+    setMobileDropdown(null);
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   const hideNavbarExactRoutes = ["/", "/admission/pg-admissions"];
   const hideNavbarPrefixRoutes = ["/sys-ops", "/alumni", "/journals", "/les"];
 
@@ -1310,23 +1317,27 @@ const Navbar: React.FC = () => {
                 Admissions
               </Link>
               <div
-                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition nav-trigger"
+                className={`relative flex items-center gap-1 cursor-pointer transition nav-trigger px-2.5 py-1 rounded-md ${
+                  activeDropdown === "student" ? "bg-white/25 font-semibold" : "hover:bg-white/20 hover:font-semibold"
+                }`}
                 onMouseEnter={() => setActiveDropdown("student")}
                 onMouseLeave={() => setActiveDropdown(null)}
                 onClick={() => setActiveDropdown(activeDropdown === "student" ? null : "student")}
               >
-                Student <ChevronDown size={14} />
+                Student <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === "student" ? "rotate-180" : ""}`} />
               </div>
               <Link href="/alumni" className="hover:opacity-80 transition">
                 Alumni
               </Link>
               <div
-                className="relative flex items-center gap-1 cursor-pointer hover:opacity-80 transition nav-trigger"
+                className={`relative flex items-center gap-1 cursor-pointer transition nav-trigger px-2.5 py-1 rounded-md ${
+                  activeDropdown === "newsEvents" ? "bg-white/25 font-semibold" : "hover:bg-white/20 hover:font-semibold"
+                }`}
                 onMouseEnter={() => setActiveDropdown("newsEvents")}
                 onMouseLeave={() => setActiveDropdown(null)}
                 onClick={() => setActiveDropdown(activeDropdown === "newsEvents" ? null : "newsEvents")}
               >
-                News & Events <ChevronDown size={14} />
+                News & Events <ChevronDown size={14} className={`transition-transform duration-200 ${activeDropdown === "newsEvents" ? "rotate-180" : ""}`} />
               </div>
               <Link href="/contact" className="hover:opacity-80 transition">
                 Contact Us
@@ -1394,8 +1405,12 @@ const Navbar: React.FC = () => {
                 onMouseLeave={() => setActiveDropdown(null)}
                 onClick={() => setActiveDropdown(activeDropdown === "about" ? null : "about")}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
-                  About <ChevronDown size={16} />
+                <div className={`flex items-center gap-1 cursor-pointer transition px-3 py-1 rounded-md ${
+                    activeDropdown === "about"
+                      ? isTransparent ? "bg-white text-primary font-semibold" : "bg-primary/10 text-primary font-semibold"
+                      : isTransparent ? "hover:bg-white/20 hover:font-semibold" : "hover:bg-primary/10 hover:text-primary hover:font-semibold"
+                  }`}>
+                  About <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === "about" ? "rotate-180" : ""}`} />
                 </div>
               </div>
 
@@ -1405,8 +1420,12 @@ const Navbar: React.FC = () => {
                 onMouseLeave={() => setActiveDropdown(null)}
                 onClick={() => setActiveDropdown(activeDropdown === "academics" ? null : "academics")}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
-                  Academics <ChevronDown size={16} />
+                <div className={`flex items-center gap-1 cursor-pointer transition px-3 py-1 rounded-md ${
+                    activeDropdown === "academics"
+                      ? isTransparent ? "bg-white text-primary font-semibold" : "bg-primary/10 text-primary font-semibold"
+                      : isTransparent ? "hover:bg-white/20 hover:font-semibold" : "hover:bg-primary/10 hover:text-primary hover:font-semibold"
+                  }`}>
+                  Academics <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === "academics" ? "rotate-180" : ""}`} />
                 </div>
               </div>
 
@@ -1420,8 +1439,12 @@ const Navbar: React.FC = () => {
                 onMouseLeave={() => setActiveDropdown(null)}
                 onClick={() => setActiveDropdown(activeDropdown === "iqac" ? null : "iqac")}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
-                  IQAC <ChevronDown size={16} />
+                <div className={`flex items-center gap-1 cursor-pointer transition px-3 py-1 rounded-md ${
+                    activeDropdown === "iqac"
+                      ? isTransparent ? "bg-white text-primary font-semibold" : "bg-primary/10 text-primary font-semibold"
+                      : isTransparent ? "hover:bg-white/20 hover:font-semibold" : "hover:bg-primary/10 hover:text-primary hover:font-semibold"
+                  }`}>
+                  IQAC <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === "iqac" ? "rotate-180" : ""}`} />
                 </div>
               </div>
 
@@ -1431,8 +1454,12 @@ const Navbar: React.FC = () => {
                 onMouseLeave={() => setActiveDropdown(null)}
                 onClick={() => setActiveDropdown(activeDropdown === "journals" ? null : "journals")}
               >
-                <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition">
-                  Journals <ChevronDown size={16} />
+                <div className={`flex items-center gap-1 cursor-pointer transition px-3 py-1 rounded-md ${
+                    activeDropdown === "journals"
+                      ? isTransparent ? "bg-white text-primary font-semibold" : "bg-primary/10 text-primary font-semibold"
+                      : isTransparent ? "hover:bg-white/20 hover:font-semibold" : "hover:bg-primary/10 hover:text-primary hover:font-semibold"
+                  }`}>
+                  Journals <ChevronDown size={16} className={`transition-transform duration-200 ${activeDropdown === "journals" ? "rotate-180" : ""}`} />
                 </div>
               </div>
 
@@ -1466,7 +1493,7 @@ const Navbar: React.FC = () => {
           onMouseLeave={() => setActiveDropdown(null)}
         >
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
-            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl min-h-[320px]">
               {/* Left Blue Sidebar with Background Image */}
               <div
                 className="w-80 bg-gradient-to-br from-primary/95 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
@@ -1497,13 +1524,13 @@ const Navbar: React.FC = () => {
 
               {/* Right White Content */}
               <div className="flex-1 bg-white p-8 border-l border-gray-100">
-                <div className="grid grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 gap-8">
                   {menuData.about.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
-                      <ul className="space-y-3">
+                      <ul className="grid grid-rows-3 grid-flow-col gap-y-3 gap-x-12 auto-cols-[minmax(200px,1fr)]">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
                             <Link href={link.href} className="block group">
@@ -1541,7 +1568,7 @@ const Navbar: React.FC = () => {
           onMouseLeave={() => setActiveDropdown(null)}
         >
           <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
-            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl min-h-[320px]">
               <div
                 className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
@@ -1576,7 +1603,7 @@ const Navbar: React.FC = () => {
                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
-                      <ul className="space-y-3">
+                      <ul className="space-y-2">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
                             <Link href={link.href} className="block group">
@@ -1607,8 +1634,8 @@ const Navbar: React.FC = () => {
           onMouseEnter={() => setActiveDropdown("journals")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-7xl ml-auto mr-30 px-4 md:px-8 lg:px-20 py-4">
-            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl min-h-[320px]">
               <div
                 className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
@@ -1637,13 +1664,13 @@ const Navbar: React.FC = () => {
               </div>
 
               <div className="flex-1 bg-white p-8 border-l border-gray-100">
-                <div className="grid grid-cols-1 gap-6">
+                <div className="grid grid-cols-1 gap-8">
                   {menuData.journals.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
                       <h3 className="text-primary font-bold text-sm pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
-                      <ul className="space-y-3">
+                      <ul className="grid grid-rows-3 grid-flow-col gap-y-3 gap-x-12 auto-cols-[minmax(200px,1fr)]">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
                             <Link href={link.href} className="block group">
@@ -1674,8 +1701,8 @@ const Navbar: React.FC = () => {
           onMouseEnter={() => setActiveDropdown("iqac")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-5xl ml-auto mr-30 px-4 md:px-8 lg:px-20 py-4">
-            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl min-h-[320px]">
               <div
                 className="w-80 bg-gradient-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden"
                 style={{
@@ -1703,13 +1730,13 @@ const Navbar: React.FC = () => {
               </div>
 
               <div className="flex-1 bg-white p-8 border-l border-gray-100">
-                <div className="grid grid-cols-2 gap-8">
+                <div className="grid grid-cols-3 gap-8">
                   {menuData.iqac.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">
                         {section.title}
                       </h3>
-                      <ul className="space-y-3">
+                      <ul className="space-y-2">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
                             <Link href={link.href} className="block group">
@@ -1741,8 +1768,8 @@ const Navbar: React.FC = () => {
           onMouseEnter={() => setActiveDropdown("student")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-4xl mx-auto lg:mx-0 lg:ml-auto px-4 md:px-8 lg:px-20 py-4">
-            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl min-h-[320px]">
               <div className="w-72 bg-linear-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden" style={{ backgroundImage: "url(/assets/loyola-building.png)", backgroundSize: "cover", backgroundPosition: "center" }}>
                 <div className="absolute inset-0 bg-linear-to-br from-primary/90 to-primary/90 z-0" />
                 <div className="relative z-10">
@@ -1758,7 +1785,7 @@ const Navbar: React.FC = () => {
                   {menuData.student.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">{section.title}</h3>
-                      <ul className="space-y-3">
+                      <ul className="space-y-2">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
                             <Link href={link.href} className="block group">
@@ -1788,8 +1815,8 @@ const Navbar: React.FC = () => {
           onMouseEnter={() => setActiveDropdown("newsEvents")}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="max-w-4xl mx-auto lg:mx-0 lg:ml-auto px-4 md:px-8 lg:px-20 py-4">
-            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-20 py-4">
+            <div className="flex gap-0 rounded-2xl overflow-hidden shadow-2xl min-h-[320px]">
               <div className="w-72 bg-linear-to-br from-primary/90 to-primary/95 text-white p-8 flex flex-col justify-between relative overflow-hidden" style={{ backgroundImage: "url(/assets/loyola-building.png)", backgroundSize: "cover", backgroundPosition: "center" }}>
                 <div className="absolute inset-0 bg-linear-to-br from-primary/90 to-primary/90 z-0" />
                 <div className="relative z-10">
@@ -1805,7 +1832,7 @@ const Navbar: React.FC = () => {
                   {menuData.newsEvents.sections.map((section, idx) => (
                     <div key={idx} className="space-y-4">
                       <h3 className="text-primary font-bold text-base pb-2 border-b-2 border-gray-200">{section.title}</h3>
-                      <ul className="space-y-3">
+                      <ul className="space-y-2">
                         {section.links.map((link, linkIdx) => (
                           <li key={linkIdx}>
                             <Link href={link.href} className="block group">

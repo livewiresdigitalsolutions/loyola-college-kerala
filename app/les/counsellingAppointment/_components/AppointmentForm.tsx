@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { counselors as fallbackCounselors, counselingSlots as fallbackSlots, genderOptions } from '../../_data'
 import { submitAppointment, getCounselors } from '../../_services/api'
 import { AppointmentFormData, Counselor } from '../../_data/types'
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 export default function AppointmentForm() {
   const [counselorsList, setCounselorsList] = useState<Counselor[]>(fallbackCounselors)
@@ -31,7 +33,13 @@ export default function AppointmentForm() {
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    let { name, value } = e.target
+    
+    if (name === 'name') {
+      value = value.replace(/[0-9]/g, '')
+    }
+    
+    setFormData({ ...formData, [name]: value })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -114,6 +122,8 @@ export default function AppointmentForm() {
             value={formData.name}
             onChange={handleChange}
             placeholder="Enter your name"
+            minLength={2}
+            maxLength={100}
             required
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
@@ -157,15 +167,20 @@ export default function AppointmentForm() {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Mobile No <span className="text-red-500">*</span>
           </label>
-          <input
-            type="tel"
-            name="mobileNo"
-            value={formData.mobileNo}
-            onChange={handleChange}
-            placeholder="Enter your mobile number"
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-          />
+          <div className="w-full px-4 py-3 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all overflow-hidden p-0!">
+            <PhoneInput
+              defaultCountry="IN"
+              international
+              countryCallingCodeEditable={false}
+              name="mobileNo"
+              value={formData.mobileNo}
+              onChange={(value) => setFormData({ ...formData, mobileNo: value || '' })}
+              limitMaxLength={true}
+              placeholder="Enter your mobile number"
+              className="w-full px-4 py-3 bg-transparent border-none outline-none focus:ring-0 [&>input]:outline-none [&>input]:bg-transparent"
+              numberInputProps={{ required: true }}
+            />
+          </div>
         </div>
 
         {/* Email */}
@@ -179,6 +194,8 @@ export default function AppointmentForm() {
             value={formData.email}
             onChange={handleChange}
             placeholder="Enter your email"
+            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+            title="Please enter a valid email address."
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
         </div>
@@ -194,6 +211,8 @@ export default function AppointmentForm() {
             value={formData.age}
             onChange={handleChange}
             placeholder="Enter your age"
+            min={15}
+            max={100}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
         </div>

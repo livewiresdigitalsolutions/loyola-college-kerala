@@ -125,7 +125,7 @@ export default function AssociationDetailPage() {
             </Link>
             <ChevronRight className="w-3.5 h-3.5 mx-2" />
             <Link
-              href="/students/students-associations"
+              href="/students-engagement/students-associations"
               className="hover:text-white transition"
             >
               Student Associations

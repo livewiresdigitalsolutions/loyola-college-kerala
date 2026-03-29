@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react'
 import { programs as fallbackPrograms, genderOptions } from '../_data'
 import { submitVolunteerRegistration, getPrograms } from '../_services/api'
 import { VolunteerFormData, Program } from '../_data/types'
+import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
+import LimitedPhoneInput from './PhoneNumberInput'
 
 export default function RegistrationForm() {
   const [programsList, setProgramsList] = useState<Program[]>(fallbackPrograms)
@@ -11,6 +14,8 @@ export default function RegistrationForm() {
   useEffect(() => {
     getPrograms().then(setProgramsList)
   }, [])
+  const [customDuration, setCustomDuration] = useState('')
+  const [customQualification, setCustomQualification] = useState('')
   const [formData, setFormData] = useState<VolunteerFormData>({
     name: '',
     gender: '',
@@ -28,7 +33,13 @@ export default function RegistrationForm() {
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+    let { name, value } = e.target
+
+    if (name === 'name') {
+      // Prevent entering numbers in the name field
+      value = value.replace(/[0-9]/g, '')
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
@@ -37,7 +48,13 @@ export default function RegistrationForm() {
     setIsSubmitting(true)
     setSubmitMessage(null)
 
-    const result = await submitVolunteerRegistration(formData)
+    const submissionData = {
+      ...formData,
+      duration: formData.duration === 'More than 1 Year' ? customDuration : formData.duration,
+      qualification: formData.qualification === 'Other' ? customQualification : formData.qualification
+    }
+
+    const result = await submitVolunteerRegistration(submissionData)
     
     setSubmitMessage({
       type: result.success ? 'success' : 'error',
@@ -59,6 +76,8 @@ export default function RegistrationForm() {
         programme: '',
         duration: ''
       })
+      setCustomDuration('')
+      setCustomQualification('')
     }
     
     setIsSubmitting(false)
@@ -111,6 +130,8 @@ export default function RegistrationForm() {
             onChange={handleChange}
             placeholder="Enter your name"
             className={inputClass}
+            minLength={2}
+            maxLength={100}
             required
           />
         </div>
@@ -136,16 +157,22 @@ export default function RegistrationForm() {
         {/* Contact Number */}
         <div>
           <label htmlFor="contactNumber" className={labelClass}>Contact Number</label>
-          <input
-            type="tel"
-            id="contactNumber"
-            name="contactNumber"
-            value={formData.contactNumber}
-            onChange={handleChange}
-            placeholder="Enter contact number"
-            className={inputClass}
-            required
-          />
+          <div className={`${inputClass} !p-0 overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary`}>
+            <PhoneInput
+              defaultCountry="IN"
+              international
+              countryCallingCodeEditable={false}
+              limitMaxLength={true}
+              id="contactNumber"
+              name="contactNumber"
+              value={formData.contactNumber}
+              onChange={(value) => setFormData(prev => ({ ...prev, contactNumber: value || '' }))}
+              placeholder="Enter contact number"
+              className="w-full px-4 py-3 bg-transparent border-none outline-none focus:ring-0 [&>input]:outline-none [&>input]:bg-transparent"
+              numberInputProps={{ required: true }}
+              inputComponent={LimitedPhoneInput}
+            />
+          </div>
         </div>
 
         {/* Address */}
@@ -174,6 +201,8 @@ export default function RegistrationForm() {
             onChange={handleChange}
             placeholder="Enter your email"
             className={inputClass}
+            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+            title="Please enter a valid email address."
             required
           />
         </div>
@@ -189,6 +218,8 @@ export default function RegistrationForm() {
             onChange={handleChange}
             placeholder="Enter your age"
             className={inputClass}
+            min={15}
+            max={100}
             required
           />
         </div>
@@ -196,45 +227,73 @@ export default function RegistrationForm() {
         {/* Educational Qualification */}
         <div>
           <label htmlFor="qualification" className={labelClass}>Educational Qualification</label>
-          <input
-            type="text"
+          <select
             id="qualification"
             name="qualification"
             value={formData.qualification}
             onChange={handleChange}
-            placeholder="Enter qualification"
             className={inputClass}
             required
-          />
+          >
+            <option value="">Select Qualification</option>
+            <option value="Student">Student</option>
+            <option value="High School">High School</option>
+            <option value="Higher Secondary">Higher Secondary</option>
+            <option value="Undergraduate">Undergraduate Degree</option>
+            <option value="Postgraduate">Postgraduate Degree</option>
+            <option value="Professional">Professional Qualification</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
-        {/* Institution Name */}
-        <div>
-          <label htmlFor="institutionName" className={labelClass}>If Student, Name of the Institution</label>
-          <input
-            type="text"
-            id="institutionName"
-            name="institutionName"
-            value={formData.institutionName}
-            onChange={handleChange}
-            placeholder="Institution Name"
-            className={inputClass}
-          />
-        </div>
+        {formData.qualification === 'Other' && (
+          <div>
+            <label htmlFor="customQualification" className={labelClass}>Please specify your qualification</label>
+            <input
+              type="text"
+              id="customQualification"
+              value={customQualification}
+              onChange={(e) => setCustomQualification(e.target.value)}
+              placeholder="e.g., Diploma in Social Work"
+              className={inputClass}
+              required
+            />
+          </div>
+        )}
 
-        {/* Institution Address */}
-        <div>
-          <label htmlFor="institutionAddress" className={labelClass}>Address of the institution</label>
-          <input
-            type="text"
-            id="institutionAddress"
-            name="institutionAddress"
-            value={formData.institutionAddress}
-            onChange={handleChange}
-            placeholder="Institution Address"
-            className={inputClass}
-          />
-        </div>
+        {formData.qualification === 'Student' && (
+          <>
+            {/* Institution Name */}
+            <div>
+              <label htmlFor="institutionName" className={labelClass}>If Student, Name of the Institution</label>
+              <input
+                type="text"
+                id="institutionName"
+                name="institutionName"
+                value={formData.institutionName}
+                onChange={handleChange}
+                placeholder="Institution Name"
+                className={inputClass}
+                required
+              />
+            </div>
+
+            {/* Institution Address */}
+            <div>
+              <label htmlFor="institutionAddress" className={labelClass}>Address of the institution</label>
+              <input
+                type="text"
+                id="institutionAddress"
+                name="institutionAddress"
+                value={formData.institutionAddress}
+                onChange={handleChange}
+                placeholder="Institution Address"
+                className={inputClass}
+                required
+              />
+            </div>
+          </>
+        )}
 
         {/* Programme */}
         <div>
@@ -259,17 +318,39 @@ export default function RegistrationForm() {
         {/* Duration */}
         <div>
           <label htmlFor="duration" className={labelClass}>Duration of Volunteership</label>
-          <input
-            type="text"
+          <select
             id="duration"
             name="duration"
             value={formData.duration}
             onChange={handleChange}
-            placeholder="e.g., 1 month, 3 months"
             className={inputClass}
             required
-          />
+          >
+            <option value="">Select Duration</option>
+            <option value="1 Week">1 Week</option>
+            <option value="2 Weeks">2 Weeks</option>
+            <option value="1 Month">1 Month</option>
+            <option value="3 Months">3 Months</option>
+            <option value="6 Months">6 Months</option>
+            <option value="1 Year">1 Year</option>
+            <option value="More than 1 Year">More than 1 Year</option>
+          </select>
         </div>
+
+        {formData.duration === 'More than 1 Year' && (
+          <div>
+            <label htmlFor="customDuration" className={labelClass}>Please specify the duration</label>
+            <input
+              type="text"
+              id="customDuration"
+              value={customDuration}
+              onChange={(e) => setCustomDuration(e.target.value)}
+              placeholder="e.g., 18 months, 2 years"
+              className={inputClass}
+              required
+            />
+          </div>
+        )}
 
         {/* Submit Button */}
         <button

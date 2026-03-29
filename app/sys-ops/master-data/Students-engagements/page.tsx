@@ -3,15 +3,16 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Users, Image as ImageIcon, Calendar, Award, Crown, UserCog, Mail, Globe } from "lucide-react";
+import { ArrowLeft, Users, Image as ImageIcon, Calendar, Award, Crown, UserCog, Mail, Globe, Building2 } from "lucide-react";
 
 const StudentsEngagementsCards = [
-    { id: "students-progression", title: "Students Progression", description: "Manage rank holders, qualifiers, placements & initiatives", href: "/sys-ops/master-data/Students-engagements/students-progression", icon: <Users className="w-6 h-6" />, color: "bg-emerald-600" },
-    { id: "loyola-mentoring-programme", title: "Loyola Mentoring Programme", description: "Manage LMP organizing team and mentoring session records", href: "/sys-ops/master-data/Students-engagements/loyola-mentoring-programme", icon: <Globe className="w-6 h-6" />, color: "bg-blue-500" },
-    { id: "litcof-management", title: "Loyola-in-the-company-of-friends", description: "Upload and manage LITCOF organizing team, activities, achievements, events & gallery", href: "/sys-ops/master-data/Students-engagements/loyola-in-the-company-of-friends", icon: <ImageIcon className="w-6 h-6" />, color: "bg-blue-600" },
-    { id: "lace-management", title: "Loyola Academy for Career Enhancement", description: "Manage LACE organizing team and activities", href: "/sys-ops/master-data/Students-engagements/loyola-academy-for-career-enhancement", icon: <Calendar className="w-6 h-6" />, color: "bg-purple-600" },
-    { id: "lila-management", title: "Loyola Initiative for Language Advancement", description: "Manage LILA organizing team and activities", href: "/sys-ops/master-data/Students-engagements/loyola-initiative-for-language-advancement", icon: <Award className="w-6 h-6" />, color: "bg-amber-500" },
-    { id: "let-management", title: "Loyola Ethnic Theatre", description: "Manage Loyola Ethnic Theatre organizing team and activities", href: "/sys-ops/master-data/Students-engagements/loyola-ethnographic-theatre", icon: <Crown className="w-6 h-6" />, color: "bg-rose-600" },
+    { id: "students-associations", title: "Students Associations", description: "Manage student associations, team members, and activities", href: "/sys-ops/master-data/associations", icon: <Building2 className="w-6 h-6" />, color: "bg-teal-600" },
+    { id: "students-progression", title: "Students Progression", description: "Manage rank holders, qualifiers, placements & initiatives", href: "/sys-ops/master-data/students-engagements/students-progression", icon: <Users className="w-6 h-6" />, color: "bg-emerald-600" },
+    { id: "loyola-mentoring-programme", title: "Loyola Mentoring Programme", description: "Manage LMP organizing team and mentoring session records", href: "/sys-ops/master-data/students-engagements/loyola-mentoring-programme", icon: <Globe className="w-6 h-6" />, color: "bg-blue-500" },
+    { id: "litcof-management", title: "Loyola-in-the-company-of-friends", description: "Upload and manage LITCOF organizing team, activities, achievements, events & gallery", href: "/sys-ops/master-data/students-engagements/loyola-in-the-company-of-friends", icon: <ImageIcon className="w-6 h-6" />, color: "bg-blue-600" },
+    { id: "lace-management", title: "Loyola Academy for Career Enhancement", description: "Manage LACE organizing team and activities", href: "/sys-ops/master-data/students-engagements/loyola-academy-for-career-enhancement", icon: <Calendar className="w-6 h-6" />, color: "bg-purple-600" },
+    { id: "lila-management", title: "Loyola Initiative for Language Advancement", description: "Manage LILA organizing team and activities", href: "/sys-ops/master-data/students-engagements/loyola-initiative-for-language-advancement", icon: <Award className="w-6 h-6" />, color: "bg-amber-500" },
+    { id: "let-management", title: "Loyola Ethnic Theatre", description: "Manage Loyola Ethnic Theatre organizing team and activities", href: "/sys-ops/master-data/students-engagements/loyola-ethnographic-theatre", icon: <Crown className="w-6 h-6" />, color: "bg-rose-600" },
 ]
 
 export default function StudentsEngagements() {
@@ -23,8 +24,8 @@ export default function StudentsEngagements() {
                     <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Alumni Management</h1>
-                    <p className="text-gray-600 text-sm">Manage all alumni website content and user accounts</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Students Engagements</h1>
+                    <p className="text-gray-600 text-sm">Manage student engagement programmes and associations</p>
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

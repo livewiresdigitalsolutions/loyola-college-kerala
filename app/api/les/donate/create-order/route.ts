@@ -4,10 +4,7 @@ import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 
 // Uses LES-specific Razorpay credentials (separate merchant account)
-const razorpay = new Razorpay({
-    key_id: process.env.LES_RAZORPAY_KEY_ID!,       // TODO: Replace with actual LES Razorpay key
-    key_secret: process.env.LES_RAZORPAY_KEY_SECRET!, // TODO: Replace with actual LES Razorpay secret
-});
+// Initialize Razorpay conditionally inside handler to prevent build errors
 
 export async function POST(request: Request) {
     try {
@@ -35,6 +32,11 @@ export async function POST(request: Request) {
                 { status: 503 }
             );
         }
+
+        const razorpay = new Razorpay({
+            key_id: process.env.LES_RAZORPAY_KEY_ID,       // TODO: Replace with actual LES Razorpay key
+            key_secret: process.env.LES_RAZORPAY_KEY_SECRET, // TODO: Replace with actual LES Razorpay secret
+        });
 
         const options = {
             amount: Math.round(amount * 100), // Amount in paise
