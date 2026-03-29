@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react'
 import { Smartphone, Building2, ShieldCheck, ChevronDown, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
+import LimitedPhoneInput from '../../_components/PhoneNumberInput'
 
 const PRESET_AMOUNTS = [500, 1000, 2500, 5000]
 
@@ -80,7 +83,7 @@ export default function DonateForm() {
     }
   }
 
-  const [donationType, setDonationType] = useState<'one-time' | 'recurring'>('one-time')
+  const [donationType] = useState<'one-time' | 'recurring'>('one-time')
   const [selectedFund, setSelectedFund] = useState('general')
   const [selectedAmount, setSelectedAmount] = useState<number | null>(500)
   const [customAmount, setCustomAmount] = useState('')
@@ -119,12 +122,16 @@ export default function DonateForm() {
       toast.error('Please enter your name')
       return false
     }
+    if (/\d/.test(donorName)) {
+      toast.error('Name should not contain numbers')
+      return false
+    }
     if (!donorEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
       toast.error('Please enter a valid email address')
       return false
     }
-    if (!donorPhone.trim() || !/^\d{10}$/.test(donorPhone)) {
-      toast.error('Please enter a valid 10-digit phone number')
+    if (!donorPhone || donorPhone.replace(/\D/g, '').length < 10) {
+      toast.error('Please enter a valid phone number')
       return false
     }
     return true
@@ -181,34 +188,6 @@ export default function DonateForm() {
               Make a Donation
             </h2>
 
-            {/* Donation Type Toggle */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Donation Type
-              </label>
-              <div className="flex bg-gray-100 rounded-full p-1 max-w-md">
-                <button
-                  onClick={() => setDonationType('one-time')}
-                  className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
-                    donationType === 'one-time'
-                      ? 'bg-[#0d4a33] text-white shadow-md'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  One-Time
-                </button>
-                <button
-                  onClick={() => setDonationType('recurring')}
-                  className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
-                    donationType === 'recurring'
-                      ? 'bg-[#0d4a33] text-white shadow-md'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  Monthly Recurring
-                </button>
-              </div>
-            </div>
 
             {/* Fund Selector */}
             <div className="mb-6">
@@ -295,7 +274,7 @@ export default function DonateForm() {
                 <input
                   type="text"
                   value={donorName}
-                  onChange={(e) => setDonorName(e.target.value)}
+                  onChange={(e) => setDonorName(e.target.value.replace(/[0-9]/g, ''))}
                   placeholder="Full Name *"
                   className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
                 />
@@ -306,14 +285,19 @@ export default function DonateForm() {
                   placeholder="Email Address *"
                   className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
                 />
-                <input
-                  type="tel"
-                  value={donorPhone}
-                  onChange={(e) => setDonorPhone(e.target.value)}
-                  placeholder="Phone Number (10 digits) *"
-                  maxLength={10}
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
-                />
+                <div className="w-full border border-gray-200 rounded-xl overflow-hidden focus-within:border-[#0d4a33] focus-within:ring-1 focus-within:ring-[#0d4a33]/20 transition-all">
+                  <PhoneInput
+                    defaultCountry="IN"
+                    international
+                    countryCallingCodeEditable={false}
+                    limitMaxLength={true}
+                    value={donorPhone}
+                    onChange={(value) => setDonorPhone(value || '')}
+                    placeholder="Phone Number *"
+                    className="w-full px-4 py-3 bg-white border-none outline-none [&>input]:outline-none [&>input]:bg-transparent [&>input]:text-sm"
+                    inputComponent={LimitedPhoneInput}
+                  />
+                </div>
               </div>
             </div>
 

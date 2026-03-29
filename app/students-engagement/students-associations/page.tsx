@@ -211,7 +211,7 @@ export default function StudentAssociationsPage() {
               {/* View Full Details Button */}
               <div className="mt-8">
                 <Link
-                  href={`/students/students-associations/${active.slug}`}
+                  href={`/students-engagement/students-associations/${active.slug}`}
                   className="inline-flex items-center gap-2 bg-[var(--primary)] text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-[var(--primary)]/90 transition-all duration-200 shadow-md hover:shadow-lg group"
                 >
                   View Full Details

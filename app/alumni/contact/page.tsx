@@ -79,7 +79,7 @@ export default function AlumniContact() {
               </div>
 
               {/* Contact Form */}
-              <div className="bg-[#f5f3ee] rounded-xl p-8 mt-10 border border-gray-200">
+              <div className="bg-[#f6f6ee] rounded-xl p-8 mt-10 border border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Send us a message</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
