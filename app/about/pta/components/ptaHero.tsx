@@ -1,27 +1,63 @@
+"use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 export default function PtaHero() {
   return (
     <>
-      <section className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
+      {/* HERO SECTION WITH IMAGE AND GREEN OVERLAY */}
+      <section className="relative w-full h-[500px] md:h-[600px] lg:h-[700px]">
+        {/* BACKGROUND IMAGE */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/assets/loyola-building.png"
-            alt="PTA"
+            alt="Loyola College Campus"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/70" />
-          <div className="absolute inset-0 bg-black/30" />
+          {/* GREEN GRADIENT OVERLAY */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/70"></div>
+          {/* ADDITIONAL DARK OVERLAY FOR TEXT READABILITY */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
+        {/* HERO CONTENT */}
         <div className="relative z-10 h-full flex items-center">
           <div className="max-w-7xl mx-auto px-6 w-full">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white tracking-wider leading-tight">
-              Parent Teacher Association
-            </h1>
+            <div className="max-w-3xl">
+              {/* BREADCRUMB NAVIGATION */}
+              <nav className="flex items-center gap-2 text-white/90 mb-8 text-sm">
+                <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                  </svg>
+                  Home
+                </Link>
+                <ChevronRight className="w-4 h-4" />
+                <Link href="/about" className="hover:text-white transition-colors">About</Link>
+                <ChevronRight className="w-4 h-4" />
+                <span className="text-[#F0B129] font-medium">PTA</span>
+              </nav>
+
+              {/* SECTION LABEL */}
+              <p className="text-white font-semibold text-sm tracking-wider uppercase mb-2">
+                Community Partnership
+              </p>
+
+              {/* MAIN HEADING */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                Parent Teacher<br />Association
+              </h1>
+
+              {/* Subtext */}
+              <p className="mt-6 text-xl md:text-lg text-white/90 leading-relaxed max-w-2xl">
+                Fostering a strong partnership between parents and educators to support 
+                student growth, welfare, and institutional development.
+              </p>
+            </div>
           </div>
         </div>
       </section>

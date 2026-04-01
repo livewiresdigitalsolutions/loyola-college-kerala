@@ -919,8 +919,8 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -960,7 +960,11 @@ const Navbar: React.FC = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   // Check if current page is homepage
   const isHomePage = pathname === "/";
@@ -979,7 +983,20 @@ const Navbar: React.FC = () => {
     setActiveDropdown(null);
     setMobileDropdown(null);
     setMobileMenuOpen(false);
+    setSearchQuery("");
+    setSearchOpen(false);
   }, [pathname]);
+
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const hideNavbarExactRoutes = ["/", "/admission/pg-admissions"];
   const hideNavbarPrefixRoutes = ["/sys-ops", "/alumni", "/journals", "/les"];
@@ -1262,6 +1279,143 @@ const Navbar: React.FC = () => {
     },
   };
 
+  // ── Comprehensive flat search index ──────────────────────────────────────
+  type SearchEntry = { name: string; subtitle?: string; href: string; category: string };
+
+  const searchIndex: SearchEntry[] = [
+    // Home & General
+    { name: "Home", subtitle: "Loyola College of Social Sciences homepage", href: "/", category: "General" },
+    { name: "Contact Us", subtitle: "Reach the college by phone, email, or visit", href: "/contact", category: "General" },
+    { name: "Careers", subtitle: "Job openings and career opportunities at Loyola", href: "/careers", category: "General" },
+    { name: "Gallery", subtitle: "Photo gallery of campus events and activities", href: "/gallery", category: "General" },
+    { name: "Research", subtitle: "Research initiatives and publications at Loyola", href: "/research", category: "General" },
+    // About
+    { name: "About Loyola", subtitle: "Overview of Loyola College of Social Sciences", href: "/about", category: "About" },
+    { name: "History", subtitle: "Our journey, milestones, and the legacy since 1963", href: "/about/history", category: "About" },
+    { name: "Vision & Mission", subtitle: "Values and principles guiding our education", href: "/about/vision-mission", category: "About" },
+    { name: "Institutional Governance", subtitle: "Strategic oversight and institutional leadership", href: "/about/institutional-governance", category: "About" },
+    { name: "PTA", subtitle: "Parent Teacher Association activities and updates", href: "/about/pta", category: "About" },
+    { name: "Eminent Visitors", subtitle: "Notable personalities who have visited our campus", href: "/about/eminent-visitors", category: "About" },
+    // Academics
+    { name: "Departments", subtitle: "Explore all academic departments at Loyola", href: "/academics/departments", category: "Academics" },
+    { name: "Programmes & Courses", subtitle: "UG, PG and research programmes offered", href: "/academics/programmes-and-course", category: "Academics" },
+    { name: "Faculty & Staffs", subtitle: "Meet our qualified teaching and support staff", href: "/academics/faculty-and-staffs", category: "Academics" },
+    { name: "Innovation Centre", subtitle: "Fostering creativity, research, and entrepreneurship", href: "/academics/innovation-center", category: "Academics" },
+    { name: "Academic Calendar", subtitle: "Schedules, events, and important academic dates", href: "/academics/academic-calendar", category: "Academics" },
+    { name: "Outcome Based Education", subtitle: "OBE framework and student learning outcomes", href: "/academics/obe", category: "Academics" },
+    { name: "Code of Conduct", subtitle: "Rules, values, and expected behavioural standards", href: "/academics/code-of-conduct", category: "Academics" },
+    { name: "College Committees", subtitle: "Committees overseeing academic and student affairs", href: "/academics/college-committees", category: "Academics" },
+    // Admissions
+    { name: "Admissions", subtitle: "Apply for undergraduate and postgraduate programs", href: "/admission", category: "Admissions" },
+    { name: "PG Admissions", subtitle: "Postgraduate admission portal and details", href: "/admission/pg-admissions", category: "Admissions" },
+    // Campus Life
+    { name: "Campus Life", subtitle: "Explore facilities, sports, and student services", href: "/campus-life", category: "Campus Life" },
+    // IQAC
+    { name: "IQAC Home", subtitle: "Quality assurance overview and IQAC goals", href: "/iqac/Home", category: "IQAC" },
+    { name: "Autonomy", subtitle: "Details about the college's autonomous status", href: "/iqac/Autonomy", category: "IQAC" },
+    { name: "NAAC Accreditation", subtitle: "National accreditation status and grading", href: "/iqac/NAAC-Accreditation", category: "IQAC" },
+    { name: "SSR", subtitle: "Self-Study Report documents and submissions", href: "/iqac/SSR", category: "IQAC" },
+    { name: "IQAC Activities", subtitle: "IQAC workshops, seminars, and events", href: "/iqac/Activities", category: "IQAC" },
+    { name: "AQARs", subtitle: "Annual Quality Assurance Reports", href: "/iqac/AQARs", category: "IQAC" },
+    { name: "AQARs Formats", subtitle: "Downloadable templates for AQAR submissions", href: "/iqac/AQARs-Formats", category: "IQAC" },
+    { name: "IQAC Documents", subtitle: "Key institutional documents and publications", href: "/iqac/Documents", category: "IQAC" },
+    { name: "Feedback", subtitle: "Student, parent, and alumni feedback portal", href: "/iqac/Feedback", category: "IQAC" },
+    { name: "IQAC Contact", subtitle: "Reach out to the IQAC team directly", href: "/iqac/Contact-us", category: "IQAC" },
+    // Journals
+    { name: "Journals", subtitle: "Loyola's scholarly peer-reviewed publications", href: "/journals", category: "Journals" },
+    { name: "About Journals", subtitle: "Overview of our academic journal publications", href: "/journals/about", category: "Journals" },
+    { name: "Editorial Board", subtitle: "Distinguished academics guiding our publications", href: "/journals/editorial-board", category: "Journals" },
+    { name: "Article Submission", subtitle: "Submit your research for peer review", href: "/journals/article-submission", category: "Journals" },
+    { name: "Journal Subscription", subtitle: "Access and subscribe to journal content", href: "/journals/subscription", category: "Journals" },
+    // LES
+    { name: "LES", subtitle: "Loyola Extension Services — community outreach and welfare", href: "/les", category: "LES" },
+    { name: "LES About", subtitle: "About Loyola Extension Services and its mission", href: "/les/about", category: "LES" },
+    { name: "LES Gallery", subtitle: "Photos from LES activities and community programmes", href: "/les/gallery", category: "LES" },
+    { name: "LES Team", subtitle: "Meet the LES team and volunteers", href: "/les/team", category: "LES" },
+    { name: "LES Engagements", subtitle: "Community engagement programmes by LES", href: "/les/engagements", category: "LES" },
+    { name: "LES Contact", subtitle: "Get in touch with the LES unit", href: "/les/contact", category: "LES" },
+    { name: "Counselling Appointment", subtitle: "Book a counselling session through LES", href: "/les/counsellingAppointment", category: "LES" },
+    { name: "Donate to LES", subtitle: "Support LES community welfare initiatives", href: "/les/donate", category: "LES" },
+    // Student Engagement
+    { name: "College Union", subtitle: "Student governance and leadership body", href: "/students-engagement/college-union", category: "Student Engagement" },
+    { name: "Students Associations", subtitle: "Join clubs and departmental student groups", href: "/students-engagement/students-associations", category: "Student Engagement" },
+    { name: "NSS Unit", subtitle: "National Service Scheme activities and volunteering", href: "/students-engagement/loyola-nss-unit", category: "Student Engagement" },
+    { name: "Women's Cell", subtitle: "Empowerment, awareness, and grievance redressal", href: "/students-engagement/womens-cell", category: "Student Engagement" },
+    { name: "Mentoring Programme", subtitle: "Guidance, counselling, and academic support", href: "/students-engagement/loyola-mentoring-programme", category: "Student Engagement" },
+    { name: "LACE", subtitle: "Loyola Academy for Career Enhancement", href: "/students-engagement/loyola-academy-for-career-enhancement", category: "Student Engagement" },
+    { name: "LILA", subtitle: "Loyola Initiative for Language Advancement", href: "/students-engagement/loyola-initiative-for-language-advancement", category: "Student Engagement" },
+    { name: "Loyola Ethnographic Theatre", subtitle: "Theatre and performing arts engagement", href: "/students-engagement/loyola-ethnographic-theatre", category: "Student Engagement" },
+    { name: "EM & Biodiversity", subtitle: "Environmental management and biodiversity activities", href: "/students-engagement/em-and-bio-diversity", category: "Student Engagement" },
+    { name: "Loyola in Company of Friends", subtitle: "Peer learning and friendship-based engagement", href: "/students-engagement/loyola-in-the-company-of-friends", category: "Student Engagement" },
+    { name: "Students Progression", subtitle: "Tracking alumni and student career outcomes", href: "/students-engagement/students-progression", category: "Student Engagement" },
+    // News & Events
+    { name: "News & Events", subtitle: "Latest institutional news and upcoming events", href: "/news-and-events/news-and-upcoming-events", category: "News & Events" },
+    { name: "Event Reports", subtitle: "Detailed reports of past events and activities", href: "/news-and-events/event-reports", category: "News & Events" },
+    // Alumni
+    { name: "Alumni", subtitle: "Loyola alumni network and resources", href: "/alumni", category: "Alumni" },
+  ];
+
+  const q = searchQuery.trim().toLowerCase();
+
+  const searchResults: SearchEntry[] =
+    q.length > 0
+      ? searchIndex.filter(
+          (entry) =>
+            entry.name.toLowerCase().includes(q) ||
+            (entry.subtitle ?? "").toLowerCase().includes(q) ||
+            entry.category.toLowerCase().includes(q)
+        )
+      : [];
+
+  // Group results by category
+  const groupedResults = searchResults.reduce<Record<string, SearchEntry[]>>((acc, entry) => {
+    if (!acc[entry.category]) acc[entry.category] = [];
+    acc[entry.category].push(entry);
+    return acc;
+  }, {});
+
+  // Flat list for keyboard nav
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+
+  // Highlight matched text
+  const highlight = (text: string) => {
+    if (!q) return text;
+    const idx = text.toLowerCase().indexOf(q);
+    if (idx === -1) return text;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="bg-primary/15 text-primary font-semibold rounded-sm px-0.5">
+          {text.slice(idx, idx + q.length)}
+        </mark>
+        {text.slice(idx + q.length)}
+      </>
+    );
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((i) => Math.min(i + 1, searchResults.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((i) => Math.max(i - 1, -1));
+    } else if (e.key === "Enter") {
+      const target = selectedIndex >= 0 ? searchResults[selectedIndex] : searchResults[0];
+      if (target) {
+        router.push(target.href);
+        setSearchQuery("");
+        setSearchOpen(false);
+        setSelectedIndex(-1);
+      }
+    } else if (e.key === "Escape") {
+      setSearchQuery("");
+      setSearchOpen(false);
+      setSelectedIndex(-1);
+    }
+  };
+  // ──────────────────────────────────────────────────────────────────────────
+
   return (
     <>
       <header
@@ -1343,21 +1497,19 @@ const Navbar: React.FC = () => {
                 Contact Us
               </Link>
 
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className={`rounded-md px-3 py-1.5 text-sm outline-none transition w-48 ${
-                    isTransparent
-                      ? "bg-white/30 placeholder-white/80 text-white"
-                      : "bg-white/20 placeholder-white text-white"
-                  }`}
-                />
-                <Search
-                  size={16}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70"
-                />
-              </div>
+              {/* ── Visible Search Bar (opens spotlight on click) ── */}
+              <button
+                onClick={() => { setSearchOpen(true); setSearchQuery(""); }}
+                aria-label="Open search"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-all cursor-pointer ${
+                  isTransparent
+                    ? "bg-white/10 border-white/30 text-white/80 hover:bg-white/20 hover:border-white/50"
+                    : "bg-white/10 border-white/40 text-white/90 hover:bg-white/20 hover:border-white/60"
+                }`}
+              >
+                <Search size={14} className="shrink-0" />
+                <span className="text-sm">Search...</span>
+              </button>
             </div>
 
             <button
@@ -1854,7 +2006,173 @@ const Navbar: React.FC = () => {
         </div>
       )}
 
+      {/* ══════════════════════════════════════════
+           SPOTLIGHT SEARCH OVERLAY
+      ══════════════════════════════════════════ */}
+      {searchOpen && (
+        <div
+          className="fixed inset-0 z-[200] flex items-start justify-center pt-[10vh] px-4"
+          style={{ animation: "searchOverlayIn 200ms ease both" }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSearchOpen(false);
+              setSearchQuery("");
+            }
+          }}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/70" />
+
+          {/* Search card */}
+          <div
+            ref={searchRef}
+            className="relative w-full max-w-2xl"
+            style={{ animation: "searchCardIn 240ms cubic-bezier(0.22,1,0.36,1) both" }}
+          >
+            {/* Input row */}
+            <div className="flex items-center gap-3 bg-white px-5 py-4 shadow-xl rounded-lg border border-gray-200">
+              <Search size={20} className="text-primary shrink-0" />
+              <input
+                autoFocus
+                type="text"
+                value={searchQuery}
+                onChange={(e) => { setSearchQuery(e.target.value); setSelectedIndex(-1); }}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Search pages, departments, courses…"
+                className="flex-1 text-[17px] text-gray-800 placeholder-gray-400 outline-none bg-transparent"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="p-1 rounded hover:bg-gray-100 transition text-gray-400 hover:text-gray-600"
+                  aria-label="Clear"
+                >
+                  <XIcon size={16} />
+                </button>
+              )}
+              <button
+                onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
+                className="ml-1 px-2.5 py-1 rounded text-xs font-medium bg-gray-100 text-gray-500 hover:bg-gray-200 transition"
+                aria-label="Close search"
+              >
+                Esc
+              </button>
+            </div>
+
+            {/* Results panel — dynamic, categorized, highlighted */}
+            {searchQuery.trim().length > 0 && (
+              <div className="mt-2 bg-white rounded-lg border border-gray-200 shadow-xl overflow-hidden max-h-[60vh] overflow-y-auto">
+                {searchResults.length > 0 ? (
+                  <>
+                    {/* Result count header */}
+                    <div className="flex items-center justify-between px-5 py-2.5 border-b border-gray-100 bg-gray-50/70">
+                      <span className="text-xs text-gray-400">
+                        <span className="font-semibold text-gray-600">{searchResults.length}</span> result{searchResults.length !== 1 ? "s" : ""} for &ldquo;{searchQuery}&rdquo;
+                      </span>
+                      <span className="text-[10px] text-gray-300 hidden sm:block">↑↓ navigate · Enter to go · Esc to close</span>
+                    </div>
+                    {/* Grouped by category */}
+                    {Object.entries(groupedResults).map(([category, entries]) => {
+                      return (
+                        <div key={category}>
+                          <div className="px-5 pt-3 pb-1">
+                            <span className="text-[10px] font-bold text-primary/70 uppercase tracking-widest">{category}</span>
+                          </div>
+                          {entries.map((result) => {
+                            const flatIdx = searchResults.indexOf(result);
+                            const isSelected = flatIdx === selectedIndex;
+                            return (
+                              <Link
+                                key={result.href}
+                                href={result.href}
+                                onClick={() => { setSearchQuery(""); setSearchOpen(false); setSelectedIndex(-1); }}
+                                onMouseEnter={() => setSelectedIndex(flatIdx)}
+                                className={`flex items-center gap-3 px-5 py-2.5 group transition-colors ${
+                                  isSelected ? "bg-primary/5" : "hover:bg-gray-50"
+                                }`}
+                              >
+                                <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 transition-colors ${
+                                  isSelected ? "bg-primary text-white" : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
+                                }`}>
+                                  <Search size={13} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-sm font-semibold transition-colors ${isSelected ? "text-primary" : "text-gray-800 group-hover:text-primary"}`}>
+                                    {highlight(result.name)}
+                                  </p>
+                                  {result.subtitle && (
+                                    <p className="text-xs text-gray-400 mt-0.5 truncate">{highlight(result.subtitle)}</p>
+                                  )}
+                                </div>
+                                <ArrowRight size={14} className={`shrink-0 transition-colors ${isSelected ? "text-primary" : "text-gray-200 group-hover:text-primary"}`} />
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <div className="px-6 py-10 text-center">
+                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                      <Search size={20} className="text-gray-300" />
+                    </div>
+                    <p className="text-gray-500 text-sm font-medium">
+                      No results for &ldquo;<span className="text-gray-700">{searchQuery}</span>&rdquo;
+                    </p>
+                    <p className="text-xs text-gray-300 mt-1">Try searching for a page, department, or section name</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Quick links when input is empty */}
+            {searchQuery.trim().length === 0 && (
+              <div className="mt-2 bg-white rounded-lg border border-gray-200 shadow-xl px-5 py-4">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Popular Pages</p>
+                <div className="grid grid-cols-3 gap-1">
+                  {[
+                    { name: "Admissions", href: "/admission" },
+                    { name: "Departments", href: "/academics/departments" },
+                    { name: "Gallery", href: "/gallery" },
+                    { name: "Contact Us", href: "/contact" },
+                    { name: "IQAC", href: "/iqac/Home" },
+                    { name: "LES Gallery", href: "/les/gallery" },
+                    { name: "News & Events", href: "/news-and-events/news-and-upcoming-events" },
+                    { name: "Research", href: "/research" },
+                    { name: "Alumni", href: "/alumni" },
+                  ].map((link, i) => (
+                    <Link
+                      key={i}
+                      href={link.href}
+                      onClick={() => { setSearchQuery(""); setSearchOpen(false); }}
+                      className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-primary/5 group transition-colors text-sm text-gray-500 hover:text-primary font-medium"
+                    >
+                      <ArrowRight size={12} className="text-gray-300 group-hover:text-primary shrink-0" />
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Keyframe animations */}
+      <style>{`
+        @keyframes searchOverlayIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes searchCardIn {
+          from { opacity: 0; transform: translateY(-24px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
+
       {/* Mobile Menu */}
+
       <div
         className={`lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
           mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"

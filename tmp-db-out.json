@@ -1,0 +1,125 @@
+{
+  "p": [
+    {
+      "id": 1,
+      "discipline": "FYUG"
+    },
+    {
+      "id": 2,
+      "discipline": "PG"
+    },
+    {
+      "id": 3,
+      "discipline": "PhD"
+    }
+  ],
+  "d": [
+    {
+      "id": 1,
+      "program_level_id": 1,
+      "degree_name": "B.Sc"
+    },
+    {
+      "id": 2,
+      "program_level_id": 1,
+      "degree_name": "B.Com"
+    },
+    {
+      "id": 3,
+      "program_level_id": 1,
+      "degree_name": "B.S.W"
+    },
+    {
+      "id": 4,
+      "program_level_id": 2,
+      "degree_name": "M.A"
+    },
+    {
+      "id": 5,
+      "program_level_id": 2,
+      "degree_name": "M.Sc"
+    },
+    {
+      "id": 6,
+      "program_level_id": 2,
+      "degree_name": "M.S.W"
+    },
+    {
+      "id": 7,
+      "program_level_id": 3,
+      "degree_name": "Ph.D"
+    }
+  ],
+  "c": [
+    {
+      "id": 1,
+      "degree_id": 1,
+      "course_name": "Data Science "
+    },
+    {
+      "id": 2,
+      "degree_id": 1,
+      "course_name": "Psychology"
+    },
+    {
+      "id": 3,
+      "degree_id": 2,
+      "course_name": "Finance and Accounts with CA and ACCA pathways"
+    },
+    {
+      "id": 4,
+      "degree_id": 2,
+      "course_name": "Logistics & Supply Chain Management"
+    },
+    {
+      "id": 5,
+      "degree_id": 2,
+      "course_name": "Fintech & Al"
+    },
+    {
+      "id": 6,
+      "degree_id": 3,
+      "course_name": "Social Work"
+    },
+    {
+      "id": 7,
+      "degree_id": 4,
+      "course_name": "Sociology"
+    },
+    {
+      "id": 8,
+      "degree_id": 4,
+      "course_name": "HRM"
+    },
+    {
+      "id": 9,
+      "degree_id": 5,
+      "course_name": "Counselling Psychology"
+    },
+    {
+      "id": 10,
+      "degree_id": 6,
+      "course_name": "Social Work"
+    },
+    {
+      "id": 11,
+      "degree_id": 6,
+      "course_name": "Disaster Management"
+    },
+    {
+      "id": 12,
+      "degree_id": 7,
+      "course_name": "Sociology"
+    },
+    {
+      "id": 13,
+      "degree_id": 7,
+      "course_name": "Social Work"
+    },
+    {
+      "id": 14,
+      "degree_id": 7,
+      "course_name": "Management Studies"
+    }
+  ]
+}

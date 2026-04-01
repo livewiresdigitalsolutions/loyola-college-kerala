@@ -18,16 +18,36 @@ export default function News() {
       {/* News Section */}
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
         <h2 className="text-2xl font-bold text-primary mb-6">NEWS</h2>
-        
-        <div className="divide-y divide-gray-200">
-          {items.map((item) => (
-            <article key={item.id} className="py-4 first:pt-0 last:pb-0 group cursor-pointer">
-              <h3 className="text-gray-800 font-medium leading-snug group-hover:text-primary transition-colors">
-                {item.title}
-              </h3>
-              <p className="text-gray-500 text-sm mt-1">{item.timeAgo}</p>
-            </article>
-          ))}
+
+        {/* Scrollable news list — shows ~2–3 items, scroll for more */}
+        <div className="relative">
+          <div
+            className="divide-y divide-gray-200 overflow-y-auto pr-1"
+            style={{
+              maxHeight: '260px',
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#d1d5db transparent',
+            }}
+          >
+            {items.map((item) => (
+              <article key={item.id} className="py-4 first:pt-0 last:pb-0 group cursor-pointer">
+                <h3 className="text-gray-800 font-medium leading-snug group-hover:text-primary transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-gray-500 text-sm mt-1">{item.timeAgo}</p>
+              </article>
+            ))}
+          </div>
+
+          {/* Fade gradient at the bottom to hint at more content */}
+          {items.length > 3 && (
+            <div
+              className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 rounded-b"
+              style={{
+                background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.95))',
+              }}
+            />
+          )}
         </div>
       </div>
 

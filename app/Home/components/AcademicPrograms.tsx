@@ -1,248 +1,48 @@
-// // import Image from "next/image";
-// // import Link from "next/link";
-// // import { GraduationCap, BookOpen, Award } from "lucide-react";
-
-// // const programmes = [
-// //   {
-// //     title: "Undergraduate Programmes",
-// //     description:
-// //       "Foundational study in social sciences, commerce combining academic learning with field exposure and community engagement.",
-// //     link: "/programmes/undergraduate",
-// //     icon: GraduationCap,
-// //     image: "/assets/UG.png", // put in /public
-// //   },
-// //   {
-// //     title: "Postgraduate Programmes",
-// //     description:
-// //       "Advanced and specialised programmes focused on research, interdisciplinary perspectives, and real-world social challenges.",
-// //     link: "/programmes/postgraduate",
-// //     icon: BookOpen,
-// //     image: "/assets/PG.png",
-// //   },
-// //   {
-// //     title: "Doctoral Programmes",
-// //     description:
-// //       "Research-led doctoral programmes fostering original scholarship in society, policy, culture, and human development.",
-// //     link: "/programmes/doctoral",
-// //     icon: Award,
-// //     image: "/assets/PHD.png",
-// //   },
-// // ];
-
-// // export default function AcademicProgrammes() {
-// //   return (
-// //     <section className="w-full bg-green-50 py-20">
-// //       <div className="max-w-7xl mx-auto px-6">
-
-// //         {/* HEADER */}
-// //         <div className="mb-12">
-// //           <h2 className="text-4xl font-bold text-primary">
-// //             Academic Programmes
-// //           </h2>
-// //           <p className="mt-2 text-gray-600 max-w-2xl">
-// //             Programmes designed to build critical thinkers, researchers,
-// //             and socially responsible leaders.
-// //           </p>
-// //         </div>
-
-// //         {/* PROGRAMMES GRID */}
-// //         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 ">
-
-// //           {programmes.map((item, index) => {
-// //             const Icon = item.icon;
-
-// //             return (
-// //               <div key={index} className="space-y-5  rounded-xl shadow-xl">
-
-// //                 {/* IMAGE */}
-// //                 <div className="rounded-lg overflow-hidden">
-// //                   <Image
-// //                     src={item.image}
-// //                     alt={item.title}
-// //                     width={700}
-// //                     height={350}
-// //                     className="w-full h-[250px] object-cover transition-transform duration-300 hover:scale-110"
-// //                   />
-// //                 </div>
-
-// //                 {/* ICON + TITLE */}
-// //                 <div className="flex items-center gap-3 px-4">
-// //                   <Icon className="w-7 h-7 text-primary" />
-// //                   <h3 className="text-xl font-semibold text-primary">
-// //                     {item.title}
-// //                   </h3>
-// //                 </div>
-
-// //                 {/* DESCRIPTION */}
-// //                 <p className="text-gray-600 leading-relaxed px-4 text-justify">
-// //                   {item.description}
-// //                 </p>
-
-// //                 {/* LINK */}
-// //                 <Link
-// //                   href={item.link}
-// //                   className="inline-flex items-center gap-2 text-primary font-medium hover:underline px-4 mb-3"
-// //                 >
-// //                   View Programmes →
-// //                 </Link>
-
-// //               </div>
-// //             );
-// //           })}
-
-// //         </div>
-// //       </div>
-// //     </section>
-// //   );
-// // }
-
-
-
-
-// import Image from "next/image";
-// import Link from "next/link";
-// import { ArrowRight } from "lucide-react";
-
-// const programmes = [
-//   {
-//     title: "Undergraduate Programmes",
-//     description:
-//       "Foundational study in social sciences, commerce combining academic learning with field exposure and community engagement.",
-//     link: "/programmes/undergraduate",
-//     image: "/assets/UG.png",
-//   },
-//   {
-//     title: "Postgraduate Programmes",
-//     description:
-//       "Advanced and specialised programmes focused on research, interdisciplinary perspectives, and real-world social challenges.",
-//     link: "/programmes/postgraduate",
-//     image: "/assets/PG.png",
-//   },
-//   {
-//     title: "Doctoral Programmes",
-//     description:
-//       "Research-led doctoral programmes fostering original scholarship in society, policy, culture, and human development.",
-//     link: "/programmes/doctoral",
-//     image: "/assets/PHD.png",
-//   },
-// ];
-
-// export default function AcademicProgrammes() {
-//   return (
-//     <section className="w-full bg-green-50 py-20">
-//       <div className="max-w-7xl mx-auto px-6">
-//         {/* HEADER */}
-//         <div className="mb-12">
-//           <h2 className="text-4xl font-bold text-primary">
-//             Academic Programmes
-//           </h2>
-//           <p className="mt-2 text-gray-600 max-w-2xl">
-//             Programmes designed to build critical thinkers, researchers, and
-//             socially responsible leaders.
-//           </p>
-//         </div>
-
-//         {/* PROGRAMMES GRID - 3 PORTRAIT CARDS */}
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-//           {programmes.map((item, index) => {
-//             return (
-//               <Link
-//                 key={index}
-//                 href={item.link}
-//                 className="group relative h-[600px] rounded-3xl overflow-hidden block shadow-xl hover:shadow-2xl transition-all duration-500"
-//               >
-//                 {/* FULL BACKGROUND IMAGE */}
-//                 <Image
-//                   src={item.image}
-//                   alt={item.title}
-//                   fill
-//                   className="object-cover transition-transform duration-700 group-hover:scale-110"
-//                 />
-
-//                 {/* DARK GRADIENT OVERLAY - BOTTOM FADE */}
-//                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-
-//                 {/* CONTENT AT BOTTOM */}
-//                 <div className="absolute bottom-0 left-0 right-0 p-8 transform transition-transform duration-300 group-hover:-translate-y-2">
-//                   <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 leading-tight">
-//                     {item.title}
-//                   </h3>
-
-//                   <p className="text-white/90 text-sm leading-relaxed mb-6">
-//                     {item.description}
-//                   </p>
-
-//                   <div className="inline-flex items-center gap-2 text-white font-semibold group-hover:gap-3 transition-all duration-300">
-//                     View Programmes
-//                     <ArrowRight className="w-5 h-5" />
-//                   </div>
-//                 </div>
-//               </Link>
-//             );
-//           })}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
-
-
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { useProgramData } from "./useProgramData";
 
-
-const programmes = [
+const tabs = [
   {
-    title: "FYUG Programmes",
+    key: "ug",
+    label: "FYUG Programmes",
     description:
-      "Build a strong foundation in arts, science and humanities through our comprehensive UG programmes.",
-    programs: [
-      "B.Sc. Data Science",
-      "B.Sc. Psychology",
-      "Bachelor of Social Work(BSW)",
-      "B.Com Finance and Accounts with CA Pathway",
-      "B.Com Finance and Accounts with ACCA Pathway",
-      "B.Com Logistics & Supply Chain Management",
-      "B.Com Fintech & Al",
-    ],
-    link: "/programmes/undergraduate",
-    linkText: "View All UG Programmes",
+      "Build a strong foundation in arts, science and social sciences through our comprehensive four-year undergraduate programmes.",
     image: "/assets/UG.png",
+    link: "/academics/programmes-and-course",
+    linkText: "View All UG Programmes",
   },
   {
-    title: "PG Programmes",
+    key: "pg",
+    label: "PG Programmes",
     description:
-      "Deepen your expertise with advanced studies in specialized areas of social sciences.",
-    programs: [
-      "M.A. Sociology",
-      "M.Sc. Counselling Psychology",
-      "M.S.W Social Work",
-      "M.S.W Disaster Management",
-      "M.A Human Resource Management",
-    ],
-    link: "/programmes/postgraduate",
-    linkText: "View All PG Programmes",
+      "Deepen your expertise with advanced studies in specialised areas of social sciences, management, and applied disciplines.",
     image: "/assets/PG.png",
+    link: "/academics/programmes-and-course",
+    linkText: "View All PG Programmes",
   },
   {
-    title: "Ph.D",
+    key: "phd",
+    label: "Ph.D",
     description:
-      "Contribute to cutting-edge research and advance the field of social sciences.",
-    programs: [
-      "Ph.D. in Sociology",
-      "Ph.D. in Social Work",
-      "Ph.D. in Management Studies",
-    ],
-    link: "/programmes/doctoral",
-    linkText: "View Doctoral Programmes",
+      "Contribute to cutting-edge research and advance the field of social sciences through doctoral scholarship.",
     image: "/assets/PHD.png",
+    link: "/academics/programmes-and-course",
+    linkText: "View Doctoral Programmes",
   },
 ];
 
-
 export default function AcademicProgrammes() {
+  const { ug, pg, phd, loading } = useProgramData();
+
+  const programmeMap: Record<string, string[]> = {
+    ug,
+    pg,
+    phd,
+  };
+
   return (
     <section className="w-full bg-[#F6F6EE] py-20">
       <div className="max-w-7xl mx-auto px-6">
@@ -251,73 +51,100 @@ export default function AcademicProgrammes() {
           <p className="text-sm font-bold text-gray-900 tracking-wider mb-4">
             ACADEMIC EXCELLENCE
           </p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tighter">
-            Explore Our Programmes
-          </h2>
-          <p className="text-gray-600 max-w-2xl text-lg">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tighter">
+              Explore Our Programmes
+            </h2>
+            <Link
+              href="/academics/programmes-and-course"
+              className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all duration-300 group shrink-0"
+            >
+              <span className="relative">
+                View All Programmes
+                <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full" />
+              </span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <p className="text-gray-600 max-w-2xl text-lg mt-4">
             Choose from a diverse range of undergraduate, postgraduate, and
-            doctoral programmes designed to foster critical thinking and social
-            responsibility.
+            doctoral programmes — all designed to foster critical thinking and
+            social responsibility.
           </p>
         </div>
 
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            <span className="ml-3 text-gray-500 font-medium">Loading programmes...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {tabs.map((tab) => {
+              const programs = programmeMap[tab.key];
 
-        {/* PROGRAMMES GRID - 3 CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {programmes.map((item, index) => {
-            return (
-              <div
-                key={index}
-                className="group flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
-              >
-                {/* IMAGE SECTION */}
-                <div className="relative h-56 w-full overflow-hidden">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+              return (
+                <div
+                  key={tab.key}
+                  className="group flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+                >
+                  {/* IMAGE SECTION */}
+                  <div className="relative h-56 w-full overflow-hidden">
+                    <Image
+                      src={tab.image}
+                      alt={tab.label}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    {/* Programme count badge */}
+                    <div className="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                      {programs.length} Programme{programs.length !== 1 ? "s" : ""}
+                    </div>
+                  </div>
+
+                  {/* CONTENT SECTION */}
+                  <div className="bg-white group-hover:bg-primary text-gray-900 group-hover:text-white p-8 flex-1 flex flex-col transition-colors duration-300">
+                    <h3 className="text-2xl font-bold mb-3">{tab.label}</h3>
+
+                    <p className="text-gray-700 group-hover:text-white/90 mb-5 leading-relaxed text-sm transition-colors duration-300">
+                      {tab.description}
+                    </p>
+
+                    {/* PROGRAMMES LIST — dynamically from db via api */}
+                    <ul className="space-y-2 mb-6 flex-1">
+                      {programs.length === 0 ? (
+                        <li className="text-sm text-gray-500 group-hover:text-white/80 italic">
+                          No programmes added yet.
+                        </li>
+                      ) : (
+                        programs.map((program, idx) => (
+                          <li
+                            key={idx}
+                            className="flex items-start gap-2 text-gray-900 group-hover:text-white transition-colors duration-300"
+                          >
+                            <span className="text-primary group-hover:text-white/60 mt-0.5 text-base leading-none">
+                              •
+                            </span>
+                            <span className="text-sm font-medium">{program}</span>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+
+                    {/* LINK */}
+                    <Link
+                      href={tab.link}
+                      className="inline-flex items-center gap-2 font-semibold group-hover:gap-3 transition-all duration-300 text-primary group-hover:text-white text-sm mt-auto pt-4 border-t border-gray-100 group-hover:border-white/20"
+                    >
+                      {tab.linkText}
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
-
-
-                {/* CONTENT SECTION */}
-                <div className="bg-white group-hover:bg-primary text-gray-900 group-hover:text-white p-8 flex-1 flex flex-col transition-colors duration-300">
-                  <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-
-
-                  <p className="text-gray-700 group-hover:text-white/90 mb-5 leading-relaxed text-sm transition-colors duration-300">
-                    {item.description}
-                  </p>
-
-
-                  {/* PROGRAMS LIST */}
-                  <ul className="space-y-2.5 mb-6 flex-1">
-                    {item.programs.map((program, idx) => (
-                      <li
-                        key={idx}
-                        className="flex items-start gap-2 text-gray-900 group-hover:text-white transition-colors duration-300"
-                      >
-                        <span className="text-base">•</span>
-                        <span className="text-sm">{program}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-
-                  {/* LINK
-                  <Link
-                    href={item.link}
-                    className="inline-flex items-center gap-2 font-semibold group-hover:gap-3 transition-all duration-300 text-gray-900 group-hover:text-white"
-                  >
-                    {item.linkText}
-                    <ArrowRight className="w-5 h-5" />
-                  </Link> */}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );
