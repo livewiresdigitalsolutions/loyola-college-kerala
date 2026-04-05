@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { createClient } from '@supabase/supabase-js';
+import { deleteUploadedFile } from '@/lib/delete-uploads';
 
 const isDevelopment = process.env.DB_TYPE === 'supabase';
 
@@ -64,6 +65,31 @@ export async function DELETE(
         const { id } = await params;
         const idNum = parseInt(id);
 
+        // Step 1: Fetch the record to find the image to delete
+        let member: any = null;
+        if (isDevelopment) {
+            const { data } = await supabase
+                .from('academic_committee_members')
+                .select('image')
+                .eq('id', idNum)
+                .single();
+            member = data;
+        } else {
+            const connection = await mysql.createConnection(mysqlConfig);
+            const [rows]: any = await connection.execute(
+                'SELECT image FROM academic_committee_members WHERE id = ?',
+                [idNum]
+            );
+            await connection.end();
+            member = rows[0] ?? null;
+        }
+
+        // Step 2: Delete the uploaded image file from disk
+        if (member?.image) {
+            await deleteUploadedFile(member.image);
+        }
+
+        // Step 3: Delete the DB record
         if (isDevelopment) {
             const { error } = await supabase.from('academic_committee_members').delete().eq('id', idNum);
             if (error) throw error;
@@ -72,7 +98,7 @@ export async function DELETE(
             await connection.execute('DELETE FROM academic_committee_members WHERE id = ?', [idNum]);
             await connection.end();
         }
-        return NextResponse.json({ message: 'Committee member deleted successfully' });
+        return NextResponse.json({ message: 'Committee member and associated files deleted successfully' });
     } catch (error: any) {
         return NextResponse.json(
             { error: 'Failed to delete committee member', details: error.message },

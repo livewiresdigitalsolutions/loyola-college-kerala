@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Search, Filter, Mail, Phone } from "lucide-react";
+import Link from "next/link";
+import { Search, Filter, Mail, Phone, ArrowRight } from "lucide-react";
 
 interface FacultyMember {
   id: number;
@@ -224,6 +225,15 @@ export default function MeetOutFaculty() {
                         Call
                       </a>
                     )}
+                    <div className="ml-auto">
+                      <Link
+                        href={`/academics/faculty-and-staffs/${member.id}`}
+                        className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors border border-primary/30 rounded-full px-2.5 py-1 hover:bg-primary/5"
+                      >
+                        View More
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

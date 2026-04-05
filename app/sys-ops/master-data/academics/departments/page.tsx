@@ -31,7 +31,14 @@ const defaultForm = {
   category: "",
   image: "/departmentsCoverImage/default.png",
   introduction: { title: "", description: [""], highlights: [""] },
-  goals: { history: "", vision: "", mission: [""], objectives: [""] },
+  goals: { 
+    accordions: [
+      { title: "History", content: "" },
+      { title: "Vision", content: "" },
+      { title: "Mission", content: "" },
+      { title: "Goal", content: "" },
+    ] as { title: string; content: string }[]
+  },
   faculty_list: [] as { id: string; name: string; designation: string; image: string }[],
   programmes: {
     ug: [] as { id: string; name: string; duration: string; eligibility: string; seats?: string }[],
@@ -199,6 +206,24 @@ export default function DepartmentsManagement() {
   const openEdit = (d: Department) => {
     setEditing(d);
     
+    // Normalise goals: convert legacy {history, vision, mission, objectives} → {accordions}
+    let goalsData: any = d.goals || defaultForm.goals;
+    if (goalsData && !goalsData.accordions) {
+      // Legacy format — convert to dynamic accordions
+      const accs: { title: string; content: string }[] = [];
+      if (goalsData.history) accs.push({ title: "History", content: goalsData.history });
+      if (goalsData.vision) accs.push({ title: "Vision", content: goalsData.vision });
+      if (goalsData.mission) {
+        const val = typeof goalsData.mission === "string" ? goalsData.mission : (goalsData.mission || []).join("<p><br/></p>");
+        if (val) accs.push({ title: "Mission", content: val });
+      }
+      if (goalsData.objectives) {
+        const val = typeof goalsData.objectives === "string" ? goalsData.objectives : (goalsData.objectives || []).join("<p><br/></p>");
+        if (val) accs.push({ title: "Goal", content: val });
+      }
+      goalsData = { accordions: accs };
+    }
+    
     // Ensure nested objects gracefully fall back to defaults if missing
     setForm({
       name: d.name,
@@ -206,7 +231,7 @@ export default function DepartmentsManagement() {
       category: d.category || "",
       image: d.image || "/departmentsCoverImage/default.png",
       introduction: d.introduction || defaultForm.introduction,
-      goals: d.goals || defaultForm.goals,
+      goals: goalsData,
       faculty_list: d.faculty_list || [],
       programmes: d.programmes || defaultForm.programmes,
       syllabus_links: d.syllabus_links || [],
@@ -395,48 +420,62 @@ export default function DepartmentsManagement() {
 
                 {/* Goals Accordion Section */}
                 <div className="bg-gray-50 p-5 rounded-lg border">
-                    <h4 className="font-semibold text-gray-900 mb-4">Goals (Accordions)</h4>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">History</label>
-                            <div className="bg-white">
-                                <TiptapEditor 
-                                    minimal={true}
-                                    content={form.goals.history || ""}
-                                    onChange={(html) => setForm({...form, goals: {...form.goals, history: html}})} 
-                                />
+                    <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-semibold text-gray-900">Accordions (Goals Section)</h4>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const newAccordions = [...(form.goals.accordions || []), { title: "New Section", content: "" }];
+                                setForm({ ...form, goals: { ...form.goals, accordions: newAccordions } });
+                            }}
+                            className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-lg font-medium hover:bg-blue-100 flex items-center gap-1"
+                        >
+                            <Plus className="w-4 h-4" /> Add Accordion
+                        </button>
+                    </div>
+                    <div className="space-y-6">
+                        {(form.goals.accordions || []).map((accordion, aIdx) => (
+                            <div key={aIdx} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                                <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b">
+                                    <input
+                                        type="text"
+                                        value={accordion.title}
+                                        onChange={(e) => {
+                                            const newAccordions = [...(form.goals.accordions || [])];
+                                            newAccordions[aIdx] = { ...newAccordions[aIdx], title: e.target.value };
+                                            setForm({ ...form, goals: { ...form.goals, accordions: newAccordions } });
+                                        }}
+                                        placeholder="Accordion Title (e.g. History, Vision...)"
+                                        className="flex-1 px-3 py-1.5 border rounded-lg text-sm font-medium focus:ring-2 focus:ring-primary/30 outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newAccordions = (form.goals.accordions || []).filter((_, i) => i !== aIdx);
+                                            setForm({ ...form, goals: { ...form.goals, accordions: newAccordions } });
+                                        }}
+                                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg shrink-0"
+                                        title="Remove Accordion"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                                <div className="bg-white">
+                                    <TiptapEditor
+                                        minimal={true}
+                                        content={accordion.content || ""}
+                                        onChange={(html) => {
+                                            const newAccordions = [...(form.goals.accordions || [])];
+                                            newAccordions[aIdx] = { ...newAccordions[aIdx], content: html };
+                                            setForm({ ...form, goals: { ...form.goals, accordions: newAccordions } });
+                                        }}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Vision</label>
-                            <div className="bg-white">
-                                <TiptapEditor 
-                                    minimal={true}
-                                    content={form.goals.vision || ""}
-                                    onChange={(html) => setForm({...form, goals: {...form.goals, vision: html}})} 
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Mission</label>
-                            <div className="bg-white">
-                                <TiptapEditor 
-                                    minimal={true}
-                                    content={typeof form.goals.mission === 'string' ? form.goals.mission : (form.goals.mission || []).join('<p><br/></p>')}
-                                    onChange={(html) => setForm({...form, goals: {...form.goals, mission: html as any}})} 
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Goal / Objectives</label>
-                            <div className="bg-white">
-                                <TiptapEditor 
-                                    minimal={true}
-                                    content={typeof form.goals.objectives === 'string' ? form.goals.objectives : (form.goals.objectives || []).join('<p><br/></p>')}
-                                    onChange={(html) => setForm({...form, goals: {...form.goals, objectives: html as any}})} 
-                                />
-                            </div>
-                        </div>
+                        ))}
+                        {(form.goals.accordions || []).length === 0 && (
+                            <p className="text-sm text-gray-500 text-center py-4">No accordions yet. Click "Add Accordion" to create one.</p>
+                        )}
                     </div>
                 </div>
 

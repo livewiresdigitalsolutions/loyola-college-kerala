@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -74,13 +74,14 @@ function MenuBar({ editor, minimal }: { editor: any; minimal?: boolean }) {
         </>
       )}
 
+      {/* Bullet & ordered lists — always visible (including minimal mode) */}
       <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btnClass(editor.isActive("bulletList"))} title="Bullet List">
         <List size={16} />
       </button>
       <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btnClass(editor.isActive("orderedList"))} title="Numbered List">
         <ListOrdered size={16} />
       </button>
-      
+
       {!minimal && (
         <>
           <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={btnClass(editor.isActive("blockquote"))} title="Quote">
@@ -150,6 +151,13 @@ export default function TiptapEditor({ content, onChange, minimal }: TiptapEdito
       },
     },
   });
+
+  // Sync content when the prop changes (e.g. switching between department edits)
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || "");
+    }
+  }, [content, editor]);
 
   return (
     <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">

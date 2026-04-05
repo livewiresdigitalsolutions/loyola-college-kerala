@@ -73,8 +73,7 @@ export async function PUT(
     }
 }
 
-import { unlink } from 'fs/promises';
-import path from 'path';
+import { deleteRecordFiles } from '@/lib/delete-uploads';
 
 export async function DELETE(
     request: Request,
@@ -96,35 +95,26 @@ export async function DELETE(
         }
 
         if (department) {
-            const urlsToDelete: string[] = [];
-            if (department.image) urlsToDelete.push(department.image);
-            
+            // Collect all top-level image URLs
+            const topLevelImages = [department.image];
+
+            // Collect arrays that may contain image fields (faculty_list, publications)
+            const jsonArrays: any[] = [];
             try {
                 const facultyList = typeof department.faculty_list === 'string' ? JSON.parse(department.faculty_list) : department.faculty_list;
-                if (Array.isArray(facultyList)) facultyList.forEach((f: any) => { if (f.image) urlsToDelete.push(f.image); });
+                if (Array.isArray(facultyList)) jsonArrays.push(facultyList);
             } catch {}
-
-            try {
-                const syllabusLinks = typeof department.syllabus_links === 'string' ? JSON.parse(department.syllabus_links) : department.syllabus_links;
-                if (Array.isArray(syllabusLinks)) syllabusLinks.forEach((link: any) => { if (link.url) urlsToDelete.push(link.url); });
-            } catch {}
-
             try {
                 const publications = typeof department.publications === 'string' ? JSON.parse(department.publications) : department.publications;
-                if (Array.isArray(publications)) publications.forEach((pub: any) => { if (pub.image) urlsToDelete.push(pub.image); });
+                if (Array.isArray(publications)) jsonArrays.push(publications);
+            } catch {}
+            // Syllabus links contain PDF urls, also pick those up
+            try {
+                const syllabusLinks = typeof department.syllabus_links === 'string' ? JSON.parse(department.syllabus_links) : department.syllabus_links;
+                if (Array.isArray(syllabusLinks)) jsonArrays.push(syllabusLinks);
             } catch {}
 
-            const uploadDir = path.join(process.cwd(), 'public');
-            for (const url of urlsToDelete) {
-                if (url && url.startsWith('/assets/academics/uploads/')) {
-                    try {
-                        const filepath = path.join(uploadDir, ...url.split('/').filter(Boolean));
-                        await unlink(filepath).catch(() => {});
-                    } catch (e) {
-                        console.error('Failed to delete file:', url);
-                    }
-                }
-            }
+            await deleteRecordFiles(topLevelImages, jsonArrays);
         }
 
         if (isDevelopment) {

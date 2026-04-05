@@ -64,7 +64,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, designation, qualification, specialization, email, phone, image, department, category, sort_order } = body;
+        const { name, designation, qualification, specialization, email, phone, image, department, category, sort_order, pen, date_of_joining, profile_data } = body;
 
         if (!name || !designation) {
             return NextResponse.json({ error: 'Name and designation are required' }, { status: 400 });
@@ -81,6 +81,9 @@ export async function POST(request: Request) {
             department: department || null,
             category: category || 'Teaching',
             sort_order: sort_order || 0,
+            pen: pen || null,
+            date_of_joining: date_of_joining || null,
+            profile_data: profile_data ? JSON.stringify(profile_data) : null,
         };
 
         if (isDevelopment) {
@@ -93,8 +96,8 @@ export async function POST(request: Request) {
         } else {
             const connection = await mysql.createConnection(mysqlConfig);
             const [result]: any = await connection.execute(
-                'INSERT INTO academic_faculty (name, designation, qualification, specialization, email, phone, image, department, category, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [record.name, record.designation, record.qualification, record.specialization, record.email, record.phone, record.image, record.department, record.category, record.sort_order]
+                'INSERT INTO academic_faculty (name, designation, qualification, specialization, email, phone, image, department, category, sort_order, pen, date_of_joining, profile_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [record.name, record.designation, record.qualification, record.specialization, record.email, record.phone, record.image, record.department, record.category, record.sort_order, record.pen, record.date_of_joining, record.profile_data]
             );
             await connection.end();
             return NextResponse.json({ id: result.insertId, ...record });

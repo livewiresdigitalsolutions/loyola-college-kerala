@@ -114,16 +114,16 @@ export default function DepartmentsList() {
 
         {/* Departments grid */}
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {filtered.map((dept) => (
               <Link
                 key={dept.id}
                 href={`/academics/departments/${dept.slug}`}
-                className="group"
+                className="group h-full"
               >
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
                   {/* Image */}
-                  <div className="relative h-48 bg-gray-100 overflow-hidden">
+                  <div className="relative h-48 bg-gray-100 overflow-hidden shrink-0">
                     <Image
                       src={dept.image || "/departmentsCoverImage/default.png"}
                       alt={dept.name}
@@ -139,17 +139,16 @@ export default function DepartmentsList() {
                     )}
                   </div>
 
-                  {/* Info */}
-                  <div className="p-5">
+                  {/* Info — flex-col so footer sticks to bottom */}
+                  <div className="p-5 flex flex-col flex-1">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
                       {dept.name}
                     </h3>
-                    {dept.short_description && (
-                      <p className="text-gray-500 text-sm mb-4 line-clamp-2">
-                        {dept.short_description}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-2 text-primary text-sm font-medium">
+                    {/* Description area — always takes up space */}
+                    <p className="text-gray-500 text-sm mb-4 line-clamp-2 min-h-10">
+                      {dept.short_description || ""}
+                    </p>
+                    <div className="flex items-center gap-2 text-primary text-sm font-medium mt-auto">
                       Explore Department
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>

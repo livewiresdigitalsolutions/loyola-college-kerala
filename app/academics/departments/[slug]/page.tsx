@@ -2,6 +2,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { getDepartmentBySlug } from "../data/departmentsData";
 import DepartmentIntro from "./components/DepartmentIntro";
 import FacultySection from "./components/FacultySection";
@@ -76,13 +77,18 @@ export default async function DepartmentPage({ params }: DepartmentPageProps) {
             <div className="max-w-3xl">
               {/* Breadcrumb Navigation */}
               <nav className="flex items-center gap-2 text-white/90 mb-8 text-sm flex-wrap">
-                <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                <span>/</span>
+                <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                  </svg>
+                  Home
+                </Link>
+                <ChevronRight className="w-4 h-4" />
                 <Link href="/academics" className="hover:text-white transition-colors">Academics</Link>
-                <span>/</span>
+                <ChevronRight className="w-4 h-4" />
                 <Link href="/academics/departments" className="hover:text-white transition-colors">Departments</Link>
-                <span>/</span>
-                <span className="text-white font-medium">{department.name}</span>
+                <ChevronRight className="w-4 h-4" />
+                <span className="text-[#F0B129] font-medium">{department.name}</span>
               </nav>
 
               {/* Department Name */}
