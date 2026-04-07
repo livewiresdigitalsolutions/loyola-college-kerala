@@ -15,17 +15,19 @@ import {
   LogOut,
   UserStar,
   ShieldUser,
-  HeartHandshake
+  HeartHandshake,
+  CreditCard,
 } from "lucide-react";
 
 const menuItems = [
-  { name: "Dashboard",        icon: LayoutDashboard, path: "/sys-ops/dashboard",       allowedRoles: ["super_admin","admin","viewer"] },
-  { name: "Admissions",       icon: FileText,         path: "/sys-ops/admissions",      allowedRoles: ["super_admin","admin","viewer"] },
-  { name: "Admin Users",      icon: ShieldUser,       path: "/sys-ops/admin-users",     allowedRoles: ["super_admin","admin"] },
-  { name: "Master Data",      icon: Database,         path: "/sys-ops/master-data",     allowedRoles: ["super_admin","admin","viewer"] },
-  { name: "Allot Entrance Exam", icon: Landmark,      path: "/sys-ops/hall-tickets",    allowedRoles: ["super_admin","admin","viewer"] },
-  { name: "LES Management",   icon: HeartHandshake,   path: "/sys-ops/master-data/les", allowedRoles: ["super_admin","les_admin"] },
-  { name: "Settings",         icon: Settings,         path: "/sys-ops/settings",        allowedRoles: ["super_admin","admin","viewer"], disabled: true },
+  { name: "Dashboard",           icon: LayoutDashboard, path: "/sys-ops/dashboard",        allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "Admissions",          icon: FileText,         path: "/sys-ops/admissions",       allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "Payment Status",      icon: CreditCard,       path: "/sys-ops/payment-status",   allowedRoles: ["super_admin","admin"] },
+  { name: "Admin Users",         icon: ShieldUser,       path: "/sys-ops/admin-users",      allowedRoles: ["super_admin","admin"] },
+  { name: "Master Data",         icon: Database,         path: "/sys-ops/master-data",      allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "Allot Entrance Exam", icon: Landmark,         path: "/sys-ops/hall-tickets",     allowedRoles: ["super_admin","admin","viewer"] },
+  { name: "LES Management",      icon: HeartHandshake,   path: "/sys-ops/master-data/les",  allowedRoles: ["super_admin","les_admin"] },
+  { name: "Settings",            icon: Settings,         path: "/sys-ops/settings",         allowedRoles: ["super_admin","admin","viewer"], disabled: true },
 ];
 
 

@@ -337,6 +337,8 @@ export default function PaymentTab({
       }
     } else if (selectedQuota === "management") {
       fee = 750;
+    } else if (selectedQuota === "both_merit_and_management") {
+      fee = 750;
     }
     setCalculatedFee(fee);
     
@@ -350,9 +352,9 @@ export default function PaymentTab({
   const handleQuotaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSelectedQuota(value);
-    
+
     // Reset sub-option when changing quota type
-    if (value === "management") {
+    if (value === "management" || value === "both_merit_and_management") {
       setSubOption("");
     }
     
@@ -472,8 +474,8 @@ export default function PaymentTab({
 
           {/* Management Option */}
           <div className={`border-2 rounded-lg p-4 transition-all duration-200 ${
-            selectedQuota === "management" 
-              ? "border-blue-500 bg-blue-50 shadow-md" 
+            selectedQuota === "management"
+              ? "border-blue-500 bg-blue-50 shadow-md"
               : "border-gray-200 bg-white hover:border-blue-300"
           }`}>
             <label className="flex items-center justify-between cursor-pointer">
@@ -487,6 +489,28 @@ export default function PaymentTab({
                   className="w-5 h-5 text-blue-600 focus:ring-blue-500 focus:ring-2"
                 />
                 <span className="ml-3 text-lg font-semibold text-gray-800">Management</span>
+              </div>
+              <span className="font-bold text-blue-600 text-lg">₹750</span>
+            </label>
+          </div>
+
+          {/* Both Merit and Management Option */}
+          <div className={`border-2 rounded-lg p-4 transition-all duration-200 ${
+            selectedQuota === "both_merit_and_management"
+              ? "border-blue-500 bg-blue-50 shadow-md"
+              : "border-gray-200 bg-white hover:border-blue-300"
+          }`}>
+            <label className="flex items-center justify-between cursor-pointer">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  name="admission_quota"
+                  value="both_merit_and_management"
+                  checked={selectedQuota === "both_merit_and_management"}
+                  onChange={handleQuotaChange}
+                  className="w-5 h-5 text-blue-600 focus:ring-blue-500 focus:ring-2"
+                />
+                <span className="ml-3 text-lg font-semibold text-gray-800">Both Merit and Management</span>
               </div>
               <span className="font-bold text-blue-600 text-lg">₹750</span>
             </label>
@@ -506,7 +530,13 @@ export default function PaymentTab({
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             <span>
-              Selected: <strong>{selectedQuota === "general_merit" ? `General Merit (${subOption})` : "Management"}</strong>
+              Selected: <strong>
+                {selectedQuota === "general_merit"
+                  ? `General Merit (${subOption})`
+                  : selectedQuota === "management"
+                  ? "Management"
+                  : "Both Merit and Management"}
+              </strong>
             </span>
           </div>
         </div>

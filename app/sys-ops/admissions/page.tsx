@@ -32,13 +32,51 @@ interface Admission {
   program_level_id: number;
   degree_id: number;
   course_id: number;
+  second_preference_course_id?: number;
+  third_preference_course_id?: number;
   exam_center_id: number;
   form_status: string;
   payment_status: string;
+  payment_id?: string;
+  payment_amount?: number;
+  admission_quota?: string;
+  academic_year?: string;
   updated_at: string;
   created_at: string;
+  submitted_at?: string;
   exam_center_location: string;
   exam_center_name: string;
+  // Export-mode extra fields
+  gender?: string;
+  dob?: string;
+  email?: string;
+  aadhaar?: string;
+  nationality?: string;
+  religion?: string;
+  category?: string;
+  caste?: string;
+  mother_tongue?: string;
+  nativity?: string;
+  blood_group?: string;
+  is_disabled?: string;
+  hostel_accommodation_required?: string;
+  father_name?: string;
+  father_mobile?: string;
+  father_occupation?: string;
+  mother_name?: string;
+  mother_mobile?: string;
+  mother_occupation?: string;
+  annual_family_income?: string;
+  communication_city?: string;
+  communication_state?: string;
+  communication_district?: string;
+  communication_pincode?: string;
+  // SQL join fields (export mode)
+  program_name?: string;
+  degree_name?: string;
+  course_name?: string;
+  second_pref_course_name?: string;
+  third_pref_course_name?: string;
 }
 
 interface Program {
@@ -270,61 +308,90 @@ const handleDelete = async (userEmail: string) => {
         degree: degreeFilter,
         course: courseFilter,
         year: yearFilter,
+        export: "true",
       });
 
       const response = await fetch(`/api/sys-ops/admissions?${params}`);
       if (response.ok) {
         const result = await response.json();
 
-        const exportData = result.data.map((adm: Admission) => {
-          const program = programs.find((p) => p.id === adm.program_level_id);
-          const degree = degrees.find((d) => d.id === adm.degree_id);
-          const course = courses.find((c) => c.id === adm.course_id);
-          const examCenter = examCenters.find(
-            (ec) => ec.id === adm.exam_center_id
-          );
+        if (!result.data || result.data.length === 0) {
+          toast.error("No data to export");
+          return;
+        }
 
-          return {
-            "Application ID": generateApplicationId(
-              adm.program_level_id,
-              adm.degree_id,
-              adm.course_id,
-              adm.id
-            ),
-            Name: adm.full_name || "N/A",
-            Email: adm.user_email,
-            Mobile: adm.mobile || "N/A",
-            Program: program?.discipline || "N/A",
-            Degree: degree?.degree_name || "N/A",
-            Course: course?.course_name || "N/A",
-            Status:
-              adm.payment_status === "completed"
-                ? "Completed"
-                : adm.form_status || "Draft",
-            "Exam Center": examCenter
-              ? `${examCenter.centre_name}${
-                  examCenter.location ? ` - ${examCenter.location}` : ""
-                }`
-              : "Not Assigned",
-          };
-        });
+        const examCenterName = (adm: Admission) => {
+          const ec = examCenters.find((e) => e.id === adm.exam_center_id);
+          const name = adm.exam_center_name || ec?.centre_name || "";
+          const loc = adm.exam_center_location || ec?.location || "";
+          return name ? `${name}${loc ? ` - ${loc}` : ""}` : "Not Assigned";
+        };
 
+        const exportData = result.data.map((adm: Admission) => ({
+          "Application ID": generateApplicationId(
+            adm.program_level_id,
+            adm.degree_id,
+            adm.course_id,
+            adm.id
+          ),
+          "Name": adm.full_name || "N/A",
+          "Email": adm.user_email,
+          "Mobile": adm.mobile || "N/A",
+          "Gender": adm.gender || "N/A",
+          "Date of Birth": adm.dob || "N/A",
+          "Aadhaar": adm.aadhaar || "N/A",
+          "Nationality": adm.nationality || "N/A",
+          "Religion": adm.religion || "N/A",
+          "Category": adm.category || "N/A",
+          "Caste": adm.caste || "N/A",
+          "Mother Tongue": adm.mother_tongue || "N/A",
+          "Nativity": adm.nativity || "N/A",
+          "Blood Group": adm.blood_group || "N/A",
+          "Differently Abled": adm.is_disabled || "N/A",
+          "Hostel Required": adm.hostel_accommodation_required || "N/A",
+          "Father Name": adm.father_name || "N/A",
+          "Father Mobile": adm.father_mobile || "N/A",
+          "Father Occupation": adm.father_occupation || "N/A",
+          "Mother Name": adm.mother_name || "N/A",
+          "Mother Mobile": adm.mother_mobile || "N/A",
+          "Mother Occupation": adm.mother_occupation || "N/A",
+          "Annual Family Income": adm.annual_family_income || "N/A",
+          "City": adm.communication_city || "N/A",
+          "District": adm.communication_district || "N/A",
+          "State": adm.communication_state || "N/A",
+          "Pincode": adm.communication_pincode || "N/A",
+          "Program": adm.program_name || programs.find((p) => p.id === adm.program_level_id)?.discipline || "N/A",
+          "Degree": adm.degree_name || degrees.find((d) => d.id === adm.degree_id)?.degree_name || "N/A",
+          "Course (1st Preference)": adm.course_name || courses.find((c) => c.id === adm.course_id)?.course_name || "N/A",
+          "Course (2nd Preference)": adm.second_pref_course_name || courses.find((c) => c.id === adm.second_preference_course_id)?.course_name || "N/A",
+          "Course (3rd Preference)": adm.third_pref_course_name || courses.find((c) => c.id === adm.third_preference_course_id)?.course_name || "N/A",
+          "Admission Quota": adm.admission_quota || "N/A",
+          "Exam Center": examCenterName(adm),
+          "Academic Year": adm.academic_year || "N/A",
+          "Form Status": adm.form_status || "Draft",
+          "Payment Status": adm.payment_status || "N/A",
+          "Payment Amount": adm.payment_amount ?? "N/A",
+          "Payment ID": adm.payment_id || "N/A",
+          "Applied On": adm.created_at ? new Date(adm.created_at).toLocaleDateString("en-IN") : "N/A",
+          "Submitted On": adm.submitted_at ? new Date(adm.submitted_at).toLocaleDateString("en-IN") : "N/A",
+        }));
+
+        const headers = Object.keys(exportData[0]);
         const csv = [
-          Object.keys(exportData[0]).join(","),
+          headers.join(","),
           ...exportData.map((row: any) =>
-            Object.values(row)
-              .map((val) => `"${val}"`)
-              .join(",")
+            headers.map((h) => `"${String(row[h] ?? "").replace(/"/g, '""')}"`).join(",")
           ),
         ].join("\n");
 
-        const blob = new Blob([csv], { type: "text/csv" });
+        const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
         a.download = `admissions-${new Date().toISOString().split("T")[0]}.csv`;
         a.click();
-        toast.success("Exported successfully");
+        window.URL.revokeObjectURL(url);
+        toast.success(`Exported ${exportData.length} records successfully`);
       }
     } catch (error) {
       toast.error("Export failed");
