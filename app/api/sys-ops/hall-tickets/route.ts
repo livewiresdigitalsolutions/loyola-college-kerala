@@ -23,6 +23,7 @@ interface HallTicketRow extends RowDataPacket {
   admission_id: number;
   exam_date: string;
   exam_time: string;
+  exam_center_id?: number;
   status: string;
   created_at: string;
   updated_at: string;
@@ -31,7 +32,6 @@ interface HallTicketRow extends RowDataPacket {
   program_level_id?: number;
   degree_id?: number;
   course_id?: number;
-  exam_center_id?: number;
   full_name?: string;
   father_name?: string;
   mobile?: string;
@@ -114,7 +114,7 @@ async function getHallTicketsMySQL(
 
     // Get hall tickets with all details from JOINs
     const [rows] = await connection.execute<HallTicketRow[]>(
-      `SELECT 
+      `SELECT
         ht.id,
         ht.admission_id,
         ht.exam_date,
@@ -122,11 +122,11 @@ async function getHallTicketsMySQL(
         ht.status,
         ht.created_at,
         ht.updated_at,
+        COALESCE(ht.exam_center_id, bi.exam_center_id) AS exam_center_id,
         bi.academic_year,
         bi.program_level_id,
         bi.degree_id,
         bi.course_id,
-        bi.exam_center_id,
         pi.full_name,
         pi.dob,
         pi.gender,
@@ -137,8 +137,8 @@ async function getHallTicketsMySQL(
        INNER JOIN admission_basic_info bi ON ht.admission_id = bi.id
        LEFT JOIN admission_personal_info pi ON bi.id = pi.admission_id
        LEFT JOIN admission_family_info fi ON bi.id = fi.admission_id
-       WHERE ${whereClause} 
-       ORDER BY ht.created_at DESC 
+       WHERE ${whereClause}
+       ORDER BY ht.created_at DESC
        LIMIT ${safePerPage} OFFSET ${safeOffset}`,
       params
     );
@@ -255,18 +255,18 @@ async function createHallTicketsMySQL(tickets: any[]) {
     await connection.beginTransaction();
 
     const insertQuery = `
-      INSERT INTO hall_ticket 
-      (admission_id, exam_date, exam_time, status)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO hall_ticket
+      (admission_id, exam_date, exam_time, exam_center_id, status)
+      VALUES (?, ?, ?, ?, ?)
     `;
 
     for (const ticket of tickets) {
-
       try {
         await connection.execute(insertQuery, [
           ticket.admission_id,
           ticket.exam_date,
           ticket.exam_time,
+          ticket.exam_center_id || null,
           'allocated',
         ]);
       } catch (insertError: any) {
@@ -289,6 +289,7 @@ async function createHallTicketsSupabase(tickets: any[]) {
       admission_id: ticket.admission_id,
       exam_date: ticket.exam_date,
       exam_time: ticket.exam_time,
+      exam_center_id: ticket.exam_center_id || null,
       status: 'allocated',
     }));
 
@@ -347,14 +348,15 @@ export async function POST(request: Request) {
     const invalidTickets = tickets.filter(ticket =>
       !ticket.admission_id ||
       !ticket.exam_date ||
-      !ticket.exam_time
+      !ticket.exam_time ||
+      !ticket.exam_center_id
     );
 
     if (invalidTickets.length > 0) {
       return NextResponse.json(
         {
           error: 'Some tickets have missing required fields',
-          details: 'Required: admission_id, exam_date, exam_time',
+          details: 'Required: admission_id, exam_date, exam_time, exam_center_id',
           invalidTickets: invalidTickets
         },
         { status: 400 }

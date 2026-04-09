@@ -136,7 +136,7 @@ async function getHallTicketByEmailMySQL(email: string) {
 
   try {
     const [rows] = await connection.execute<HallTicketRow[]>(
-      `SELECT 
+      `SELECT
         ht.id,
         ht.admission_id,
         ht.exam_date,
@@ -147,7 +147,7 @@ async function getHallTicketByEmailMySQL(email: string) {
         bi.program_level_id,
         bi.degree_id,
         bi.course_id,
-        bi.exam_center_id,
+        COALESCE(ht.exam_center_id, bi.exam_center_id) AS exam_center_id,
         bi.academic_year,
         pi.full_name,
         pi.mobile,

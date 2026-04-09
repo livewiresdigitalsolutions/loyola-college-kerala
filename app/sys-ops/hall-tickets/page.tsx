@@ -1110,10 +1110,11 @@ export default function HallTicketsPage() {
   const [programFilter, setProgramFilter] = useState("all");
   const [degreeFilter, setDegreeFilter] = useState("all");
   const [courseFilter, setCourseFilter] = useState("all");
+  const [examCenterFilter, setExamCenterFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const perPage = 10;
+  const [perPage, setPerPage] = useState(20);
 
   // Master data
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -1126,6 +1127,7 @@ export default function HallTicketsPage() {
   // Allocation state
   const [examDate, setExamDate] = useState("");
   const [examTime, setExamTime] = useState("");
+  const [allotExamCenter, setAllotExamCenter] = useState("");
   const [isAllocating, setIsAllocating] = useState(false);
 
   // Already allocated hall tickets
@@ -1139,7 +1141,7 @@ export default function HallTicketsPage() {
 
   useEffect(() => {
     fetchAvailableAdmissions();
-  }, [currentPage, searchTerm, programFilter, degreeFilter, courseFilter, academicYear]);
+  }, [currentPage, searchTerm, programFilter, degreeFilter, courseFilter, examCenterFilter, academicYear, perPage]);
 
   useEffect(() => {
     fetchPrograms();
@@ -1238,6 +1240,7 @@ export default function HallTicketsPage() {
         program: programFilter,
         degree: degreeFilter,
         course: courseFilter,
+        examCenter: examCenterFilter,
         year: academicYear,
       });
 
@@ -1318,13 +1321,18 @@ export default function HallTicketsPage() {
       return;
     }
 
+    if (!allotExamCenter) {
+      toast.error("Please select an exam centre");
+      return;
+    }
+
     setIsAllocating(true);
     try {
-      // Only send admission_id, exam_date, exam_time
       const tickets = selectedAdmissions.map((admissionId) => ({
         admission_id: admissionId,
         exam_date: examDate,
         exam_time: examTime,
+        exam_center_id: parseInt(allotExamCenter),
       }));
 
       const response = await fetch("/api/sys-ops/hall-tickets", {
@@ -1342,6 +1350,7 @@ export default function HallTicketsPage() {
         setSelectedAdmissions([]);
         setExamDate("");
         setExamTime("");
+        setAllotExamCenter("");
         fetchAvailableAdmissions();
         fetchAllocatedTickets();
       } else {
@@ -1443,6 +1452,7 @@ export default function HallTicketsPage() {
     setProgramFilter("all");
     setDegreeFilter("all");
     setCourseFilter("all");
+    setExamCenterFilter("all");
     setCurrentPage(1);
   };
 
@@ -1450,7 +1460,8 @@ export default function HallTicketsPage() {
     searchTerm !== "" ||
     programFilter !== "all" ||
     degreeFilter !== "all" ||
-    courseFilter !== "all";
+    courseFilter !== "all" ||
+    examCenterFilter !== "all";
 
   const getExamCenterName = (examCenterId: number): string => {
     const center = examCenters.find((ec) => ec.id === examCenterId);
@@ -1547,9 +1558,26 @@ export default function HallTicketsPage() {
                       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Exam Centre
+                    </label>
+                    <select
+                      value={allotExamCenter}
+                      onChange={(e) => setAllotExamCenter(e.target.value)}
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                    >
+                      <option value="">Select centre...</option>
+                      {examCenters.map((ec) => (
+                        <option key={ec.id} value={ec.id}>
+                          {ec.centre_name}{ec.location ? ` - ${ec.location}` : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <button
                     onClick={handleAllocate}
-                    disabled={isAllocating || !examDate || !examTime}
+                    disabled={isAllocating || !examDate || !examTime || !allotExamCenter}
                     className="px-6 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {isAllocating ? (
@@ -1652,6 +1680,22 @@ export default function HallTicketsPage() {
                   {filteredCourses.map((course) => (
                     <option key={course.id} value={course.id}>
                       {course.course_name}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={examCenterFilter}
+                  onChange={(e) => {
+                    setExamCenterFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+                >
+                  <option value="all">All Exam Centres</option>
+                  {examCenters.map((ec) => (
+                    <option key={ec.id} value={ec.id}>
+                      {ec.centre_name}{ec.location ? ` - ${ec.location}` : ""}
                     </option>
                   ))}
                 </select>
@@ -1897,10 +1941,28 @@ export default function HallTicketsPage() {
 
                 {/* Pagination */}
                 <div className="flex items-center justify-between mt-6">
-                  <p className="text-sm text-gray-600">
-                    Showing {admissions.length} of {totalRecords} records (Page{" "}
-                    {currentPage} of {totalPages})
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <p className="text-sm text-gray-600">
+                      Showing {admissions.length} of {totalRecords} records (Page{" "}
+                      {currentPage} of {totalPages})
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600">Show:</span>
+                      <select
+                        value={perPage}
+                        onChange={(e) => {
+                          setPerPage(parseInt(e.target.value));
+                          setCurrentPage(1);
+                        }}
+                        className="px-2 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm"
+                      >
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}

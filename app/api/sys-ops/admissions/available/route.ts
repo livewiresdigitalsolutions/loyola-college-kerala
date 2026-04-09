@@ -48,7 +48,8 @@ async function getAvailableAdmissionsMySQL(
   program: string,
   degree: string,
   course: string,
-  year: string
+  year: string,
+  examCenter: string
 ) {
   const connection = await mysql.createConnection(mysqlConfig);
 
@@ -81,6 +82,12 @@ async function getAvailableAdmissionsMySQL(
     if (course && course !== 'all') {
       whereClause += ' AND bi.course_id = ?';
       params.push(parseInt(course));
+    }
+
+    // Exam centre filter (student's preferred centre)
+    if (examCenter && examCenter !== 'all') {
+      whereClause += ' AND bi.exam_center_id = ?';
+      params.push(parseInt(examCenter));
     }
 
     // Search filter
@@ -154,7 +161,8 @@ async function getAvailableAdmissionsSupabase(
   program: string,
   degree: string,
   course: string,
-  year: string
+  year: string,
+  examCenter: string
 ) {
   try {
     const from = (page - 1) * perPage;
@@ -205,6 +213,11 @@ async function getAvailableAdmissionsSupabase(
     // Course filter
     if (course && course !== 'all') {
       query = query.eq('course_id', parseInt(course));
+    }
+
+    // Exam centre filter (student's preferred centre)
+    if (examCenter && examCenter !== 'all') {
+      query = query.eq('exam_center_id', parseInt(examCenter));
     }
 
     // Search filter
@@ -265,10 +278,11 @@ export async function GET(request: Request) {
     const degree = searchParams.get('degree') || 'all';
     const course = searchParams.get('course') || 'all';
     const year = searchParams.get('year') || 'all';
+    const examCenter = searchParams.get('examCenter') || 'all';
 
     const result = isDevelopment
-      ? await getAvailableAdmissionsSupabase(page, perPage, search, program, degree, course, year)
-      : await getAvailableAdmissionsMySQL(page, perPage, search, program, degree, course, year);
+      ? await getAvailableAdmissionsSupabase(page, perPage, search, program, degree, course, year, examCenter)
+      : await getAvailableAdmissionsMySQL(page, perPage, search, program, degree, course, year, examCenter);
 
     return NextResponse.json(result);
   } catch (error: any) {
