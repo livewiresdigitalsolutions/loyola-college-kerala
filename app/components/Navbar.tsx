@@ -962,6 +962,7 @@ const Navbar: React.FC = () => {
   const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const searchRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -1373,9 +1374,6 @@ const Navbar: React.FC = () => {
     acc[entry.category].push(entry);
     return acc;
   }, {});
-
-  // Flat list for keyboard nav
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   // Highlight matched text
   const highlight = (text: string) => {

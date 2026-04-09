@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
         "66.116.207.103",
         "66.116.207.103:3000",
         process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, "") || "",
+        "admissions.loyolacollegekerala.edu.in",
+        "loyolacollegekerala.edu.in",
       ].filter(Boolean),
     },
   },

@@ -128,10 +128,9 @@ const mysqlConfig = {
   database: process.env.DB_DATABASE || 'loyola',
 };
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+  : null;
 
 // JWT secret - must be at least 32 characters
 const JWT_SECRET = new TextEncoder().encode(
@@ -165,6 +164,9 @@ async function loginWithMySQL(email: string, password: string) {
 }
 
 async function loginWithSupabase(email: string, password: string) {
+  if (!supabase) {
+    return { success: false, error: 'Supabase not configured' };
+  }
   const { data: user, error } = await supabase
     .from('user_credentials')
     .select('id, email, password_hash')
@@ -234,6 +236,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
       { error: 'Login failed. Please try again.' },
       { status: 500 }
