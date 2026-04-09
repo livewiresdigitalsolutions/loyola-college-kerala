@@ -1016,6 +1016,7 @@ interface Admission {
   degree_id: number;
   course_id: number;
   exam_center_id: number;
+  academic_year?: string;
   payment_status: string;
   form_status: string;
   created_at: string;
@@ -1071,15 +1072,21 @@ interface ExamCenter {
   location: string;
 }
 
+const fallbackApplicationYear = getAcademicYearConfig().start.toString();
+
+const getApplicationYearSegment = (academicYear?: string) =>
+  academicYear?.match(/\d{4}/)?.[0] || fallbackApplicationYear;
+
 const generateApplicationId = (
   programLevelId: number,
   degreeId: number,
   courseId: number,
-  dbId: number
+  dbId: number,
+  academicYear?: string
 ): string => {
   const paddedId = String(dbId).padStart(3, "0");
   const paddedCourseId = String(courseId).padStart(2, "0");
-  return `LCSS${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
+  return `LCSS${programLevelId}${degreeId}${paddedCourseId}${getApplicationYearSegment(academicYear)}${paddedId}`;
 };
 
 export default function HallTicketsPage() {
@@ -1239,13 +1246,14 @@ export default function HallTicketsPage() {
         const data = await response.json();
         
         // Map the response to ensure all fields are at root level
-        const mappedAdmissions = (data.admissions || data.data || []).map((adm: any) => ({
+        const mappedAdmissions = ((data.admissions || data.data || []) as Admission[]).map((adm) => ({
           id: adm.id,
           user_email: adm.user_email,
           program_level_id: adm.program_level_id,
           degree_id: adm.degree_id,
           course_id: adm.course_id,
           exam_center_id: adm.exam_center_id,
+          academic_year: adm.academic_year,
           payment_status: adm.payment_status,
           form_status: adm.form_status,
           created_at: adm.created_at,
@@ -1373,7 +1381,7 @@ export default function HallTicketsPage() {
           return;
         }
 
-        const exportData = dataToExport.map((adm: any) => {
+        const exportData: Record<string, string>[] = (dataToExport as Admission[]).map((adm) => {
           const program = programs.find((p) => p.id === adm.program_level_id);
           const degree = degrees.find((d) => d.id === adm.degree_id);
           const course = courses.find((c) => c.id === adm.course_id);
@@ -1384,7 +1392,8 @@ export default function HallTicketsPage() {
               adm.program_level_id,
               adm.degree_id,
               adm.course_id,
-              adm.id
+              adm.id,
+              adm.academic_year || academicYear
             ),
             "Name": adm.full_name || "N/A",
             "Email": adm.email || adm.user_email || "N/A",
@@ -1400,7 +1409,7 @@ export default function HallTicketsPage() {
 
         const csv = [
           Object.keys(exportData[0]).join(","),
-          ...exportData.map((row: any) =>
+          ...exportData.map((row) =>
             Object.values(row)
               .map((val) => `"${String(val).replace(/"/g, '""')}"`)
               .join(",")
@@ -1724,7 +1733,8 @@ export default function HallTicketsPage() {
                                   ticket.program_level_id,
                                   ticket.degree_id,
                                   ticket.course_id,
-                                  ticket.admission_id
+                                  ticket.admission_id,
+                                  ticket.academic_year || academicYear
                                 )
                               : "N/A"}
                           </td>
@@ -1856,7 +1866,8 @@ export default function HallTicketsPage() {
                                 admission.program_level_id,
                                 admission.degree_id,
                                 admission.course_id,
-                                admission.id
+                                admission.id,
+                                academicYear
                               )}
                             </td>
                             <td className="py-3 px-4 text-sm font-medium text-gray-900">

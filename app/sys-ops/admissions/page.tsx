@@ -102,15 +102,56 @@ interface ExamCenter {
   location: string;
 }
 
+const fallbackApplicationYear = getAcademicYearConfig().start.toString();
+
+const getApplicationYearSegment = (academicYear?: string) =>
+  academicYear?.match(/\d{4}/)?.[0] || fallbackApplicationYear;
+
 const generateApplicationId = (
   programLevelId: number,
   degreeId: number,
   courseId: number,
-  dbId: number
+  dbId: number,
+  academicYear?: string
 ): string => {
   const paddedId = String(dbId).padStart(3, "0");
   const paddedCourseId = String(courseId).padStart(2, "0");
-  return `LCSS${programLevelId}${degreeId}${paddedCourseId}2026${paddedId}`;
+  return `LCSS${programLevelId}${degreeId}${paddedCourseId}${getApplicationYearSegment(academicYear)}${paddedId}`;
+};
+
+const formatDateValue = (value?: string) => {
+  if (!value) return "N/A";
+
+  const parsedDate = new Date(value);
+  return Number.isNaN(parsedDate.getTime())
+    ? value
+    : parsedDate.toLocaleDateString("en-IN");
+};
+
+const formatValue = (value: string | number | null | undefined) => {
+  if (value === null || value === undefined) return "N/A";
+  if (typeof value === "string" && value.trim() === "") return "N/A";
+  return String(value);
+};
+
+const formatBooleanValue = (value?: string) => {
+  if (!value) return "N/A";
+  if (value.toLowerCase() === "yes") return "Yes";
+  if (value.toLowerCase() === "no") return "No";
+  return value;
+};
+
+const formatAdmissionQuota = (value?: string) => {
+  switch (value) {
+    case "general_merit":
+      return "General Merit";
+    case "management":
+      return "Management";
+    case "both_merit_and_management":
+      return "Both Merit and Management";
+    default:
+      return formatValue(value);
+  }
 };
 
 export default function Admissions() {
@@ -327,59 +368,77 @@ const handleDelete = async (userEmail: string) => {
           return name ? `${name}${loc ? ` - ${loc}` : ""}` : "Not Assigned";
         };
 
-        const exportData = result.data.map((adm: Admission) => ({
+        const exportData: Record<string, string>[] = result.data.map((adm: Admission) => ({
           "Application ID": generateApplicationId(
             adm.program_level_id,
             adm.degree_id,
             adm.course_id,
-            adm.id
+            adm.id,
+            adm.academic_year
           ),
-          "Name": adm.full_name || "N/A",
-          "Email": adm.user_email,
-          "Mobile": adm.mobile || "N/A",
-          "Gender": adm.gender || "N/A",
-          "Date of Birth": adm.dob || "N/A",
-          "Aadhaar": adm.aadhaar || "N/A",
-          "Nationality": adm.nationality || "N/A",
-          "Religion": adm.religion || "N/A",
-          "Category": adm.category || "N/A",
-          "Caste": adm.caste || "N/A",
-          "Mother Tongue": adm.mother_tongue || "N/A",
-          "Nativity": adm.nativity || "N/A",
-          "Blood Group": adm.blood_group || "N/A",
-          "Differently Abled": adm.is_disabled || "N/A",
-          "Hostel Required": adm.hostel_accommodation_required || "N/A",
-          "Father Name": adm.father_name || "N/A",
-          "Father Mobile": adm.father_mobile || "N/A",
-          "Father Occupation": adm.father_occupation || "N/A",
-          "Mother Name": adm.mother_name || "N/A",
-          "Mother Mobile": adm.mother_mobile || "N/A",
-          "Mother Occupation": adm.mother_occupation || "N/A",
-          "Annual Family Income": adm.annual_family_income || "N/A",
-          "City": adm.communication_city || "N/A",
-          "District": adm.communication_district || "N/A",
-          "State": adm.communication_state || "N/A",
-          "Pincode": adm.communication_pincode || "N/A",
-          "Program": adm.program_name || programs.find((p) => p.id === adm.program_level_id)?.discipline || "N/A",
-          "Degree": adm.degree_name || degrees.find((d) => d.id === adm.degree_id)?.degree_name || "N/A",
-          "Course (1st Preference)": adm.course_name || courses.find((c) => c.id === adm.course_id)?.course_name || "N/A",
-          "Course (2nd Preference)": adm.second_pref_course_name || courses.find((c) => c.id === adm.second_preference_course_id)?.course_name || "N/A",
-          "Course (3rd Preference)": adm.third_pref_course_name || courses.find((c) => c.id === adm.third_preference_course_id)?.course_name || "N/A",
-          "Admission Quota": adm.admission_quota || "N/A",
+          "Name": formatValue(adm.full_name),
+          "Email": formatValue(adm.email || adm.user_email),
+          "Mobile": formatValue(adm.mobile),
+          "Gender": formatValue(adm.gender),
+          "Date of Birth": formatDateValue(adm.dob),
+          "Aadhaar": formatValue(adm.aadhaar),
+          "Nationality": formatValue(adm.nationality),
+          "Religion": formatValue(adm.religion),
+          "Category": formatValue(adm.category),
+          "Caste": formatValue(adm.caste),
+          "Mother Tongue": formatValue(adm.mother_tongue),
+          "Nativity": formatValue(adm.nativity),
+          "Blood Group": formatValue(adm.blood_group),
+          "Differently Abled": formatBooleanValue(adm.is_disabled),
+          "Hostel Required": formatBooleanValue(adm.hostel_accommodation_required),
+          "Father Name": formatValue(adm.father_name),
+          "Father Mobile": formatValue(adm.father_mobile),
+          "Father Occupation": formatValue(adm.father_occupation),
+          "Mother Name": formatValue(adm.mother_name),
+          "Mother Mobile": formatValue(adm.mother_mobile),
+          "Mother Occupation": formatValue(adm.mother_occupation),
+          "Annual Family Income": formatValue(adm.annual_family_income),
+          "City": formatValue(adm.communication_city),
+          "District": formatValue(adm.communication_district),
+          "State": formatValue(adm.communication_state),
+          "Pincode": formatValue(adm.communication_pincode),
+          "Program": formatValue(
+            adm.program_name ||
+              programs.find((p) => p.id === adm.program_level_id)?.discipline
+          ),
+          "Degree": formatValue(
+            adm.degree_name ||
+              degrees.find((d) => d.id === adm.degree_id)?.degree_name
+          ),
+          "Course (1st Preference)": formatValue(
+            adm.course_name ||
+              courses.find((c) => c.id === adm.course_id)?.course_name
+          ),
+          "Course (2nd Preference)": formatValue(
+            adm.second_pref_course_name ||
+              courses.find((c) => c.id === adm.second_preference_course_id)
+                ?.course_name
+          ),
+          "Course (3rd Preference)": formatValue(
+            adm.third_pref_course_name ||
+              courses.find((c) => c.id === adm.third_preference_course_id)
+                ?.course_name
+          ),
+          "Admission Quota": formatAdmissionQuota(adm.admission_quota),
           "Exam Center": examCenterName(adm),
-          "Academic Year": adm.academic_year || "N/A",
-          "Form Status": adm.form_status || "Draft",
-          "Payment Status": adm.payment_status || "N/A",
-          "Payment Amount": adm.payment_amount ?? "N/A",
-          "Payment ID": adm.payment_id || "N/A",
-          "Applied On": adm.created_at ? new Date(adm.created_at).toLocaleDateString("en-IN") : "N/A",
-          "Submitted On": adm.submitted_at ? new Date(adm.submitted_at).toLocaleDateString("en-IN") : "N/A",
+          "Academic Year": formatValue(adm.academic_year),
+          "Form Status": formatValue(adm.form_status || "Draft"),
+          "Payment Status": formatValue(adm.payment_status),
+          "Payment Amount": formatValue(adm.payment_amount),
+          "Payment ID": formatValue(adm.payment_id),
+          "Applied On": formatDateValue(adm.created_at),
+          "Submitted On": formatDateValue(adm.submitted_at),
         }));
 
         const headers = Object.keys(exportData[0]);
         const csv = [
           headers.join(","),
-          ...exportData.map((row: any) =>
+          ...exportData.map((row) =>
             headers.map((h) => `"${String(row[h] ?? "").replace(/"/g, '""')}"`).join(",")
           ),
         ].join("\n");
@@ -709,7 +768,8 @@ const handleDelete = async (userEmail: string) => {
                               admission.program_level_id,
                               admission.degree_id,
                               admission.course_id,
-                              admission.id
+                              admission.id,
+                              admission.academic_year
                             )}
                           </td>
                           <td className="py-3 px-4 text-sm font-medium text-gray-900">

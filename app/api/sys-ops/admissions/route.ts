@@ -22,6 +22,10 @@ interface CountResult extends RowDataPacket {
   total: number;
 }
 
+interface ColumnResult extends RowDataPacket {
+  Field: string;
+}
+
 interface AdmissionRow extends RowDataPacket {
   id: number;
   user_email: string;
@@ -38,6 +42,17 @@ interface AdmissionRow extends RowDataPacket {
   created_at: string;
   exam_center_name: string;
   exam_center_location: string;
+}
+
+async function getTableColumnSet(
+  connection: mysql.Connection,
+  tableName: string
+) {
+  const [rows] = await connection.query<ColumnResult[]>(
+    `SHOW COLUMNS FROM \`${tableName}\``
+  );
+
+  return new Set(rows.map((row) => row.Field));
 }
 
 async function getAdmissionsMySQL(
@@ -113,12 +128,27 @@ async function getAdmissionsMySQL(
     );
     const total = countResult[0]?.total || 0;
 
+    const [basicInfoColumns, personalInfoColumns] = await Promise.all([
+      getTableColumnSet(connection, 'admission_basic_info'),
+      getTableColumnSet(connection, 'admission_personal_info'),
+    ]);
+
+    const admissionQuotaSelect = basicInfoColumns.has('admission_quota')
+      ? 'bi.admission_quota'
+      : personalInfoColumns.has('seat_reservation_quota')
+        ? 'pi.seat_reservation_quota as admission_quota'
+        : 'NULL as admission_quota';
+
+    const submittedAtSelect = basicInfoColumns.has('submitted_at')
+      ? 'bi.submitted_at'
+      : 'NULL as submitted_at';
+
     const selectFields = exportMode
       ? `bi.id, bi.user_email, bi.program_level_id, bi.degree_id,
          bi.course_id, bi.second_preference_course_id, bi.third_preference_course_id,
          bi.exam_center_id, bi.form_status, bi.payment_status,
-         bi.payment_id, bi.payment_amount, bi.admission_quota, bi.academic_year,
-         bi.updated_at, bi.created_at, bi.submitted_at,
+         bi.payment_id, bi.payment_amount, ${admissionQuotaSelect}, bi.academic_year,
+         bi.updated_at, bi.created_at, ${submittedAtSelect},
          pi.full_name, pi.gender, pi.dob, pi.mobile, pi.email,
          pi.aadhaar, pi.nationality, pi.religion, pi.category, pi.caste,
          pi.mother_tongue, pi.nativity, pi.blood_group,
