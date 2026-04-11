@@ -52,8 +52,8 @@ export default function Footer() {
             <FooterCol
               title="Explore"
               links={[
-                { label: "About Us", href: "/about-us" },
-                { label: "Academics", href: "/academics" },
+                { label: "About Us", href: "/about" },
+                { label: "Academics", href: "/academics/departments" },
                 { label: "Admissions", href: "/admissions" },
                 { label: "Research", href: "/research" },
                 { label: "Campus Life", href: "/campus-life" },
@@ -69,9 +69,9 @@ export default function Footer() {
               links={[
                 { label: "IQAC / NAAC", href: "/iqac" },
                 { label: "Extension Services (LES)", href: "/les" },
-                { label: "Code of Conduct", href: "/code-of-conduct" },
-                { label: "Academic Calendar", href: "/academic-calendar" },
-                { label: "Student Associations", href: "/associations" },
+                { label: "Code of Conduct", href: "/academics/code-of-conduct" },
+                { label: "Academic Calendar", href: "/academics/academic-calendar" },
+                { label: "Student Associations", href: "/students-engagement/students-associations" },
               ]}
             />
             <Link 

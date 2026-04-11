@@ -22,7 +22,7 @@ export default function WhatIsChildline() {
           />
         </div>
         
-        <div className="space-y-4 text-gray-700 leading-relaxed text-sm md:text-base">
+        <div className="space-y-4 text-gray-700 leading-relaxed text-justify text-sm md:text-base">
           <p>
             <strong>CHILDLINE is a 24-hour emergency helpline for children in distress.</strong>
           </p>

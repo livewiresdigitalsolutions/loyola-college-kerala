@@ -4,9 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Smartphone, Building2, ShieldCheck, ChevronDown, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
-import LimitedPhoneInput from '../../_components/PhoneNumberInput'
+
 
 const PRESET_AMOUNTS = [500, 1000, 2500, 5000]
 
@@ -122,16 +120,16 @@ export default function DonateForm() {
       toast.error('Please enter your name')
       return false
     }
-    if (/\d/.test(donorName)) {
-      toast.error('Name should not contain numbers')
+    if (/[^a-zA-Z\u00C0-\u024F\s.]/.test(donorName)) {
+      toast.error('Name should only contain letters and periods')
       return false
     }
     if (!donorEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(donorEmail)) {
       toast.error('Please enter a valid email address')
       return false
     }
-    if (!donorPhone || donorPhone.replace(/\D/g, '').length < 10) {
-      toast.error('Please enter a valid phone number')
+    if (!donorPhone || donorPhone.replace(/\D/g, '').length !== 10) {
+      toast.error('Please enter a valid 10-digit phone number')
       return false
     }
     return true
@@ -274,7 +272,7 @@ export default function DonateForm() {
                 <input
                   type="text"
                   value={donorName}
-                  onChange={(e) => setDonorName(e.target.value.replace(/[0-9]/g, ''))}
+                  onChange={(e) => setDonorName(e.target.value.replace(/[^a-zA-Z\u00C0-\u024F\s.]/g, ''))}
                   placeholder="Full Name *"
                   className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
                 />
@@ -283,19 +281,22 @@ export default function DonateForm() {
                   value={donorEmail}
                   onChange={(e) => setDonorEmail(e.target.value)}
                   placeholder="Email Address *"
+                  pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                  title="Please enter a valid email address."
                   className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0d4a33] focus:ring-1 focus:ring-[#0d4a33]/20 transition-all"
                 />
-                <div className="w-full border border-gray-200 rounded-xl overflow-hidden focus-within:border-[#0d4a33] focus-within:ring-1 focus-within:ring-[#0d4a33]/20 transition-all">
-                  <PhoneInput
-                    defaultCountry="IN"
-                    international
-                    countryCallingCodeEditable={false}
-                    limitMaxLength={true}
+                <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:border-[#0d4a33] focus-within:ring-1 focus-within:ring-[#0d4a33]/20 transition-all bg-white">
+                  <span className="px-3 py-3 text-gray-600 bg-gray-50 border-r border-gray-200 text-sm font-semibold select-none whitespace-nowrap">+91</span>
+                  <input
+                    type="tel"
                     value={donorPhone}
-                    onChange={(value) => setDonorPhone(value || '')}
-                    placeholder="Phone Number *"
-                    className="w-full px-4 py-3 bg-white border-none outline-none [&>input]:outline-none [&>input]:bg-transparent [&>input]:text-sm"
-                    inputComponent={LimitedPhoneInput}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 10)
+                      setDonorPhone(digits.length > 5 ? `${digits.slice(0, 5)} ${digits.slice(5)}` : digits)
+                    }}
+                    placeholder="XXXXX XXXXX"
+                    className="flex-1 px-4 py-3 outline-none bg-transparent text-sm tracking-wider"
+                    maxLength={11}
                   />
                 </div>
               </div>

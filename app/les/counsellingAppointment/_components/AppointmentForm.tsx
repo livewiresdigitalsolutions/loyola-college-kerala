@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { counselors as fallbackCounselors, counselingSlots as fallbackSlots, genderOptions } from '../../_data'
 import { submitAppointment, getCounselors } from '../../_services/api'
 import { AppointmentFormData, Counselor } from '../../_data/types'
-import PhoneInput from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
+
 
 export default function AppointmentForm() {
   const [counselorsList, setCounselorsList] = useState<Counselor[]>(fallbackCounselors)
@@ -36,9 +35,21 @@ export default function AppointmentForm() {
     let { name, value } = e.target
     
     if (name === 'name') {
-      value = value.replace(/[0-9]/g, '')
+      // Allow only letters (including accented), spaces and periods
+      value = value.replace(/[^a-zA-Z\u00C0-\u024F\s.]/g, '')
     }
-    
+
+    if (name === 'mobileNo') {
+      // Allow only digits, cap at 10, auto-format as XXXXX XXXXX
+      const digits = value.replace(/\D/g, '').slice(0, 10)
+      value = digits.length > 5 ? `${digits.slice(0, 5)} ${digits.slice(5)}` : digits
+    }
+
+    if (name === 'age') {
+      // Only allow positive whole numbers
+      value = value.replace(/[^0-9]/g, '')
+    }
+
     setFormData({ ...formData, [name]: value })
   }
 
@@ -167,18 +178,20 @@ export default function AppointmentForm() {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Mobile No <span className="text-red-500">*</span>
           </label>
-          <div className="w-full px-4 py-3 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all overflow-hidden p-0!">
-            <PhoneInput
-              defaultCountry="IN"
-              international
-              countryCallingCodeEditable={false}
+          <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all bg-white">
+            <span className="px-3 py-3 text-gray-600 bg-gray-50 border-r border-gray-300 text-sm font-semibold select-none whitespace-nowrap">+91</span>
+            <input
+              type="tel"
               name="mobileNo"
               value={formData.mobileNo}
-              onChange={(value) => setFormData({ ...formData, mobileNo: value || '' })}
-              limitMaxLength={true}
-              placeholder="Enter your mobile number"
-              className="w-full px-4 py-3 bg-transparent border-none outline-none focus:ring-0 [&>input]:outline-none [&>input]:bg-transparent"
-              numberInputProps={{ required: true }}
+              onChange={handleChange}
+              placeholder="XXXXX XXXXX"
+              className="flex-1 px-4 py-3 outline-none bg-transparent tracking-wider"
+              maxLength={11}
+              minLength={11}
+              pattern="[0-9]{5} [0-9]{5}"
+              title="Enter a valid 10-digit number (format: XXXXX XXXXX)"
+              required
             />
           </div>
         </div>
@@ -210,8 +223,11 @@ export default function AppointmentForm() {
             name="age"
             value={formData.age}
             onChange={handleChange}
+            onKeyDown={(e) => {
+              if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault()
+            }}
             placeholder="Enter your age"
-            min={15}
+            min={1}
             max={100}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />

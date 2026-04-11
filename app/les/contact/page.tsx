@@ -6,9 +6,7 @@ import { Mail, Phone, MapPin, Clock, Send, User } from 'lucide-react'
 import { coordinators as fallbackCoordinators, contactInfo as fallbackContactInfo } from '../_data'
 import { submitContactForm, getCoordinators, getContactInfo } from '../_services/api'
 import { ContactFormData, ContactPerson, ContactInfo as ContactInfoType } from '../_data/types'
-import PhoneInput, { parsePhoneNumber } from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
-import LimitedPhoneInput from '../_components/PhoneNumberInput'
+
 
 export default function ContactPage() {
   const [coordinatorsList, setCoordinatorsList] = useState<ContactPerson[]>(fallbackCoordinators)
@@ -33,9 +31,16 @@ export default function ContactPage() {
     let { name, value } = e.target
     
     if (name === 'firstName' || name === 'lastName') {
-      value = value.replace(/[0-9]/g, '')
+      // Allow letters (any language), spaces, commas and periods only
+      value = value.replace(/[^a-zA-Z\u00C0-\u024F\s.,]/g, '')
     }
-    
+
+    if (name === 'phone') {
+      // Allow only digits, cap at 10, auto-format as XXXXX XXXXX
+      const digits = value.replace(/\D/g, '').slice(0, 10)
+      value = digits.length > 5 ? `${digits.slice(0, 5)} ${digits.slice(5)}` : digits
+    }
+
     setFormData({ ...formData, [name]: value })
   }
 
@@ -248,19 +253,20 @@ export default function ContactPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <div className="w-full px-4 py-3 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-[#1a5632] focus-within:border-transparent transition overflow-hidden p-0!">
-                    <PhoneInput
-                      defaultCountry="IN"
-                      international
-                      countryCallingCodeEditable={false}
+                  <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#1a5632] focus-within:border-transparent transition bg-white">
+                    <span className="px-3 py-3 text-gray-600 bg-gray-50 border-r border-gray-300 text-sm font-semibold select-none whitespace-nowrap">+91</span>
+                    <input
+                      type="tel"
                       name="phone"
                       value={formData.phone}
-                      onChange={(value) => setFormData({ ...formData, phone: value || '' })}
-                      limitMaxLength={true}
-                      placeholder="+91 XXXXX XXXXX"
-                      className="w-full px-4 py-3 bg-transparent border-none outline-none focus:ring-0 [&>input]:outline-none [&>input]:bg-transparent"
-                      numberInputProps={{ required: true }}
-                      inputComponent={LimitedPhoneInput}
+                      onChange={handleChange}
+                      placeholder="XXXXX XXXXX"
+                      className="flex-1 px-4 py-3 outline-none bg-transparent tracking-wider"
+                      maxLength={11}
+                      minLength={11}
+                      pattern="[0-9]{5} [0-9]{5}"
+                      title="Enter a valid 10-digit number (format: XXXXX XXXXX)"
+                      required
                     />
                   </div>
                 </div>
