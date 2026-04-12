@@ -53,7 +53,7 @@ export default function Footer() {
               title="Explore"
               links={[
                 { label: "About Us", href: "/about" },
-                { label: "Academics", href: "/academics/departments" },
+                { label: "Departments", href: "/academics/departments" },
                 { label: "Admissions", href: "/admissions" },
                 { label: "Research", href: "/research" },
                 { label: "Campus Life", href: "/campus-life" },
@@ -67,8 +67,8 @@ export default function Footer() {
             <FooterCol
               title="Important Links"
               links={[
-                { label: "IQAC / NAAC", href: "/iqac" },
-                { label: "Extension Services (LES)", href: "/les" },
+                { label: "IQAC", href: "/iqac" },
+                { label: "Loyola Extension Services", href: "/les" },
                 { label: "Code of Conduct", href: "/academics/code-of-conduct" },
                 { label: "Academic Calendar", href: "/academics/academic-calendar" },
                 { label: "Student Associations", href: "/students-engagement/students-associations" },
