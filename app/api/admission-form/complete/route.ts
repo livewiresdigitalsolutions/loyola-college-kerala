@@ -73,16 +73,22 @@ async function getCompleteAdmissionMySQL(email: string) {
 
     // Combine all data
     return {
-      // Structured data
-      basicInfo,
-      personalInfo,
-      familyInfo,
-      addressInfo,
       // Flattened data for backward compatibility (merge all sections)
       ...basicInfo,
       ...(personalInfo || {}),
       ...(familyInfo || {}),
       ...(addressInfo || {}),
+      // Re-assert basicInfo primary fields to prevent other tables' id columns from overwriting them
+      id: basicInfo.id,
+      program_level_id: basicInfo.program_level_id,
+      degree_id: basicInfo.degree_id,
+      course_id: basicInfo.course_id,
+      exam_center_id: basicInfo.exam_center_id,
+      // Structured data
+      basicInfo,
+      personalInfo,
+      familyInfo,
+      addressInfo,
       // Academic marks (only defined once now)
       academicMarks: academicMarks || []
     };
@@ -142,16 +148,22 @@ async function getCompleteAdmissionSupabase(email: string) {
 
     // Combine all data
     return {
-      // Structured data
-      basicInfo,
-      personalInfo: personalInfo || null,
-      familyInfo: familyInfo || null,
-      addressInfo: addressInfo || null,
       // Flattened data for backward compatibility (merge all sections)
       ...basicInfo,
       ...(personalInfo || {}),
       ...(familyInfo || {}),
       ...(addressInfo || {}),
+      // Re-assert basicInfo primary fields to prevent other tables' id columns from overwriting them
+      id: basicInfo.id,
+      program_level_id: basicInfo.program_level_id,
+      degree_id: basicInfo.degree_id,
+      course_id: basicInfo.course_id,
+      exam_center_id: basicInfo.exam_center_id,
+      // Structured data
+      basicInfo,
+      personalInfo: personalInfo || null,
+      familyInfo: familyInfo || null,
+      addressInfo: addressInfo || null,
       // Academic marks (only defined once now)
       academicMarks: academicMarks || []
     };
