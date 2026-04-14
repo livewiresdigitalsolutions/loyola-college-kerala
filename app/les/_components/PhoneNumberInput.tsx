@@ -14,8 +14,13 @@ const LimitedPhoneInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttr
       const isDigit = /^[0-9]$/.test(e.key)
       if (isDigit) {
         const currentValue = (e.target as HTMLInputElement).value
-        const currentDigits = currentValue.replace(/\D/g, '').length
-        if (currentDigits >= 10) {
+        // Strip the country-code portion (everything before the first space)
+        // so we only count the national (subscriber) digits toward the limit.
+        const afterCountryCode = currentValue.includes(' ')
+          ? currentValue.slice(currentValue.indexOf(' ') + 1)
+          : currentValue
+        const nationalDigits = afterCountryCode.replace(/\D/g, '').length
+        if (nationalDigits >= 10) {
           e.preventDefault()
           return
         }

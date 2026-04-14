@@ -20,7 +20,7 @@ export default function Kecro() {
       </div>
       
       {/* Description */}
-      <div className="space-y-4 text-gray-700 leading-relaxed text-sm md:text-base">
+      <div className="space-y-4 text-gray-700 leading-relaxed text-justify text-sm md:text-base">
         <p>
           Kerala Child Rights Observatory (KeCRO) is a consortium of Civil Society Organizations working 
           together for promotion and protection of child rights in the State of Kerala. It will actively involve 

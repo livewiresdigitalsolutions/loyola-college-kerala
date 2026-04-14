@@ -20,7 +20,7 @@ export default function FamilyCounsellingCentre() {
       </div>
       
       {/* Description */}
-      <div className="space-y-4 text-gray-700 leading-relaxed text-sm md:text-base">
+      <div className="space-y-4 text-gray-700 leading-relaxed text-justify text-sm md:text-base">
         <p>
           LFCC was established in 1986 and has completed thirty one years of service. It offers counselling 
           services to all crises situations. The priority is on women and children who are the victims of 

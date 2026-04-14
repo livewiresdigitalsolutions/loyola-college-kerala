@@ -147,16 +147,24 @@ async function getHallTicketByEmailMySQL(email: string) {
         bi.program_level_id,
         bi.degree_id,
         bi.course_id,
+        bi.second_preference_course_id,
+        bi.third_preference_course_id,
         COALESCE(ht.exam_center_id, bi.exam_center_id) AS exam_center_id,
         bi.academic_year,
         pi.full_name,
         pi.mobile,
         pi.email,
-        fi.father_name
+        fi.father_name,
+        c1.course_name as pref1_name,
+        c2.course_name as pref2_name,
+        c3.course_name as pref3_name
        FROM hall_ticket ht
        JOIN admission_basic_info bi ON ht.admission_id = bi.id
        LEFT JOIN admission_personal_info pi ON bi.id = pi.admission_id
        LEFT JOIN admission_family_info fi ON bi.id = fi.admission_id
+       LEFT JOIN course c1 ON bi.course_id = c1.id
+       LEFT JOIN course c2 ON bi.second_preference_course_id = c2.id
+       LEFT JOIN course c3 ON bi.third_preference_course_id = c3.id
        WHERE bi.user_email = ?`,
       [email]
     );

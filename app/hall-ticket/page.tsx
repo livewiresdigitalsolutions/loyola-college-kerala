@@ -28,6 +28,8 @@ interface ProgramDetails {
   program: string;
   degree: string;
   course: string;
+  pref2?: string;
+  pref3?: string;
   examCenter: string;
 }
 
@@ -35,7 +37,8 @@ function HallTicketPreviewContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("email");
-  const contentRef = useRef<HTMLDivElement>(null);
+  const page1Ref = useRef<HTMLDivElement>(null);
+  const page2Ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [hallTicketData, setHallTicketData] = useState<HallTicketData | null>(
@@ -80,12 +83,7 @@ function HallTicketPreviewContent() {
       if (result.data) {
         setHallTicketData(result.data);
 
-        await fetchProgramDetails(
-          result.data.program_level_id,
-          result.data.degree_id,
-          result.data.course_id,
-          result.data.exam_center_id
-        );
+        await fetchProgramDetails(result.data);
       } else {
         toast.error("Hall ticket not allocated yet");
         router.push("/");
@@ -97,31 +95,24 @@ function HallTicketPreviewContent() {
     }
   };
 
-  const fetchProgramDetails = async (
-    programId: number,
-    degreeId: number,
-    courseId: number,
-    examCenterId: number
-  ) => {
+  const fetchProgramDetails = async (data: any) => {
     try {
-      const [programRes, degreeRes, courseRes, examCenterRes] =
+      const { program_level_id: programId, degree_id: degreeId, exam_center_id: examCenterId } = data;
+      const [programRes, degreeRes, examCenterRes] =
         await Promise.all([
           fetch(`/api/programs`),
           fetch(`/api/degrees?program_id=${programId}`),
-          fetch(`/api/courses?degree_id=${degreeId}`),
           examCenterId ? fetch(`/api/exam-centers`) : null,
         ]);
 
-      const [programs, degrees, courses, examCenters] = await Promise.all([
+      const [programs, degrees, examCenters] = await Promise.all([
         programRes.json(),
         degreeRes.json(),
-        courseRes.json(),
         examCenterRes ? examCenterRes.json() : [],
       ]);
 
       const program = programs.find((p: any) => p.id === programId);
       const degree = degrees.find((d: any) => d.id === degreeId);
-      const course = courses.find((c: any) => c.id === courseId);
       const examCenter = examCenterId
         ? examCenters.find((e: any) => e.id === examCenterId)
         : null;
@@ -129,7 +120,9 @@ function HallTicketPreviewContent() {
       setProgramDetails({
         program: program?.discipline || "N/A",
         degree: degree?.degree_name || "N/A",
-        course: course?.course_name || "N/A",
+        course: data.pref1_name || "N/A",
+        pref2: data.pref2_name,
+        pref3: data.pref3_name,
         examCenter: examCenter
           ? examCenter.location
             ? `${examCenter.centre_name} - ${examCenter.location}`
@@ -141,42 +134,36 @@ function HallTicketPreviewContent() {
   };
 
   const handleDownloadPDF = async () => {
-    if (!contentRef.current || !hallTicketData) return;
+    if (!page1Ref.current || !page2Ref.current || !hallTicketData) return;
 
     setIsDownloading(true);
     try {
-      const canvas = await html2canvas(contentRef.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-
-      // A4 Portrait
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 0;
+      // Page 1
+      const canvas1 = await html2canvas(page1Ref.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+      const imgData1 = canvas1.toDataURL("image/png");
+      pdf.addImage(imgData1, "PNG", 0, 0, 210, 297);
 
-      pdf.addImage(
-        imgData,
-        "PNG",
-        imgX,
-        imgY,
-        imgWidth * ratio,
-        imgHeight * ratio
-      );
+      // Page 2
+      pdf.addPage();
+      const canvas2 = await html2canvas(page2Ref.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+      const imgData2 = canvas2.toDataURL("image/png");
+      pdf.addImage(imgData2, "PNG", 0, 0, 210, 297);
 
       pdf.save(`HallTicket-${hallTicketData.application_id}.pdf`);
 
@@ -209,10 +196,10 @@ function HallTicketPreviewContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#342D87]">
+      <div className="min-h-screen flex items-center justify-center bg-slate-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto"></div>
-          <p className="mt-6 text-lg text-white font-semibold">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#342D87] mx-auto"></div>
+          <p className="mt-6 text-lg text-slate-700 font-semibold">
             Loading your hall ticket...
           </p>
         </div>
@@ -231,23 +218,17 @@ function HallTicketPreviewContent() {
     : "N/A";
 
   return (
-    <div className="min-h-screen bg-[#342D87] py-8 pt-20">
+    <div className="min-h-screen bg-slate-100 py-8 pt-20">
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-3">
-        <button
-          onClick={() => router.push("/")}
-          className="px-6 py-3 bg-[#342D87] border-2 border-white text-white font-bold rounded-lg transition-colors shadow-lg hover:bg-white hover:text-[#342D87]"
-        >
-          Back to Home
-        </button>
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
         <button
           onClick={handleDownloadPDF}
           disabled={isDownloading}
-          className="px-6 py-3 bg-[#342D87] text-white border-white border-2 font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-white hover:text-[#342D87]"
+          className="px-6 py-3 bg-[#342D87] text-white border-white border-2 font-bold rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-white hover:text-[#342D87]"
         >
           {isDownloading ? (
             <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#342D87]"></div>
               Generating...
             </>
           ) : (
@@ -269,6 +250,12 @@ function HallTicketPreviewContent() {
             </>
           )}
         </button>
+        <button
+          onClick={() => router.push("/")}
+          className="px-6 py-3 bg-white border-2 border-white text-red-600 font-bold rounded-lg transition-colors shadow-lg hover:bg-red-50 hover:text-red-700"
+        >
+          Back to Home
+        </button>
       </div>
 
       {/* Hall Ticket Content Area - Responsive Scaled Container */}
@@ -276,22 +263,13 @@ function HallTicketPreviewContent() {
         ref={containerRef}
         className="pt-8 pb-24 flex justify-center items-start px-4"
       >
-        <div
-          style={{
-            transform: `scale(${scale})`,
-            transformOrigin: "top center",
-            transition: "transform 0.3s ease",
-          }}
-        >
+        <div className="flex flex-col gap-8" style={{ transform: `scale(${scale})`, transformOrigin: "top center", transition: "transform 0.3s ease" }}>
+          
+          {/* PAGE 1 */}
           <div
-            ref={contentRef}
-            className="bg-white shadow-2xl"
-            style={{
-              width: "210mm",
-              height: "297mm", // A4 Portrait
-              padding: "12mm",
-              boxSizing: "border-box",
-            }}
+            ref={page1Ref}
+            className="bg-white shadow-2xl relative flex flex-col"
+            style={{ width: "210mm", height: "297mm", padding: "12mm", boxSizing: "border-box" }}
           >
             {/* Header with Logo */}
             <div className="text-center mb-4">
@@ -305,7 +283,7 @@ function HallTicketPreviewContent() {
 
             {/* Title */}
             <div className="bg-[#342D87] text-white text-center text-xl font-bold py-2 uppercase mb-4">
-              Hall Ticket - 2026
+              Loyola Common Entrance Test (LCET 2026)
             </div>
 
             {/* Content */}
@@ -346,65 +324,37 @@ function HallTicketPreviewContent() {
                         {hallTicketData.mobile}
                       </td>
                     </tr>
+
                     <tr>
-                      <td className="border border-[#342D87] p-1.5 px-2.5 font-bold text-[11pt] bg-gray-50">
-                        Program
+                      <td className="border border-[#342D87] p-1.5 px-2.5 font-bold text-[11pt] bg-gray-50 align-top">
+                        Course(s) Applied
                       </td>
                       <td className="border border-[#342D87] p-1.5 px-2.5 text-[11pt]">
-                        {programDetails?.program || "N/A"}
+                        <div className="flex flex-col gap-0.5">
+                          <div>Option 1: {programDetails?.course || "N/A"}</div>
+                          {programDetails?.pref2 && <div>Option 2: {programDetails.pref2}</div>}
+                          {programDetails?.pref3 && <div>Option 3: {programDetails.pref3}</div>}
+                        </div>
                       </td>
                     </tr>
                     <tr>
                       <td className="border border-[#342D87] p-1.5 px-2.5 font-bold text-[11pt] bg-gray-50">
-                        Degree
+                        Exam Date
                       </td>
                       <td className="border border-[#342D87] p-1.5 px-2.5 text-[11pt]">
-                        {programDetails?.degree || "N/A"}
+                        {formattedExamDate}
                       </td>
                     </tr>
                     <tr>
                       <td className="border border-[#342D87] p-1.5 px-2.5 font-bold text-[11pt] bg-gray-50">
-                        Course
+                        Exam Center
                       </td>
                       <td className="border border-[#342D87] p-1.5 px-2.5 text-[11pt]">
-                        {programDetails?.course || "N/A"}
+                        {programDetails?.examCenter || "N/A"}
                       </td>
                     </tr>
                   </tbody>
                 </table>
-
-                {/* Exam Details */}
-                <div className="mt-4 border-2 border-[#342D87] p-2.5 bg-gray-50">
-                  <h3 className="text-[#342D87] text-sm font-bold mb-2 uppercase">
-                    Exam Details
-                  </h3>
-                  <div className="flex gap-5">
-                    <div className="flex-1">
-                      <div className="text-xs font-bold text-gray-600 mb-1">
-                        Date
-                      </div>
-                      <div className="text-[13pt] font-bold text-black">
-                        {formattedExamDate}
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs font-bold text-gray-600 mb-1">
-                        Time
-                      </div>
-                      <div className="text-[13pt] font-bold text-black">
-                        {hallTicketData.exam_time}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-2.5">
-                    <div className="text-xs font-bold text-gray-600 mb-1">
-                      Test Center
-                    </div>
-                    <div className="text-[13pt] font-bold text-black">
-                      {programDetails?.examCenter || "N/A"}
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Right Section - Passport Photo */}
@@ -433,8 +383,49 @@ function HallTicketPreviewContent() {
               </div>
             </div>
 
+            {/* Exam Schedule Table */}
+            <div className="mt-8">
+              <h3 className="text-[#342D87] text-sm font-bold mb-2 uppercase">Exam Time</h3>
+              <table className="w-full border-collapse border border-[#342D87] text-center">
+                <thead className="bg-[#342D87] text-white">
+                  <tr>
+                    <th className="border border-[#342D87] p-1.5 text-[10pt] font-semibold w-1/2">Examination</th>
+                    <th className="border border-[#342D87] p-1.5 text-[10pt] font-semibold whitespace-nowrap">Number of Questions</th>
+                    <th className="border border-[#342D87] p-1.5 text-[10pt] font-semibold whitespace-nowrap">Duration</th>
+                    <th className="border border-[#342D87] p-1.5 text-[10pt] font-semibold whitespace-nowrap">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] text-left">General Paper (Common for All)</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">60</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">70 minutes</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">10:00 AM – 11:10 AM</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] text-left">Commerce (Fintech & AI, Finance & Accounts, Logistics & SCM)</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">30</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">35 minutes</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">11:30 AM – 12:05 PM</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] text-left">Data Science</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">30</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">35 minutes</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">12:20 PM – 12:50 PM</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] text-left">Social Sciences (Psychology & Social Work)</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">30</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">35 minutes</td>
+                    <td className="border border-[#342D87] p-1.5 text-[10pt] whitespace-nowrap">01:00 PM – 01:35 PM</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             {/* Signature Section */}
-            <div className="mt-10 mb-4 flex justify-between items-end gap-8">
+            <div className="mt-auto mb-8 flex justify-between items-end gap-8">
               <div className="flex-1 text-center">
                 <div className="h-12"></div>
                 <div className="border-t-2 border-black mx-8"></div>
@@ -446,7 +437,7 @@ function HallTicketPreviewContent() {
                 {/* Controller Signature Image */}
                 <div className="h-18 flex items-center justify-center">
                   <img
-                    src="/assets/COE_sign.png"
+                    src="/assets/COE_SIGN.png"
                     alt="Controller Signature"
                     className="h-20 w-auto object-contain"
                     crossOrigin="anonymous"
@@ -459,28 +450,69 @@ function HallTicketPreviewContent() {
               </div>
             </div>
 
+            <div className="absolute bottom-6 left-0 right-0 text-center text-sm font-bold text-gray-500">
+              Page 1 of 2
+            </div>
+          </div>
+
+          {/* PAGE 2 */}
+          <div
+            ref={page2Ref}
+            className="bg-white shadow-2xl relative"
+            style={{ width: "210mm", height: "297mm", padding: "12mm", boxSizing: "border-box" }}
+          >
+            {/* Header with Logo */}
+            <div className="text-center mb-4">
+              <img
+                src="/loyola-banner.jpg"
+                alt="Institution Logo"
+                className="max-w-[600px] h-auto mx-auto mb-2"
+                crossOrigin="anonymous"
+              />
+            </div>
+
+            <div className="bg-[#342D87] text-white text-center text-xl font-bold py-2 uppercase mb-4">
+              Important Instructions
+            </div>
+
             {/* Instructions/Rules Section */}
-            <div className="mt-6 border-t-2 border-[#342D87] pt-4">
-              <h3 className="text-[#342D87] text-sm font-bold mb-3 uppercase">
-                Instructions for Candidates
-              </h3>
-              <ol className="list-decimal pl-6 text-[10pt] space-y-2">
+            <div className="mt-6 pt-4">
+              <ol className="list-decimal pl-6 text-[11pt] space-y-4 text-justify">
                 <li>
-                  Candidates must bring this hall ticket along with a valid
-                  photo ID proof (Aadhaar Card/Passport/Driving License) to the
-                  examination center.
+                  The Hall Ticket is mandatory for entry into the examination hall. Candidates must also carry one passport-size photograph.
                 </li>
                 <li>
-                  Candidates must report to the examination center at least 30
-                  minutes before the scheduled start time. Late arrivals will
-                  not be permitted entry.
+                  Candidates must bring a valid Government-issued ID proof for verification.
                 </li>
                 <li>
-                  Mobile phones, electronic devices, books, notes, or any
-                  unauthorized materials are strictly prohibited inside the
-                  examination hall.
+                  Candidates are required to report to the examination centre at least 30 minutes prior to the commencement of the examination.
+                </li>
+                <li>
+                  The use of mobile phones, calculators, smart devices, or any other electronic gadgets is strictly prohibited inside the examination hall.
+                </li>
+                <li>
+                  The candidates shall write their Application Number and Date of Birth in the space provided in the Answer Sheet and shall blacken the appropriate bubbles.
+                </li>
+                <li>
+                  Each question carries FOUR marks. There is no negative mark for wrong answers.
+                </li>
+                <li>
+                  USE ONLY A BLACK/BLUE BALL-POINT PEN to mark your answers. Marking with any other ink or pencils will not be recognised by the system. Once an answer is marked, it cannot be changed. Marking more than one answer will not fetch the candidate any marks, even if one of the answers is RIGHT.
+                </li>
+                <li>
+                  Candidates are not permitted to leave the examination hall before the conclusion of the examination.
+                </li>
+                <li>
+                  Any form of malpractice or misconduct will result in immediate disqualification and cancellation of candidature.
+                </li>
+                <li>
+                  The decision of the college management in all matters related to the examination shall be final and binding.
                 </li>
               </ol>
+            </div>
+
+            <div className="absolute bottom-6 left-0 right-0 text-center text-sm font-bold text-gray-500">
+              Page 2 of 2
             </div>
           </div>
         </div>

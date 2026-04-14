@@ -21,7 +21,7 @@ export default function Intro() {
             <h2 className="text-2xl md:text-3xl font-bold text-primary mb-6 uppercase tracking-wide">
               Loyola Extension Services
             </h2>
-            <p className="text-gray-700 leading-relaxed text-sm md:text-base">
+            <p className="text-gray-700 leading-relaxed text-sm text-justify md:text-base">
               Loyola Extension Services (LES) is the Resource cum Outreach Centre of Loyola College of Social 
               Sciences, Trivandrum. It was established in 1986 and registered under the Charitable Societies 
               Registration Act in the same year. LES was started in alignment with the UGC guidelines that envisaged 

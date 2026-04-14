@@ -324,6 +324,13 @@ export async function GET(request: Request) {
 
     return NextResponse.json(result);
   } catch (error: any) {
+    console.error('[GET /api/sys-ops/hall-tickets] Error:', {
+      message: error.message,
+      code: error.code,
+      errno: error.errno,
+      sqlMessage: error.sqlMessage,
+      stack: error.stack,
+    });
     return NextResponse.json(
       { error: 'Failed to fetch hall tickets', details: error.message, data: [], total: 0, pages: 0, page: 1, perPage: 10 },
       { status: 500 }
@@ -374,6 +381,14 @@ export async function POST(request: Request) {
       message: `${result.count} hall ticket(s) allocated successfully`,
     }, { status: 200 }); // Explicitly set 200 status
   } catch (error: any) {
+
+    console.error('[POST /api/sys-ops/hall-tickets] Error:', {
+      message: error.message,
+      code: error.code,
+      errno: error.errno,
+      sqlMessage: error.sqlMessage,
+      stack: error.stack,
+    });
 
     // Check for duplicate entry error
     if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {

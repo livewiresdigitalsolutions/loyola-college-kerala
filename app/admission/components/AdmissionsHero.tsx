@@ -857,9 +857,10 @@ export default function AdmissionsHero() {
     try {
       const response = await fetch("/api/programs");
       const data = await response.json();
-      setPrograms(data);
+      setPrograms(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Failed to load programs");
+      setPrograms([]);
     }
   };
 
@@ -867,9 +868,10 @@ export default function AdmissionsHero() {
     try {
       const response = await fetch(`/api/degrees?program_id=${programId}`);
       const data = await response.json();
-      setDegrees(data);
+      setDegrees(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Failed to load degrees");
+      setDegrees([]);
     }
   };
 
@@ -877,9 +879,10 @@ export default function AdmissionsHero() {
     try {
       const response = await fetch(`/api/courses?degree_id=${degreeId}`);
       const data = await response.json();
-      setCourses(data);
+      setCourses(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Failed to load courses");
+      setCourses([]);
     }
   };
 

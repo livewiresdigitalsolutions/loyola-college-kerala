@@ -26,9 +26,13 @@ export function useProgramData() {
           fetch("/api/courses"),
         ]);
 
-        const levels: ProgramLevel[] = await levelsRes.json();
-        const degrees: Degree[] = await degreesRes.json();
-        const courses: Course[] = await coursesRes.json();
+        const levelsData = await levelsRes.json();
+        const degreesData = await degreesRes.json();
+        const coursesData = await coursesRes.json();
+
+        const levels: ProgramLevel[] = Array.isArray(levelsData) ? levelsData : [];
+        const degrees: Degree[] = Array.isArray(degreesData) ? degreesData : [];
+        const courses: Course[] = Array.isArray(coursesData) ? coursesData : [];
 
         // Arrays to hold the formatted names
         const ug: string[] = [];
